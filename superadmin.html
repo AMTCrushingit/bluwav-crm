@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BluWav — Super Admin</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BluWav — Super Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
     *{margin:0;padding:0;box-sizing:border-box;}
     :root{--bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;--border:rgba(255,255,255,0.06);--cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--text:#ffffff;--text2:#b0bec5;--text3:#4a5568;--sidebar:220px;}
     body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
@@ -134,250 +135,238 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div>
-    <div class="super-badge">🛡 Super Admin</div>
-  </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section">
-      <div class="nav-label">Platform</div>
-      <a class="nav-item active" href="#"><span class="nav-icon">📊</span> Overview</a>
-      <a class="nav-item" href="#"><span class="nav-icon">🏢</span> Organizations</a>
-      <a class="nav-item" href="#"><span class="nav-icon">💰</span> Revenue</a>
-      <a class="nav-item" href="#"><span class="nav-icon">⏱</span> Trials</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Management</div>
-      <a class="nav-item" href="#"><span class="nav-icon">🔄</span> Lifecycle</a>
-      <a class="nav-item" href="#"><span class="nav-icon">🔔</span> Alerts</a>
-      <a class="nav-item" href="#"><span class="nav-icon">📋</span> Audit Logs</a>
-      <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Settings</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Switch View</div>
-      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Back to CRM</a>
-    </div>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="user-card">
-      <div class="avatar" id="sidebarAvatar">AM</div>
-      <div class="user-info">
-        <div class="user-name" id="sidebarName">Andrea M. Tanguay</div>
-        <div class="user-role" style="color:var(--green);">Platform Admin</div>
-      </div>
-    </div>
-    <button class="logout-btn" onclick="signOut()">🚪 Log Out</button>
-  </div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left">
-      <h1>Platform Overview <span style="font-size:16px;">💙</span></h1>
-      <div class="date" id="topDate"></div>
-    </div>
-    <div class="topbar-right">
-      <button class="btn btn-ghost">⬇ Export Report</button>
-      <button class="btn btn-primary" onclick="showToast('📧 Broadcast sent to all orgs','success')">📢 Broadcast</button>
-      <div class="icon-btn">🔔<div class="notif-dot"></div></div>
-      <div class="user-card" style="padding:4px 8px;border-radius:8px;">
-        <div class="avatar" style="width:32px;height:32px;font-size:12px;" id="topAvatar">AM</div>
-        <div class="user-info"><div class="user-name" style="font-size:12px;" id="topName">Andrea M. Tanguay</div><div class="user-role" style="color:var(--green);">Owner / Platform Admin</div></div>
-      </div>
-    </div>
-  </header>
-
-  <div class="content">
-
-    <!-- MRR Hero -->
-    <div class="mrr-hero">
-      <div class="mrr-main">
-        <div class="mrr-label">Monthly Recurring Revenue</div>
-        <div class="mrr-value">$203<span style="font-size:18px;color:var(--text3);">/mo</span></div>
-        <div class="mrr-sub">7 active subscriptions · <span>+$29 vs last month</span></div>
-      </div>
-      <div class="mrr-stat"><div class="mrr-stat-val green">$1,421</div><div class="mrr-stat-lbl">Revenue YTD</div></div>
-      <div class="mrr-stat"><div class="mrr-stat-val gold">$693</div><div class="mrr-stat-lbl">Setup Fees YTD</div></div>
-      <div class="mrr-stat"><div class="mrr-stat-val orange">$2,114</div><div class="mrr-stat-lbl">Total YTD</div></div>
-      <div class="mrr-stat"><div class="mrr-stat-val" style="color:var(--text);">62%</div><div class="mrr-stat-lbl">Trial-to-Paid Rate</div></div>
-    </div>
-
-    <!-- Stat Cards -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-val">12</div>
-        <div class="stat-lbl">Total Orgs</div>
-        <div class="stat-trend up">↑ 2 this month</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" style="color:var(--green);">7</div>
-        <div class="stat-lbl">Active Paid</div>
-        <div class="stat-trend up">↑ 1 this week</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" style="color:var(--orange);">5</div>
-        <div class="stat-lbl">On Trial</div>
-        <div class="stat-trend down">2 expiring soon</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val">62%</div>
-        <div class="stat-lbl">Trial-Paid Rate</div>
-        <div class="stat-trend up">↑ 5% vs last mo</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" style="color:var(--red);">2</div>
-        <div class="stat-lbl">Churned</div>
-        <div class="stat-trend down">This quarter</div>
-      </div>
-    </div>
-
-    <!-- Alert Banner -->
-    <div class="alert-banner">
-      <div class="alert-text">⚠️ <strong>2 trials expiring within 48 hours</strong> — Tropic Eats (1 day) and Carib Wellness (2 days). Send reminders now to improve conversion.</div>
-      <button class="btn-remind" onclick="showToast('📧 Reminder emails sent to Tropic Eats & Carib Wellness','success')">📧 Send Reminders</button>
-    </div>
-
-    <!-- Main Grid -->
-    <div class="main-grid">
-      <!-- Org Table -->
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">Recent Organizations</div><div class="card-sub">All active orgs on the platform</div></div>
-          <span class="card-action">View all →</span>
-        </div>
-        <div style="padding:0;">
-          <table class="org-table">
-            <thead><tr><th>Organization</th><th>Plan</th><th>Admin</th><th>Joined</th><th>MRR</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><div class="org-name">Sunrise Digital Ltd.</div><div class="org-admin">Jordan Williams</div></td>
-                <td><span class="plan-badge active">● Active</span></td>
-                <td style="color:var(--text3);">jordan@sunrise.com</td>
-                <td style="color:var(--text3);">Jun 1</td>
-                <td style="color:var(--cyan);font-weight:700;">$29</td>
-              </tr>
-              <tr>
-                <td><div class="org-name">Tropic Eats</div><div class="org-admin">Marcus Brown</div></td>
-                <td><span class="plan-badge trial">⏱ Trial</span></td>
-                <td style="color:var(--text3);">marcus@tropiceats.com</td>
-                <td style="color:var(--text3);">Jun 28</td>
-                <td style="color:var(--text3);">—</td>
-              </tr>
-              <tr>
-                <td><div class="org-name">Island Realty</div><div class="org-admin">Sandra Clarke</div></td>
-                <td><span class="plan-badge active">● Active</span></td>
-                <td style="color:var(--text3);">sandra@islandrealty.com</td>
-                <td style="color:var(--text3);">May 15</td>
-                <td style="color:var(--cyan);font-weight:700;">$29</td>
-              </tr>
-              <tr>
-                <td><div class="org-name">Carib Wellness</div><div class="org-admin">Priya Ramkissoon</div></td>
-                <td><span class="plan-badge trial">⏱ Trial</span></td>
-                <td style="color:var(--text3);">priya@caribwellness.com</td>
-                <td style="color:var(--text3);">Jun 27</td>
-                <td style="color:var(--text3);">—</td>
-              </tr>
-              <tr>
-                <td><div class="org-name">BluSky Logistics</div><div class="org-admin">Devon Charles</div></td>
-                <td><span class="plan-badge expired">✗ Expired</span></td>
-                <td style="color:var(--text3);">devon@blusky.com</td>
-                <td style="color:var(--text3);">Apr 10</td>
-                <td style="color:var(--red);">$0</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Activity Feed -->
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">Platform Activity</div><div class="card-sub">Real-time events</div></div>
-        </div>
-        <div class="card-body" style="padding:0 16px;">
-          <div class="activity-item">
-            <div class="act-dot" style="background:rgba(34,197,94,0.1);">💳</div>
-            <div class="act-content"><div class="act-text"><strong>Sunrise Digital</strong> activated Pro plan</div><div class="act-time">2h ago</div></div>
-          </div>
-          <div class="activity-item">
-            <div class="act-dot" style="background:rgba(0,194,209,0.1);">🆕</div>
-            <div class="act-content"><div class="act-text"><strong>Mango & Co.</strong> signed up for trial</div><div class="act-time">5h ago</div></div>
-          </div>
-          <div class="activity-item">
-            <div class="act-dot" style="background:rgba(255,140,66,0.1);">⏱</div>
-            <div class="act-content"><div class="act-text"><strong>BluSky Logistics</strong> trial expired</div><div class="act-time">1d ago</div></div>
-          </div>
-          <div class="activity-item">
-            <div class="act-dot" style="background:rgba(34,197,94,0.1);">💰</div>
-            <div class="act-content"><div class="act-text">Payment received — <strong>Island Realty</strong> $29</div><div class="act-time">2d ago</div></div>
-          </div>
-          <div class="activity-item">
-            <div class="act-dot" style="background:rgba(0,194,209,0.1);">🆕</div>
-            <div class="act-content"><div class="act-text"><strong>Carib Wellness</strong> signed up for trial</div><div class="act-time">3d ago</div></div>
-          </div>
-          <div class="activity-item">
-            <div class="act-dot" style="background:rgba(239,68,68,0.1);">❌</div>
-            <div class="act-content"><div class="act-text"><strong>TechHub TT</strong> cancelled subscription</div><div class="act-time">5d ago</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Grid -->
-    <div class="bottom-grid">
-      <!-- Revenue Chart -->
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">Monthly Revenue Trend</div><div class="card-sub">MRR + setup fees over time</div></div>
-        </div>
-        <div class="card-body">
-          <div class="chart-container"><canvas id="revenueChart"></canvas></div>
-        </div>
-      </div>
-
-      <!-- Platform Health -->
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">Platform Health</div><div class="card-sub">System status & metrics</div></div>
-          <span style="font-size:11px;color:var(--green);font-weight:600;">● All Systems Operational</span>
-        </div>
-        <div class="card-body">
-          <div class="health-grid" style="margin-bottom:16px;">
-            <div class="health-item"><div class="health-val" style="color:var(--green);">99.9%</div><div class="health-lbl">Uptime</div></div>
-            <div class="health-item"><div class="health-val" style="color:var(--cyan);">7</div><div class="health-lbl">Active Orgs</div></div>
-            <div class="health-item"><div class="health-val" style="color:var(--orange);">5</div><div class="health-lbl">On Trial</div></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
-              <span style="color:var(--text2);">Database</span>
-              <span style="color:var(--green);font-weight:600;">● Healthy</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
-              <span style="color:var(--text2);">Auth Service</span>
-              <span style="color:var(--green);font-weight:600;">● Healthy</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
-              <span style="color:var(--text2);">Email Service</span>
-              <span style="color:var(--green);font-weight:600;">● Healthy</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
-              <span style="color:var(--text2);">WhatsApp API</span>
-              <span style="color:var(--orange);font-weight:600;">⚠ Degraded</span>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
-              <span style="color:var(--text2);">Storage</span>
-              <span style="color:var(--green);font-weight:600;">● Healthy</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
+<div class="sidebar-logo">
+<div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div>
+<div class="super-badge">🛡 Super Admin</div>
 </div>
-
+<nav class="sidebar-nav">
+<div class="nav-section">
+<div class="nav-label">Platform</div>
+<a class="nav-item active" href="#"><span class="nav-icon">📊</span> Overview</a>
+<a class="nav-item" href="#"><span class="nav-icon">🏢</span> Organizations</a>
+<a class="nav-item" href="#"><span class="nav-icon">💰</span> Revenue</a>
+<a class="nav-item" href="#"><span class="nav-icon">⏱</span> Trials</a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Management</div>
+<a class="nav-item" href="#"><span class="nav-icon">🔄</span> Lifecycle</a>
+<a class="nav-item" href="#"><span class="nav-icon">🔔</span> Alerts</a>
+<a class="nav-item" href="#"><span class="nav-icon">📋</span> Audit Logs</a>
+<a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Settings</a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Switch View</div>
+<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Back to CRM</a>
+</div>
+</nav>
+<div class="sidebar-bottom">
+<div class="user-card">
+<div class="avatar" id="sidebarAvatar">AM</div>
+<div class="user-info">
+<div class="user-name" id="sidebarName">Andrea M. Tanguay</div>
+<div class="user-role" style="color:var(--green);">Platform Admin</div>
+</div>
+</div>
+<button class="logout-btn" onclick="signOut()">🚪 Log Out</button>
+</div>
+</aside>
+<div class="main">
+<header class="topbar">
+<div class="topbar-left">
+<h1>Platform Overview <span style="font-size:16px;">💙</span></h1>
+<div class="date" id="topDate"></div>
+</div>
+<div class="topbar-right">
+<button class="btn btn-ghost">⬇ Export Report</button>
+<button class="btn btn-primary" onclick="showToast('📧 Broadcast sent to all orgs','success')">📢 Broadcast</button>
+<div class="icon-btn">🔔<div class="notif-dot"></div></div>
+<div class="user-card" style="padding:4px 8px;border-radius:8px;">
+<div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
+<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Andrea M. Tanguay</div><div class="user-role" style="color:var(--green);">Owner / Platform Admin</div></div>
+</div>
+</div>
+</header>
+<div class="content">
+<!-- MRR Hero -->
+<div class="mrr-hero">
+<div class="mrr-main">
+<div class="mrr-label">Monthly Recurring Revenue</div>
+<div class="mrr-value">$203<span style="font-size:18px;color:var(--text3);">/mo</span></div>
+<div class="mrr-sub">7 active subscriptions · <span>+$29 vs last month</span></div>
+</div>
+<div class="mrr-stat"><div class="mrr-stat-val green">$1,421</div><div class="mrr-stat-lbl">Revenue YTD</div></div>
+<div class="mrr-stat"><div class="mrr-stat-val gold">$693</div><div class="mrr-stat-lbl">Setup Fees YTD</div></div>
+<div class="mrr-stat"><div class="mrr-stat-val orange">$2,114</div><div class="mrr-stat-lbl">Total YTD</div></div>
+<div class="mrr-stat"><div class="mrr-stat-val" style="color:var(--text);">62%</div><div class="mrr-stat-lbl">Trial-to-Paid Rate</div></div>
+</div>
+<!-- Stat Cards -->
+<div class="stats-row">
+<div class="stat-card">
+<div class="stat-val">12</div>
+<div class="stat-lbl">Total Orgs</div>
+<div class="stat-trend up">↑ 2 this month</div>
+</div>
+<div class="stat-card">
+<div class="stat-val" style="color:var(--green);">7</div>
+<div class="stat-lbl">Active Paid</div>
+<div class="stat-trend up">↑ 1 this week</div>
+</div>
+<div class="stat-card">
+<div class="stat-val" style="color:var(--orange);">5</div>
+<div class="stat-lbl">On Trial</div>
+<div class="stat-trend down">2 expiring soon</div>
+</div>
+<div class="stat-card">
+<div class="stat-val">62%</div>
+<div class="stat-lbl">Trial-Paid Rate</div>
+<div class="stat-trend up">↑ 5% vs last mo</div>
+</div>
+<div class="stat-card">
+<div class="stat-val" style="color:var(--red);">2</div>
+<div class="stat-lbl">Churned</div>
+<div class="stat-trend down">This quarter</div>
+</div>
+</div>
+<!-- Alert Banner -->
+<div class="alert-banner">
+<div class="alert-text">⚠️ <strong>2 trials expiring within 48 hours</strong> — Tropic Eats (1 day) and Carib Wellness (2 days). Send reminders now to improve conversion.</div>
+<button class="btn-remind" onclick="showToast('📧 Reminder emails sent to Tropic Eats &amp; Carib Wellness','success')">📧 Send Reminders</button>
+</div>
+<!-- Main Grid -->
+<div class="main-grid">
+<!-- Org Table -->
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">Recent Organizations</div><div class="card-sub">All active orgs on the platform</div></div>
+<span class="card-action">View all →</span>
+</div>
+<div style="padding:0;">
+<table class="org-table">
+<thead><tr><th>Organization</th><th>Plan</th><th>Admin</th><th>Joined</th><th>MRR</th></tr></thead>
+<tbody>
+<tr>
+<td><div class="org-name">Sunrise Digital Ltd.</div><div class="org-admin">Jordan Williams</div></td>
+<td><span class="plan-badge active">● Active</span></td>
+<td style="color:var(--text3);">jordan@sunrise.com</td>
+<td style="color:var(--text3);">Jun 1</td>
+<td style="color:var(--cyan);font-weight:700;">$29</td>
+</tr>
+<tr>
+<td><div class="org-name">Tropic Eats</div><div class="org-admin">Marcus Brown</div></td>
+<td><span class="plan-badge trial">⏱ Trial</span></td>
+<td style="color:var(--text3);">marcus@tropiceats.com</td>
+<td style="color:var(--text3);">Jun 28</td>
+<td style="color:var(--text3);">—</td>
+</tr>
+<tr>
+<td><div class="org-name">Island Realty</div><div class="org-admin">Sandra Clarke</div></td>
+<td><span class="plan-badge active">● Active</span></td>
+<td style="color:var(--text3);">sandra@islandrealty.com</td>
+<td style="color:var(--text3);">May 15</td>
+<td style="color:var(--cyan);font-weight:700;">$29</td>
+</tr>
+<tr>
+<td><div class="org-name">Carib Wellness</div><div class="org-admin">Priya Ramkissoon</div></td>
+<td><span class="plan-badge trial">⏱ Trial</span></td>
+<td style="color:var(--text3);">priya@caribwellness.com</td>
+<td style="color:var(--text3);">Jun 27</td>
+<td style="color:var(--text3);">—</td>
+</tr>
+<tr>
+<td><div class="org-name">BluSky Logistics</div><div class="org-admin">Devon Charles</div></td>
+<td><span class="plan-badge expired">✗ Expired</span></td>
+<td style="color:var(--text3);">devon@blusky.com</td>
+<td style="color:var(--text3);">Apr 10</td>
+<td style="color:var(--red);">$0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Activity Feed -->
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">Platform Activity</div><div class="card-sub">Real-time events</div></div>
+</div>
+<div class="card-body" style="padding:0 16px;">
+<div class="activity-item">
+<div class="act-dot" style="background:rgba(34,197,94,0.1);">💳</div>
+<div class="act-content"><div class="act-text"><strong>Sunrise Digital</strong> activated Pro plan</div><div class="act-time">2h ago</div></div>
+</div>
+<div class="activity-item">
+<div class="act-dot" style="background:rgba(0,194,209,0.1);">🆕</div>
+<div class="act-content"><div class="act-text"><strong>Mango &amp; Co.</strong> signed up for trial</div><div class="act-time">5h ago</div></div>
+</div>
+<div class="activity-item">
+<div class="act-dot" style="background:rgba(255,140,66,0.1);">⏱</div>
+<div class="act-content"><div class="act-text"><strong>BluSky Logistics</strong> trial expired</div><div class="act-time">1d ago</div></div>
+</div>
+<div class="activity-item">
+<div class="act-dot" style="background:rgba(34,197,94,0.1);">💰</div>
+<div class="act-content"><div class="act-text">Payment received — <strong>Island Realty</strong> $29</div><div class="act-time">2d ago</div></div>
+</div>
+<div class="activity-item">
+<div class="act-dot" style="background:rgba(0,194,209,0.1);">🆕</div>
+<div class="act-content"><div class="act-text"><strong>Carib Wellness</strong> signed up for trial</div><div class="act-time">3d ago</div></div>
+</div>
+<div class="activity-item">
+<div class="act-dot" style="background:rgba(239,68,68,0.1);">❌</div>
+<div class="act-content"><div class="act-text"><strong>TechHub TT</strong> cancelled subscription</div><div class="act-time">5d ago</div></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Grid -->
+<div class="bottom-grid">
+<!-- Revenue Chart -->
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">Monthly Revenue Trend</div><div class="card-sub">MRR + setup fees over time</div></div>
+</div>
+<div class="card-body">
+<div class="chart-container"><canvas id="revenueChart"></canvas></div>
+</div>
+</div>
+<!-- Platform Health -->
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">Platform Health</div><div class="card-sub">System status &amp; metrics</div></div>
+<span style="font-size:11px;color:var(--green);font-weight:600;">● All Systems Operational</span>
+</div>
+<div class="card-body">
+<div class="health-grid" style="margin-bottom:16px;">
+<div class="health-item"><div class="health-val" style="color:var(--green);">99.9%</div><div class="health-lbl">Uptime</div></div>
+<div class="health-item"><div class="health-val" style="color:var(--cyan);">7</div><div class="health-lbl">Active Orgs</div></div>
+<div class="health-item"><div class="health-val" style="color:var(--orange);">5</div><div class="health-lbl">On Trial</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;">
+<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+<span style="color:var(--text2);">Database</span>
+<span style="color:var(--green);font-weight:600;">● Healthy</span>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+<span style="color:var(--text2);">Auth Service</span>
+<span style="color:var(--green);font-weight:600;">● Healthy</span>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+<span style="color:var(--text2);">Email Service</span>
+<span style="color:var(--green);font-weight:600;">● Healthy</span>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+<span style="color:var(--text2);">WhatsApp API</span>
+<span style="color:var(--orange);font-weight:600;">⚠ Degraded</span>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;">
+<span style="color:var(--text2);">Storage</span>
+<span style="color:var(--green);font-weight:600;">● Healthy</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="toast" id="toast"></div>
-
 <script>
   const{createClient}=supabase;
   const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
