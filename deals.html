@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BluWav CRM — Deals</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BluWav CRM — Deals</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
     * { margin:0; padding:0; box-sizing:border-box; }
     :root {
       --bg:#0a0e1a; --bg2:#0f1623; --bg3:#1a2235; --bg4:#222d42;
@@ -189,204 +190,195 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div>
-  </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section">
-      <div class="nav-label">Main</div>
-      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
-      <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span> Contacts</a>
-      <a class="nav-item active" href="deals.html"><span class="nav-icon">💼</span> Deals <span class="nav-badge" id="navCount">—</span></a>
-      <a class="nav-item" href="#"><span class="nav-icon">🏢</span> Companies</a>
-      <a class="nav-item" href="#"><span class="nav-icon">✅</span> Tasks</a>
-      <a class="nav-item" href="#"><span class="nav-icon">📅</span> Calendar</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Communicate</div>
-      <a class="nav-item" href="#"><span class="nav-icon">📧</span> Email</a>
-      <a class="nav-item" href="#"><span class="nav-icon">💬</span> WhatsApp</a>
-      <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span> Automations</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Insights</div>
-      <a class="nav-item" href="reports.html"><span class="nav-icon">📊</span> Reports</a>
-      <a class="nav-item" href="#"><span class="nav-icon">🏗️</span> Org Setup</a>
-      <a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
-      <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span> Billing</a>
-    </div>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="trial-pill">
-      <div class="tp-label">⏱ 30-Day Free Trial</div>
-      <div class="tp-sub">No card needed · Full access</div>
-      <button class="btn-upgrade">Upgrade Plan</button>
-    </div>
-    <div class="user-card">
-      <div class="avatar" id="sidebarAvatar">AM</div>
-      <div class="user-info">
-        <div class="user-name" id="sidebarName">Andrea M. Tanguay</div>
-        <div class="user-role">Administrator</div>
-      </div>
-    </div>
-  </div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left">
-      <h1>Deals</h1>
-      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Deals</div>
-    </div>
-    <div class="topbar-right">
-      <div class="view-toggle">
-        <button class="view-btn active" onclick="setView('list',this)">☰ List</button>
-        <button class="view-btn" onclick="setView('kanban',this)">⊞ Kanban</button>
-      </div>
-      <button class="btn btn-primary" onclick="openModal()">+ New Deal</button>
-      <div class="icon-btn">🔔<div class="notif-dot"></div></div>
-      <div class="user-card" style="padding:4px 8px;border-radius:8px;">
-        <div class="avatar" style="width:32px;height:32px;font-size:12px;" id="topAvatar">AM</div>
-        <div class="user-info"><div class="user-name" style="font-size:12px;" id="topName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div>
-      </div>
-    </div>
-  </header>
-
-  <div class="content">
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card cyan">
-        <div class="stat-top"><div class="stat-icon cyan">💼</div><div class="stat-trend up">↑ 3 this week</div></div>
-        <div class="stat-val" id="statTotal">0</div>
-        <div class="stat-lbl">Total Deals</div>
-        <div class="stat-sub">All active deals</div>
-      </div>
-      <div class="stat-card gold">
-        <div class="stat-top"><div class="stat-icon gold">💰</div><div class="stat-trend up">↑ 18%</div></div>
-        <div class="stat-val" id="statValue">$0</div>
-        <div class="stat-lbl">Pipeline Value</div>
-        <div class="stat-sub">Total open value</div>
-      </div>
-      <div class="stat-card green">
-        <div class="stat-top"><div class="stat-icon green">🏆</div><div class="stat-trend up">↑ 2 this mo</div></div>
-        <div class="stat-val" id="statWon">0</div>
-        <div class="stat-lbl">Deals Won</div>
-        <div class="stat-sub">This month</div>
-      </div>
-      <div class="stat-card purple">
-        <div class="stat-top"><div class="stat-icon purple">📈</div><div class="stat-trend up">↑ 5%</div></div>
-        <div class="stat-val" id="statRate">0%</div>
-        <div class="stat-lbl">Win Rate</div>
-        <div class="stat-sub">Won vs closed</div>
-      </div>
-    </div>
-
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Search deals..." />
-      </div>
-      <select class="filter-select" id="stageFilter">
-        <option value="">All Stages</option>
-        <option value="lead">Lead</option>
-        <option value="qualified">Qualified</option>
-        <option value="proposal">Proposal</option>
-        <option value="negotiation">Negotiation</option>
-        <option value="won">Won</option>
-        <option value="lost">Lost</option>
-      </select>
-      <select class="filter-select" id="sortSelect">
-        <option value="created_at-desc">Newest First</option>
-        <option value="value-desc">Highest Value</option>
-        <option value="value-asc">Lowest Value</option>
-        <option value="title-asc">Name A–Z</option>
-      </select>
-    </div>
-
-    <!-- List View -->
-    <div id="listView">
-      <div class="table-wrap">
-        <table class="deals-table">
-          <thead>
-            <tr>
-              <th>Deal</th>
-              <th>Stage</th>
-              <th>Value</th>
-              <th>Probability</th>
-              <th>Close Date</th>
-              <th>Created</th>
-              <th style="width:80px;"></th>
-            </tr>
-          </thead>
-          <tbody id="dealsBody">
-            <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3);">Loading deals...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Kanban View -->
-    <div id="kanbanView" style="display:none;">
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;">
-        <div id="col-lead"></div>
-        <div id="col-qualified"></div>
-        <div id="col-proposal"></div>
-        <div id="col-negotiation"></div>
-        <div id="col-won"></div>
-        <div id="col-lost"></div>
-      </div>
-    </div>
-  </div>
+<div class="sidebar-logo">
+<div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div>
 </div>
-
+<nav class="sidebar-nav">
+<div class="nav-section">
+<div class="nav-label">Main</div>
+<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span> Contacts</a>
+<a class="nav-item active" href="deals.html"><span class="nav-icon">💼</span> Deals <span class="nav-badge" id="navCount">—</span></a>
+<a class="nav-item" href="#"><span class="nav-icon">🏢</span> Companies</a>
+<a class="nav-item" href="#"><span class="nav-icon">✅</span> Tasks</a>
+<a class="nav-item" href="#"><span class="nav-icon">📅</span> Calendar</a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Communicate</div>
+<a class="nav-item" href="#"><span class="nav-icon">📧</span> Email</a>
+<a class="nav-item" href="#"><span class="nav-icon">💬</span> WhatsApp</a>
+<a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span> Automations</a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Insights</div>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span> Reports</a>
+<a class="nav-item" href="#"><span class="nav-icon">🏗️</span> Org Setup</a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+<a class="nav-item" href="billing.html"><span class="nav-icon">💳</span> Billing</a>
+</div>
+</nav>
+<div class="sidebar-bottom">
+<div class="trial-pill">
+<div class="tp-label">⏱ 30-Day Free Trial</div>
+<div class="tp-sub">No card needed · Full access</div>
+<button class="btn-upgrade">Upgrade Plan</button>
+</div>
+<div class="user-card">
+<div class="avatar" id="sidebarAvatar">AM</div>
+<div class="user-info">
+<div class="user-name" id="sidebarName">Andrea M. Tanguay</div>
+<div class="user-role">Administrator</div>
+</div>
+</div>
+</div>
+</aside>
+<div class="main">
+<header class="topbar">
+<div class="topbar-left">
+<h1>Deals</h1>
+<div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Deals</div>
+</div>
+<div class="topbar-right">
+<div class="view-toggle">
+<button class="view-btn active" onclick="setView('list',this)">☰ List</button>
+<button class="view-btn" onclick="setView('kanban',this)">⊞ Kanban</button>
+</div>
+<button class="btn btn-primary" onclick="openModal()">+ New Deal</button>
+<div class="icon-btn">🔔<div class="notif-dot"></div></div>
+<div class="user-card" style="padding:4px 8px;border-radius:8px;">
+<div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
+<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div>
+</div>
+</div>
+</header>
+<div class="content">
+<!-- Stats -->
+<div class="stats-row">
+<div class="stat-card cyan">
+<div class="stat-top"><div class="stat-icon cyan">💼</div><div class="stat-trend up">↑ 3 this week</div></div>
+<div class="stat-val" id="statTotal">0</div>
+<div class="stat-lbl">Total Deals</div>
+<div class="stat-sub">All active deals</div>
+</div>
+<div class="stat-card gold">
+<div class="stat-top"><div class="stat-icon gold">💰</div><div class="stat-trend up">↑ 18%</div></div>
+<div class="stat-val" id="statValue">$0</div>
+<div class="stat-lbl">Pipeline Value</div>
+<div class="stat-sub">Total open value</div>
+</div>
+<div class="stat-card green">
+<div class="stat-top"><div class="stat-icon green">🏆</div><div class="stat-trend up">↑ 2 this mo</div></div>
+<div class="stat-val" id="statWon">0</div>
+<div class="stat-lbl">Deals Won</div>
+<div class="stat-sub">This month</div>
+</div>
+<div class="stat-card purple">
+<div class="stat-top"><div class="stat-icon purple">📈</div><div class="stat-trend up">↑ 5%</div></div>
+<div class="stat-val" id="statRate">0%</div>
+<div class="stat-lbl">Win Rate</div>
+<div class="stat-sub">Won vs closed</div>
+</div>
+</div>
+<!-- Toolbar -->
+<div class="toolbar">
+<div class="search-box">
+<span class="search-icon">🔍</span>
+<input id="searchInput" placeholder="Search deals..." type="text"/>
+</div>
+<select class="filter-select" id="stageFilter">
+<option value="">All Stages</option>
+<option value="lead">Lead</option>
+<option value="qualified">Qualified</option>
+<option value="proposal">Proposal</option>
+<option value="negotiation">Negotiation</option>
+<option value="won">Won</option>
+<option value="lost">Lost</option>
+</select>
+<select class="filter-select" id="sortSelect">
+<option value="created_at-desc">Newest First</option>
+<option value="value-desc">Highest Value</option>
+<option value="value-asc">Lowest Value</option>
+<option value="title-asc">Name A–Z</option>
+</select>
+</div>
+<!-- List View -->
+<div id="listView">
+<div class="table-wrap">
+<table class="deals-table">
+<thead>
+<tr>
+<th>Deal</th>
+<th>Stage</th>
+<th>Value</th>
+<th>Probability</th>
+<th>Close Date</th>
+<th>Created</th>
+<th style="width:80px;"></th>
+</tr>
+</thead>
+<tbody id="dealsBody">
+<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3);">Loading deals...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Kanban View -->
+<div id="kanbanView" style="display:none;">
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;">
+<div id="col-lead"></div>
+<div id="col-qualified"></div>
+<div id="col-proposal"></div>
+<div id="col-negotiation"></div>
+<div id="col-won"></div>
+<div id="col-lost"></div>
+</div>
+</div>
+</div>
+</div>
 <!-- DETAIL PANEL -->
 <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
 <div class="detail-panel" id="detailPanel">
-  <div class="panel-header">
-    <div class="panel-title" id="panelTitle">Deal Details</div>
-    <div class="panel-close" onclick="closePanel()">✕</div>
-  </div>
-  <div class="panel-body" id="panelBody"></div>
-  <div class="panel-footer">
-    <button class="btn-save" onclick="saveDeal()">Save Changes</button>
-    <button class="btn-delete" onclick="deleteDeal()">🗑 Delete</button>
-  </div>
+<div class="panel-header">
+<div class="panel-title" id="panelTitle">Deal Details</div>
+<div class="panel-close" onclick="closePanel()">✕</div>
 </div>
-
+<div class="panel-body" id="panelBody"></div>
+<div class="panel-footer">
+<button class="btn-save" onclick="saveDeal()">Save Changes</button>
+<button class="btn-delete" onclick="deleteDeal()">🗑 Delete</button>
+</div>
+</div>
 <!-- ADD DEAL MODAL -->
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">New Deal</div>
-      <div class="modal-close" onclick="closeModal()">✕</div>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group full"><label>Deal Title *</label><input type="text" id="f_title" placeholder="e.g. Website Redesign for Sunrise Digital" /></div>
-        <div class="form-group"><label>Value ($)</label><input type="number" id="f_value" placeholder="0.00" /></div>
-        <div class="form-group"><label>Stage</label>
-          <select id="f_stage">
-            <option value="lead">🎯 Lead</option>
-            <option value="qualified">⭐ Qualified</option>
-            <option value="proposal">📄 Proposal</option>
-            <option value="negotiation">🤝 Negotiation</option>
-            <option value="won">🏆 Won</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Expected Close Date</label><input type="date" id="f_close" /></div>
-        <div class="form-group full"><label>Notes</label><textarea id="f_notes" rows="3" placeholder="Deal notes..."></textarea></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="addDeal()">Create Deal</button>
-    </div>
-  </div>
+<div class="modal">
+<div class="modal-header">
+<div class="modal-title">New Deal</div>
+<div class="modal-close" onclick="closeModal()">✕</div>
 </div>
-
+<div class="modal-body">
+<div class="form-grid">
+<div class="form-group full"><label>Deal Title *</label><input id="f_title" placeholder="e.g. Website Redesign for Sunrise Digital" type="text"/></div>
+<div class="form-group"><label>Value ($)</label><input id="f_value" placeholder="0.00" type="number"/></div>
+<div class="form-group"><label>Stage</label>
+<select id="f_stage">
+<option value="lead">🎯 Lead</option>
+<option value="qualified">⭐ Qualified</option>
+<option value="proposal">📄 Proposal</option>
+<option value="negotiation">🤝 Negotiation</option>
+<option value="won">🏆 Won</option>
+</select>
+</div>
+<div class="form-group"><label>Expected Close Date</label><input id="f_close" type="date"/></div>
+<div class="form-group full"><label>Notes</label><textarea id="f_notes" placeholder="Deal notes..." rows="3"></textarea></div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+<button class="btn btn-primary" onclick="addDeal()">Create Deal</button>
+</div>
+</div>
+</div>
 <div class="toast" id="toast"></div>
-
 <script>
   const { createClient } = supabase;
   const db = createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
