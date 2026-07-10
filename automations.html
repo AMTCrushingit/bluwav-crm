@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BluWav CRM — Automations</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BluWav CRM — Automations</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
     *{margin:0;padding:0;box-sizing:border-box;}
     :root{--bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;--border:rgba(255,255,255,0.06);--cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--text:#ffffff;--text2:#b0bec5;--text3:#4a5568;--sidebar:220px;}
     body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
@@ -122,258 +123,244 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-logo"><div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div></div>
-  <nav class="sidebar-nav">
-    <div class="nav-section">
-      <div class="nav-label">Main</div>
-      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
-      <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span> Contacts</a>
-      <a class="nav-item" href="deals.html"><span class="nav-icon">💼</span> Deals</a>
-      <a class="nav-item" href="#"><span class="nav-icon">🏢</span> Companies</a>
-      <a class="nav-item" href="#"><span class="nav-icon">✅</span> Tasks</a>
-      <a class="nav-item" href="#"><span class="nav-icon">📅</span> Calendar</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Communicate</div>
-      <a class="nav-item" href="#"><span class="nav-icon">📧</span> Email</a>
-      <a class="nav-item" href="#"><span class="nav-icon">💬</span> WhatsApp</a>
-      <a class="nav-item active" href="automations.html"><span class="nav-icon">⚡</span> Automations</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Insights</div>
-      <a class="nav-item" href="reports.html"><span class="nav-icon">📊</span> Reports</a>
-      <a class="nav-item" href="#"><span class="nav-icon">🏗️</span> Org Setup</a>
-      <a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
-      <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span> Billing</a>
-    </div>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="trial-pill"><div class="tp-label">⏱ 30-Day Free Trial</div><div class="tp-sub">No card needed · Full access</div><button class="btn-upgrade">Upgrade Plan</button></div>
-    <div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div></div>
-  </div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left"><h1>Automations</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Automations</div></div>
-    <div class="topbar-right">
-      <button class="btn btn-ghost">📋 View Logs</button>
-      <button class="btn btn-primary" onclick="showToast('🚀 Automation builder coming soon!','success')">+ New Automation</button>
-      <div class="icon-btn">🔔<div class="notif-dot"></div></div>
-      <div class="user-card" style="padding:4px 8px;border-radius:8px;">
-        <div class="avatar" style="width:32px;height:32px;font-size:12px;" id="topAvatar">AM</div>
-        <div class="user-info"><div class="user-name" style="font-size:12px;" id="topName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div>
-      </div>
-    </div>
-  </header>
-
-  <div class="content">
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(34,197,94,0.12);">⚡</div>
-        <div><div class="stat-val">4</div><div class="stat-lbl">Active Automations</div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(0,194,209,0.12);">🔄</div>
-        <div><div class="stat-val">284</div><div class="stat-lbl">Runs This Month</div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(212,175,55,0.12);">📧</div>
-        <div><div class="stat-val">142</div><div class="stat-lbl">Emails Sent</div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon" style="background:rgba(167,139,250,0.12);">⏱</div>
-        <div><div class="stat-val">18h</div><div class="stat-lbl">Time Saved</div></div>
-      </div>
-    </div>
-
-    <!-- Tabs -->
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab('active',this)">Active (4)</div>
-      <div class="tab" onclick="switchTab('paused',this)">Paused (1)</div>
-      <div class="tab" onclick="switchTab('templates',this)">Templates</div>
-      <div class="tab" onclick="switchTab('logs',this)">Run Logs</div>
-    </div>
-
-    <!-- Active Automations -->
-    <div id="tab-active">
-      <div class="automations-grid">
-
-        <div class="auto-card active-auto">
-          <div class="auto-header">
-            <div class="auto-icon" style="background:rgba(0,194,209,0.12);">👋</div>
-            <div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
-          </div>
-          <div class="auto-title">Welcome New Contact</div>
-          <div class="auto-desc">Automatically sends a welcome email when a new contact is added to the CRM.</div>
-          <div class="auto-trigger">
-            <span class="trigger-badge">⚡ Contact Added</span>
-            <span class="arrow">→</span>
-            <span class="action-badge">📧 Send Email</span>
-          </div>
-          <div class="auto-stats">
-            <div class="auto-stat"><div class="auto-stat-val">48</div><div class="auto-stat-lbl">Runs</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">94%</div><div class="auto-stat-lbl">Open Rate</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Errors</div></div>
-          </div>
-          <div class="auto-footer">
-            <div class="auto-actions">
-              <button class="auto-btn toggle-on" onclick="toggleAuto(this)">⏸ Pause</button>
-              <button class="auto-btn edit">✏️ Edit</button>
-            </div>
-            <div class="auto-last">Last run: 2h ago</div>
-          </div>
-        </div>
-
-        <div class="auto-card active-auto">
-          <div class="auto-header">
-            <div class="auto-icon" style="background:rgba(255,140,66,0.12);">⏰</div>
-            <div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
-          </div>
-          <div class="auto-title">Follow-Up Reminder</div>
-          <div class="auto-desc">Sends a follow-up email if no activity is logged for a contact in 7 days.</div>
-          <div class="auto-trigger">
-            <span class="trigger-badge">⏱ 7 Days Inactive</span>
-            <span class="arrow">→</span>
-            <span class="action-badge">📧 Follow-Up Email</span>
-          </div>
-          <div class="auto-stats">
-            <div class="auto-stat"><div class="auto-stat-val">31</div><div class="auto-stat-lbl">Runs</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">78%</div><div class="auto-stat-lbl">Open Rate</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">1</div><div class="auto-stat-lbl">Errors</div></div>
-          </div>
-          <div class="auto-footer">
-            <div class="auto-actions">
-              <button class="auto-btn toggle-on" onclick="toggleAuto(this)">⏸ Pause</button>
-              <button class="auto-btn edit">✏️ Edit</button>
-            </div>
-            <div class="auto-last">Last run: 1d ago</div>
-          </div>
-        </div>
-
-        <div class="auto-card active-auto">
-          <div class="auto-header">
-            <div class="auto-icon" style="background:rgba(34,197,94,0.12);">🏆</div>
-            <div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
-          </div>
-          <div class="auto-title">Deal Won Celebration</div>
-          <div class="auto-desc">Sends a congratulations email to the client and notifies the team via WhatsApp when a deal is marked Won.</div>
-          <div class="auto-trigger">
-            <span class="trigger-badge">💼 Deal Won</span>
-            <span class="arrow">→</span>
-            <span class="action-badge">💬 WhatsApp + 📧 Email</span>
-          </div>
-          <div class="auto-stats">
-            <div class="auto-stat"><div class="auto-stat-val">5</div><div class="auto-stat-lbl">Runs</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">100%</div><div class="auto-stat-lbl">Success</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Errors</div></div>
-          </div>
-          <div class="auto-footer">
-            <div class="auto-actions">
-              <button class="auto-btn toggle-on" onclick="toggleAuto(this)">⏸ Pause</button>
-              <button class="auto-btn edit">✏️ Edit</button>
-            </div>
-            <div class="auto-last">Last run: 3d ago</div>
-          </div>
-        </div>
-
-        <div class="auto-card active-auto">
-          <div class="auto-header">
-            <div class="auto-icon" style="background:rgba(167,139,250,0.12);">📅</div>
-            <div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
-          </div>
-          <div class="auto-title">Deal Close Date Reminder</div>
-          <div class="auto-desc">Notifies the assigned rep 3 days before a deal's expected close date.</div>
-          <div class="auto-trigger">
-            <span class="trigger-badge">📅 3 Days Before Close</span>
-            <span class="arrow">→</span>
-            <span class="action-badge">🔔 Notify Rep</span>
-          </div>
-          <div class="auto-stats">
-            <div class="auto-stat"><div class="auto-stat-val">12</div><div class="auto-stat-lbl">Runs</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">100%</div><div class="auto-stat-lbl">Delivered</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Errors</div></div>
-          </div>
-          <div class="auto-footer">
-            <div class="auto-actions">
-              <button class="auto-btn toggle-on" onclick="toggleAuto(this)">⏸ Pause</button>
-              <button class="auto-btn edit">✏️ Edit</button>
-            </div>
-            <div class="auto-last">Last run: 12h ago</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Paused Tab -->
-    <div id="tab-paused" style="display:none;">
-      <div class="automations-grid">
-        <div class="auto-card paused">
-          <div class="auto-header">
-            <div class="auto-icon" style="background:rgba(74,85,104,0.2);">🎂</div>
-            <div class="auto-status"><div class="status-dot paused"></div><div class="status-text paused">Paused</div></div>
-          </div>
-          <div class="auto-title">Birthday Greeting</div>
-          <div class="auto-desc">Sends a birthday message to contacts on their birthday. Paused — birthday field not yet populated.</div>
-          <div class="auto-trigger">
-            <span class="trigger-badge" style="color:var(--text3);border-color:var(--border);background:var(--bg3);">📅 Birthday</span>
-            <span class="arrow">→</span>
-            <span class="action-badge" style="color:var(--text3);border-color:var(--border);background:var(--bg3);">💬 WhatsApp</span>
-          </div>
-          <div class="auto-stats">
-            <div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Runs</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">—</div><div class="auto-stat-lbl">Open Rate</div></div>
-            <div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Errors</div></div>
-          </div>
-          <div class="auto-footer">
-            <div class="auto-actions">
-              <button class="auto-btn toggle-off" onclick="toggleAuto(this)">▶ Activate</button>
-              <button class="auto-btn edit">✏️ Edit</button>
-            </div>
-            <div class="auto-last">Never run</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Templates Tab -->
-    <div id="tab-templates" style="display:none;">
-      <div class="templates-grid">
-        <div class="template-card"><div class="template-icon">👋</div><div class="template-title">Welcome Series</div><div class="template-desc">3-email onboarding sequence for new contacts over 7 days</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
-        <div class="template-card"><div class="template-icon">🔥</div><div class="template-title">Lead Nurture</div><div class="template-desc">Automated follow-up sequence to move leads through the pipeline</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
-        <div class="template-card"><div class="template-icon">🏆</div><div class="template-title">Win/Loss Survey</div><div class="template-desc">Automatically send a feedback survey when a deal is won or lost</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
-        <div class="template-card"><div class="template-icon">💬</div><div class="template-title">WhatsApp Drip</div><div class="template-desc">Caribbean-focused WhatsApp message sequence for new leads</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
-        <div class="template-card"><div class="template-icon">📅</div><div class="template-title">Meeting Reminder</div><div class="template-desc">Send reminders 24h and 1h before scheduled meetings</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
-        <div class="template-card"><div class="template-icon">🔄</div><div class="template-title">Re-engagement</div><div class="template-desc">Win back inactive contacts who haven't engaged in 30 days</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
-      </div>
-    </div>
-
-    <!-- Logs Tab -->
-    <div id="tab-logs" style="display:none;">
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
-        <table style="width:100%;border-collapse:collapse;">
-          <thead><tr>
-            <th style="text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;border-bottom:1px solid var(--border);">Automation</th>
-            <th style="text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;border-bottom:1px solid var(--border);">Contact</th>
-            <th style="text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;border-bottom:1px solid var(--border);">Status</th>
-            <th style="text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;border-bottom:1px solid var(--border);">Time</th>
-          </tr></thead>
-          <tbody>
-            <tr><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Welcome New Contact</td><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Sarah Chen</td><td style="padding:11px 16px;border-bottom:1px solid var(--border);"><span style="background:rgba(34,197,94,0.1);color:var(--green);font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;">✓ Success</span></td><td style="padding:11px 16px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);">2h ago</td></tr>
-            <tr><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Deal Close Reminder</td><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Island Realty</td><td style="padding:11px 16px;border-bottom:1px solid var(--border);"><span style="background:rgba(34,197,94,0.1);color:var(--green);font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;">✓ Success</span></td><td style="padding:11px 16px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);">12h ago</td></tr>
-            <tr><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Follow-Up Reminder</td><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Tropic Eats</td><td style="padding:11px 16px;border-bottom:1px solid var(--border);"><span style="background:rgba(239,68,68,0.1);color:var(--red);font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;">✗ Failed</span></td><td style="padding:11px 16px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);">1d ago</td></tr>
-            <tr><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Deal Won Celebration</td><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Mango & Co.</td><td style="padding:11px 16px;border-bottom:1px solid var(--border);"><span style="background:rgba(34,197,94,0.1);color:var(--green);font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;">✓ Success</span></td><td style="padding:11px 16px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);">3d ago</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+<div class="sidebar-logo"><div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div></div>
+<nav class="sidebar-nav">
+<div class="nav-section">
+<div class="nav-label">Main</div>
+<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span> Contacts</a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span> Deals</a>
+<a class="nav-item" href="#"><span class="nav-icon">🏢</span> Companies</a>
+<a class="nav-item" href="#"><span class="nav-icon">✅</span> Tasks</a>
+<a class="nav-item" href="#"><span class="nav-icon">📅</span> Calendar</a>
 </div>
-
+<div class="nav-section">
+<div class="nav-label">Communicate</div>
+<a class="nav-item" href="#"><span class="nav-icon">📧</span> Email</a>
+<a class="nav-item" href="#"><span class="nav-icon">💬</span> WhatsApp</a>
+<a class="nav-item active" href="automations.html"><span class="nav-icon">⚡</span> Automations</a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Insights</div>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span> Reports</a>
+<a class="nav-item" href="#"><span class="nav-icon">🏗️</span> Org Setup</a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+<a class="nav-item" href="billing.html"><span class="nav-icon">💳</span> Billing</a>
+</div>
+</nav>
+<div class="sidebar-bottom">
+<div class="trial-pill"><div class="tp-label">⏱ 30-Day Free Trial</div><div class="tp-sub">No card needed · Full access</div><button class="btn-upgrade">Upgrade Plan</button></div>
+<div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div></div>
+</div>
+</aside>
+<div class="main">
+<header class="topbar">
+<div class="topbar-left"><h1>Automations</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Automations</div></div>
+<div class="topbar-right">
+<button class="btn btn-ghost">📋 View Logs</button>
+<button class="btn btn-primary" onclick="showToast('🚀 Automation builder coming soon!','success')">+ New Automation</button>
+<div class="icon-btn">🔔<div class="notif-dot"></div></div>
+<div class="user-card" style="padding:4px 8px;border-radius:8px;">
+<div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
+<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div>
+</div>
+</div>
+</header>
+<div class="content">
+<!-- Stats -->
+<div class="stats-row">
+<div class="stat-card">
+<div class="stat-icon" style="background:rgba(34,197,94,0.12);">⚡</div>
+<div><div class="stat-val">4</div><div class="stat-lbl">Active Automations</div></div>
+</div>
+<div class="stat-card">
+<div class="stat-icon" style="background:rgba(0,194,209,0.12);">🔄</div>
+<div><div class="stat-val">284</div><div class="stat-lbl">Runs This Month</div></div>
+</div>
+<div class="stat-card">
+<div class="stat-icon" style="background:rgba(212,175,55,0.12);">📧</div>
+<div><div class="stat-val">142</div><div class="stat-lbl">Emails Sent</div></div>
+</div>
+<div class="stat-card">
+<div class="stat-icon" style="background:rgba(167,139,250,0.12);">⏱</div>
+<div><div class="stat-val">18h</div><div class="stat-lbl">Time Saved</div></div>
+</div>
+</div>
+<!-- Tabs -->
+<div class="tabs">
+<div class="tab active" onclick="switchTab('active',this)">Active (4)</div>
+<div class="tab" onclick="switchTab('paused',this)">Paused (1)</div>
+<div class="tab" onclick="switchTab('templates',this)">Templates</div>
+<div class="tab" onclick="switchTab('logs',this)">Run Logs</div>
+</div>
+<!-- Active Automations -->
+<div id="tab-active">
+<div class="automations-grid">
+<div class="auto-card active-auto">
+<div class="auto-header">
+<div class="auto-icon" style="background:rgba(0,194,209,0.12);">👋</div>
+<div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
+</div>
+<div class="auto-title">Welcome New Contact</div>
+<div class="auto-desc">Automatically sends a welcome email when a new contact is added to the CRM.</div>
+<div class="auto-trigger">
+<span class="trigger-badge">⚡ Contact Added</span>
+<span class="arrow">→</span>
+<span class="action-badge">📧 Send Email</span>
+</div>
+<div class="auto-stats">
+<div class="auto-stat"><div class="auto-stat-val">48</div><div class="auto-stat-lbl">Runs</div></div>
+<div class="auto-stat"><div class="auto-stat-val">94%</div><div class="auto-stat-lbl">Open Rate</div></div>
+<div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Errors</div></div>
+</div>
+<div class="auto-footer">
+<div class="auto-actions">
+<button class="auto-btn toggle-on" onclick="toggleAuto(this)">⏸ Pause</button>
+<button class="auto-btn edit">✏️ Edit</button>
+</div>
+<div class="auto-last">Last run: 2h ago</div>
+</div>
+</div>
+<div class="auto-card active-auto">
+<div class="auto-header">
+<div class="auto-icon" style="background:rgba(255,140,66,0.12);">⏰</div>
+<div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
+</div>
+<div class="auto-title">Follow-Up Reminder</div>
+<div class="auto-desc">Sends a follow-up email if no activity is logged for a contact in 7 days.</div>
+<div class="auto-trigger">
+<span class="trigger-badge">⏱ 7 Days Inactive</span>
+<span class="arrow">→</span>
+<span class="action-badge">📧 Follow-Up Email</span>
+</div>
+<div class="auto-stats">
+<div class="auto-stat"><div class="auto-stat-val">31</div><div class="auto-stat-lbl">Runs</div></div>
+<div class="auto-stat"><div class="auto-stat-val">78%</div><div class="auto-stat-lbl">Open Rate</div></div>
+<div class="auto-stat"><div class="auto-stat-val">1</div><div class="auto-stat-lbl">Errors</div></div>
+</div>
+<div class="auto-footer">
+<div class="auto-actions">
+<button class="auto-btn toggle-on" onclick="toggleAuto(this)">⏸ Pause</button>
+<button class="auto-btn edit">✏️ Edit</button>
+</div>
+<div class="auto-last">Last run: 1d ago</div>
+</div>
+</div>
+<div class="auto-card active-auto">
+<div class="auto-header">
+<div class="auto-icon" style="background:rgba(34,197,94,0.12);">🏆</div>
+<div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
+</div>
+<div class="auto-title">Deal Won Celebration</div>
+<div class="auto-desc">Sends a congratulations email to the client and notifies the team via WhatsApp when a deal is marked Won.</div>
+<div class="auto-trigger">
+<span class="trigger-badge">💼 Deal Won</span>
+<span class="arrow">→</span>
+<span class="action-badge">💬 WhatsApp + 📧 Email</span>
+</div>
+<div class="auto-stats">
+<div class="auto-stat"><div class="auto-stat-val">5</div><div class="auto-stat-lbl">Runs</div></div>
+<div class="auto-stat"><div class="auto-stat-val">100%</div><div class="auto-stat-lbl">Success</div></div>
+<div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Errors</div></div>
+</div>
+<div class="auto-footer">
+<div class="auto-actions">
+<button class="auto-btn toggle-on" onclick="toggleAuto(this)">⏸ Pause</button>
+<button class="auto-btn edit">✏️ Edit</button>
+</div>
+<div class="auto-last">Last run: 3d ago</div>
+</div>
+</div>
+<div class="auto-card active-auto">
+<div class="auto-header">
+<div class="auto-icon" style="background:rgba(167,139,250,0.12);">📅</div>
+<div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
+</div>
+<div class="auto-title">Deal Close Date Reminder</div>
+<div class="auto-desc">Notifies the assigned rep 3 days before a deal's expected close date.</div>
+<div class="auto-trigger">
+<span class="trigger-badge">📅 3 Days Before Close</span>
+<span class="arrow">→</span>
+<span class="action-badge">🔔 Notify Rep</span>
+</div>
+<div class="auto-stats">
+<div class="auto-stat"><div class="auto-stat-val">12</div><div class="auto-stat-lbl">Runs</div></div>
+<div class="auto-stat"><div class="auto-stat-val">100%</div><div class="auto-stat-lbl">Delivered</div></div>
+<div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Errors</div></div>
+</div>
+<div class="auto-footer">
+<div class="auto-actions">
+<button class="auto-btn toggle-on" onclick="toggleAuto(this)">⏸ Pause</button>
+<button class="auto-btn edit">✏️ Edit</button>
+</div>
+<div class="auto-last">Last run: 12h ago</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Paused Tab -->
+<div id="tab-paused" style="display:none;">
+<div class="automations-grid">
+<div class="auto-card paused">
+<div class="auto-header">
+<div class="auto-icon" style="background:rgba(74,85,104,0.2);">🎂</div>
+<div class="auto-status"><div class="status-dot paused"></div><div class="status-text paused">Paused</div></div>
+</div>
+<div class="auto-title">Birthday Greeting</div>
+<div class="auto-desc">Sends a birthday message to contacts on their birthday. Paused — birthday field not yet populated.</div>
+<div class="auto-trigger">
+<span class="trigger-badge" style="color:var(--text3);border-color:var(--border);background:var(--bg3);">📅 Birthday</span>
+<span class="arrow">→</span>
+<span class="action-badge" style="color:var(--text3);border-color:var(--border);background:var(--bg3);">💬 WhatsApp</span>
+</div>
+<div class="auto-stats">
+<div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Runs</div></div>
+<div class="auto-stat"><div class="auto-stat-val">—</div><div class="auto-stat-lbl">Open Rate</div></div>
+<div class="auto-stat"><div class="auto-stat-val">0</div><div class="auto-stat-lbl">Errors</div></div>
+</div>
+<div class="auto-footer">
+<div class="auto-actions">
+<button class="auto-btn toggle-off" onclick="toggleAuto(this)">▶ Activate</button>
+<button class="auto-btn edit">✏️ Edit</button>
+</div>
+<div class="auto-last">Never run</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Templates Tab -->
+<div id="tab-templates" style="display:none;">
+<div class="templates-grid">
+<div class="template-card"><div class="template-icon">👋</div><div class="template-title">Welcome Series</div><div class="template-desc">3-email onboarding sequence for new contacts over 7 days</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
+<div class="template-card"><div class="template-icon">🔥</div><div class="template-title">Lead Nurture</div><div class="template-desc">Automated follow-up sequence to move leads through the pipeline</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
+<div class="template-card"><div class="template-icon">🏆</div><div class="template-title">Win/Loss Survey</div><div class="template-desc">Automatically send a feedback survey when a deal is won or lost</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
+<div class="template-card"><div class="template-icon">💬</div><div class="template-title">WhatsApp Drip</div><div class="template-desc">Caribbean-focused WhatsApp message sequence for new leads</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
+<div class="template-card"><div class="template-icon">📅</div><div class="template-title">Meeting Reminder</div><div class="template-desc">Send reminders 24h and 1h before scheduled meetings</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
+<div class="template-card"><div class="template-icon">🔄</div><div class="template-title">Re-engagement</div><div class="template-desc">Win back inactive contacts who haven't engaged in 30 days</div><div class="template-use" onclick="showToast('✅ Template added to your automations','success')">Use Template →</div></div>
+</div>
+</div>
+<!-- Logs Tab -->
+<div id="tab-logs" style="display:none;">
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+<table style="width:100%;border-collapse:collapse;">
+<thead><tr>
+<th style="text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;border-bottom:1px solid var(--border);">Automation</th>
+<th style="text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;border-bottom:1px solid var(--border);">Contact</th>
+<th style="text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;border-bottom:1px solid var(--border);">Status</th>
+<th style="text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;border-bottom:1px solid var(--border);">Time</th>
+</tr></thead>
+<tbody>
+<tr><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Welcome New Contact</td><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Sarah Chen</td><td style="padding:11px 16px;border-bottom:1px solid var(--border);"><span style="background:rgba(34,197,94,0.1);color:var(--green);font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;">✓ Success</span></td><td style="padding:11px 16px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);">2h ago</td></tr>
+<tr><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Deal Close Reminder</td><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Island Realty</td><td style="padding:11px 16px;border-bottom:1px solid var(--border);"><span style="background:rgba(34,197,94,0.1);color:var(--green);font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;">✓ Success</span></td><td style="padding:11px 16px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);">12h ago</td></tr>
+<tr><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Follow-Up Reminder</td><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Tropic Eats</td><td style="padding:11px 16px;border-bottom:1px solid var(--border);"><span style="background:rgba(239,68,68,0.1);color:var(--red);font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;">✗ Failed</span></td><td style="padding:11px 16px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);">1d ago</td></tr>
+<tr><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Deal Won Celebration</td><td style="padding:11px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);">Mango &amp; Co.</td><td style="padding:11px 16px;border-bottom:1px solid var(--border);"><span style="background:rgba(34,197,94,0.1);color:var(--green);font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;">✓ Success</span></td><td style="padding:11px 16px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);">3d ago</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
 <div class="toast" id="toast"></div>
-
 <script>
   const{createClient}=supabase;
   const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
