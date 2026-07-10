@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BluWav CRM — Billing & Plan</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BluWav CRM — Billing &amp; Plan</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
     *{margin:0;padding:0;box-sizing:border-box;}
     :root{--bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;--border:rgba(255,255,255,0.06);--cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--text:#ffffff;--text2:#b0bec5;--text3:#4a5568;--sidebar:220px;}
     body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
@@ -129,200 +130,187 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-logo"><div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div></div>
-  <nav class="sidebar-nav">
-    <div class="nav-section">
-      <div class="nav-label">Main</div>
-      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
-      <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span> Contacts</a>
-      <a class="nav-item" href="deals.html"><span class="nav-icon">💼</span> Deals</a>
-      <a class="nav-item" href="#"><span class="nav-icon">🏢</span> Companies</a>
-      <a class="nav-item" href="#"><span class="nav-icon">✅</span> Tasks</a>
-      <a class="nav-item" href="#"><span class="nav-icon">📅</span> Calendar</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Communicate</div>
-      <a class="nav-item" href="#"><span class="nav-icon">📧</span> Email</a>
-      <a class="nav-item" href="#"><span class="nav-icon">💬</span> WhatsApp</a>
-      <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span> Automations</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Insights</div>
-      <a class="nav-item" href="reports.html"><span class="nav-icon">📊</span> Reports</a>
-      <a class="nav-item" href="#"><span class="nav-icon">🏗️</span> Org Setup</a>
-      <a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
-      <a class="nav-item active" href="billing.html"><span class="nav-icon">💳</span> Billing</a>
-    </div>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="trial-pill"><div class="tp-label">⏱ 30-Day Free Trial</div><div class="tp-sub">No card needed · Full access</div><button class="btn-upgrade">Upgrade Plan</button></div>
-    <div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div></div>
-  </div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left"><h1>Billing & Plan</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Billing</div></div>
-    <div class="topbar-right">
-      <button class="btn btn-ghost" onclick="showToast('📄 Invoice downloaded','success')">⬇ Download Invoice</button>
-      <button class="btn btn-gold" onclick="showToast('🚀 Redirecting to checkout...','success')">⚡ Upgrade Plan</button>
-      <div class="icon-btn">🔔<div class="notif-dot"></div></div>
-      <div class="user-card" style="padding:4px 8px;border-radius:8px;">
-        <div class="avatar" style="width:32px;height:32px;font-size:12px;" id="topAvatar">AM</div>
-        <div class="user-info"><div class="user-name" style="font-size:12px;" id="topName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div>
-      </div>
-    </div>
-  </header>
-
-  <div class="content">
-
-    <!-- Trial Banner -->
-    <div class="trial-banner">
-      <div class="trial-left">
-        <div class="trial-days"><div class="num" id="trialDays">30</div><div class="lbl">Days</div></div>
-        <div class="trial-info">
-          <h3>🎉 Your Free Trial is Active</h3>
-          <p>Full access to BluWav CRM — no credit card required</p>
-          <div class="trial-progress">
-            <div class="trial-bar"><div class="trial-fill" id="trialFill" style="width:100%;"></div></div>
-            <div class="trial-dates"><span id="trialStart">Started today</span><span id="trialEnd">Ends in 30 days</span></div>
-          </div>
-        </div>
-      </div>
-      <button class="btn-activate" onclick="showToast('🚀 Redirecting to secure checkout...','success')">⚡ Activate Plan Now</button>
-    </div>
-
-    <!-- Current Plan + Payment -->
-    <div class="plan-grid">
-      <div class="plan-card">
-        <div class="plan-card-title">Current Plan</div>
-        <div class="plan-detail-row"><span class="plan-detail-label">Plan</span><span class="plan-detail-value" style="color:var(--gold);">BluWav Pro (Trial)</span></div>
-        <div class="plan-detail-row"><span class="plan-detail-label">Organization</span><span class="plan-detail-value">BluWav</span></div>
-        <div class="plan-detail-row"><span class="plan-detail-label">Trial Ends</span><span class="plan-detail-value" id="trialEndDate">—</span></div>
-        <div class="plan-detail-row"><span class="plan-detail-label">Post-Trial Price</span><span class="plan-detail-value">$99 setup + $29/mo</span></div>
-        <div class="plan-detail-row"><span class="plan-detail-label">Billing Cycle</span><span class="plan-detail-value">Monthly · 1st of month</span></div>
-      </div>
-      <div class="plan-card">
-        <div class="plan-card-title">Payment Method</div>
-        <div style="text-align:center;padding:20px 0;">
-          <div style="font-size:36px;margin-bottom:10px;">💳</div>
-          <div style="font-size:14px;color:var(--text2);margin-bottom:6px;">No payment method on file</div>
-          <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">Add a card to activate your plan after the trial</div>
-          <button class="btn-activate" style="font-size:13px;padding:10px 20px;" onclick="showToast('🔒 Secure payment form opening...','success')">+ Add Payment Method</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Billing Toggle -->
-    <div class="billing-toggle">
-      <span id="monthlyLabel" class="active">Monthly</span>
-      <label class="toggle-switch">
-        <input type="checkbox" id="billingToggle" onchange="toggleBilling(this)" />
-        <span class="toggle-slider"></span>
-      </label>
-      <span id="annualLabel">Annual</span>
-      <span class="save-badge">Save 20%</span>
-    </div>
-
-    <!-- Plan Cards -->
-    <div class="plans-grid">
-      <div class="pricing-card">
-        <div class="plan-name">Starter</div>
-        <div class="plan-tagline">For solo operators & freelancers</div>
-        <div class="plan-price"><span class="amount" id="starterPrice">$29</span><span class="period">/month</span></div>
-        <div class="plan-setup">+ $99 one-time setup fee</div>
-        <div class="plan-features">
-          <div class="plan-feature"><span class="feature-check">✅</span> Up to 500 contacts</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Sales pipeline</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Email integration</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> 1 user seat</div>
-          <div class="plan-feature disabled"><span class="feature-check">⬜</span> WhatsApp integration</div>
-          <div class="plan-feature disabled"><span class="feature-check">⬜</span> Automations</div>
-        </div>
-        <button class="btn-plan select" onclick="showToast('Switching to Starter plan...','success')">Select Starter</button>
-      </div>
-
-      <div class="pricing-card popular">
-        <div class="popular-badge">⭐ Most Popular</div>
-        <div class="plan-name">BluWav Pro</div>
-        <div class="plan-tagline">The full BluWav experience</div>
-        <div class="plan-price"><span class="amount" id="proPrice">$29</span><span class="period">/month</span></div>
-        <div class="plan-setup">+ $99 one-time setup fee</div>
-        <div class="plan-features">
-          <div class="plan-feature"><span class="feature-check">✅</span> Unlimited contacts</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Sales pipeline & deals</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Email integration</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Up to 5 user seats</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> WhatsApp integration</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Email automations</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Advanced reports</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Priority support</div>
-        </div>
-        <button class="btn-plan popular-btn" onclick="showToast('🚀 Activating BluWav Pro...','success')">⚡ Activate BluWav Pro</button>
-      </div>
-
-      <div class="pricing-card">
-        <div class="plan-name">Enterprise</div>
-        <div class="plan-tagline">For larger teams & agencies</div>
-        <div class="plan-price"><span class="amount">Custom</span></div>
-        <div class="plan-setup">Tailored to your team size</div>
-        <div class="plan-features">
-          <div class="plan-feature"><span class="feature-check">✅</span> Everything in Pro</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Unlimited user seats</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Custom branding</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> Dedicated account manager</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> API access</div>
-          <div class="plan-feature"><span class="feature-check">✅</span> SLA guarantee</div>
-        </div>
-        <button class="btn-plan select" onclick="showToast('📧 Our team will contact you shortly','success')">Contact Us</button>
-      </div>
-    </div>
-
-    <!-- Usage -->
-    <div style="font-size:16px;font-weight:800;margin-bottom:14px;">Usage This Month</div>
-    <div class="usage-grid">
-      <div class="usage-card">
-        <div class="usage-header"><div class="usage-title">👥 Contacts</div><div class="usage-val" id="contactUsage">— / Unlimited</div></div>
-        <div class="usage-bar"><div class="usage-fill" id="contactBar" style="width:0%;background:var(--cyan);"></div></div>
-        <div class="usage-sub">Loading from Supabase...</div>
-      </div>
-      <div class="usage-card">
-        <div class="usage-header"><div class="usage-title">👤 User Seats</div><div class="usage-val">3 / 5</div></div>
-        <div class="usage-bar"><div class="usage-fill" style="width:60%;background:var(--gold);"></div></div>
-        <div class="usage-sub">2 seats remaining on Pro plan</div>
-      </div>
-      <div class="usage-card">
-        <div class="usage-header"><div class="usage-title">⚡ Automations</div><div class="usage-val">284 runs</div></div>
-        <div class="usage-bar"><div class="usage-fill" style="width:28%;background:var(--purple);"></div></div>
-        <div class="usage-sub">Unlimited on Pro plan</div>
-      </div>
-      <div class="usage-card">
-        <div class="usage-header"><div class="usage-title">📧 Emails Sent</div><div class="usage-val">142 / 1,000</div></div>
-        <div class="usage-bar"><div class="usage-fill" style="width:14%;background:var(--green);"></div></div>
-        <div class="usage-sub">858 emails remaining this month</div>
-      </div>
-    </div>
-
-    <!-- Invoice History -->
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
-      <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-size:14px;font-weight:700;">Invoice History</div>
-        <span style="font-size:12px;color:var(--text3);">Trial period — no invoices yet</span>
-      </div>
-      <table class="invoice-table">
-        <thead><tr><th>Invoice</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead>
-        <tbody>
-          <tr><td style="color:var(--text3);">INV-2026-001</td><td style="color:var(--text3);">Aug 1, 2026</td><td style="color:var(--text3);">$29.00</td><td><span class="invoice-status pending">⏳ Upcoming</span></td><td><span style="font-size:12px;color:var(--text3);">After trial</span></td></tr>
-          <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">No invoices yet — your first invoice will appear after your trial ends</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
+<div class="sidebar-logo"><div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div></div>
+<nav class="sidebar-nav">
+<div class="nav-section">
+<div class="nav-label">Main</div>
+<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span> Contacts</a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span> Deals</a>
+<a class="nav-item" href="#"><span class="nav-icon">🏢</span> Companies</a>
+<a class="nav-item" href="#"><span class="nav-icon">✅</span> Tasks</a>
+<a class="nav-item" href="#"><span class="nav-icon">📅</span> Calendar</a>
 </div>
-
+<div class="nav-section">
+<div class="nav-label">Communicate</div>
+<a class="nav-item" href="#"><span class="nav-icon">📧</span> Email</a>
+<a class="nav-item" href="#"><span class="nav-icon">💬</span> WhatsApp</a>
+<a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span> Automations</a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Insights</div>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span> Reports</a>
+<a class="nav-item" href="#"><span class="nav-icon">🏗️</span> Org Setup</a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+<a class="nav-item active" href="billing.html"><span class="nav-icon">💳</span> Billing</a>
+</div>
+</nav>
+<div class="sidebar-bottom">
+<div class="trial-pill"><div class="tp-label">⏱ 30-Day Free Trial</div><div class="tp-sub">No card needed · Full access</div><button class="btn-upgrade">Upgrade Plan</button></div>
+<div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div></div>
+</div>
+</aside>
+<div class="main">
+<header class="topbar">
+<div class="topbar-left"><h1>Billing &amp; Plan</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Billing</div></div>
+<div class="topbar-right">
+<button class="btn btn-ghost" onclick="showToast('📄 Invoice downloaded','success')">⬇ Download Invoice</button>
+<button class="btn btn-gold" onclick="showToast('🚀 Redirecting to checkout...','success')">⚡ Upgrade Plan</button>
+<div class="icon-btn">🔔<div class="notif-dot"></div></div>
+<div class="user-card" style="padding:4px 8px;border-radius:8px;">
+<div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
+<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div>
+</div>
+</div>
+</header>
+<div class="content">
+<!-- Trial Banner -->
+<div class="trial-banner">
+<div class="trial-left">
+<div class="trial-days"><div class="num" id="trialDays">30</div><div class="lbl">Days</div></div>
+<div class="trial-info">
+<h3>🎉 Your Free Trial is Active</h3>
+<p>Full access to BluWav CRM — no credit card required</p>
+<div class="trial-progress">
+<div class="trial-bar"><div class="trial-fill" id="trialFill" style="width:100%;"></div></div>
+<div class="trial-dates"><span id="trialStart">Started today</span><span id="trialEnd">Ends in 30 days</span></div>
+</div>
+</div>
+</div>
+<button class="btn-activate" onclick="showToast('🚀 Redirecting to secure checkout...','success')">⚡ Activate Plan Now</button>
+</div>
+<!-- Current Plan + Payment -->
+<div class="plan-grid">
+<div class="plan-card">
+<div class="plan-card-title">Current Plan</div>
+<div class="plan-detail-row"><span class="plan-detail-label">Plan</span><span class="plan-detail-value" style="color:var(--gold);">BluWav Pro (Trial)</span></div>
+<div class="plan-detail-row"><span class="plan-detail-label">Organization</span><span class="plan-detail-value">BluWav</span></div>
+<div class="plan-detail-row"><span class="plan-detail-label">Trial Ends</span><span class="plan-detail-value" id="trialEndDate">—</span></div>
+<div class="plan-detail-row"><span class="plan-detail-label">Post-Trial Price</span><span class="plan-detail-value">$99 setup + $29/mo</span></div>
+<div class="plan-detail-row"><span class="plan-detail-label">Billing Cycle</span><span class="plan-detail-value">Monthly · 1st of month</span></div>
+</div>
+<div class="plan-card">
+<div class="plan-card-title">Payment Method</div>
+<div style="text-align:center;padding:20px 0;">
+<div style="font-size:36px;margin-bottom:10px;">💳</div>
+<div style="font-size:14px;color:var(--text2);margin-bottom:6px;">No payment method on file</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:16px;">Add a card to activate your plan after the trial</div>
+<button class="btn-activate" onclick="showToast('🔒 Secure payment form opening...','success')" style="font-size:13px;padding:10px 20px;">+ Add Payment Method</button>
+</div>
+</div>
+</div>
+<!-- Billing Toggle -->
+<div class="billing-toggle">
+<span class="active" id="monthlyLabel">Monthly</span>
+<label class="toggle-switch">
+<input id="billingToggle" onchange="toggleBilling(this)" type="checkbox"/>
+<span class="toggle-slider"></span>
+</label>
+<span id="annualLabel">Annual</span>
+<span class="save-badge">Save 20%</span>
+</div>
+<!-- Plan Cards -->
+<div class="plans-grid">
+<div class="pricing-card">
+<div class="plan-name">Starter</div>
+<div class="plan-tagline">For solo operators &amp; freelancers</div>
+<div class="plan-price"><span class="amount" id="starterPrice">$29</span><span class="period">/month</span></div>
+<div class="plan-setup">+ $99 one-time setup fee</div>
+<div class="plan-features">
+<div class="plan-feature"><span class="feature-check">✅</span> Up to 500 contacts</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Sales pipeline</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Email integration</div>
+<div class="plan-feature"><span class="feature-check">✅</span> 1 user seat</div>
+<div class="plan-feature disabled"><span class="feature-check">⬜</span> WhatsApp integration</div>
+<div class="plan-feature disabled"><span class="feature-check">⬜</span> Automations</div>
+</div>
+<button class="btn-plan select" onclick="showToast('Switching to Starter plan...','success')">Select Starter</button>
+</div>
+<div class="pricing-card popular">
+<div class="popular-badge">⭐ Most Popular</div>
+<div class="plan-name">BluWav Pro</div>
+<div class="plan-tagline">The full BluWav experience</div>
+<div class="plan-price"><span class="amount" id="proPrice">$29</span><span class="period">/month</span></div>
+<div class="plan-setup">+ $99 one-time setup fee</div>
+<div class="plan-features">
+<div class="plan-feature"><span class="feature-check">✅</span> Unlimited contacts</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Sales pipeline &amp; deals</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Email integration</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Up to 5 user seats</div>
+<div class="plan-feature"><span class="feature-check">✅</span> WhatsApp integration</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Email automations</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Advanced reports</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Priority support</div>
+</div>
+<button class="btn-plan popular-btn" onclick="showToast('🚀 Activating BluWav Pro...','success')">⚡ Activate BluWav Pro</button>
+</div>
+<div class="pricing-card">
+<div class="plan-name">Enterprise</div>
+<div class="plan-tagline">For larger teams &amp; agencies</div>
+<div class="plan-price"><span class="amount">Custom</span></div>
+<div class="plan-setup">Tailored to your team size</div>
+<div class="plan-features">
+<div class="plan-feature"><span class="feature-check">✅</span> Everything in Pro</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Unlimited user seats</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Custom branding</div>
+<div class="plan-feature"><span class="feature-check">✅</span> Dedicated account manager</div>
+<div class="plan-feature"><span class="feature-check">✅</span> API access</div>
+<div class="plan-feature"><span class="feature-check">✅</span> SLA guarantee</div>
+</div>
+<button class="btn-plan select" onclick="showToast('📧 Our team will contact you shortly','success')">Contact Us</button>
+</div>
+</div>
+<!-- Usage -->
+<div style="font-size:16px;font-weight:800;margin-bottom:14px;">Usage This Month</div>
+<div class="usage-grid">
+<div class="usage-card">
+<div class="usage-header"><div class="usage-title">👥 Contacts</div><div class="usage-val" id="contactUsage">— / Unlimited</div></div>
+<div class="usage-bar"><div class="usage-fill" id="contactBar" style="width:0%;background:var(--cyan);"></div></div>
+<div class="usage-sub">Loading from Supabase...</div>
+</div>
+<div class="usage-card">
+<div class="usage-header"><div class="usage-title">👤 User Seats</div><div class="usage-val">3 / 5</div></div>
+<div class="usage-bar"><div class="usage-fill" style="width:60%;background:var(--gold);"></div></div>
+<div class="usage-sub">2 seats remaining on Pro plan</div>
+</div>
+<div class="usage-card">
+<div class="usage-header"><div class="usage-title">⚡ Automations</div><div class="usage-val">284 runs</div></div>
+<div class="usage-bar"><div class="usage-fill" style="width:28%;background:var(--purple);"></div></div>
+<div class="usage-sub">Unlimited on Pro plan</div>
+</div>
+<div class="usage-card">
+<div class="usage-header"><div class="usage-title">📧 Emails Sent</div><div class="usage-val">142 / 1,000</div></div>
+<div class="usage-bar"><div class="usage-fill" style="width:14%;background:var(--green);"></div></div>
+<div class="usage-sub">858 emails remaining this month</div>
+</div>
+</div>
+<!-- Invoice History -->
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+<div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+<div style="font-size:14px;font-weight:700;">Invoice History</div>
+<span style="font-size:12px;color:var(--text3);">Trial period — no invoices yet</span>
+</div>
+<table class="invoice-table">
+<thead><tr><th>Invoice</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+<tbody>
+<tr><td style="color:var(--text3);">INV-2026-001</td><td style="color:var(--text3);">Aug 1, 2026</td><td style="color:var(--text3);">$29.00</td><td><span class="invoice-status pending">⏳ Upcoming</span></td><td><span style="font-size:12px;color:var(--text3);">After trial</span></td></tr>
+<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">No invoices yet — your first invoice will appear after your trial ends</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 <div class="toast" id="toast"></div>
-
 <script>
   const{createClient}=supabase;
   const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
