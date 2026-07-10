@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BluWav CRM — Sign In</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BluWav CRM — Sign In</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -188,34 +189,137 @@
 
     /* Trial banner */
     .trial-banner {
-      background: rgba(0,194,209,0.08);
-      border: 1px solid rgba(0,194,209,0.2);
-      border-radius: 10px;
-      padding: 12px 16px;
+      background: linear-gradient(135deg, rgba(255,140,66,0.08) 0%, rgba(0,194,209,0.08) 100%);
+      border: 1px solid rgba(255,140,66,0.3);
+      border-radius: 12px;
+      padding: 14px 16px;
       margin-bottom: 24px;
+      font-size: 13px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .trial-banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #ff8c42, #00C2D1);
+    }
+
+    .trial-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 13px;
+      margin-bottom: 10px;
     }
 
-    .trial-banner .trial-text {
-      color: #8892a4;
+    .trial-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
     }
 
-    .trial-banner .trial-text strong {
+    .trial-badge .pulse {
+      width: 8px;
+      height: 8px;
+      background: #ff8c42;
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(255,140,66,0.4); }
+      50% { opacity: 0.8; transform: scale(1.1); box-shadow: 0 0 0 4px rgba(255,140,66,0); }
+    }
+
+    .trial-badge span {
       color: #ff8c42;
+      font-weight: 700;
+      font-size: 13px;
     }
 
     .trial-banner a {
       color: #00C2D1;
       text-decoration: none;
-      font-weight: 600;
-      font-size: 13px;
+      font-weight: 700;
+      font-size: 12px;
+      background: rgba(0,194,209,0.1);
+      border: 1px solid rgba(0,194,209,0.25);
+      padding: 4px 10px;
+      border-radius: 6px;
+      transition: all 0.2s;
       white-space: nowrap;
     }
 
-    .trial-banner a:hover { text-decoration: underline; }
+    .trial-banner a:hover {
+      background: rgba(0,194,209,0.2);
+      border-color: #00C2D1;
+    }
+
+    .countdown-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .countdown-unit {
+      text-align: center;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      padding: 6px 10px;
+      min-width: 48px;
+    }
+
+    .countdown-unit .num {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .countdown-unit .lbl {
+      font-size: 9px;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+    }
+
+    .countdown-sep {
+      color: #4a5568;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .trial-progress-bar {
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .trial-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff8c42, #00C2D1);
+      border-radius: 4px;
+      transition: width 1s linear;
+    }
+
+    .trial-sub {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 11px;
+      color: #4a5568;
+    }
+
+    .trial-sub span:last-child { color: #00C2D1; }
 
     /* Form */
     .form-group {
@@ -447,103 +551,107 @@
   </style>
 </head>
 <body>
-
 <div class="container">
-
-  <!-- LEFT PANEL -->
-  <div class="left">
-    <div class="logo">
-      <div class="logo-text">
-        <span class="blu">Blu</span><span class="wav">Wav</span>
-      </div>
-      <div class="logo-badge">CRM</div>
-    </div>
-
-    <div class="left-content">
-      <h1>Welcome back to your<br><span>growth</span> engine.</h1>
-      <p>Track leads, manage customers, and automate follow-ups — all in one place built for Caribbean businesses.</p>
-      <div class="features">
-        <div class="feature-item">
-          <div class="feature-icon">👥</div>
-          Manage all your contacts & deals in one view
+<!-- LEFT PANEL -->
+<div class="left">
+<div class="logo">
+<div class="logo-text">
+<span class="blu">Blu</span><span class="wav">Wav</span>
+</div>
+<div class="logo-badge">CRM</div>
+</div>
+<div class="left-content">
+<h1>Welcome back to your<br/><span>growth</span> engine.</h1>
+<p>Track leads, manage customers, and automate follow-ups — all in one place built for Caribbean businesses.</p>
+<div class="features">
+<div class="feature-item">
+<div class="feature-icon">👥</div>
+          Manage all your contacts &amp; deals in one view
         </div>
-        <div class="feature-item">
-          <div class="feature-icon">📊</div>
-          Real-time pipeline & revenue tracking
+<div class="feature-item">
+<div class="feature-icon">📊</div>
+          Real-time pipeline &amp; revenue tracking
         </div>
-        <div class="feature-item">
-          <div class="feature-icon">⚡</div>
-          Automated follow-ups via email & WhatsApp
+<div class="feature-item">
+<div class="feature-icon">⚡</div>
+          Automated follow-ups via email &amp; WhatsApp
         </div>
-      </div>
-    </div>
-
-    <div class="bottom-card">
-      <span>💙</span>
-      <span><strong>BluWav CRM</strong> — Simple customer management that helps you grow online.</span>
-    </div>
-  </div>
-
-  <!-- RIGHT PANEL -->
-  <div class="right">
-    <div class="right-inner">
-      <h2>Sign in</h2>
-      <p class="subtitle">Enter your credentials to access your dashboard</p>
-
-      <div class="trial-banner">
-        <span class="trial-text"><strong>7-day free trial</strong> — no credit card needed</span>
-        <a href="#">Start free →</a>
-      </div>
-
-      <div id="alert" class="alert"></div>
-
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" placeholder="you@company.com" required autocomplete="email" />
-        </div>
-
-        <div class="form-group">
-          <label for="password">Password</label>
-          <div class="password-wrapper">
-            <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password" />
-            <button type="button" class="toggle-pw" id="togglePw">👁</button>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <label class="remember">
-            <input type="checkbox" id="remember" /> Remember me
+</div>
+</div>
+<div class="bottom-card">
+<span>💙</span>
+<span><strong>BluWav CRM</strong> — Simple customer management that helps you grow online.</span>
+</div>
+</div>
+<!-- RIGHT PANEL -->
+<div class="right">
+<div class="right-inner">
+<h2>Sign in</h2>
+<p class="subtitle">Enter your credentials to access your dashboard</p>
+<div class="trial-banner">
+<div class="trial-top">
+<div class="trial-badge">
+<div class="pulse"></div>
+<span>30-Day Free Trial — No Credit Card Needed</span>
+</div>
+<a href="#">Claim Now →</a>
+</div>
+<div class="countdown-row">
+<div class="countdown-unit"><div class="num" id="cd-days">30</div><div class="lbl">Days</div></div>
+<div class="countdown-sep">:</div>
+<div class="countdown-unit"><div class="num" id="cd-hours">00</div><div class="lbl">Hours</div></div>
+<div class="countdown-sep">:</div>
+<div class="countdown-unit"><div class="num" id="cd-mins">00</div><div class="lbl">Mins</div></div>
+<div class="countdown-sep">:</div>
+<div class="countdown-unit"><div class="num" id="cd-secs">00</div><div class="lbl">Secs</div></div>
+</div>
+<div class="trial-progress-bar">
+<div class="trial-progress-fill" id="trialProgress" style="width:100%"></div>
+</div>
+<div class="trial-sub">
+<span>Trial started today</span>
+<span id="trialEndDate">Ends in 30 days</span>
+</div>
+</div>
+<div class="alert" id="alert"></div>
+<form id="loginForm">
+<div class="form-group">
+<label for="email">Email Address</label>
+<input autocomplete="email" id="email" placeholder="you@company.com" required="" type="email"/>
+</div>
+<div class="form-group">
+<label for="password">Password</label>
+<div class="password-wrapper">
+<input autocomplete="current-password" id="password" placeholder="••••••••" required="" type="password"/>
+<button class="toggle-pw" id="togglePw" type="button">👁</button>
+</div>
+</div>
+<div class="form-row">
+<label class="remember">
+<input id="remember" type="checkbox"/> Remember me
           </label>
-          <a href="#" class="forgot">Forgot password?</a>
-        </div>
-
-        <button type="submit" class="btn-primary" id="signInBtn">
+<a class="forgot" href="#">Forgot password?</a>
+</div>
+<button class="btn-primary" id="signInBtn" type="submit">
           Sign In →
         </button>
-      </form>
-
-      <div class="divider"><span>or continue with</span></div>
-
-      <button class="btn-social" id="googleBtn">
-        <img src="https://www.google.com/favicon.ico" alt="Google" />
+</form>
+<div class="divider"><span>or continue with</span></div>
+<button class="btn-social" id="googleBtn">
+<img alt="Google" src="https://www.google.com/favicon.ico"/>
         Continue with Google
       </button>
-
-      <button class="btn-social" id="microsoftBtn">
-        <img src="https://www.microsoft.com/favicon.ico" alt="Microsoft" />
+<button class="btn-social" id="microsoftBtn">
+<img alt="Microsoft" src="https://www.microsoft.com/favicon.ico"/>
         Continue with Microsoft
       </button>
-
-      <div class="bottom-links">
-        Don't have an account? <a href="#">Start your free trial</a><br><br>
-        <a href="#">Terms of Service</a> &nbsp;·&nbsp; <a href="#">Privacy Policy</a>
-      </div>
-    </div>
-  </div>
-
+<div class="bottom-links">
+        Don't have an account? <a href="#">Start your free trial</a><br/><br/>
+<a href="#">Terms of Service</a>  ·  <a href="#">Privacy Policy</a>
 </div>
-
+</div>
+</div>
+</div>
 <script>
   // ── Supabase Init ──
   const { createClient } = supabase;
@@ -635,7 +743,61 @@
       window.location.href = 'dashboard.html';
     }
   })();
-</script>
 
+  // ── 30-Day Trial Countdown ──
+  (function() {
+    const TRIAL_DAYS = 30;
+    const TOTAL_SECS = TRIAL_DAYS * 24 * 60 * 60;
+
+    // Use localStorage to persist trial start time
+    let startTime = localStorage.getItem('bw_trial_start');
+    if (!startTime) {
+      startTime = Date.now();
+      localStorage.setItem('bw_trial_start', startTime);
+    } else {
+      startTime = parseInt(startTime);
+    }
+
+    const endTime = startTime + TOTAL_SECS * 1000;
+
+    // Set end date label
+    const endDate = new Date(endTime);
+    const opts = { month: 'short', day: 'numeric', year: 'numeric' };
+    document.getElementById('trialEndDate').textContent =
+      'Ends ' + endDate.toLocaleDateString('en-US', opts);
+
+    function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
+
+    function tick() {
+      const now = Date.now();
+      const remaining = Math.max(0, endTime - now);
+      const pct = (remaining / (TOTAL_SECS * 1000)) * 100;
+
+      const totalSecs = Math.floor(remaining / 1000);
+      const days  = Math.floor(totalSecs / 86400);
+      const hours = Math.floor((totalSecs % 86400) / 3600);
+      const mins  = Math.floor((totalSecs % 3600) / 60);
+      const secs  = totalSecs % 60;
+
+      document.getElementById('cd-days').textContent  = pad(days);
+      document.getElementById('cd-hours').textContent = pad(hours);
+      document.getElementById('cd-mins').textContent  = pad(mins);
+      document.getElementById('cd-secs').textContent  = pad(secs);
+      document.getElementById('trialProgress').style.width = pct.toFixed(2) + '%';
+
+      // Urgency color shift when < 3 days left
+      const urgency = days < 3;
+      document.querySelectorAll('.countdown-unit .num').forEach(el => {
+        el.style.color = urgency ? '#ff8c42' : '#ffffff';
+      });
+      document.querySelector('.trial-badge span').style.color =
+        urgency ? '#ff4444' : '#ff8c42';
+
+      if (remaining > 0) setTimeout(tick, 1000);
+    }
+
+    tick();
+  })();
+</script>
 </body>
 </html>
