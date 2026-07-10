@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BluWav CRM — Reports</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BluWav CRM — Reports</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
     *{margin:0;padding:0;box-sizing:border-box;}
     :root{--bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;--border:rgba(255,255,255,0.06);--cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--text:#ffffff;--text2:#b0bec5;--text3:#4a5568;--sidebar:220px;}
     body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
@@ -124,188 +125,179 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-logo"><div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div></div>
-  <nav class="sidebar-nav">
-    <div class="nav-section">
-      <div class="nav-label">Main</div>
-      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
-      <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span> Contacts</a>
-      <a class="nav-item" href="deals.html"><span class="nav-icon">💼</span> Deals</a>
-      <a class="nav-item" href="#"><span class="nav-icon">🏢</span> Companies</a>
-      <a class="nav-item" href="#"><span class="nav-icon">✅</span> Tasks</a>
-      <a class="nav-item" href="#"><span class="nav-icon">📅</span> Calendar</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Communicate</div>
-      <a class="nav-item" href="#"><span class="nav-icon">📧</span> Email</a>
-      <a class="nav-item" href="#"><span class="nav-icon">💬</span> WhatsApp</a>
-      <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span> Automations</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Insights</div>
-      <a class="nav-item active" href="reports.html"><span class="nav-icon">📊</span> Reports</a>
-      <a class="nav-item" href="#"><span class="nav-icon">🏗️</span> Org Setup</a>
-      <a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
-      <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span> Billing</a>
-    </div>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="trial-pill"><div class="tp-label">⏱ 30-Day Free Trial</div><div class="tp-sub">No card needed · Full access</div><button class="btn-upgrade">Upgrade Plan</button></div>
-    <div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div></div>
-  </div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left"><h1>Reports & Analytics</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Reports</div></div>
-    <div class="topbar-right">
-      <button class="btn btn-ghost">⬇ Export PDF</button>
-      <button class="btn btn-primary">📊 Custom Report</button>
-      <div class="icon-btn">🔔<div class="notif-dot"></div></div>
-      <div class="user-card" style="padding:4px 8px;border-radius:8px;">
-        <div class="avatar" style="width:32px;height:32px;font-size:12px;" id="topAvatar">AM</div>
-        <div class="user-info"><div class="user-name" style="font-size:12px;" id="topName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div>
-      </div>
-    </div>
-  </header>
-
-  <div class="content">
-    <!-- Date Range -->
-    <div class="date-range-bar">
-      <button class="range-btn" onclick="setRange('7d',this)">7 Days</button>
-      <button class="range-btn active" onclick="setRange('30d',this)">30 Days</button>
-      <button class="range-btn" onclick="setRange('90d',this)">90 Days</button>
-      <button class="range-btn" onclick="setRange('ytd',this)">YTD</button>
-      <button class="range-btn" onclick="setRange('12m',this)">12 Months</button>
-      <div class="date-inputs">
-        <input type="date" id="dateFrom" />
-        <span style="color:var(--text3);">→</span>
-        <input type="date" id="dateTo" />
-      </div>
-    </div>
-
-    <!-- KPI Cards -->
-    <div class="kpi-grid">
-      <div class="kpi-card c1">
-        <div class="kpi-top"><div class="kpi-icon c1">💰</div><div class="kpi-trend up">↑ 18%</div></div>
-        <div class="kpi-val">$48.2K</div>
-        <div class="kpi-lbl">Pipeline Value</div>
-        <div class="kpi-sub">vs $40.8K last period</div>
-      </div>
-      <div class="kpi-card c2">
-        <div class="kpi-top"><div class="kpi-icon c2">🏆</div><div class="kpi-trend up">↑ 12%</div></div>
-        <div class="kpi-val">$18.5K</div>
-        <div class="kpi-lbl">Revenue Won</div>
-        <div class="kpi-sub">5 deals closed</div>
-      </div>
-      <div class="kpi-card c3">
-        <div class="kpi-top"><div class="kpi-icon c3">📈</div><div class="kpi-trend up">↑ 5%</div></div>
-        <div class="kpi-val">62%</div>
-        <div class="kpi-lbl">Win Rate</div>
-        <div class="kpi-sub">vs 57% last period</div>
-      </div>
-      <div class="kpi-card c4">
-        <div class="kpi-top"><div class="kpi-icon c4">⏱</div><div class="kpi-trend down">↓ 3 days</div></div>
-        <div class="kpi-val">18d</div>
-        <div class="kpi-lbl">Avg Deal Cycle</div>
-        <div class="kpi-sub">From lead to close</div>
-      </div>
-    </div>
-
-    <!-- Charts Row 1 -->
-    <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-header">
-          <div><div class="chart-title">Revenue Trend</div><div class="chart-sub">Monthly pipeline vs won revenue</div></div>
-          <span class="chart-action">View details →</span>
-        </div>
-        <div class="chart-body"><div class="chart-container"><canvas id="revenueChart"></canvas></div></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-header">
-          <div><div class="chart-title">Deals by Stage</div><div class="chart-sub">Current distribution</div></div>
-        </div>
-        <div class="chart-body"><div class="chart-container"><canvas id="stageChart"></canvas></div></div>
-      </div>
-    </div>
-
-    <!-- Charts Row 2 -->
-    <div class="charts-grid" style="grid-template-columns:1fr 1fr;">
-      <div class="chart-card">
-        <div class="chart-header">
-          <div><div class="chart-title">Contact Growth</div><div class="chart-sub">New contacts per month</div></div>
-        </div>
-        <div class="chart-body"><div class="chart-container"><canvas id="contactChart"></canvas></div></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-header">
-          <div><div class="chart-title">Activity Breakdown</div><div class="chart-sub">Calls, emails, WhatsApp, notes</div></div>
-        </div>
-        <div class="chart-body"><div class="chart-container"><canvas id="activityChart"></canvas></div></div>
-      </div>
-    </div>
-
-    <!-- Bottom Grid -->
-    <div class="bottom-grid">
-      <!-- Leaderboard -->
-      <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Team Leaderboard</div><div class="chart-sub">Top performers this month</div></div></div>
-        <div class="chart-body" style="padding:0 20px;">
-          <div class="leaderboard-item">
-            <div class="lb-rank gold">1</div>
-            <div class="lb-avatar" style="background:var(--cyan);">AM</div>
-            <div class="lb-info"><div class="lb-name">Andrea M. Tanguay</div><div class="lb-deals">8 deals · 3 won</div></div>
-            <div class="lb-val">$24K</div>
-          </div>
-          <div class="leaderboard-item">
-            <div class="lb-rank silver">2</div>
-            <div class="lb-avatar" style="background:var(--gold);">KG</div>
-            <div class="lb-info"><div class="lb-name">Kenric Gilpin</div><div class="lb-deals">5 deals · 2 won</div></div>
-            <div class="lb-val">$14K</div>
-          </div>
-          <div class="leaderboard-item">
-            <div class="lb-rank bronze">3</div>
-            <div class="lb-avatar" style="background:var(--orange);">RL</div>
-            <div class="lb-info"><div class="lb-name">Ryan Leah</div><div class="lb-deals">3 deals · 1 won</div></div>
-            <div class="lb-val">$8K</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Contacts by Island -->
-      <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Contacts by Island</div><div class="chart-sub">Geographic distribution</div></div></div>
-        <div class="chart-body" style="padding:0 20px;">
-          <div class="island-row"><div class="island-flag">🇹🇹</div><div class="island-name">Trinidad</div><div class="island-bar-wrap"><div class="island-bar" style="width:85%;"></div></div><div class="island-count">42</div></div>
-          <div class="island-row"><div class="island-flag">🇧🇧</div><div class="island-name">Barbados</div><div class="island-bar-wrap"><div class="island-bar" style="width:60%;"></div></div><div class="island-count">28</div></div>
-          <div class="island-row"><div class="island-flag">🇯🇲</div><div class="island-name">Jamaica</div><div class="island-bar-wrap"><div class="island-bar" style="width:50%;"></div></div><div class="island-count">24</div></div>
-          <div class="island-row"><div class="island-flag">🇬🇾</div><div class="island-name">Guyana</div><div class="island-bar-wrap"><div class="island-bar" style="width:35%;"></div></div><div class="island-count">18</div></div>
-          <div class="island-row"><div class="island-flag">🇱🇨</div><div class="island-name">St. Lucia</div><div class="island-bar-wrap"><div class="island-bar" style="width:25%;"></div></div><div class="island-count">12</div></div>
-          <div class="island-row"><div class="island-flag">🇬🇩</div><div class="island-name">Grenada</div><div class="island-bar-wrap"><div class="island-bar" style="width:18%;"></div></div><div class="island-count">9</div></div>
-        </div>
-      </div>
-
-      <!-- Recent Activity Log -->
-      <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Recent Activity</div><div class="chart-sub">Last 10 logged events</div></div></div>
-        <div style="padding:0;">
-          <table class="activity-table">
-            <thead><tr><th>Event</th><th>User</th><th>Time</th></tr></thead>
-            <tbody>
-              <tr><td>Deal won — E-Commerce Store</td><td>Andrea</td><td style="color:var(--text3);">2h ago</td></tr>
-              <tr><td>Contact added — Sarah Chen</td><td>Kenric</td><td style="color:var(--text3);">4h ago</td></tr>
-              <tr><td>Email sent — Island Realty</td><td>Andrea</td><td style="color:var(--text3);">6h ago</td></tr>
-              <tr><td>Deal updated — Annual Retainer</td><td>Ryan</td><td style="color:var(--text3);">1d ago</td></tr>
-              <tr><td>12 contacts imported</td><td>Andrea</td><td style="color:var(--text3);">1d ago</td></tr>
-              <tr><td>Automation triggered</td><td>System</td><td style="color:var(--text3);">2d ago</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="sidebar-logo"><div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div></div>
+<nav class="sidebar-nav">
+<div class="nav-section">
+<div class="nav-label">Main</div>
+<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span> Contacts</a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span> Deals</a>
+<a class="nav-item" href="#"><span class="nav-icon">🏢</span> Companies</a>
+<a class="nav-item" href="#"><span class="nav-icon">✅</span> Tasks</a>
+<a class="nav-item" href="#"><span class="nav-icon">📅</span> Calendar</a>
 </div>
-
+<div class="nav-section">
+<div class="nav-label">Communicate</div>
+<a class="nav-item" href="#"><span class="nav-icon">📧</span> Email</a>
+<a class="nav-item" href="#"><span class="nav-icon">💬</span> WhatsApp</a>
+<a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span> Automations</a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Insights</div>
+<a class="nav-item active" href="reports.html"><span class="nav-icon">📊</span> Reports</a>
+<a class="nav-item" href="#"><span class="nav-icon">🏗️</span> Org Setup</a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span> Settings</a>
+<a class="nav-item" href="billing.html"><span class="nav-icon">💳</span> Billing</a>
+</div>
+</nav>
+<div class="sidebar-bottom">
+<div class="trial-pill"><div class="tp-label">⏱ 30-Day Free Trial</div><div class="tp-sub">No card needed · Full access</div><button class="btn-upgrade">Upgrade Plan</button></div>
+<div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div></div>
+</div>
+</aside>
+<div class="main">
+<header class="topbar">
+<div class="topbar-left"><h1>Reports &amp; Analytics</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Reports</div></div>
+<div class="topbar-right">
+<button class="btn btn-ghost">⬇ Export PDF</button>
+<button class="btn btn-primary">📊 Custom Report</button>
+<div class="icon-btn">🔔<div class="notif-dot"></div></div>
+<div class="user-card" style="padding:4px 8px;border-radius:8px;">
+<div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
+<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div>
+</div>
+</div>
+</header>
+<div class="content">
+<!-- Date Range -->
+<div class="date-range-bar">
+<button class="range-btn" onclick="setRange('7d',this)">7 Days</button>
+<button class="range-btn active" onclick="setRange('30d',this)">30 Days</button>
+<button class="range-btn" onclick="setRange('90d',this)">90 Days</button>
+<button class="range-btn" onclick="setRange('ytd',this)">YTD</button>
+<button class="range-btn" onclick="setRange('12m',this)">12 Months</button>
+<div class="date-inputs">
+<input id="dateFrom" type="date"/>
+<span style="color:var(--text3);">→</span>
+<input id="dateTo" type="date"/>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="kpi-grid">
+<div class="kpi-card c1">
+<div class="kpi-top"><div class="kpi-icon c1">💰</div><div class="kpi-trend up">↑ 18%</div></div>
+<div class="kpi-val">$48.2K</div>
+<div class="kpi-lbl">Pipeline Value</div>
+<div class="kpi-sub">vs $40.8K last period</div>
+</div>
+<div class="kpi-card c2">
+<div class="kpi-top"><div class="kpi-icon c2">🏆</div><div class="kpi-trend up">↑ 12%</div></div>
+<div class="kpi-val">$18.5K</div>
+<div class="kpi-lbl">Revenue Won</div>
+<div class="kpi-sub">5 deals closed</div>
+</div>
+<div class="kpi-card c3">
+<div class="kpi-top"><div class="kpi-icon c3">📈</div><div class="kpi-trend up">↑ 5%</div></div>
+<div class="kpi-val">62%</div>
+<div class="kpi-lbl">Win Rate</div>
+<div class="kpi-sub">vs 57% last period</div>
+</div>
+<div class="kpi-card c4">
+<div class="kpi-top"><div class="kpi-icon c4">⏱</div><div class="kpi-trend down">↓ 3 days</div></div>
+<div class="kpi-val">18d</div>
+<div class="kpi-lbl">Avg Deal Cycle</div>
+<div class="kpi-sub">From lead to close</div>
+</div>
+</div>
+<!-- Charts Row 1 -->
+<div class="charts-grid">
+<div class="chart-card">
+<div class="chart-header">
+<div><div class="chart-title">Revenue Trend</div><div class="chart-sub">Monthly pipeline vs won revenue</div></div>
+<span class="chart-action">View details →</span>
+</div>
+<div class="chart-body"><div class="chart-container"><canvas id="revenueChart"></canvas></div></div>
+</div>
+<div class="chart-card">
+<div class="chart-header">
+<div><div class="chart-title">Deals by Stage</div><div class="chart-sub">Current distribution</div></div>
+</div>
+<div class="chart-body"><div class="chart-container"><canvas id="stageChart"></canvas></div></div>
+</div>
+</div>
+<!-- Charts Row 2 -->
+<div class="charts-grid" style="grid-template-columns:1fr 1fr;">
+<div class="chart-card">
+<div class="chart-header">
+<div><div class="chart-title">Contact Growth</div><div class="chart-sub">New contacts per month</div></div>
+</div>
+<div class="chart-body"><div class="chart-container"><canvas id="contactChart"></canvas></div></div>
+</div>
+<div class="chart-card">
+<div class="chart-header">
+<div><div class="chart-title">Activity Breakdown</div><div class="chart-sub">Calls, emails, WhatsApp, notes</div></div>
+</div>
+<div class="chart-body"><div class="chart-container"><canvas id="activityChart"></canvas></div></div>
+</div>
+</div>
+<!-- Bottom Grid -->
+<div class="bottom-grid">
+<!-- Leaderboard -->
+<div class="chart-card">
+<div class="chart-header"><div><div class="chart-title">Team Leaderboard</div><div class="chart-sub">Top performers this month</div></div></div>
+<div class="chart-body" style="padding:0 20px;">
+<div class="leaderboard-item">
+<div class="lb-rank gold">1</div>
+<div class="lb-avatar" style="background:var(--cyan);">AM</div>
+<div class="lb-info"><div class="lb-name">Andrea M. Tanguay</div><div class="lb-deals">8 deals · 3 won</div></div>
+<div class="lb-val">$24K</div>
+</div>
+<div class="leaderboard-item">
+<div class="lb-rank silver">2</div>
+<div class="lb-avatar" style="background:var(--gold);">KG</div>
+<div class="lb-info"><div class="lb-name">Kenric Gilpin</div><div class="lb-deals">5 deals · 2 won</div></div>
+<div class="lb-val">$14K</div>
+</div>
+<div class="leaderboard-item">
+<div class="lb-rank bronze">3</div>
+<div class="lb-avatar" style="background:var(--orange);">RL</div>
+<div class="lb-info"><div class="lb-name">Ryan Leah</div><div class="lb-deals">3 deals · 1 won</div></div>
+<div class="lb-val">$8K</div>
+</div>
+</div>
+</div>
+<!-- Contacts by Island -->
+<div class="chart-card">
+<div class="chart-header"><div><div class="chart-title">Contacts by Island</div><div class="chart-sub">Geographic distribution</div></div></div>
+<div class="chart-body" style="padding:0 20px;">
+<div class="island-row"><div class="island-flag">🇹🇹</div><div class="island-name">Trinidad</div><div class="island-bar-wrap"><div class="island-bar" style="width:85%;"></div></div><div class="island-count">42</div></div>
+<div class="island-row"><div class="island-flag">🇧🇧</div><div class="island-name">Barbados</div><div class="island-bar-wrap"><div class="island-bar" style="width:60%;"></div></div><div class="island-count">28</div></div>
+<div class="island-row"><div class="island-flag">🇯🇲</div><div class="island-name">Jamaica</div><div class="island-bar-wrap"><div class="island-bar" style="width:50%;"></div></div><div class="island-count">24</div></div>
+<div class="island-row"><div class="island-flag">🇬🇾</div><div class="island-name">Guyana</div><div class="island-bar-wrap"><div class="island-bar" style="width:35%;"></div></div><div class="island-count">18</div></div>
+<div class="island-row"><div class="island-flag">🇱🇨</div><div class="island-name">St. Lucia</div><div class="island-bar-wrap"><div class="island-bar" style="width:25%;"></div></div><div class="island-count">12</div></div>
+<div class="island-row"><div class="island-flag">🇬🇩</div><div class="island-name">Grenada</div><div class="island-bar-wrap"><div class="island-bar" style="width:18%;"></div></div><div class="island-count">9</div></div>
+</div>
+</div>
+<!-- Recent Activity Log -->
+<div class="chart-card">
+<div class="chart-header"><div><div class="chart-title">Recent Activity</div><div class="chart-sub">Last 10 logged events</div></div></div>
+<div style="padding:0;">
+<table class="activity-table">
+<thead><tr><th>Event</th><th>User</th><th>Time</th></tr></thead>
+<tbody>
+<tr><td>Deal won — E-Commerce Store</td><td>Andrea</td><td style="color:var(--text3);">2h ago</td></tr>
+<tr><td>Contact added — Sarah Chen</td><td>Kenric</td><td style="color:var(--text3);">4h ago</td></tr>
+<tr><td>Email sent — Island Realty</td><td>Andrea</td><td style="color:var(--text3);">6h ago</td></tr>
+<tr><td>Deal updated — Annual Retainer</td><td>Ryan</td><td style="color:var(--text3);">1d ago</td></tr>
+<tr><td>12 contacts imported</td><td>Andrea</td><td style="color:var(--text3);">1d ago</td></tr>
+<tr><td>Automation triggered</td><td>System</td><td style="color:var(--text3);">2d ago</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
 <script>
   const { createClient } = supabase;
   const db = createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
