@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BluWav CRM — Activities</title>
+<link href="bluwav.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+    .act-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+    .act-stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px;}
+    .act-stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .act-stat-val{font-size:22px;font-weight:800;color:var(--text);}
+    .act-stat-lbl{font-size:12px;color:var(--text3);}
+    .type-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+    .type-tab{padding:7px 16px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
+    .type-tab:hover{background:var(--bg3);color:var(--text);}
+    .type-tab.active{background:rgba(0,194,209,0.1);border-color:var(--cyan);color:var(--cyan);}
+    .activity-feed{display:flex;flex-direction:column;gap:0;}
+    .feed-item{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;cursor:pointer;transition:all 0.15s;}
+    .feed-item:hover{border-color:rgba(0,194,209,0.2);transform:translateY(-1px);}
+    .feed-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .feed-content{flex:1;}
+    .feed-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+    .feed-title{font-size:14px;font-weight:700;color:var(--text);}
+    .feed-meta{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+    .feed-time{font-size:11px;color:var(--text3);}
+    .feed-body{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:8px;}
+    .feed-footer{display:flex;align-items:center;gap:10px;}
+    .feed-contact{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);}
+    .feed-avatar{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#0a0e1a;flex-shrink:0;}
+    .type-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;}
+    .type-badge.call{background:rgba(34,197,94,0.1);color:var(--green);}
+    .type-badge.email{background:rgba(0,194,209,0.1);color:var(--cyan);}
+    .type-badge.note{background:rgba(212,175,55,0.1);color:var(--gold);}
+    .type-badge.whatsapp{background:rgba(37,211,102,0.1);color:#25d366;}
+    .type-badge.meeting{background:rgba(167,139,250,0.1);color:var(--purple);}
+    .type-badge.task{background:rgba(255,140,66,0.1);color:var(--orange);}
+    .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .status-dot.done{background:var(--green);}
+    .status-dot.pending{background:var(--orange);}
+    .log-form{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:24px;}
+    .log-form-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;}
+    .log-type-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+    .log-type-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+    .log-type-btn:hover{background:var(--bg4);color:var(--text);}
+    .log-type-btn.active{background:rgba(0,194,209,0.1);border-color:var(--cyan);color:var(--cyan);}
+    .log-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+    .log-fields .full{grid-column:1/-1;}
+    .log-field{display:flex;flex-direction:column;gap:6px;}
+    .log-field label{font-size:12px;font-weight:600;color:var(--text2);}
+    .log-field input,.log-field select,.log-field textarea{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;transition:border-color 0.2s;font-family:inherit;}
+    .log-field input:focus,.log-field select:focus,.log-field textarea:focus{border-color:var(--cyan);}
+    .log-field input::placeholder,.log-field textarea::placeholder{color:var(--text3);}
+    .log-field select option{background:var(--bg3);}
+    .log-actions{display:flex;gap:10px;justify-content:flex-end;}
+    .empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
+    .empty-icon{font-size:48px;margin-bottom:16px;}
+  </style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-logo">
+<div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div>
+<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
+</div>
+<nav class="sidebar-nav">
+<div class="nav-section">
+<div class="nav-label">Main</div>
+<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span class="nav-text"> Dashboard</span></a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item active" href="activities.html"><span class="nav-icon">📋</span><span class="nav-text"> Activities</span></a>
+<a class="nav-item" href="#"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Communicate</div>
+<a class="nav-item" href="#"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
+<a class="nav-item" href="#"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
+<a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Insights</div>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
+</div>
+<div class="nav-section" id="adminNav" style="display:none;">
+<div class="nav-label">Admin</div>
+<a class="nav-item" href="superadmin.html"><span class="nav-icon">🛡</span><span class="nav-text"> Super Admin</span></a>
+</div>
+</nav>
+<div class="sidebar-bottom">
+<div class="trial-pill"><div class="tp-label">⏱ 30-Day Free Trial</div><div class="tp-sub">No card needed · Full access</div><button class="btn-upgrade">Upgrade Plan</button></div>
+<div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Loading...</div><div class="user-role" id="sidebarRole">—</div></div></div>
+<button class="signout-btn" onclick="signOut()">🚪 Sign Out</button>
+</div>
+</aside>
+<div class="main" id="mainContent">
+<header class="topbar">
+<div class="topbar-left"><h1>Activities</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Activities</div></div>
+<div class="topbar-right">
+<button class="btn btn-primary" onclick="toggleLogForm()">+ Log Activity</button>
+<div class="icon-btn">🔔<div class="notif-dot"></div></div>
+<div class="user-card" style="padding:4px 8px;border-radius:8px;">
+<div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
+<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Loading...</div><div class="user-role" id="topRole">—</div></div>
+</div>
+</div>
+</header>
+<div class="role-banner" id="roleBanner"></div>
+<div class="content">
+<!-- Stats -->
+<div class="act-grid">
+<div class="act-stat"><div class="act-stat-icon" style="background:rgba(34,197,94,0.12);">📞</div><div><div class="act-stat-val" id="statCalls">0</div><div class="act-stat-lbl">Calls Logged</div></div></div>
+<div class="act-stat"><div class="act-stat-icon" style="background:rgba(0,194,209,0.12);">📧</div><div><div class="act-stat-val" id="statEmails">0</div><div class="act-stat-lbl">Emails Sent</div></div></div>
+<div class="act-stat"><div class="act-stat-icon" style="background:rgba(37,211,102,0.12);">💬</div><div><div class="act-stat-val" id="statWA">0</div><div class="act-stat-lbl">WhatsApp</div></div></div>
+<div class="act-stat"><div class="act-stat-icon" style="background:rgba(255,140,66,0.12);">✅</div><div><div class="act-stat-val" id="statTasks">0</div><div class="act-stat-lbl">Tasks Done</div></div></div>
+</div>
+<!-- Log Form (hidden by default) -->
+<div class="log-form" id="logForm" style="display:none;">
+<div class="log-form-title">📝 Log New Activity</div>
+<div class="log-type-row">
+<button class="log-type-btn active" onclick="setType('call',this)">📞 Call</button>
+<button class="log-type-btn" onclick="setType('email',this)">📧 Email</button>
+<button class="log-type-btn" onclick="setType('whatsapp',this)">💬 WhatsApp</button>
+<button class="log-type-btn" onclick="setType('meeting',this)">🤝 Meeting</button>
+<button class="log-type-btn" onclick="setType('note',this)">📝 Note</button>
+<button class="log-type-btn" onclick="setType('task',this)">✅ Task</button>
+</div>
+<div class="log-fields">
+<div class="log-field"><label>Contact Name</label><input id="lf_contact" placeholder="Who did you interact with?" type="text"/></div>
+<div class="log-field"><label>Date &amp; Time</label><input id="lf_date" type="datetime-local"/></div>
+<div class="log-field full"><label>Summary</label><textarea id="lf_summary" placeholder="What happened? Key points, outcomes, next steps..." rows="3"></textarea></div>
+<div class="log-field"><label>Duration (mins)</label><input id="lf_duration" placeholder="e.g. 15" type="number"/></div>
+<div class="log-field"><label>Status</label>
+<select id="lf_status">
+<option value="completed">✅ Completed</option>
+<option value="pending">⏳ Pending</option>
+<option value="follow_up">🔄 Follow-up needed</option>
+</select>
+</div>
+</div>
+<div class="log-actions">
+<button class="btn btn-ghost" onclick="toggleLogForm()">Cancel</button>
+<button class="btn btn-primary" onclick="logActivity()">Save Activity</button>
+</div>
+</div>
+<!-- Filter Tabs -->
+<div class="type-tabs">
+<button class="type-tab active" onclick="filterType('all',this)">📋 All <span id="countAll" style="background:var(--bg3);padding:1px 7px;border-radius:8px;font-size:11px;margin-left:4px;">0</span></button>
+<button class="type-tab" onclick="filterType('call',this)">📞 Calls</button>
+<button class="type-tab" onclick="filterType('email',this)">📧 Emails</button>
+<button class="type-tab" onclick="filterType('whatsapp',this)">💬 WhatsApp</button>
+<button class="type-tab" onclick="filterType('meeting',this)">🤝 Meetings</button>
+<button class="type-tab" onclick="filterType('note',this)">📝 Notes</button>
+<button class="type-tab" onclick="filterType('task',this)">✅ Tasks</button>
+</div>
+<!-- Activity Feed -->
+<div id="activityFeed"></div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const{createClient}=supabase;
+const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
+
+let currentUser=null,userRole='salesperson',allActivities=[],filtered=[],activeType='all',logType='call';
+const COLORS=['#00C2D1','#D4AF37','#22c55e','#ff8c42','#a78bfa'];
+const TYPE_ICONS={call:'📞',email:'📧',whatsapp:'💬',meeting:'🤝',note:'📝',task:'✅'};
+const TYPE_COLORS={call:'rgba(34,197,94,0.12)',email:'rgba(0,194,209,0.12)',whatsapp:'rgba(37,211,102,0.12)',meeting:'rgba(167,139,250,0.12)',note:'rgba(212,175,55,0.12)',task:'rgba(255,140,66,0.12)'};
+
+function ini(n){return(n||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);}
+function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
+function timeAgo(ts){const diff=Date.now()-new Date(ts).getTime(),m=60000,h=3600000,d=86400000;if(diff<m)return'Just now';if(diff<h)return Math.floor(diff/m)+'m ago';if(diff<d)return Math.floor(diff/h)+'h ago';if(diff<7*d)return Math.floor(diff/d)+'d ago';return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
+async function signOut(){await db.auth.signOut();window.location.href='login.html';}
+
+// Set default datetime to now
+document.getElementById('lf_date').value = new Date().toISOString().slice(0,16);
+
+(async()=>{
+  const{data:{session}}=await db.auth.getSession();
+  if(!session){window.location.href='login.html';return;}
+  currentUser=session.user;
+  const{data:profile}=await db.from('profiles').select('*').eq('id',currentUser.id).single();
+  userRole=profile?.role||'salesperson';
+  const name=profile?.full_name||currentUser.email?.split('@')[0]||'User';
+  ['sidebarName','topName'].forEach(id=>document.getElementById(id).textContent=name);
+  ['sidebarAvatar','topAvatar'].forEach(id=>document.getElementById(id).textContent=ini(name));
+  document.getElementById('sidebarRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
+  document.getElementById('topRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
+  const banner=document.getElementById('roleBanner');
+  if(userRole==='manager'||userRole==='owner'){
+    banner.className='role-banner manager';
+    banner.innerHTML='👑 Manager View — Showing all team activities';
+    document.getElementById('adminNav').style.display='block';
+  } else {
+    banner.className='role-banner salesperson';
+    banner.innerHTML='💼 Salesperson View — Showing your activities';
+  }
+  loadActivities();
+})();
+
+// Mock activities — replace with real Supabase activities table when ready
+function getMockActivities(userId, name){
+  const now = Date.now();
+  const h=3600000,d=86400000;
+  return [
+    {id:'1',type:'call',contact:'Jordan Williams',summary:'Discussed CRM setup requirements. Client interested in Pro plan. Follow up next week.',duration:12,status:'completed',created_at:new Date(now-2*h).toISOString(),user_id:userId,user_name:name},
+    {id:'2',type:'email',contact:'Sarah Chen',summary:'Sent welcome email with onboarding guide and pricing PDF.',duration:null,status:'completed',created_at:new Date(now-5*h).toISOString(),user_id:userId,user_name:name},
+    {id:'3',type:'whatsapp',contact:'Marcus Brown',summary:'Sent intro message and product brochure via WhatsApp.',duration:null,status:'completed',created_at:new Date(now-1*d).toISOString(),user_id:userId,user_name:name},
+    {id:'4',type:'meeting',contact:'Sandra Clarke',summary:'Discovery call — Island Realty needs full CRM implementation for 8 agents. Budget approved.',duration:45,status:'completed',created_at:new Date(now-2*d).toISOString(),user_id:userId,user_name:name},
+    {id:'5',type:'task',contact:'Priya Ramkissoon',summary:'Send proposal for Carib Wellness social media package.',duration:null,status:'pending',created_at:new Date(now-2*d-3*h).toISOString(),user_id:userId,user_name:name},
+    {id:'6',type:'note',contact:'Devon Charles',summary:'Client mentioned budget constraints. May need to offer payment plan. Check with manager.',duration:null,status:'completed',created_at:new Date(now-3*d).toISOString(),user_id:userId,user_name:name},
+    {id:'7',type:'call',contact:'Jordan Williams',summary:'Follow-up call. Client ready to proceed. Sending contract today.',duration:8,status:'completed',created_at:new Date(now-4*d).toISOString(),user_id:userId,user_name:name},
+    {id:'8',type:'email',contact:'Marcus Brown',summary:'Sent follow-up email after no response to WhatsApp. Included case studies.',duration:null,status:'follow_up',created_at:new Date(now-5*d).toISOString(),user_id:userId,user_name:name},
+  ];
+}
+
+function loadActivities(){
+  const name=document.getElementById('sidebarName').textContent;
+  allActivities=getMockActivities(currentUser.id, name);
+  updateStats();
+  applyFilter();
+}
+
+function updateStats(){
+  document.getElementById('statCalls').textContent=allActivities.filter(a=>a.type==='call').length;
+  document.getElementById('statEmails').textContent=allActivities.filter(a=>a.type==='email').length;
+  document.getElementById('statWA').textContent=allActivities.filter(a=>a.type==='whatsapp').length;
+  document.getElementById('statTasks').textContent=allActivities.filter(a=>a.type==='task'&&a.status==='completed').length;
+  document.getElementById('countAll').textContent=allActivities.length;
+}
+
+function filterType(type,el){
+  activeType=type;
+  document.querySelectorAll('.type-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter(){
+  filtered=activeType==='all'?allActivities:allActivities.filter(a=>a.type===activeType);
+  renderFeed();
+}
+
+function renderFeed(){
+  const feed=document.getElementById('activityFeed');
+  if(!filtered.length){
+    feed.innerHTML=`<div class="empty-state"><div class="empty-icon">${activeType==='all'?'📋':TYPE_ICONS[activeType]||'📋'}</div><h3 style="font-size:16px;color:var(--text2);margin-bottom:8px;">No activities yet</h3><p>Log your first activity using the button above</p></div>`;
+    return;
+  }
+  feed.innerHTML=filtered.map(a=>{
+    const color=getColor(a.contact);
+    const statusDot=a.status==='completed'?'done':a.status==='pending'?'pending':'';
+    const statusLabel=a.status==='completed'?'Completed':a.status==='pending'?'Pending':'Follow-up needed';
+    return`<div class="feed-item" onclick="toggleExpand('${a.id}')">
+      <div class="feed-icon" style="background:${TYPE_COLORS[a.type]||'rgba(0,194,209,0.12)'};">${TYPE_ICONS[a.type]||'📋'}</div>
+      <div class="feed-content">
+        <div class="feed-header">
+          <div class="feed-title">${a.contact}</div>
+          <div class="feed-meta">
+            <span class="type-badge ${a.type}">${TYPE_ICONS[a.type]} ${a.type.charAt(0).toUpperCase()+a.type.slice(1)}</span>
+            <span class="feed-time">${timeAgo(a.created_at)}</span>
+          </div>
+        </div>
+        <div class="feed-body">${a.summary}</div>
+        <div class="feed-footer">
+          <div class="feed-contact">
+            <div class="feed-avatar" style="background:${color};">${ini(a.user_name)}</div>
+            ${a.user_name}
+          </div>
+          ${a.duration?`<span style="font-size:11px;color:var(--text3);">⏱ ${a.duration} mins</span>`:''}
+          <div style="display:flex;align-items:center;gap:5px;">
+            <div class="status-dot ${statusDot}"></div>
+            <span style="font-size:11px;color:var(--text3);">${statusLabel}</span>
+          </div>
+          ${a.status==='pending'||a.status==='follow_up'?`<button onclick="event.stopPropagation();markDone('${a.id}')" style="padding:3px 10px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:6px;color:var(--green);font-size:11px;font-weight:600;cursor:pointer;">Mark Done</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function markDone(id){
+  const a=allActivities.find(x=>x.id===id);
+  if(a){a.status='completed';applyFilter();showToast('✅ Activity marked as done','success');}
+}
+
+function toggleLogForm(){
+  const form=document.getElementById('logForm');
+  form.style.display=form.style.display==='none'?'block':'none';
+  if(form.style.display==='block'){
+    document.getElementById('lf_date').value=new Date().toISOString().slice(0,16);
+    form.scrollIntoView({behavior:'smooth'});
+  }
+}
+
+function setType(type,el){
+  logType=type;
+  document.querySelectorAll('.log-type-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function logActivity(){
+  const contact=document.getElementById('lf_contact').value.trim();
+  const summary=document.getElementById('lf_summary').value.trim();
+  if(!contact||!summary){showToast('Contact and summary are required','error');return;}
+  const name=document.getElementById('sidebarName').textContent;
+  const newActivity={
+    id:Date.now().toString(),
+    type:logType,
+    contact,
+    summary,
+    duration:parseInt(document.getElementById('lf_duration').value)||null,
+    status:document.getElementById('lf_status').value,
+    created_at:new Date(document.getElementById('lf_date').value).toISOString(),
+    user_id:currentUser.id,
+    user_name:name
+  };
+  allActivities.unshift(newActivity);
+  updateStats();
+  applyFilter();
+  toggleLogForm();
+  document.getElementById('lf_contact').value='';
+  document.getElementById('lf_summary').value='';
+  document.getElementById('lf_duration').value='';
+  showToast(`✅ ${logType.charAt(0).toUpperCase()+logType.slice(1)} logged successfully`,'success');
+}
+</script>
+</body>
+</html>
