@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BluWav CRM — Contacts</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:     #0a0e1a;
+      --bg2:    #0f1623;
+      --bg3:    #1a2235;
+      --bg4:    #222d42;
+      --border: rgba(255,255,255,0.06);
+      --cyan:   #00C2D1;
+      --gold:   #D4AF37;
+      --orange: #ff8c42;
+      --green:  #22c55e;
+      --red:    #ef4444;
+      --purple: #a78bfa;
+      --text:   #ffffff;
+      --text2:  #b0bec5;
+      --text3:  #4a5568;
+      --sidebar: 220px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar);
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-text { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .logo-text .blu { color: #fff; }
+    .logo-text .wav { color: var(--cyan); }
+    .logo-badge {
+      display: inline-block;
+      background: rgba(0,194,209,0.15);
+      border: 1px solid rgba(0,194,209,0.3);
+      color: var(--cyan);
+      font-size: 9px; font-weight: 700;
+      padding: 1px 6px; border-radius: 4px;
+      letter-spacing: 1px; margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .sidebar-nav { flex: 1; padding: 16px 0; }
+    .nav-section { padding: 0 12px; margin-bottom: 4px; }
+    .nav-label {
+      font-size: 10px; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: 8px 8px 4px;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px; border-radius: 8px;
+      color: var(--text2); text-decoration: none;
+      font-size: 13.5px; font-weight: 500;
+      transition: all 0.15s; cursor: pointer;
+      position: relative;
+    }
+
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(0,194,209,0.12); color: var(--cyan); }
+    .nav-item.active::before {
+      content: ''; position: absolute;
+      left: 0; top: 20%; bottom: 20%;
+      width: 3px; background: var(--cyan);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto; background: var(--bg3);
+      color: var(--text2); font-size: 11px; font-weight: 600;
+      padding: 1px 7px; border-radius: 10px;
+    }
+    .nav-item.active .nav-badge { background: rgba(0,194,209,0.2); color: var(--cyan); }
+
+    .sidebar-bottom { padding: 12px; border-top: 1px solid var(--border); }
+
+    .trial-pill {
+      background: rgba(255,140,66,0.1);
+      border: 1px solid rgba(255,140,66,0.25);
+      border-radius: 10px; padding: 10px 12px; margin-bottom: 10px;
+    }
+    .trial-pill .tp-label { font-size: 11px; color: var(--orange); font-weight: 700; margin-bottom: 4px; }
+    .trial-pill .tp-sub { font-size: 11px; color: var(--text3); margin-bottom: 8px; }
+    .btn-upgrade {
+      width: 100%; background: var(--gold); color: #0a0e1a;
+      border: none; border-radius: 7px; padding: 7px;
+      font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-upgrade:hover { background: #e8c547; }
+
+    .user-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px; border-radius: 8px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .user-card:hover { background: var(--bg3); }
+
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), #0099a8);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #0a0e1a; flex-shrink: 0;
+    }
+
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-role { font-size: 11px; color: var(--text3); }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sidebar); flex: 1; display: flex; flex-direction: column; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+
+    .topbar-left h1 { font-size: 18px; font-weight: 700; }
+    .topbar-left .breadcrumb { font-size: 12px; color: var(--text3); margin-top: 1px; }
+    .breadcrumb a { color: var(--cyan); text-decoration: none; }
+
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    .btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none; transition: all 0.2s;
+    }
+
+    .btn-ghost { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg4); color: var(--text); }
+    .btn-primary { background: var(--cyan); color: #0a0e1a; }
+    .btn-primary:hover { background: #00d4e4; box-shadow: 0 4px 16px rgba(0,194,209,0.3); }
+
+    .icon-btn {
+      width: 36px; height: 36px; background: var(--bg3);
+      border: 1px solid var(--border); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; transition: all 0.15s; position: relative;
+    }
+    .icon-btn:hover { background: var(--bg4); }
+    .notif-dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 7px; height: 7px; background: var(--orange);
+      border-radius: 50%; border: 1px solid var(--bg2);
+    }
+
+    /* ── CONTENT ── */
+    .content { padding: 24px 28px; flex: 1; }
+
+    /* Stats row */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 12px; margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+      cursor: pointer; transition: all 0.15s;
+    }
+
+    .stat-card:hover { border-color: rgba(0,194,209,0.2); }
+    .stat-card.active-filter { border-color: var(--cyan); background: rgba(0,194,209,0.05); }
+
+    .stat-icon {
+      width: 36px; height: 36px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+
+    .stat-info .stat-val { font-size: 20px; font-weight: 800; color: var(--text); }
+    .stat-info .stat-lbl { font-size: 11px; color: var(--text3); }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1; min-width: 200px; max-width: 340px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%; background: var(--bg2);
+      border: 1px solid var(--border); border-radius: 9px;
+      padding: 9px 14px 9px 36px;
+      color: var(--text); font-size: 13px; outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus { border-color: var(--cyan); }
+    .search-box input::placeholder { color: var(--text3); }
+    .search-icon {
+      position: absolute; left: 12px; top: 50%;
+      transform: translateY(-50%); color: var(--text3); font-size: 14px;
+    }
+
+    .filter-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 12px; border-radius: 8px;
+      background: var(--bg2); border: 1px solid var(--border);
+      color: var(--text2); font-size: 13px; cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { background: var(--bg3); color: var(--text); }
+    .filter-btn.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0,194,209,0.05); }
+
+    .filter-select {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 12px;
+      color: var(--text2); font-size: 13px; cursor: pointer;
+      outline: none; transition: all 0.15s;
+    }
+
+    .filter-select:focus { border-color: var(--cyan); }
+
+    .toolbar-right { margin-left: auto; display: flex; gap: 8px; }
+
+    /* Bulk actions bar */
+    .bulk-bar {
+      background: rgba(0,194,209,0.08);
+      border: 1px solid rgba(0,194,209,0.2);
+      border-radius: 10px; padding: 10px 16px;
+      display: none; align-items: center; gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .bulk-bar.visible { display: flex; }
+    .bulk-count { font-size: 13px; font-weight: 600; color: var(--cyan); }
+
+    .bulk-action {
+      display: flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 7px;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text2); font-size: 12px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+
+    .bulk-action:hover { background: var(--bg4); color: var(--text); }
+    .bulk-action.danger:hover { background: rgba(239,68,68,0.1); color: var(--red); border-color: rgba(239,68,68,0.3); }
+
+    /* Table */
+    .table-wrap {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+    }
+
+    .contacts-table { width: 100%; border-collapse: collapse; }
+
+    .contacts-table thead tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .contacts-table th {
+      text-align: left; font-size: 11px; font-weight: 700;
+      color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 12px 16px; background: var(--bg2);
+      cursor: pointer; user-select: none; white-space: nowrap;
+    }
+
+    .contacts-table th:hover { color: var(--text2); }
+    .contacts-table th.sorted { color: var(--cyan); }
+
+    .contacts-table td {
+      padding: 12px 16px; font-size: 13px;
+      color: var(--text2); border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .contacts-table tr:last-child td { border-bottom: none; }
+
+    .contacts-table tbody tr {
+      transition: background 0.1s; cursor: pointer;
+    }
+
+    .contacts-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+    .contacts-table tbody tr.selected td { background: rgba(0,194,209,0.04); }
+
+    .contact-cell { display: flex; align-items: center; gap: 10px; }
+
+    .contact-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #0a0e1a; flex-shrink: 0;
+    }
+
+    .contact-name-text { font-size: 13px; font-weight: 600; color: var(--text); }
+    .contact-email-text { font-size: 11px; color: var(--text3); }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 9px; border-radius: 6px;
+    }
+
+    .status-badge.customer  { background: rgba(34,197,94,0.1);  color: var(--green); }
+    .status-badge.lead      { background: rgba(0,194,209,0.1);  color: var(--cyan); }
+    .status-badge.prospect  { background: rgba(212,175,55,0.1); color: var(--gold); }
+    .status-badge.inactive  { background: rgba(74,85,104,0.2);  color: var(--text3); }
+
+    .tag {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-weight: 500;
+      padding: 2px 8px; border-radius: 5px;
+      background: var(--bg3); color: var(--text2);
+      margin-right: 4px; margin-bottom: 2px;
+    }
+
+    .action-btns {
+      display: flex; gap: 6px; opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .contacts-table tbody tr:hover .action-btns { opacity: 1; }
+
+    .action-btn {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: var(--bg3); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; cursor: pointer; transition: all 0.15s;
+    }
+
+    .action-btn:hover { background: var(--bg4); }
+
+    /* Pagination */
+    .pagination {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-top: 1px solid var(--border);
+    }
+
+    .page-info { font-size: 12px; color: var(--text3); }
+
+    .page-btns { display: flex; gap: 6px; }
+
+    .page-btn {
+      width: 32px; height: 32px; border-radius: 7px;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text2); font-size: 13px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .page-btn:hover { background: var(--bg4); color: var(--text); }
+    .page-btn.active { background: var(--cyan); color: #0a0e1a; border-color: var(--cyan); font-weight: 700; }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── SLIDE-OUT PANEL ── */
+    .panel-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200; opacity: 0;
+      pointer-events: none; transition: opacity 0.25s;
+    }
+
+    .panel-overlay.open { opacity: 1; pointer-events: all; }
+
+    .detail-panel {
+      position: fixed; top: 0; right: -480px; bottom: 0;
+      width: 480px; background: var(--bg2);
+      border-left: 1px solid var(--border);
+      z-index: 201; transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    .detail-panel.open { right: 0; }
+
+    .panel-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .panel-title { font-size: 15px; font-weight: 700; color: var(--text); }
+
+    .panel-close {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--bg3); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: var(--text2);
+      transition: all 0.15s;
+    }
+
+    .panel-close:hover { background: var(--bg4); color: var(--text); }
+
+    .panel-body { flex: 1; overflow-y: auto; padding: 24px; }
+
+    .panel-avatar-row {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+    }
+
+    .panel-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 800; color: #0a0e1a;
+    }
+
+    .panel-name { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .panel-company { font-size: 13px; color: var(--text3); }
+
+    .panel-actions {
+      display: flex; gap: 8px; margin-bottom: 24px;
+    }
+
+    .panel-action-btn {
+      flex: 1; padding: 9px; border-radius: 9px;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text2); font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 5px;
+    }
+
+    .panel-action-btn:hover { background: var(--bg4); color: var(--text); }
+    .panel-action-btn.primary { background: var(--cyan); color: #0a0e1a; border-color: var(--cyan); }
+    .panel-action-btn.primary:hover { background: #00d4e4; }
+
+    .panel-section { margin-bottom: 24px; }
+    .panel-section-title {
+      font-size: 11px; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      margin-bottom: 12px;
+    }
+
+    .detail-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-icon { font-size: 15px; width: 20px; text-align: center; margin-top: 1px; flex-shrink: 0; }
+    .detail-label { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
+    .detail-value { font-size: 13px; color: var(--text); font-weight: 500; }
+    .detail-value a { color: var(--cyan); text-decoration: none; }
+    .detail-value a:hover { text-decoration: underline; }
+
+    .notes-area {
+      width: 100%; background: var(--bg3);
+      border: 1px solid var(--border); border-radius: 9px;
+      padding: 12px; color: var(--text); font-size: 13px;
+      resize: vertical; min-height: 80px; outline: none;
+      font-family: inherit; transition: border-color 0.2s;
+    }
+
+    .notes-area:focus { border-color: var(--cyan); }
+
+    .panel-footer {
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      display: flex; gap: 10px;
+    }
+
+    .btn-save {
+      flex: 1; background: var(--cyan); color: #0a0e1a;
+      border: none; border-radius: 9px; padding: 11px;
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-save:hover { background: #00d4e4; }
+
+    .btn-delete {
+      padding: 11px 16px; background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2); border-radius: 9px;
+      color: var(--red); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+
+    .btn-delete:hover { background: rgba(239,68,68,0.2); }
+
+    /* Add Contact Modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 300; display: none;
+      align-items: center; justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .modal-title { font-size: 16px; font-weight: 700; }
+
+    .modal-body { padding: 24px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 12px; font-weight: 600; color: var(--text2); }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 9px; padding: 10px 14px;
+      color: var(--text); font-size: 13px; outline: none;
+      transition: border-color 0.2s; font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--cyan); }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--text3); }
+
+    .form-group select option { background: var(--bg3); }
+
+    .modal-footer {
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      display: flex; gap: 10px; justify-content: flex-end;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--text3);
+    }
+
+    .empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 16px; color: var(--text2); margin-bottom: 8px; }
+    .empty-state p { font-size: 13px; margin-bottom: 20px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 18px;
+      font-size: 13px; color: var(--text);
+      z-index: 500; transform: translateY(80px);
+      opacity: 0; transition: all 0.3s;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+    .toast.error { border-color: rgba(239,68,68,0.3); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 5px; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+      .detail-panel { width: 100%; right: -100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">
+      <span class="blu">Blu</span><span class="wav">Wav</span>
+      <span class="logo-badge">CRM</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span> Dashboard</a>
+      <a class="nav-item active" href="contacts.html">
+        <span class="nav-icon">👥</span> Contacts
+        <span class="nav-badge" id="navCount">—</span>
+      </a>
+      <a class="nav-item" href="#"><span class="nav-icon">💼</span> Deals <span class="nav-badge">6</span></a>
+      <a class="nav-item" href="#"><span class="nav-icon">🏢</span> Companies</a>
+      <a class="nav-item" href="#"><span class="nav-icon">✅</span> Tasks</a>
+      <a class="nav-item" href="#"><span class="nav-icon">📅</span> Calendar</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Communicate</div>
+      <a class="nav-item" href="#"><span class="nav-icon">📧</span> Email</a>
+      <a class="nav-item" href="#"><span class="nav-icon">💬</span> WhatsApp</a>
+      <a class="nav-item" href="#"><span class="nav-icon">⚡</span> Automations</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Insights</div>
+      <a class="nav-item" href="#"><span class="nav-icon">📊</span> Reports</a>
+      <a class="nav-item" href="#"><span class="nav-icon">🏗️</span> Org Setup</a>
+      <a class="nav-item" href="#"><span class="nav-icon">⚙️</span> Settings</a>
+      <a class="nav-item" href="#"><span class="nav-icon">💳</span> Billing</a>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="trial-pill">
+      <div class="tp-label">⏱ 30-Day Free Trial</div>
+      <div class="tp-sub">No card needed · Full access</div>
+      <button class="btn-upgrade">Upgrade Plan</button>
+    </div>
+    <div class="user-card">
+      <div class="avatar" id="sidebarAvatar">AM</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarName">Andrea M. Tanguay</div>
+        <div class="user-role">Administrator</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Contacts</h1>
+      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Contacts</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export</button>
+      <button class="btn btn-ghost" onclick="openModal()">⬆ Import</button>
+      <button class="btn btn-primary" onclick="openModal()">+ Add Contact</button>
+      <div class="icon-btn">🔔<div class="notif-dot"></div></div>
+      <div class="user-card" style="padding:4px 8px;border-radius:8px;">
+        <div class="avatar" style="width:32px;height:32px;font-size:12px;" id="topAvatar">AM</div>
+        <div class="user-info">
+          <div class="user-name" style="font-size:12px;" id="topName">Andrea M. Tanguay</div>
+          <div class="user-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card active-filter" onclick="filterByStatus('all', this)">
+        <div class="stat-icon" style="background:rgba(0,194,209,0.1);">👥</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statTotal">—</div>
+          <div class="stat-lbl">All Contacts</div>
+        </div>
+      </div>
+      <div class="stat-card" onclick="filterByStatus('customer', this)">
+        <div class="stat-icon" style="background:rgba(34,197,94,0.1);">✅</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statCustomer">—</div>
+          <div class="stat-lbl">Customers</div>
+        </div>
+      </div>
+      <div class="stat-card" onclick="filterByStatus('lead', this)">
+        <div class="stat-icon" style="background:rgba(0,194,209,0.1);">🎯</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statLead">—</div>
+          <div class="stat-lbl">Leads</div>
+        </div>
+      </div>
+      <div class="stat-card" onclick="filterByStatus('prospect', this)">
+        <div class="stat-icon" style="background:rgba(212,175,55,0.1);">⭐</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statProspect">—</div>
+          <div class="stat-lbl">Prospects</div>
+        </div>
+      </div>
+      <div class="stat-card" onclick="filterByStatus('inactive', this)">
+        <div class="stat-icon" style="background:rgba(74,85,104,0.2);">💤</div>
+        <div class="stat-info">
+          <div class="stat-val" id="statInactive">—</div>
+          <div class="stat-lbl">Inactive</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search contacts by name, email, company..." />
+      </div>
+      <select class="filter-select" id="islandFilter">
+        <option value="">All Islands</option>
+        <option>Trinidad</option>
+        <option>Barbados</option>
+        <option>Jamaica</option>
+        <option>Antigua</option>
+        <option>St. Lucia</option>
+        <option>Grenada</option>
+        <option>Guyana</option>
+        <option>Belize</option>
+        <option>Bahamas</option>
+        <option>Cayman Islands</option>
+      </select>
+      <select class="filter-select" id="sortSelect">
+        <option value="created_at-desc">Newest First</option>
+        <option value="created_at-asc">Oldest First</option>
+        <option value="full_name-asc">Name A–Z</option>
+        <option value="full_name-desc">Name Z–A</option>
+      </select>
+      <div class="toolbar-right">
+        <button class="filter-btn" id="viewToggle" onclick="toggleView()">⊞ Grid</button>
+      </div>
+    </div>
+
+    <!-- Bulk Actions Bar -->
+    <div class="bulk-bar" id="bulkBar">
+      <span class="bulk-count" id="bulkCount">0 selected</span>
+      <button class="bulk-action" onclick="bulkEmail()">📧 Send Email</button>
+      <button class="bulk-action" onclick="bulkWhatsApp()">💬 WhatsApp</button>
+      <button class="bulk-action" onclick="bulkTag()">🏷 Add Tag</button>
+      <button class="bulk-action" onclick="bulkExport()">⬇ Export</button>
+      <button class="bulk-action danger" onclick="bulkDelete()">🗑 Delete</button>
+      <button class="bulk-action" onclick="clearSelection()" style="margin-left:auto;">✕ Clear</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table class="contacts-table">
+        <thead>
+          <tr>
+            <th style="width:40px;">
+              <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" style="accent-color:var(--cyan);width:15px;height:15px;" />
+            </th>
+            <th onclick="sortBy('full_name')">Name ↕</th>
+            <th onclick="sortBy('email')">Email</th>
+            <th>Phone</th>
+            <th>WhatsApp</th>
+            <th onclick="sortBy('business_name')">Business</th>
+            <th onclick="sortBy('island')">Island</th>
+            <th>Status</th>
+            <th>Added</th>
+            <th style="width:80px;"></th>
+          </tr>
+        </thead>
+        <tbody id="contactsBody">
+          <tr>
+            <td colspan="10">
+              <div class="empty-state">
+                <div class="empty-icon">⏳</div>
+                <h3>Loading contacts...</h3>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination" id="pagination" style="display:none;">
+        <div class="page-info" id="pageInfo"></div>
+        <div class="page-btns" id="pageBtns"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── SLIDE-OUT DETAIL PANEL ── -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="panel-header">
+    <div class="panel-title">Contact Details</div>
+    <div class="panel-close" onclick="closePanel()">✕</div>
+  </div>
+  <div class="panel-body" id="panelBody">
+    <!-- Filled dynamically -->
+  </div>
+  <div class="panel-footer">
+    <button class="btn-save" onclick="saveContact()">Save Changes</button>
+    <button class="btn-delete" onclick="deleteContact()">🗑 Delete</button>
+  </div>
+</div>
+
+<!-- ── ADD CONTACT MODAL ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add New Contact</div>
+      <div class="panel-close" onclick="closeModal()">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="f_name" placeholder="e.g. Jordan Williams" />
+        </div>
+        <div class="form-group">
+          <label>Business Name</label>
+          <input type="text" id="f_business" placeholder="e.g. Sunrise Digital" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="f_email" placeholder="jordan@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" id="f_phone" placeholder="+1 868 555 0000" />
+        </div>
+        <div class="form-group">
+          <label>WhatsApp</label>
+          <input type="tel" id="f_whatsapp" placeholder="+1 868 555 0000" />
+        </div>
+        <div class="form-group">
+          <label>Island</label>
+          <select id="f_island">
+            <option value="">Select island...</option>
+            <option>Trinidad</option>
+            <option>Barbados</option>
+            <option>Jamaica</option>
+            <option>Antigua</option>
+            <option>St. Lucia</option>
+            <option>Grenada</option>
+            <option>Guyana</option>
+            <option>Belize</option>
+            <option>Bahamas</option>
+            <option>Cayman Islands</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <textarea id="f_notes" placeholder="Any notes about this contact..." rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addContact()">Add Contact</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Supabase ──
+  const { createClient } = supabase;
+  const db = createClient(
+    'https://izyuupdmlzcphvdpigrs.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog'
+  );
+
+  // ── State ──
+  let allContacts = [];
+  let filtered = [];
+  let selected = new Set();
+  let currentPage = 1;
+  const PER_PAGE = 15;
+  let currentContact = null;
+  let statusFilter = 'all';
+  let sortField = 'created_at';
+  let sortDir = 'desc';
+  let viewMode = 'table';
+
+  const COLORS = ['#00C2D1','#D4AF37','#22c55e','#ff8c42','#a78bfa','#f472b6','#60a5fa'];
+
+  function getColor(name) {
+    let h = 0;
+    for (let c of (name||'')) h = (h * 31 + c.charCodeAt(0)) % COLORS.length;
+    return COLORS[h];
+  }
+
+  function initials(name) {
+    return (name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+
+  // ── Auth Guard ──
+  (async () => {
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    const user = session.user;
+    const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+    const ini = initials(name);
+    document.getElementById('sidebarName').textContent = name;
+    document.getElementById('topName').textContent = name;
+    document.getElementById('sidebarAvatar').textContent = ini;
+    document.getElementById('topAvatar').textContent = ini;
+    loadContacts();
+  })();
+
+  // ── Load Contacts ──
+  async function loadContacts() {
+    const { data, error } = await db
+      .from('contacts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) { showToast('Failed to load contacts', 'error'); return; }
+
+    allContacts = data || [];
+    updateStats();
+    applyFilters();
+  }
+
+  function updateStats() {
+    const counts = { customer:0, lead:0, prospect:0, inactive:0 };
+    allContacts.forEach(c => { if (counts[c.status] !== undefined) counts[c.status]++; });
+    document.getElementById('statTotal').textContent    = allContacts.length;
+    document.getElementById('statCustomer').textContent = counts.customer;
+    document.getElementById('statLead').textContent     = counts.lead;
+    document.getElementById('statProspect').textContent = counts.prospect;
+    document.getElementById('statInactive').textContent = counts.inactive;
+    document.getElementById('navCount').textContent     = allContacts.length;
+  }
+
+  function applyFilters() {
+    const q      = document.getElementById('searchInput').value.toLowerCase();
+    const island = document.getElementById('islandFilter').value;
+    const sort   = document.getElementById('sortSelect').value.split('-');
+    sortField = sort[0]; sortDir = sort[1];
+
+    filtered = allContacts.filter(c => {
+      const matchStatus = statusFilter === 'all' || c.status === statusFilter;
+      const matchIsland = !island || c.island === island;
+      const matchQ = !q ||
+        (c.full_name||'').toLowerCase().includes(q) ||
+        (c.email||'').toLowerCase().includes(q) ||
+        (c.business_name||'').toLowerCase().includes(q) ||
+        (c.phone||'').includes(q);
+      return matchStatus && matchIsland && matchQ;
+    });
+
+    filtered.sort((a, b) => {
+      const av = (a[sortField]||'').toString().toLowerCase();
+      const bv = (b[sortField]||'').toString().toLowerCase();
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+
+    currentPage = 1;
+    renderTable();
+  }
+
+  function renderTable() {
+    const start = (currentPage - 1) * PER_PAGE;
+    const page  = filtered.slice(start, start + PER_PAGE);
+    const tbody = document.getElementById('contactsBody');
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="10">
+        <div class="empty-state">
+          <div class="empty-icon">👥</div>
+          <h3>No contacts found</h3>
+          <p>Try adjusting your search or filters</p>
+          <button class="btn btn-primary" onclick="openModal()" style="margin:0 auto;">+ Add First Contact</button>
+        </div>
+      </td></tr>`;
+      document.getElementById('pagination').style.display = 'none';
+      return;
+    }
+
+    tbody.innerHTML = page.map(c => {
+      const color = getColor(c.full_name || c.email);
+      const ini   = initials(c.full_name || c.email);
+      const status = c.status || 'lead';
+      const isSelected = selected.has(c.id);
+      return `
+        <tr class="${isSelected ? 'selected' : ''}" onclick="openPanel('${c.id}')">
+          <td onclick="event.stopPropagation()">
+            <input type="checkbox" ${isSelected ? 'checked' : ''}
+              onchange="toggleSelect('${c.id}', this)"
+              style="accent-color:var(--cyan);width:15px;height:15px;" />
+          </td>
+          <td>
+            <div class="contact-cell">
+              <div class="contact-avatar" style="background:${color};">${ini}</div>
+              <div>
+                <div class="contact-name-text">${c.full_name || '—'}</div>
+                <div class="contact-email-text">${c.email || ''}</div>
+              </div>
+            </div>
+          </td>
+          <td>${c.email ? `<a href="mailto:${c.email}" onclick="event.stopPropagation()" style="color:var(--cyan);text-decoration:none;">${c.email}</a>` : '—'}</td>
+          <td>${c.phone || '—'}</td>
+          <td>${c.whatsapp ? `<a href="https://wa.me/${c.whatsapp.replace(/\D/g,'')}" onclick="event.stopPropagation()" target="_blank" style="color:var(--green);text-decoration:none;">💬 ${c.whatsapp}</a>` : '—'}</td>
+          <td>${c.business_name || '—'}</td>
+          <td>${c.island || '—'}</td>
+          <td><span class="status-badge ${status}">● ${status.charAt(0).toUpperCase()+status.slice(1)}</span></td>
+          <td style="color:var(--text3);">${formatDate(c.created_at)}</td>
+          <td onclick="event.stopPropagation()">
+            <div class="action-btns">
+              <div class="action-btn" title="Email" onclick="window.location='mailto:${c.email}'">📧</div>
+              <div class="action-btn" title="WhatsApp" onclick="window.open('https://wa.me/${(c.whatsapp||'').replace(/\D/g,'')}','_blank')">💬</div>
+              <div class="action-btn" title="Edit" onclick="openPanel('${c.id}')">✏️</div>
+            </div>
+          </td>
+        </tr>`;
+    }).join('');
+
+    renderPagination();
+  }
+
+  function renderPagination() {
+    const total = filtered.length;
+    const pages = Math.ceil(total / PER_PAGE);
+    const start = (currentPage - 1) * PER_PAGE + 1;
+    const end   = Math.min(currentPage * PER_PAGE, total);
+
+    document.getElementById('pagination').style.display = 'flex';
+    document.getElementById('pageInfo').textContent = `Showing ${start}–${end} of ${total} contacts`;
+
+    const btns = document.getElementById('pageBtns');
+    let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+    for (let i = 1; i <= pages; i++) {
+      if (pages > 7 && i > 2 && i < pages - 1 && Math.abs(i - currentPage) > 1) {
+        if (i === 3 || i === pages - 2) html += `<span style="color:var(--text3);padding:0 4px;">…</span>`;
+        continue;
+      }
+      html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    }
+    html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>›</button>`;
+    btns.innerHTML = html;
+  }
+
+  function goPage(p) {
+    const pages = Math.ceil(filtered.length / PER_PAGE);
+    if (p < 1 || p > pages) return;
+    currentPage = p;
+    renderTable();
+  }
+
+  // ── Filters ──
+  function filterByStatus(status, el) {
+    statusFilter = status;
+    document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
+    el.classList.add('active-filter');
+    applyFilters();
+  }
+
+  function sortBy(field) {
+    if (sortField === field) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+    else { sortField = field; sortDir = 'asc'; }
+    applyFilters();
+  }
+
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  document.getElementById('islandFilter').addEventListener('change', applyFilters);
+  document.getElementById('sortSelect').addEventListener('change', applyFilters);
+
+  // ── Selection ──
+  function toggleSelect(id, cb) {
+    if (cb.checked) selected.add(id);
+    else selected.delete(id);
+    updateBulkBar();
+    renderTable();
+  }
+
+  function toggleSelectAll(cb) {
+    const page = filtered.slice((currentPage-1)*PER_PAGE, currentPage*PER_PAGE);
+    page.forEach(c => cb.checked ? selected.add(c.id) : selected.delete(c.id));
+    updateBulkBar();
+    renderTable();
+  }
+
+  function clearSelection() {
+    selected.clear();
+    updateBulkBar();
+    renderTable();
+  }
+
+  function updateBulkBar() {
+    const bar = document.getElementById('bulkBar');
+    const count = selected.size;
+    if (count > 0) {
+      bar.classList.add('visible');
+      document.getElementById('bulkCount').textContent = `${count} contact${count>1?'s':''} selected`;
+    } else {
+      bar.classList.remove('visible');
+    }
+  }
+
+  // ── Bulk Actions ──
+  function bulkEmail()    { showToast(`📧 Email composer opening for ${selected.size} contacts`); }
+  function bulkWhatsApp() { showToast(`💬 WhatsApp broadcast for ${selected.size} contacts`); }
+  function bulkTag()      { showToast(`🏷 Tag manager coming soon`); }
+  function bulkExport()   { exportCSV(true); }
+
+  async function bulkDelete() {
+    if (!confirm(`Delete ${selected.size} contact(s)? This cannot be undone.`)) return;
+    const ids = [...selected];
+    const { error } = await db.from('contacts').delete().in('id', ids);
+    if (error) { showToast('Delete failed', 'error'); return; }
+    showToast(`🗑 ${ids.length} contact(s) deleted`, 'success');
+    selected.clear();
+    updateBulkBar();
+    loadContacts();
+  }
+
+  // ── Export CSV ──
+  function exportCSV(selectedOnly = false) {
+    const data = selectedOnly
+      ? allContacts.filter(c => selected.has(c.id))
+      : filtered;
+    const headers = ['full_name','email','phone','whatsapp','business_name','island','status','created_at'];
+    const rows = [headers.join(','), ...data.map(c =>
+      headers.map(h => `"${(c[h]||'').toString().replace(/"/g,'""')}"`).join(',')
+    )];
+    const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `bluwav-contacts-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    showToast(`⬇ Exported ${data.length} contacts`, 'success');
+  }
+
+  // ── View Toggle ──
+  function toggleView() {
+    showToast('Grid view coming soon!');
+  }
+
+  // ── Detail Panel ──
+  function openPanel(id) {
+    currentContact = allContacts.find(c => c.id === id);
+    if (!currentContact) return;
+    const c = currentContact;
+    const color = getColor(c.full_name || c.email);
+    const ini   = initials(c.full_name || c.email);
+    const status = c.status || 'lead';
+
+    document.getElementById('panelBody').innerHTML = `
+      <div class="panel-avatar-row">
+        <div class="panel-avatar" style="background:${color};">${ini}</div>
+        <div>
+          <div class="panel-name">${c.full_name || '—'}</div>
+          <div class="panel-company">${c.business_name || 'No business listed'}</div>
+          <span class="status-badge ${status}" style="margin-top:6px;display:inline-flex;">● ${status.charAt(0).toUpperCase()+status.slice(1)}</span>
+        </div>
+      </div>
+
+      <div class="panel-actions">
+        <button class="panel-action-btn primary" onclick="window.location='mailto:${c.email}'">📧 Email</button>
+        <button class="panel-action-btn" onclick="window.open('https://wa.me/${(c.whatsapp||c.phone||'').replace(/\D/g,'')}','_blank')">💬 WhatsApp</button>
+        <button class="panel-action-btn" onclick="window.location='tel:${c.phone}'">📞 Call</button>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-title">Contact Info</div>
+        <div class="detail-row">
+          <div class="detail-icon">📧</div>
+          <div><div class="detail-label">Email</div>
+          <div class="detail-value"><a href="mailto:${c.email}">${c.email || '—'}</a></div></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-icon">📞</div>
+          <div><div class="detail-label">Phone</div>
+          <div class="detail-value">${c.phone || '—'}</div></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-icon">💬</div>
+          <div><div class="detail-label">WhatsApp</div>
+          <div class="detail-value">${c.whatsapp || '—'}</div></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-icon">🏢</div>
+          <div><div class="detail-label">Business</div>
+          <div class="detail-value">${c.business_name || '—'}</div></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-icon">🌴</div>
+          <div><div class="detail-label">Island</div>
+          <div class="detail-value">${c.island || '—'}</div></div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-icon">📅</div>
+          <div><div class="detail-label">Added</div>
+          <div class="detail-value">${formatDate(c.created_at)}</div></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-title">Status</div>
+        <select id="panelStatus" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;">
+          <option value="lead"     ${status==='lead'?'selected':''}>🎯 Lead</option>
+          <option value="prospect" ${status==='prospect'?'selected':''}>⭐ Prospect</option>
+          <option value="customer" ${status==='customer'?'selected':''}>✅ Customer</option>
+          <option value="inactive" ${status==='inactive'?'selected':''}>💤 Inactive</option>
+        </select>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-title">Notes</div>
+        <textarea class="notes-area" id="panelNotes" placeholder="Add notes about this contact...">${c.notes || ''}</textarea>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-title">Tags</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+          <span class="tag">🌴 Caribbean</span>
+          <span class="tag">💼 SME</span>
+          <span class="tag" style="cursor:pointer;border:1px dashed var(--border);">+ Add tag</span>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('detailPanel').classList.add('open');
+    document.getElementById('panelOverlay').classList.add('open');
+  }
+
+  function closePanel() {
+    document.getElementById('detailPanel').classList.remove('open');
+    document.getElementById('panelOverlay').classList.remove('open');
+    currentContact = null;
+  }
+
+  async function saveContact() {
+    if (!currentContact) return;
+    const status = document.getElementById('panelStatus').value;
+    const notes  = document.getElementById('panelNotes').value;
+    const { error } = await db.from('contacts')
+      .update({ status, notes })
+      .eq('id', currentContact.id);
+    if (error) { showToast('Save failed', 'error'); return; }
+    showToast('✅ Contact saved', 'success');
+    closePanel();
+    loadContacts();
+  }
+
+  async function deleteContact() {
+    if (!currentContact) return;
+    if (!confirm(`Delete ${currentContact.full_name}? This cannot be undone.`)) return;
+    const { error } = await db.from('contacts').delete().eq('id', currentContact.id);
+    if (error) { showToast('Delete failed', 'error'); return; }
+    showToast('🗑 Contact deleted', 'success');
+    closePanel();
+    loadContacts();
+  }
+
+  // ── Add Contact Modal ──
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    ['f_name','f_business','f_email','f_phone','f_whatsapp','f_notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('f_island').value = '';
+  }
+
+  async function addContact() {
+    const name = document.getElementById('f_name').value.trim();
+    if (!name) { showToast('Full name is required', 'error'); return; }
+
+    const { data: { session } } = await db.auth.getSession();
+
+    const contact = {
+      full_name:     name,
+      business_name: document.getElementById('f_business').value.trim() || null,
+      email:         document.getElementById('f_email').value.trim() || null,
+      phone:         document.getElementById('f_phone').value.trim() || null,
+      whatsapp:      document.getElementById('f_whatsapp').value.trim() || null,
+      island:        document.getElementById('f_island').value || null,
+      notes:         document.getElementById('f_notes').value.trim() || null,
+      user_id:       session?.user?.id || null,
+    };
+
+    const { error } = await db.from('contacts').insert([contact]);
+    if (error) { showToast('Failed to add contact: ' + error.message, 'error'); return; }
+
+    showToast(`✅ ${name} added successfully`, 'success');
+    closeModal();
+    loadContacts();
+  }
+
+  // ── Toast ──
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── Keyboard shortcuts ──
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closePanel(); closeModal(); }
+    if (e.key === 'n' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') openModal();
+  });
+</script>
+
+</body>
+</html>
