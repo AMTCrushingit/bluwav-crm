@@ -198,13 +198,24 @@ async function signOut(){await db.auth.signOut();window.location.href='login.htm
   const{data:{session}}=await db.auth.getSession();
   if(!session){window.location.href='login.html';return;}
   currentUser=session.user;
-  const{data:profile}=await db.from('profiles').select('*').eq('id',currentUser.id).single();
+
+  // Get profile — create one if missing
+  let{data:profile,error:profileErr}=await db.from('profiles').select('*').eq('id',currentUser.id).single();
+  if(!profile){
+    // Auto-create profile for users who signed up but have no profile row
+    const autoName=currentUser.user_metadata?.full_name||currentUser.email?.split('@')[0]||'User';
+    const autoRole=currentUser.user_metadata?.role||'salesperson';
+    await db.from('profiles').upsert({id:currentUser.id,full_name:autoName,role:autoRole});
+    profile={full_name:autoName,role:autoRole};
+  }
+
   userRole=profile?.role||'salesperson';
   const name=profile?.full_name||currentUser.email?.split('@')[0]||'User';
   ['sidebarName','topName'].forEach(id=>document.getElementById(id).textContent=name);
   ['sidebarAvatar','topAvatar'].forEach(id=>document.getElementById(id).textContent=ini(name));
   document.getElementById('sidebarRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
   document.getElementById('topRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
+
   const banner=document.getElementById('roleBanner');
   if(userRole==='manager'||userRole==='owner'){
     banner.className='role-banner manager';
@@ -212,10 +223,18 @@ async function signOut(){await db.auth.signOut();window.location.href='login.htm
     document.getElementById('adminNav').style.display='block';
     document.getElementById('ownerFilterRow').style.display='block';
     document.getElementById('ownerCol').style.display='';
+    // Load ALL profiles for owner filter dropdown
     const{data:profiles}=await db.from('profiles').select('*');
     allProfiles=profiles||[];
     const sel=document.getElementById('ownerFilter');
-    allProfiles.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.full_name||p.id;sel.appendChild(o);});
+    // Clear existing options except first
+    while(sel.options.length>1)sel.remove(1);
+    allProfiles.forEach(p=>{
+      const o=document.createElement('option');
+      o.value=p.id;
+      o.textContent=p.full_name||p.id;
+      sel.appendChild(o);
+    });
   } else {
     banner.className='role-banner salesperson';
     banner.innerHTML='💼 Salesperson View — Showing only your contacts';
@@ -224,9 +243,14 @@ async function signOut(){await db.auth.signOut();window.location.href='login.htm
 })();
 
 async function loadContacts(){
+  // RLS handles filtering automatically:
+  // - Managers see ALL contacts (via RLS policy)
+  // - Salespersons see only their own (user_id = auth.uid())
   const{data,error}=await db.from('contacts').select('*').order('created_at',{ascending:false});
   if(error){showToast('Failed to load: '+error.message,'error');return;}
-  allContacts=data||[];updateStats();applyFilters();
+  allContacts=data||[];
+  updateStats();
+  applyFilters();
 }
 
 function updateStats(){
