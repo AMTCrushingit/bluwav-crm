@@ -209,19 +209,36 @@ document.getElementById('signupForm').addEventListener('submit',async(e)=>{
     }
   });
 
-  if(error){showAlert(error.message);btn.disabled=false;btn.innerHTML='Create Account →';return;}
-
-  // Create profile record
-  if(data.user){
-    await db.from('profiles').upsert({
-      id:data.user.id,
-      full_name:`${firstName} ${lastName}`,
-      role
-    });
+  if(error){
+    showAlert(error.message);
+    btn.disabled=false;
+    btn.innerHTML='Create Account →';
+    return;
   }
 
-  showAlert(`✅ Account created! Welcome to BluWav CRM, ${firstName}. Redirecting to login...`,'success');
-  setTimeout(()=>window.location.href='login.html',2500);
+  // Create profile record immediately
+  if(data.user){
+    const{error:profileError}=await db.from('profiles').upsert({
+      id:data.user.id,
+      full_name:`${firstName} ${lastName}`,
+      role:role
+    });
+    if(profileError){
+      console.log('Profile error:',profileError.message);
+    }
+  }
+
+  // Check if email confirmation is required
+  if(data.user && data.session){
+    // No email confirmation needed — log them in directly
+    showAlert(`✅ Account created! Welcome, ${firstName}. Redirecting to dashboard...`,'success');
+    setTimeout(()=>window.location.href='dashboard.html',1500);
+  } else {
+    // Email confirmation required
+    showAlert(`✅ Account created! Check your email (${email}) for a confirmation link, then sign in.`,'success');
+    btn.disabled=false;
+    btn.innerHTML='Create Account →';
+  }
 });
 
 // Check if already logged in
