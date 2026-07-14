@@ -410,12 +410,30 @@ document.getElementById('topDate').textContent=new Date().toLocaleDateString('en
   if(!session){window.location.href='login.html';return;}
   currentUser=session.user;
 
-  // Get profile
-  const{data:profile}=await db.from('profiles').select('*').eq('id',currentUser.id).single();
+  // Get profile — with retry on failure
+  let profile=null;
+  try{
+    const{data:p,error:pe}=await db.from('profiles').select('*').eq('id',currentUser.id).single();
+    if(!pe)profile=p;
+  }catch(e){console.log('Profile fetch error:',e);}
+
+  // If no profile found, create one from auth metadata
+  if(!profile){
+    const meta=currentUser.user_metadata||{};
+    const autoName=meta.full_name||currentUser.email?.split('@')[0]||'User';
+    const autoRole=meta.role||'salesperson';
+    await db.from('profiles').upsert({
+      id:currentUser.id,
+      full_name:autoName,
+      role:autoRole
+    });
+    profile={full_name:autoName,role:autoRole};
+  }
+
   userRole=profile?.role||'salesperson';
   viewingUserId=currentUser.id;
 
-  const name=profile?.full_name||currentUser.email?.split('@')[0]||'User';
+  const name=profile?.full_name||currentUser.user_metadata?.full_name||currentUser.email?.split('@')[0]||'User';
   const hour=new Date().getHours();
   const greet=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
   document.getElementById('greeting').textContent=`${greet}, ${name.split(' ')[0]} 👋`;
