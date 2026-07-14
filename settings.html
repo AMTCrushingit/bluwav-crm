@@ -188,7 +188,7 @@
 <div class="settings-nav-item" onclick="switchSection('integrations',this)"><span class="settings-nav-icon">🔗</span> Integrations</div>
 <div class="settings-nav-item" onclick="switchSection('security',this)"><span class="settings-nav-icon">🔒</span> Security</div>
 <div class="settings-nav-divider"></div>
-<div class="settings-nav-item" onclick="switchSection('danger',this)"><span class="settings-nav-icon">⚠️</span> Danger Zone</div>
+<div class="settings-nav-item" onclick="switchSection('danger',this)" id="dangerNavItem"><span class="settings-nav-icon">⚠️</span> Danger Zone</div>
 </div>
 <!-- Settings Content -->
 <div>
@@ -283,7 +283,7 @@
 <div class="settings-card">
 <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
 <div><div class="card-title">Team (3 members)</div><div class="card-sub">1 of 5 seats remaining on your plan</div></div>
-<button class="btn-save" onclick="showToast('📧 Invite sent!','success')" style="padding:8px 16px;">+ Invite Member</button>
+<button class="btn-save" onclick="openInviteModal()" style="padding:8px 16px;">+ Invite Member</button>
 </div>
 <div class="card-body" style="padding:0;">
 <table class="team-table">
@@ -423,15 +423,45 @@
     if(document.getElementById('firstName'))document.getElementById('firstName').value=parts[0]||'';
     if(document.getElementById('lastName'))document.getElementById('lastName').value=parts.slice(1).join(' ')||'';
     if(document.getElementById('profileEmail'))document.getElementById('profileEmail').value=session.user.email||'';
+
+    // Hide danger zone nav for salespersons
+    if(userRole==='salesperson'){
+      const dangerNav=document.getElementById('dangerNavItem');
+      if(dangerNav)dangerNav.style.display='none';
+    }
+
+    // Show admin nav for managers
+    if(userRole==='manager'||userRole==='owner'){
+      const adminNav=document.getElementById('adminNav');
+      if(adminNav)adminNav.style.display='block';
+    }
   })();
 
   function switchSection(id,el){
+    // Block danger zone for non-managers
+    if(id==='danger' && userRole==='salesperson'){
+      showToast('⚠️ Only managers can access the Danger Zone','error');
+      return;
+    }
     document.querySelectorAll('.settings-nav-item').forEach(i=>i.classList.remove('active'));
     el.classList.add('active');
     document.querySelectorAll('.settings-section').forEach(s=>s.classList.remove('active'));
     document.getElementById('section-'+id).classList.add('active');
   }
 
+  function openInviteModal(){
+    const email = prompt('Enter the email address to invite:');
+    if(!email || !email.includes('@')){
+      if(email !== null) showToast('Please enter a valid email address','error');
+      return;
+    }
+    const role = prompt('Select role (manager or salesperson):','salesperson');
+    if(!role){return;}
+    const validRole = ['manager','salesperson'].includes(role.toLowerCase()) ? role.toLowerCase() : 'salesperson';
+    showToast(`📧 Invite sent to ${email} as ${validRole}`,'success');
+  }
+
+  let userRole='salesperson';
   function saveSettings(section){
     showToast(`✅ ${section} settings saved`,'success');
   }
