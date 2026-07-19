@@ -142,9 +142,9 @@
 <div class="panel-close" onclick="closePanel()">✕</div>
 </div>
 <div class="panel-tabs">
-<div class="panel-tab active" onclick="switchTab('overview',this)">Overview</div>
-<div class="panel-tab" onclick="switchTab('activity',this)">Activity</div>
-<div class="panel-tab" onclick="switchTab('notes',this)">Notes</div>
+<div class="panel-tab active" onclick="switchTab(&quot;overview&quot;,this)">Overview</div>
+<div class="panel-tab" onclick="switchTab(&quot;activity&quot;,this)">Activity</div>
+<div class="panel-tab" onclick="switchTab(&quot;notes&quot;,this)">Notes</div>
 </div>
 <div class="panel-body" id="panelBody"></div>
 <div class="panel-footer" id="panelFooter" style="display:none;">
@@ -303,8 +303,8 @@ function renderTable(){
       ${ownerCell}
       <td style="color:var(--text3);">${fmtDate(c.created_at)}</td>
       <td onclick="event.stopPropagation()"><div class="action-btns">
-        ${c.email?`<div class="action-btn" title="Email" onclick="window.location.href='mailto:${c.email}'">📧</div>`:''}
-        ${waNum?`<div class="action-btn" title="WhatsApp" onclick="window.open('https://wa.me/${waNum}','_blank')">💬</div>`:''}
+        ${c.email?`<div class="action-btn" title="Email" onclick="emailContact('${c.email}')">📧</div>`:''}
+        ${waNum?`<div class="action-btn" title="WhatsApp" onclick="waContact('${waNum}')">💬</div>`:''}
         <div class="action-btn" title="Edit" onclick="openPanel('${c.id}')">✏️</div>
       </div></td>
     </tr>`;
@@ -401,9 +401,9 @@ function renderPanelTab(){
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:16px;">
-      ${c.email?`<button onclick="window.location.href='mailto:${c.email}'" style="flex:1;padding:9px;border-radius:9px;background:var(--cyan);border:none;color:#0a0e1a;font-size:12px;font-weight:700;cursor:pointer;">📧 Email</button>`:''}
-      ${waNum?`<button onclick="window.open('https://wa.me/${waNum}','_blank')" style="flex:1;padding:9px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;">💬 WhatsApp</button>`:''}
-      ${c.phone?`<button onclick="window.location.href='tel:${c.phone}'" style="flex:1;padding:9px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;">📞 Call</button>`:''}
+      ${c.email?`<button onclick="emailContact('${c.email}')" style="flex:1;padding:9px;border-radius:9px;background:var(--cyan);border:none;color:#0a0e1a;font-size:12px;font-weight:700;cursor:pointer;">📧 Email</button>`:''}
+      ${waNum?`<button onclick="waContact('${waNum}')" style="flex:1;padding:9px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;">💬 WhatsApp</button>`:''}
+      ${c.phone?`<button onclick="callContact('${c.phone}')" style="flex:1;padding:9px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;">📞 Call</button>`:''}
     </div>
   </div>`;
 
@@ -436,15 +436,15 @@ function renderPanelTab(){
     document.getElementById('panelBody').innerHTML=header+`<div style="padding:0 24px 24px;">
       <div class="log-activity-box">
         <div class="log-type-row">
-          <button class="log-type-btn ${logType==='note'?'active':''}" onclick="setLogType('note',this)">📝 Note</button>
-          <button class="log-type-btn ${logType==='call'?'active':''}" onclick="setLogType('call',this)">📞 Call</button>
-          <button class="log-type-btn ${logType==='email'?'active':''}" onclick="setLogType('email',this)">📧 Email</button>
-          <button class="log-type-btn ${logType==='whatsapp'?'active':''}" onclick="setLogType('whatsapp',this)">💬 WhatsApp</button>
+          <button class="log-type-btn ${logType==='note'?'active':''}" onclick="setLogType(&quot;note&quot;,this)">📝 Note</button>
+          <button class="log-type-btn ${logType==='call'?'active':''}" onclick="setLogType(&quot;call&quot;,this)">📞 Call</button>
+          <button class="log-type-btn ${logType==='email'?'active':''}" onclick="setLogType(&quot;email&quot;,this)">📧 Email</button>
+          <button class="log-type-btn ${logType==='whatsapp'?'active':''}" onclick="setLogType(&quot;whatsapp&quot;,this)">💬 WhatsApp</button>
         </div>
         <textarea class="log-input" id="logInput" placeholder="Write a note..."></textarea>
         <div class="log-footer-row">
           <div class="log-meta">📅 ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
-          <button class="btn-log" onclick="logActivity()">Log ${logType.charAt(0).toUpperCase()+logType.slice(1)}</button>
+          <button class="btn-log" onclick="logActivity()">Log Activity</button>
         </div>
       </div>
       <div class="timeline">${tlHTML}</div>
@@ -521,6 +521,17 @@ async function addContact(){
   showToast(`✅ ${name} added successfully`,'success');closeModal();loadContacts();
 }
 
+
+// ── Safe contact action helpers ──
+function emailContact(email){
+  if(email) window.location.href='mailto:'+email;
+}
+function waContact(num){
+  if(num) window.open('https://wa.me/'+num,'_blank');
+}
+function callContact(phone){
+  if(phone) window.location.href='tel:'+phone;
+}
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){closePanel();closeModal();}
   if(e.key==='n'&&!e.ctrlKey&&!e.metaKey&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName))openModal();
