@@ -431,7 +431,9 @@ document.getElementById('topDate').textContent=new Date().toLocaleDateString('en
   }
 
   userRole=profile?.role||'salesperson';
-  viewingUserId=currentUser.id;
+  // Managers default to seeing ALL contacts (null = no filter)
+  // Salespersons see only their own (set to their ID)
+  viewingUserId=(userRole==='manager'||userRole==='owner') ? null : currentUser.id;
 
   const name=profile?.full_name||currentUser.user_metadata?.full_name||currentUser.email?.split('@')[0]||'User';
   const hour=new Date().getHours();
@@ -490,6 +492,7 @@ async function loadTeam(myName){
 }
 
 function switchRep(userId,btn){
+  // null or 'all' means show all team contacts
   viewingUserId=userId;
   document.querySelectorAll('.rep-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -498,8 +501,13 @@ function switchRep(userId,btn){
 
 async function loadData(){
   // Load contacts
+  // Manager with no specific rep selected (viewingUserId=null) sees ALL contacts
+  // Manager with rep selected sees that rep's contacts
+  // Salesperson always sees only their own (RLS handles this)
   let cq=db.from('contacts').select('*',{count:'exact'}).order('created_at',{ascending:false});
-  if(viewingUserId)cq=cq.eq('user_id',viewingUserId);
+  if(viewingUserId && viewingUserId !== 'all'){
+    cq=cq.eq('user_id',viewingUserId);
+  }
   const{data:contacts,count:cCount}=await cq;
   allContacts=contacts||[];
   document.getElementById('metricContacts').textContent=cCount||0;
