@@ -290,7 +290,7 @@ function renderTable(){
   const isManager=userRole==='manager'||userRole==='owner';
   if(!filtered.length){tbody.innerHTML=`<tr><td colspan="${isManager?10:9}" style="text-align:center;padding:60px;color:var(--text3);">No contacts found — <span style="color:var(--cyan);cursor:pointer;" onclick="openModal()">Add first contact</span></td></tr>`;document.getElementById('pagination').style.display='none';return;}
   tbody.innerHTML=page.map(c=>{
-    const color=getColor(c.full_name||c.email),isSel=selected.has(c.id),waNum=(c.whatsapp||'').replace(/\D/g,'');
+    const color=getColor(c.full_name||c.email),isSel=selected.has(c.id),waNum=(c.whatsapp||c.phone||'').replace(/\D/g,'');
     const ownerCell=isManager?`<td><span class="owner-badge">${ini(getOwnerName(c.user_id))} ${getOwnerName(c.user_id).split(' ')[0]}</span></td>`:'';
     return`<tr class="${isSel?'selected':''}" onclick="openPanel('${c.id}')">
       <td onclick="event.stopPropagation()"><input type="checkbox" ${isSel?'checked':''} onchange="toggleSelect('${c.id}',this)" style="accent-color:var(--cyan);width:15px;height:15px;"/></td>
@@ -527,7 +527,10 @@ function emailContact(email){
   if(email) window.location.href='mailto:'+email;
 }
 function waContact(num){
-  if(num) window.open('https://wa.me/'+num,'_blank');
+  if(num){
+    const clean=num.replace(/[^0-9]/g,'');
+    window.open('https://wa.me/'+clean,'_blank');
+  }
 }
 function callContact(phone){
   if(phone) window.location.href='tel:'+phone;
