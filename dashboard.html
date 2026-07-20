@@ -500,12 +500,9 @@ function switchRep(userId,btn){
 }
 
 async function loadData(){
-  // Load contacts
-  // Manager with no specific rep selected (viewingUserId=null) sees ALL contacts
-  // Manager with rep selected sees that rep's contacts
-  // Salesperson always sees only their own (RLS handles this)
+  // Load contacts - RLS handles filtering automatically
   let cq=db.from('contacts').select('*',{count:'exact'}).order('created_at',{ascending:false});
-  if(viewingUserId && viewingUserId !== 'all'){
+  if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
     cq=cq.eq('user_id',viewingUserId);
   }
   const{data:contacts,count:cCount}=await cq;
@@ -513,17 +510,26 @@ async function loadData(){
   document.getElementById('metricContacts').textContent=cCount||0;
   document.getElementById('navContacts').textContent=cCount||0;
 
-  // Load deals (mock for now since deals table may not exist)
-  const mockDeals=[
-    {id:'1',title:'Website Redesign',contact_name:'Sunrise Digital',value:4500,stage:'lead',user_id:currentUser.id},
-    {id:'2',title:'CRM Setup',contact_name:'Island Realty',value:8000,stage:'qualified',user_id:currentUser.id},
-    {id:'3',title:'Annual Retainer',contact_name:'BluSky Logistics',value:24000,stage:'proposal',user_id:currentUser.id},
-    {id:'4',title:'E-Commerce Store',contact_name:'Mango & Co.',value:7100,stage:'won',user_id:currentUser.id},
-  ];
-  allDeals=mockDeals;
-  const openDeals=allDeals.filter(d=>!['won','lost'].includes(d.stage));
-  const wonDeals=allDeals.filter(d=>d.stage==='won');
-  const pipelineVal=openDeals.reduce((s,d)=>s+(d.value||0),0);
+  // Load REAL deals from Supabase
+  let dq=db.from('deals').select('*').order('created_at',{ascending:false});
+  if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
+    dq=dq.eq('agent_id',viewingUserId);
+  } else if(userRole==='salesperson'){
+    dq=dq.eq('agent_id',currentUser.id);
+  }
+  const{data:dealsData}=await dq;
+  allDeals=(dealsData||[]).map(d=>({
+    ...d,
+    deal_name: d.deal_name||d.title||'Untitled Deal',
+    deal_value: d.deal_value||d.value||0,
+    deal_type: d.deal_type||'Ripple',
+    stage: d.stage||'Lead',
+    agent_id: d.agent_id||d.created_by||null,
+  }));
+
+  const openDeals=allDeals.filter(d=>!['Won','Lost'].includes(d.stage));
+  const wonDeals=allDeals.filter(d=>d.stage==='Won');
+  const pipelineVal=openDeals.reduce((s,d)=>s+(d.deal_value||0),0);
   document.getElementById('metricDeals').textContent=openDeals.length;
   document.getElementById('metricValue').textContent='$'+pipelineVal.toLocaleString();
   document.getElementById('metricWon').textContent=wonDeals.length;
@@ -533,19 +539,27 @@ async function loadData(){
   renderRecentContacts();
 }
 
+function getContactName(id){
+  if(!id)return '—';
+  const c=allContacts.find(x=>x.id===id);
+  return c?c.full_name:'—';
+}
+
 function renderPipeline(){
-  const stages=['lead','qualified','proposal','won'];
+  const stages=['Lead','Qualified','Proposal','Won'];
   stages.forEach(stage=>{
     const deals=allDeals.filter(d=>d.stage===stage);
-    document.getElementById('col'+stage.charAt(0).toUpperCase()+stage.slice(1)).textContent=deals.length;
-    document.getElementById('deals'+stage.charAt(0).toUpperCase()+stage.slice(1)).innerHTML=
+    const colEl=document.getElementById('col'+stage);
+    const dealsEl=document.getElementById('deals'+stage);
+    if(colEl)colEl.textContent=deals.length;
+    if(dealsEl)dealsEl.innerHTML=
       deals.slice(0,2).map(d=>`
         <div class="deal-card" onclick="window.location.href='deals.html'">
-          <div class="deal-title">${d.title}</div>
-          <div class="deal-company">${d.contact_name||'—'}</div>
+          <div class="deal-title">${d.deal_name||d.title||'Untitled'}</div>
+          <div class="deal-company">${getContactName(d.contact_id)||'—'}</div>
           <div class="deal-footer">
-            <span class="deal-value">$${(d.value||0).toLocaleString()}</span>
-            <span class="deal-date">${stage==='won'?'✓ Won':'Active'}</span>
+            <span class="deal-value">$${(d.deal_value||d.value||0).toLocaleString()}</span>
+            <span class="deal-date">${stage==='Won'?'✓ Won':'Active'}</span>
           </div>
         </div>`).join('')||`<div style="text-align:center;padding:12px;color:var(--text3);font-size:12px;">No deals</div>`;
   });
