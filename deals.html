@@ -47,26 +47,19 @@
     .btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
     .btn-ghost:hover{background:var(--bg4);color:var(--text);}
     .btn-primary{background:var(--cyan);color:#0a0e1a;}
-    .btn-primary:hover{background:#00d4e4;box-shadow:0 4px 16px rgba(0,194,209,0.3);}
+    .btn-primary:hover{background:#00d4e4;}
     .icon-btn{width:36px;height:36px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative;}
     .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--orange);border-radius:50%;border:1px solid var(--bg2);}
     .content{padding:24px 28px;flex:1;}
-
-    /* STATS */
     .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
     .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.15s;}
     .stat-card:hover{border-color:rgba(0,194,209,0.2);}
     .stat-card.active-filter{border-color:var(--cyan);background:rgba(0,194,209,0.05);}
     .stat-val{font-size:22px;font-weight:800;color:var(--text);}
     .stat-lbl{font-size:11px;color:var(--text3);margin-top:2px;}
-    .stat-sub{font-size:11px;color:var(--text3);margin-top:2px;}
-
-    /* VIEW TOGGLE */
     .view-toggle{display:flex;gap:0;background:var(--bg3);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
     .view-btn{padding:7px 14px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;transition:all 0.15s;}
     .view-btn.active{background:var(--cyan);color:#0a0e1a;}
-
-    /* TOOLBAR */
     .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
     .search-box{flex:1;min-width:200px;max-width:300px;position:relative;}
     .search-box input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:9px 14px 9px 36px;color:var(--text);font-size:13px;outline:none;transition:border-color 0.2s;}
@@ -74,17 +67,15 @@
     .search-box input::placeholder{color:var(--text3);}
     .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;}
     .filter-select{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text2);font-size:13px;cursor:pointer;outline:none;}
-    .filter-select:focus{border-color:var(--cyan);}
     .filter-select option{background:var(--bg3);}
-
-    /* KANBAN */
     .kanban-board{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;overflow-x:auto;padding-bottom:16px;}
-    .kanban-col{background:var(--bg2);border:1px solid var(--border);border-radius:12px;min-width:200px;display:flex;flex-direction:column;}
-    .kanban-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .kanban-col{background:var(--bg2);border:1px solid var(--border);border-radius:12px;min-width:190px;display:flex;flex-direction:column;}
+    .kanban-header{padding:12px 14px;border-bottom:1px solid var(--border);}
     .kanban-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+    .kanban-meta{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
     .kanban-count{font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;background:var(--bg3);color:var(--text3);}
-    .kanban-value{font-size:11px;color:var(--text3);margin-top:2px;}
-    .kanban-cards{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:100px;flex:1;}
+    .kanban-value{font-size:11px;color:var(--text3);}
+    .kanban-cards{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:80px;flex:1;}
     .deal-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all 0.15s;}
     .deal-card:hover{border-color:rgba(0,194,209,0.3);transform:translateY(-1px);}
     .deal-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
@@ -92,12 +83,10 @@
     .deal-card-footer{display:flex;align-items:center;justify-content:space-between;}
     .deal-card-value{font-size:13px;font-weight:700;color:var(--cyan);}
     .deal-type-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;}
-
-    /* LIST VIEW */
     .table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
     .deals-table{width:100%;border-collapse:collapse;}
     .deals-table thead tr{border-bottom:1px solid var(--border);}
-    .deals-table th{text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;cursor:pointer;user-select:none;}
+    .deals-table th{text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:12px 16px;cursor:pointer;}
     .deals-table th:hover{color:var(--text2);}
     .deals-table td{padding:12px 16px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:middle;}
     .deals-table tr:last-child td{border-bottom:none;}
@@ -107,24 +96,14 @@
     .action-btns{display:flex;gap:6px;opacity:0;transition:opacity 0.15s;}
     .action-btn{width:28px;height:28px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;}
     .action-btn:hover{background:var(--bg4);}
-
-    /* STAGE BADGES */
-    .stage-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;}
+    .stage-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;}
     .stage-Lead{background:rgba(100,116,139,0.15);color:#94a3b8;}
     .stage-Qualified{background:rgba(0,194,209,0.1);color:var(--cyan);}
     .stage-Proposal{background:rgba(245,158,11,0.1);color:#f59e0b;}
     .stage-Negotiation{background:rgba(249,115,22,0.1);color:var(--orange);}
     .stage-Won{background:rgba(34,197,94,0.1);color:var(--green);}
     .stage-Lost{background:rgba(239,68,68,0.1);color:var(--red);}
-
-    /* TYPE BADGES */
-    .type-Ripple{background:rgba(0,194,209,0.1);color:var(--cyan);}
-    .type-Current{background:rgba(249,115,22,0.1);color:var(--orange);}
-    .type-Surge{background:rgba(167,139,250,0.1);color:var(--purple);}
-    .type-CRM{background:rgba(212,175,55,0.1);color:var(--gold);}
-
-    /* COMMISSION BAR */
-    .comm-bar{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+    .comm-bar{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
     .comm-item{text-align:center;}
     .comm-val{font-size:20px;font-weight:800;color:var(--green);}
     .comm-lbl{font-size:11px;color:var(--text3);}
@@ -132,8 +111,6 @@
     .unlock-label{font-size:12px;color:var(--text2);margin-bottom:6px;display:flex;justify-content:space-between;}
     .unlock-progress{height:8px;background:var(--bg3);border-radius:8px;overflow:hidden;}
     .unlock-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));border-radius:8px;transition:width 0.5s;}
-
-    /* MODAL */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;display:none;align-items:center;justify-content:center;}
     .modal-overlay.open{display:flex;}
     .modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
@@ -150,8 +127,6 @@
     .form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3);}
     .form-group select option{background:var(--bg3);}
     .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
-
-    /* DETAIL PANEL */
     .panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;opacity:0;pointer-events:none;transition:opacity 0.25s;}
     .panel-overlay.open{opacity:1;pointer-events:all;}
     .detail-panel{position:fixed;top:0;right:-500px;bottom:0;width:500px;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transition:right 0.3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;overflow:hidden;}
@@ -169,24 +144,17 @@
     .detail-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
     .detail-label{font-size:11px;color:var(--text3);margin-bottom:2px;}
     .detail-value{font-size:13px;color:var(--text);font-weight:500;}
-
-    /* STAGE PROGRESS */
-    .stage-progress{display:flex;gap:0;margin-bottom:20px;overflow:hidden;border-radius:10px;}
-    .stage-step{flex:1;padding:8px 4px;text-align:center;font-size:10px;font-weight:700;cursor:pointer;transition:all 0.15s;border-right:1px solid var(--bg);}
-    .stage-step:last-child{border-right:none;}
+    .stage-steps{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap;}
+    .stage-step{flex:1;min-width:60px;padding:8px 4px;text-align:center;font-size:10px;font-weight:700;cursor:pointer;transition:all 0.15s;border-radius:6px;}
     .stage-step.done{background:rgba(34,197,94,0.15);color:var(--green);}
     .stage-step.current{background:var(--cyan);color:#0a0e1a;}
     .stage-step.future{background:var(--bg3);color:var(--text3);}
-    .stage-step.lost{background:rgba(239,68,68,0.15);color:var(--red);}
-
-    /* TOAST */
+    .stage-step.lost-step{background:rgba(239,68,68,0.15);color:var(--red);}
     .toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;color:var(--text);z-index:500;transform:translateY(80px);opacity:0;transition:all 0.3s;}
     .toast.show{transform:translateY(0);opacity:1;}
     .toast.success{border-color:rgba(34,197,94,0.3);}
     .toast.error{border-color:rgba(239,68,68,0.3);}
-
     ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:5px;}
-    @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0!important;}.kanban-board{grid-template-columns:repeat(3,minmax(180px,1fr));}.stats-row{grid-template-columns:repeat(3,1fr);}}
   </style>
 </head>
 <body>
@@ -232,8 +200,8 @@
 <div class="topbar-left"><h1>Deals &amp; Pipeline</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Deals</div></div>
 <div class="topbar-right">
 <div class="view-toggle">
-<button class="view-btn active" id="btnKanban" onclick="setView('kanban',this)">⊞ Kanban</button>
-<button class="view-btn" id="btnList" onclick="setView('list',this)">☰ List</button>
+<button class="view-btn active" onclick="setView('kanban',this)">⊞ Kanban</button>
+<button class="view-btn" onclick="setView('list',this)">☰ List</button>
 </div>
 <button class="btn btn-ghost" onclick="exportDeals()">⬇ Export</button>
 <button class="btn btn-primary" onclick="openModal()">+ New Deal</button>
@@ -247,40 +215,22 @@
 <div class="content">
 <!-- COMMISSION BAR -->
 <div class="comm-bar">
-<div class="comm-item"><div class="comm-val" id="commTotal">$0</div><div class="comm-lbl">My Commission (MTD)</div></div>
-<div class="comm-item"><div class="comm-val" id="commPending" style="color:var(--orange);">$0</div><div class="comm-lbl">Pending Payout</div></div>
+<div class="comm-item"><div class="comm-val" id="commTotal">$0</div><div class="comm-lbl">Commission (MTD)</div></div>
 <div class="comm-item"><div class="comm-val" id="dealsWonCount" style="color:var(--gold);">0</div><div class="comm-lbl">Deals Won (MTD)</div></div>
+<div class="comm-item"><div class="comm-val" id="pipelineVal" style="color:var(--cyan);">$0</div><div class="comm-lbl">Pipeline Value</div></div>
 <div class="unlock-bar">
-<div class="unlock-label">
-<span>CRM Client Unlock Progress</span>
-<span id="unlockCount">0/3 CRM clients</span>
-</div>
+<div class="unlock-label"><span>CRM Unlock Progress</span><span id="unlockCount">0/3</span></div>
 <div class="unlock-progress"><div class="unlock-fill" id="unlockFill" style="width:0%;"></div></div>
-<div id="unlockStatus" style="font-size:11px;color:var(--text3);margin-top:4px;">Unlock 25% commission uplift at 3 active CRM clients</div>
+<div id="unlockStatus" style="font-size:11px;color:var(--text3);margin-top:4px;">3 CRM clients unlocks 25% commission rate</div>
 </div>
 </div>
 <!-- STATS -->
 <div class="stats-row">
-<div class="stat-card active-filter" onclick="filterStage('all',this)">
-<div class="stat-val" id="statAll">0</div>
-<div class="stat-lbl">All Deals</div>
-</div>
-<div class="stat-card" onclick="filterStage('Lead',this)">
-<div class="stat-val" id="statLead" style="color:#94a3b8;">0</div>
-<div class="stat-lbl">Lead</div>
-</div>
-<div class="stat-card" onclick="filterStage('Qualified',this)">
-<div class="stat-val" id="statQualified" style="color:var(--cyan);">0</div>
-<div class="stat-lbl">Qualified</div>
-</div>
-<div class="stat-card" onclick="filterStage('Won',this)">
-<div class="stat-val" id="statWon" style="color:var(--green);">0</div>
-<div class="stat-lbl">Won</div>
-</div>
-<div class="stat-card" onclick="filterStage('Lost',this)">
-<div class="stat-val" id="statLost" style="color:var(--red);">0</div>
-<div class="stat-lbl">Lost</div>
-</div>
+<div class="stat-card active-filter" onclick="filterStage('all',this)"><div class="stat-val" id="statAll">0</div><div class="stat-lbl">All Deals</div></div>
+<div class="stat-card" onclick="filterStage('Lead',this)"><div class="stat-val" id="statLead" style="color:#94a3b8;">0</div><div class="stat-lbl">Lead</div></div>
+<div class="stat-card" onclick="filterStage('Qualified',this)"><div class="stat-val" id="statQualified" style="color:var(--cyan);">0</div><div class="stat-lbl">Qualified</div></div>
+<div class="stat-card" onclick="filterStage('Won',this)"><div class="stat-val" id="statWon" style="color:var(--green);">0</div><div class="stat-lbl">Won</div></div>
+<div class="stat-card" onclick="filterStage('Lost',this)"><div class="stat-val" id="statLost" style="color:var(--red);">0</div><div class="stat-lbl">Lost</div></div>
 </div>
 <!-- TOOLBAR -->
 <div class="toolbar">
@@ -294,34 +244,16 @@
 <option value="CRM Premium">🖤 CRM Premium</option>
 <option value="White-Label">⚡ White-Label</option>
 </select>
-<select class="filter-select" id="agentFilter" style="display:none;">
-<option value="">All Agents</option>
-</select>
+<select class="filter-select" id="agentFilter" style="display:none;"><option value="">All Agents</option></select>
 </div>
-<!-- KANBAN VIEW -->
-<div id="kanbanView">
-<div class="kanban-board" id="kanbanBoard"></div>
-</div>
-<!-- LIST VIEW -->
+<!-- KANBAN -->
+<div id="kanbanView"><div class="kanban-board" id="kanbanBoard"></div></div>
+<!-- LIST -->
 <div id="listView" style="display:none;">
 <div class="table-wrap">
 <table class="deals-table">
-<thead>
-<tr>
-<th>Deal</th>
-<th>Contact</th>
-<th>Type</th>
-<th>Value</th>
-<th>Commission</th>
-<th>Stage</th>
-<th>Agent</th>
-<th>Created</th>
-<th style="width:80px;"></th>
-</tr>
-</thead>
-<tbody id="dealsTableBody">
-<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3);">⏳ Loading deals...</td></tr>
-</tbody>
+<thead><tr><th>Deal</th><th>Contact</th><th>Type</th><th>Value</th><th>Commission</th><th>Stage</th><th>Agent</th><th>Created</th><th style="width:80px;"></th></tr></thead>
+<tbody id="dealsTableBody"><tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3);">⏳ Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -330,10 +262,7 @@
 <!-- DETAIL PANEL -->
 <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
 <div class="detail-panel" id="detailPanel">
-<div class="panel-header">
-<div class="panel-title" id="panelTitle">Deal Details</div>
-<div class="panel-close" onclick="closePanel()">✕</div>
-</div>
+<div class="panel-header"><div class="panel-title" id="panelTitle">Deal Details</div><div class="panel-close" onclick="closePanel()">✕</div></div>
 <div class="panel-body" id="panelBody"></div>
 <div class="panel-footer">
 <button class="btn-save" onclick="saveDeal()">Save Changes</button>
@@ -347,11 +276,9 @@
 <div class="modal-body">
 <div class="form-grid">
 <div class="form-group full"><label>Deal Name *</label><input id="f_name" placeholder="e.g. Website for Island Bites" type="text"/></div>
-<div class="form-group"><label>Contact *</label>
-<select id="f_contact"><option value="">Select contact...</option></select>
-</div>
+<div class="form-group"><label>Contact</label><select id="f_contact"><option value="">Select contact...</option></select></div>
 <div class="form-group"><label>Deal Type *</label>
-<select id="f_type">
+<select id="f_type" onchange="autoFillValue(this.value)">
 <option value="Ripple">🌊 Ripple ($1,200)</option>
 <option value="Current">⚡ Current ($2,500)</option>
 <option value="Surge">🚀 Surge ($4,500+)</option>
@@ -371,11 +298,8 @@
 <option value="Lost">Lost</option>
 </select>
 </div>
-<div class="form-group"><label>Is CRM Client Deal?</label>
-<select id="f_crm">
-<option value="false">No</option>
-<option value="true">Yes — CRM subscription</option>
-</select>
+<div class="form-group"><label>CRM Client Deal?</label>
+<select id="f_crm"><option value="false">No</option><option value="true">Yes — CRM subscription</option></select>
 </div>
 <div class="form-group full"><label>Notes</label><textarea id="f_notes" placeholder="Deal notes..." rows="2"></textarea></div>
 </div>
@@ -391,11 +315,11 @@
 const{createClient}=supabase;
 const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
 
-// Commission rates from Copilot (real)
-const COMMISSION_RATES={Ripple:0.20,Current:0.20,Surge:0.20,'CRM Lite':0.20,'CRM Premium':0.20,'White-Label':0.20};
-const COMMISSION_UNLOCKED=0.25; // 25% after 3 CRM clients
+// Real commission rates
+const RATES={Ripple:0.20,Current:0.20,Surge:0.20,'CRM Lite':0.20,'CRM Premium':0.20,'White-Label':0.20};
+const RATES_UNLOCKED=0.25;
 const UNLOCK_THRESHOLD=3;
-
+const DEFAULT_VALUES={Ripple:1200,Current:2500,Surge:4500,'CRM Lite':99,'CRM Premium':179,'White-Label':697};
 const STAGES=['Lead','Qualified','Proposal','Negotiation','Won','Lost'];
 const STAGE_COLORS={Lead:'#94a3b8',Qualified:'#00C2D1',Proposal:'#f59e0b',Negotiation:'#ff8c42',Won:'#22c55e',Lost:'#ef4444'};
 const TYPE_COLORS={Ripple:'#00C2D1',Current:'#ff8c42',Surge:'#a78bfa','CRM Lite':'#D4AF37','CRM Premium':'#D4AF37','White-Label':'#a78bfa'};
@@ -404,78 +328,67 @@ const TYPE_EMOJI={Ripple:'🌊',Current:'⚡',Surge:'🚀','CRM Lite':'💼','CR
 let currentUser=null,userRole='salesperson',allDeals=[],allContacts=[],allProfiles=[],filtered=[],currentDeal=null,viewMode='kanban',stageFilter='all';
 
 function ini(n){return(n||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);}
-function fmt$(v){return'$'+Number(v).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function fmt$(v){return'$'+Number(v||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
 function fmtDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
-function calcCommission(deal,unlocked){const rate=unlocked?COMMISSION_UNLOCKED:(COMMISSION_RATES[deal.deal_type]||0.20);return(deal.deal_value||0)*rate;}
+function calcComm(deal,unlocked){const rate=unlocked?RATES_UNLOCKED:(RATES[deal.deal_type]||0.20);return(deal.deal_value||0)*rate;}
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
 async function signOut(){await db.auth.signOut();window.location.href='login.html';}
+function autoFillValue(type){document.getElementById('f_value').value=DEFAULT_VALUES[type]||'';}
 
-// AUTH
 (async()=>{
   const{data:{session}}=await db.auth.getSession();
   if(!session){window.location.href='login.html';return;}
   currentUser=session.user;
-
   let profile=null;
   try{const{data:p}=await db.from('profiles').select('*').eq('id',currentUser.id).single();profile=p;}catch(e){}
-  if(!profile){
-    const meta=currentUser.user_metadata||{};
-    profile={full_name:meta.full_name||currentUser.email?.split('@')[0]||'User',role:meta.role||'salesperson'};
-  }
-
+  if(!profile){const meta=currentUser.user_metadata||{};profile={full_name:meta.full_name||currentUser.email?.split('@')[0]||'User',role:meta.role||'salesperson'};}
   userRole=profile?.role||'salesperson';
   const name=profile?.full_name||currentUser.email?.split('@')[0]||'User';
   ['sidebarName','topName'].forEach(id=>document.getElementById(id).textContent=name);
   ['sidebarAvatar','topAvatar'].forEach(id=>document.getElementById(id).textContent=ini(name));
   document.getElementById('sidebarRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
   document.getElementById('topRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
-
-  if(userRole==='manager'||userRole==='owner'){
-    document.getElementById('adminNav').style.display='block';
-    document.getElementById('agentFilter').style.display='block';
-  }
-
+  if(userRole==='manager'||userRole==='owner'){document.getElementById('adminNav').style.display='block';document.getElementById('agentFilter').style.display='block';}
   await loadData();
 })();
 
 async function loadData(){
-  // Load contacts for dropdown
+  // Load contacts
   const{data:contacts}=await db.from('contacts').select('id,full_name,business_name').order('full_name');
   allContacts=contacts||[];
-
-  // Populate contact dropdown
   const sel=document.getElementById('f_contact');
-  allContacts.forEach(c=>{
-    const o=document.createElement('option');
-    o.value=c.id;
-    o.textContent=`${c.full_name}${c.business_name?' — '+c.business_name:''}`;
-    sel.appendChild(o);
-  });
+  allContacts.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.full_name}${c.business_name?' — '+c.business_name:''}`;sel.appendChild(o);});
 
-  // Load profiles for agent filter
+  // Load profiles
   const{data:profiles}=await db.from('profiles').select('*');
   allProfiles=profiles||[];
-  const agentSel=document.getElementById('agentFilter');
-  allProfiles.forEach(p=>{
-    const o=document.createElement('option');
-    o.value=p.id;
-    o.textContent=p.full_name||p.id;
-    agentSel.appendChild(o);
-  });
+  const agSel=document.getElementById('agentFilter');
+  allProfiles.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.full_name||p.id;agSel.appendChild(o);});
 
-  // Load deals
   await loadDeals();
 }
 
 async function loadDeals(){
+  // Use correct column names from actual schema
+  // deals table has: id, contact_id, title, value, stage, notes, created_by, created_at
+  // Plus our added: agent_id, deal_name, deal_type, deal_value, is_crm_client_deal, updated_at
   let q=db.from('deals').select('*').order('created_at',{ascending:false});
   if(userRole==='salesperson')q=q.eq('agent_id',currentUser.id);
   const{data,error}=await q;
-  if(error){showToast('Failed to load deals: '+error.message,'error');return;}
-  allDeals=data||[];
+  if(error){showToast('Failed to load deals: '+error.message,'error');console.error(error);return;}
+  allDeals=(data||[]).map(d=>({
+    ...d,
+    // Map old column names to new ones for compatibility
+    deal_name: d.deal_name||d.title||'Untitled Deal',
+    deal_value: d.deal_value||d.value||0,
+    deal_type: d.deal_type||'Ripple',
+    stage: d.stage||'Lead',
+    agent_id: d.agent_id||d.created_by||null,
+    is_crm_client_deal: d.is_crm_client_deal||false,
+  }));
   updateStats();
-  updateCommissionBar();
+  updateCommBar();
   applyFilters();
 }
 
@@ -488,22 +401,22 @@ function updateStats(){
   document.getElementById('navDeals').textContent=allDeals.length;
 }
 
-function updateCommissionBar(){
+function updateCommBar(){
   const now=new Date();
   const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   const myDeals=allDeals.filter(d=>d.agent_id===currentUser.id);
   const crmClients=myDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
   const unlocked=crmClients>=UNLOCK_THRESHOLD;
-  const wonThisMonth=myDeals.filter(d=>d.stage==='Won'&&d.updated_at?.startsWith(monthStr));
-  const totalComm=wonThisMonth.reduce((s,d)=>s+calcCommission(d,unlocked),0);
-  const pendingComm=myDeals.filter(d=>d.stage==='Won'&&!d.updated_at?.startsWith(monthStr)).reduce((s,d)=>s+calcCommission(d,unlocked),0);
-
+  const wonMTD=myDeals.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
+  const totalComm=wonMTD.reduce((s,d)=>s+calcComm(d,unlocked),0);
+  const openDeals=allDeals.filter(d=>!['Won','Lost'].includes(d.stage));
+  const pipelineVal=openDeals.reduce((s,d)=>s+(d.deal_value||0),0);
   document.getElementById('commTotal').textContent=fmt$(totalComm);
-  document.getElementById('commPending').textContent=fmt$(pendingComm);
-  document.getElementById('dealsWonCount').textContent=wonThisMonth.length;
-  document.getElementById('unlockCount').textContent=`${crmClients}/${UNLOCK_THRESHOLD} CRM clients`;
+  document.getElementById('dealsWonCount').textContent=wonMTD.length;
+  document.getElementById('pipelineVal').textContent=fmt$(pipelineVal);
+  document.getElementById('unlockCount').textContent=`${crmClients}/${UNLOCK_THRESHOLD}`;
   document.getElementById('unlockFill').style.width=Math.min(100,(crmClients/UNLOCK_THRESHOLD)*100)+'%';
-  document.getElementById('unlockStatus').textContent=unlocked?'🎉 Unlocked! Earning 25% commission rate':'Unlock 25% commission uplift at '+UNLOCK_THRESHOLD+' active CRM clients';
+  document.getElementById('unlockStatus').textContent=unlocked?'🎉 Unlocked! Earning 25% commission':'Unlock 25% rate with '+UNLOCK_THRESHOLD+' active CRM clients';
 }
 
 function filterStage(stage,el){
@@ -528,15 +441,8 @@ function applyFilters(){
   else renderList();
 }
 
-function getContactName(contactId){
-  const c=allContacts.find(x=>x.id===contactId);
-  return c?c.full_name:'Unknown';
-}
-
-function getAgentName(agentId){
-  const p=allProfiles.find(x=>x.id===agentId);
-  return p?p.full_name:'Unknown';
-}
+function getContactName(id){const c=allContacts.find(x=>x.id===id);return c?c.full_name:'—';}
+function getAgentName(id){const p=allProfiles.find(x=>x.id===id);return p?p.full_name:'—';}
 
 function renderKanban(){
   const board=document.getElementById('kanbanBoard');
@@ -546,26 +452,26 @@ function renderKanban(){
     const color=STAGE_COLORS[stage];
     return`<div class="kanban-col">
       <div class="kanban-header">
-        <div>
-          <div class="kanban-title" style="color:${color};">${stage}</div>
-          <div class="kanban-value">${totalVal>0?fmt$(totalVal):''}</div>
+        <div class="kanban-title" style="color:${color};">${stage}</div>
+        <div class="kanban-meta">
+          ${totalVal>0?`<span class="kanban-value">${fmt$(totalVal)}</span>`:'<span></span>'}
+          <span class="kanban-count">${deals.length}</span>
         </div>
-        <span class="kanban-count">${deals.length}</span>
       </div>
       <div class="kanban-cards">
         ${deals.map(d=>{
-          const typeColor=TYPE_COLORS[d.deal_type]||'#94a3b8';
-          const emoji=TYPE_EMOJI[d.deal_type]||'💼';
+          const tc=TYPE_COLORS[d.deal_type]||'#94a3b8';
+          const te=TYPE_EMOJI[d.deal_type]||'💼';
           return`<div class="deal-card" onclick="openPanel('${d.id}')">
-            <div class="deal-card-title">${d.deal_name||'Untitled Deal'}</div>
+            <div class="deal-card-title">${d.deal_name}</div>
             <div class="deal-card-contact">${getContactName(d.contact_id)}</div>
             <div class="deal-card-footer">
-              <span class="deal-card-value">${fmt$(d.deal_value||0)}</span>
-              <span class="deal-type-badge" style="background:${typeColor}22;color:${typeColor};">${emoji} ${d.deal_type}</span>
+              <span class="deal-card-value">${fmt$(d.deal_value)}</span>
+              <span class="deal-type-badge" style="background:${tc}22;color:${tc};">${te} ${d.deal_type}</span>
             </div>
           </div>`;
         }).join('')}
-        ${deals.length===0?`<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px;">No deals</div>`:''}
+        ${!deals.length?`<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px;">No deals</div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -573,21 +479,19 @@ function renderKanban(){
 
 function renderList(){
   const tbody=document.getElementById('dealsTableBody');
-  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3);">No deals found — <span style="color:var(--cyan);cursor:pointer;" onclick="openModal()">Create first deal</span></td></tr>`;return;}
-  const now=new Date();
-  const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  if(!filtered.length){tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3);">No deals — <span style="color:var(--cyan);cursor:pointer;" onclick="openModal()">Create first deal</span></td></tr>`;return;}
+  const myDeals=allDeals.filter(d=>d.agent_id===currentUser.id);
+  const crmClients=myDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
+  const unlocked=crmClients>=UNLOCK_THRESHOLD;
   tbody.innerHTML=filtered.map(d=>{
-    const myDeals=allDeals.filter(x=>x.agent_id===currentUser.id);
-    const crmClients=myDeals.filter(x=>x.is_crm_client_deal&&x.stage==='Won').length;
-    const unlocked=crmClients>=UNLOCK_THRESHOLD;
-    const comm=calcCommission(d,unlocked);
-    const typeColor=TYPE_COLORS[d.deal_type]||'#94a3b8';
-    const emoji=TYPE_EMOJI[d.deal_type]||'💼';
+    const comm=calcComm(d,unlocked);
+    const tc=TYPE_COLORS[d.deal_type]||'#94a3b8';
+    const te=TYPE_EMOJI[d.deal_type]||'💼';
     return`<tr onclick="openPanel('${d.id}')">
-      <td><div style="font-size:13px;font-weight:600;color:var(--text);">${d.deal_name||'Untitled'}</div>${d.is_crm_client_deal?'<div style="font-size:10px;color:var(--cyan);">CRM Client</div>':''}</td>
+      <td><div style="font-size:13px;font-weight:600;color:var(--text);">${d.deal_name}</div>${d.is_crm_client_deal?'<div style="font-size:10px;color:var(--cyan);">CRM Client</div>':''}</td>
       <td>${getContactName(d.contact_id)}</td>
-      <td><span style="background:${typeColor}22;color:${typeColor};font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;">${emoji} ${d.deal_type}</span></td>
-      <td style="font-weight:700;color:var(--text);">${fmt$(d.deal_value||0)}</td>
+      <td><span style="background:${tc}22;color:${tc};font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;">${te} ${d.deal_type}</span></td>
+      <td style="font-weight:700;color:var(--text);">${fmt$(d.deal_value)}</td>
       <td style="color:var(--green);font-weight:600;">${fmt$(comm)}</td>
       <td><span class="stage-badge stage-${d.stage}">${d.stage}</span></td>
       <td style="color:var(--text3);">${getAgentName(d.agent_id)}</td>
@@ -616,37 +520,26 @@ function openPanel(id){
   const myDeals=allDeals.filter(x=>x.agent_id===currentUser.id);
   const crmClients=myDeals.filter(x=>x.is_crm_client_deal&&x.stage==='Won').length;
   const unlocked=crmClients>=UNLOCK_THRESHOLD;
-  const comm=calcCommission(d,unlocked);
+  const comm=calcComm(d,unlocked);
   const stageIdx=STAGES.indexOf(d.stage);
-  document.getElementById('panelTitle').textContent=d.deal_name||'Deal Details';
-
+  document.getElementById('panelTitle').textContent=d.deal_name;
   document.getElementById('panelBody').innerHTML=`
-    <div style="margin-bottom:20px;">
-      <div class="stage-progress">
-        ${STAGES.filter(s=>s!=='Lost').map((s,i)=>{
-          const isDone=stageIdx>i&&d.stage!=='Lost';
-          const isCurrent=s===d.stage;
-          const cls=d.stage==='Lost'&&s===d.stage?'lost':isDone?'done':isCurrent?'current':'future';
-          return`<div class="stage-step ${cls}" onclick="changeStage('${s}')">${s}</div>`;
-        }).join('')}
-        <div class="stage-step ${d.stage==='Lost'?'lost':'future'}" onclick="changeStage('Lost')">Lost</div>
-      </div>
+    <div class="stage-steps">
+      ${STAGES.filter(s=>s!=='Lost').map((s,i)=>{
+        const isDone=stageIdx>i&&d.stage!=='Lost';
+        const isCurrent=s===d.stage;
+        const cls=isDone?'done':isCurrent?'current':'future';
+        return`<div class="stage-step ${cls}" onclick="changeStage('${s}')" style="cursor:pointer;">${s}</div>`;
+      }).join('')}
+      <div class="stage-step ${d.stage==='Lost'?'lost-step':'future'}" onclick="changeStage('Lost')" style="cursor:pointer;">Lost</div>
     </div>
-
-    <div style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div style="font-size:22px;font-weight:800;color:var(--cyan);">${fmt$(d.deal_value||0)}</div>
-        <div style="font-size:12px;color:var(--text3);">Deal Value</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:22px;font-weight:800;color:var(--green);">${fmt$(comm)}</div>
-        <div style="font-size:12px;color:var(--text3);">Your Commission ${unlocked?'(25% unlocked)':'(20%)'}</div>
-      </div>
+    <div style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+      <div><div style="font-size:24px;font-weight:800;color:var(--cyan);">${fmt$(d.deal_value)}</div><div style="font-size:12px;color:var(--text3);">Deal Value</div></div>
+      <div style="text-align:right;"><div style="font-size:24px;font-weight:800;color:var(--green);">${fmt$(comm)}</div><div style="font-size:12px;color:var(--text3);">Commission ${unlocked?'(25%)':'(20%)'}</div></div>
     </div>
-
     <div style="margin-bottom:20px;">
       <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;">Deal Info</div>
-      <div class="detail-row"><div class="detail-icon">💼</div><div><div class="detail-label">Deal Name</div><div class="detail-value">${d.deal_name||'—'}</div></div></div>
+      <div class="detail-row"><div class="detail-icon">💼</div><div><div class="detail-label">Deal Name</div><div class="detail-value">${d.deal_name}</div></div></div>
       <div class="detail-row"><div class="detail-icon">👤</div><div><div class="detail-label">Contact</div><div class="detail-value">${getContactName(d.contact_id)}</div></div></div>
       <div class="detail-row"><div class="detail-icon">📦</div><div><div class="detail-label">Type</div><div class="detail-value">${TYPE_EMOJI[d.deal_type]||'💼'} ${d.deal_type}</div></div></div>
       <div class="detail-row"><div class="detail-icon">🏆</div><div><div class="detail-label">Stage</div><div class="detail-value"><span class="stage-badge stage-${d.stage}">${d.stage}</span></div></div></div>
@@ -654,21 +547,13 @@ function openPanel(id){
       <div class="detail-row"><div class="detail-icon">👤</div><div><div class="detail-label">Agent</div><div class="detail-value">${getAgentName(d.agent_id)}</div></div></div>
       <div class="detail-row"><div class="detail-icon">📅</div><div><div class="detail-label">Created</div><div class="detail-value">${fmtDate(d.created_at)}</div></div></div>
     </div>
-
-    <div style="margin-bottom:20px;">
-      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;">Update Stage</div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Update Stage</div>
       <select id="panelStage" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;">
         ${STAGES.map(s=>`<option value="${s}" ${d.stage===s?'selected':''}>${s}</option>`).join('')}
       </select>
     </div>
-
-    ${d.notes?`<div style="background:var(--bg3);border-radius:9px;padding:12px;font-size:13px;color:var(--text2);">${d.notes}</div>`:''}
-
-    <div style="display:flex;gap:8px;margin-top:16px;">
-      <button onclick="window.location.href='contacts.html'" style="flex:1;padding:10px;background:rgba(0,194,209,0.1);border:1px solid rgba(0,194,209,0.2);border-radius:9px;color:var(--cyan);font-size:13px;font-weight:600;cursor:pointer;">👤 View Contact</button>
-      <button onclick="logActivity('${d.id}')" style="flex:1;padding:10px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:9px;color:var(--green);font-size:13px;font-weight:600;cursor:pointer;">📋 Log Activity</button>
-    </div>`;
-
+    ${d.notes?`<div style="background:var(--bg3);border-radius:9px;padding:12px;font-size:13px;color:var(--text2);margin-bottom:16px;">${d.notes}</div>`:''}`;
   document.getElementById('detailPanel').classList.add('open');
   document.getElementById('panelOverlay').classList.add('open');
 }
@@ -676,29 +561,23 @@ function openPanel(id){
 async function changeStage(newStage){
   if(!currentDeal)return;
   const{error}=await db.from('deals').update({stage:newStage,updated_at:new Date().toISOString()}).eq('id',currentDeal.id);
-  if(error){showToast('Failed to update stage','error');return;}
+  if(error){showToast('Failed: '+error.message,'error');return;}
   currentDeal.stage=newStage;
   const idx=allDeals.findIndex(d=>d.id===currentDeal.id);
   if(idx>-1)allDeals[idx].stage=newStage;
-  showToast(`Deal moved to ${newStage}`,'success');
-  closePanel();
-  updateStats();
-  updateCommissionBar();
-  applyFilters();
+  showToast(`✅ Moved to ${newStage}`,'success');
+  closePanel();updateStats();updateCommBar();applyFilters();
 }
 
 async function saveDeal(){
   if(!currentDeal)return;
   const stage=document.getElementById('panelStage').value;
   const{error}=await db.from('deals').update({stage,updated_at:new Date().toISOString()}).eq('id',currentDeal.id);
-  if(error){showToast('Save failed','error');return;}
+  if(error){showToast('Save failed: '+error.message,'error');return;}
   const idx=allDeals.findIndex(d=>d.id===currentDeal.id);
   if(idx>-1)allDeals[idx].stage=stage;
   showToast('✅ Deal saved','success');
-  closePanel();
-  updateStats();
-  updateCommissionBar();
-  applyFilters();
+  closePanel();updateStats();updateCommBar();applyFilters();
 }
 
 async function deleteDeal(){
@@ -707,11 +586,8 @@ async function deleteDeal(){
   const{error}=await db.from('deals').delete().eq('id',currentDeal.id);
   if(error){showToast('Delete failed','error');return;}
   allDeals=allDeals.filter(d=>d.id!==currentDeal.id);
-  showToast('🗑 Deal deleted','success');
-  closePanel();
-  updateStats();
-  updateCommissionBar();
-  applyFilters();
+  showToast('🗑 Deleted','success');
+  closePanel();updateStats();updateCommBar();applyFilters();
 }
 
 async function quickDelete(id){
@@ -719,54 +595,42 @@ async function quickDelete(id){
   const{error}=await db.from('deals').delete().eq('id',id);
   if(error){showToast('Delete failed','error');return;}
   allDeals=allDeals.filter(d=>d.id!==id);
-  updateStats();updateCommissionBar();applyFilters();
+  updateStats();updateCommBar();applyFilters();
   showToast('🗑 Deleted','success');
 }
 
-function closePanel(){
-  document.getElementById('detailPanel').classList.remove('open');
-  document.getElementById('panelOverlay').classList.remove('open');
-  currentDeal=null;
-}
-
+function closePanel(){document.getElementById('detailPanel').classList.remove('open');document.getElementById('panelOverlay').classList.remove('open');currentDeal=null;}
 function openModal(){document.getElementById('modalOverlay').classList.add('open');}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
 
 async function addDeal(){
   const name=document.getElementById('f_name').value.trim();
-  const contactId=document.getElementById('f_contact').value;
   const type=document.getElementById('f_type').value;
   if(!name){showToast('Deal name is required','error');return;}
-
-  // Auto-set value based on type
-  const defaultValues={Ripple:1200,Current:2500,Surge:4500,'CRM Lite':99,'CRM Premium':179,'White-Label':697};
-  const value=parseFloat(document.getElementById('f_value').value)||defaultValues[type]||0;
-
+  const value=parseFloat(document.getElementById('f_value').value)||DEFAULT_VALUES[type]||0;
   const deal={
     deal_name:name,
-    contact_id:contactId||null,
+    title:name, // also set title for compatibility with existing schema
+    contact_id:document.getElementById('f_contact').value||null,
     agent_id:currentUser.id,
+    created_by:currentUser.id,
     deal_type:type,
     deal_value:value,
+    value:value, // also set value for compatibility
     stage:document.getElementById('f_stage').value,
     is_crm_client_deal:document.getElementById('f_crm').value==='true',
     notes:document.getElementById('f_notes').value.trim()||null,
+    updated_at:new Date().toISOString(),
   };
-
   const{data,error}=await db.from('deals').insert([deal]).select();
-  if(error){showToast('Failed: '+error.message,'error');return;}
-  allDeals.unshift(data[0]);
+  if(error){showToast('Failed: '+error.message,'error');console.error(error);return;}
+  const newDeal={...data[0],deal_name:data[0].deal_name||data[0].title||name,deal_value:data[0].deal_value||data[0].value||value,deal_type:data[0].deal_type||type};
+  allDeals.unshift(newDeal);
   showToast(`✅ "${name}" created`,'success');
   closeModal();
-  document.getElementById('f_name').value='';
-  document.getElementById('f_value').value='';
-  document.getElementById('f_notes').value='';
-  updateStats();updateCommissionBar();applyFilters();
-}
-
-function logActivity(dealId){
-  showToast('📋 Activity logging — go to Activities page','success');
-  setTimeout(()=>window.location.href='activities.html',1500);
+  ['f_name','f_value','f_notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f_contact').value='';
+  updateStats();updateCommBar();applyFilters();
 }
 
 function exportDeals(){
@@ -782,7 +646,6 @@ document.getElementById('typeFilter').addEventListener('change',applyFilters);
 document.getElementById('agentFilter').addEventListener('change',applyFilters);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePanel();closeModal();}});
 
-// SESSION TIMEOUT
 (function(){
   const TIMEOUT_MS=5*60*1000;let timer;
   function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
