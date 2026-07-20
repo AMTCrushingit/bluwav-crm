@@ -204,25 +204,32 @@ document.getElementById('lf_date').value = new Date().toISOString().slice(0,16);
   loadActivities();
 })();
 
-// Mock activities — replace with real Supabase activities table when ready
-function getMockActivities(userId, name){
-  const now = Date.now();
-  const h=3600000,d=86400000;
-  return [
-    {id:'1',type:'call',contact:'Jordan Williams',summary:'Discussed CRM setup requirements. Client interested in Pro plan. Follow up next week.',duration:12,status:'completed',created_at:new Date(now-2*h).toISOString(),user_id:userId,user_name:name},
-    {id:'2',type:'email',contact:'Sarah Chen',summary:'Sent welcome email with onboarding guide and pricing PDF.',duration:null,status:'completed',created_at:new Date(now-5*h).toISOString(),user_id:userId,user_name:name},
-    {id:'3',type:'whatsapp',contact:'Marcus Brown',summary:'Sent intro message and product brochure via WhatsApp.',duration:null,status:'completed',created_at:new Date(now-1*d).toISOString(),user_id:userId,user_name:name},
-    {id:'4',type:'meeting',contact:'Sandra Clarke',summary:'Discovery call — Island Realty needs full CRM implementation for 8 agents. Budget approved.',duration:45,status:'completed',created_at:new Date(now-2*d).toISOString(),user_id:userId,user_name:name},
-    {id:'5',type:'task',contact:'Priya Ramkissoon',summary:'Send proposal for Carib Wellness social media package.',duration:null,status:'pending',created_at:new Date(now-2*d-3*h).toISOString(),user_id:userId,user_name:name},
-    {id:'6',type:'note',contact:'Devon Charles',summary:'Client mentioned budget constraints. May need to offer payment plan. Check with manager.',duration:null,status:'completed',created_at:new Date(now-3*d).toISOString(),user_id:userId,user_name:name},
-    {id:'7',type:'call',contact:'Jordan Williams',summary:'Follow-up call. Client ready to proceed. Sending contract today.',duration:8,status:'completed',created_at:new Date(now-4*d).toISOString(),user_id:userId,user_name:name},
-    {id:'8',type:'email',contact:'Marcus Brown',summary:'Sent follow-up email after no response to WhatsApp. Included case studies.',duration:null,status:'follow_up',created_at:new Date(now-5*d).toISOString(),user_id:userId,user_name:name},
-  ];
-}
-
-function loadActivities(){
+async function loadActivities(){
   const name=document.getElementById('sidebarName').textContent;
-  allActivities=getMockActivities(currentUser.id, name);
+  
+  // Load from real Supabase activities table
+  let q=db.from('activities').select('*').order('created_at',{ascending:false}).limit(100);
+  if(userRole==='salesperson') q=q.eq('agent_id',currentUser.id);
+  
+  const{data,error}=await q;
+  
+  if(error || !data || data.length===0){
+    // Show empty state with option to log first activity
+    allActivities=[];
+  } else {
+    allActivities=data.map(a=>({
+      id:a.id,
+      type:(a.type||'note').toLowerCase(),
+      contact:a.contact_id||'',
+      summary:a.description||'',
+      duration:null,
+      status:'completed',
+      created_at:a.created_at,
+      user_id:a.agent_id,
+      user_name:name,
+      deal_id:a.deal_id||null,
+    }));
+  }
   updateStats();
   applyFilter();
 }
@@ -305,19 +312,36 @@ function setType(type,el){
   el.classList.add('active');
 }
 
-function logActivity(){
+async function logActivity(){
   const contact=document.getElementById('lf_contact').value.trim();
   const summary=document.getElementById('lf_summary').value.trim();
   if(!contact||!summary){showToast('Contact and summary are required','error');return;}
   const name=document.getElementById('sidebarName').textContent;
+  
+  // Save to real Supabase activities table
+  const activity={
+    type:logType.charAt(0).toUpperCase()+logType.slice(1),
+    description:summary,
+    agent_id:currentUser.id,
+    created_at:new Date(document.getElementById('lf_date').value||Date.now()).toISOString(),
+  };
+  
+  const{data,error}=await db.from('activities').insert([activity]).select();
+  if(error){
+    showToast('Failed to save: '+error.message,'error');
+    console.error(error);
+    return;
+  }
+  
+  // Add to local list
   const newActivity={
-    id:Date.now().toString(),
+    id:data[0].id,
     type:logType,
-    contact,
-    summary,
+    contact:contact,
+    summary:summary,
     duration:parseInt(document.getElementById('lf_duration').value)||null,
     status:document.getElementById('lf_status').value,
-    created_at:new Date(document.getElementById('lf_date').value).toISOString(),
+    created_at:data[0].created_at,
     user_id:currentUser.id,
     user_name:name
   };
