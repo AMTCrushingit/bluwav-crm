@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BluWav CRM — Agent Onboarding</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;--border:rgba(255,255,255,0.06);--cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--text:#fff;--text2:#b0bec5;--text3:#4a5568;--sidebar:220px;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+    .sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;transition:width 0.3s;}
+    .sidebar.collapsed{width:60px;}
+    .sidebar.collapsed .nav-label,.sidebar.collapsed .nav-text,.sidebar.collapsed .nav-badge,.sidebar.collapsed .user-info,.sidebar.collapsed .trial-pill,.sidebar.collapsed .logo-badge{display:none;}
+    .sidebar.collapsed .nav-item{justify-content:center;padding:10px;}
+    .sidebar-logo{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .logo-text{font-size:22px;font-weight:800;white-space:nowrap;}.logo-text .blu{color:#fff;}.logo-text .wav{color:var(--cyan);}
+    .logo-badge{display:inline-block;background:rgba(0,194,209,0.15);border:1px solid rgba(0,194,209,0.3);color:var(--cyan);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:1px;margin-left:4px;vertical-align:middle;}
+    .collapse-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0;}
+    .sidebar-nav{flex:1;padding:12px 0;}.nav-section{padding:0 10px;margin-bottom:4px;}
+    .nav-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:8px 8px 4px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--text2);text-decoration:none;font-size:13.5px;font-weight:500;transition:all 0.15s;cursor:pointer;position:relative;}
+    .nav-item:hover{background:rgba(255,255,255,0.05);color:var(--text);}
+    .nav-item.active{background:rgba(0,194,209,0.12);color:var(--cyan);}
+    .nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--cyan);border-radius:0 3px 3px 0;}
+    .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+    .nav-text{white-space:nowrap;}
+    .sidebar-bottom{padding:12px;border-top:1px solid var(--border);}
+    .trial-pill{background:rgba(255,140,66,0.1);border:1px solid rgba(255,140,66,0.25);border-radius:10px;padding:10px 12px;margin-bottom:10px;}
+    .trial-pill .tp-label{font-size:11px;color:var(--orange);font-weight:700;margin-bottom:4px;}
+    .trial-pill .tp-sub{font-size:11px;color:var(--text3);margin-bottom:8px;}
+    .btn-upgrade{width:100%;background:var(--gold);color:#0a0e1a;border:none;border-radius:7px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;}
+    .user-card{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;}
+    .user-card:hover{background:var(--bg3);}
+    .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#0099a8);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#0a0e1a;flex-shrink:0;}
+    .user-info{flex:1;min-width:0;}.user-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.user-role{font-size:11px;color:var(--text3);}
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;transition:margin-left 0.3s;}
+    .main.expanded{margin-left:60px;}
+    .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .topbar-left h1{font-size:18px;font-weight:700;}.topbar-left .breadcrumb{font-size:12px;color:var(--text3);}
+    .breadcrumb a{color:var(--cyan);text-decoration:none;}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .icon-btn{width:36px;height:36px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative;}
+    .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--orange);border-radius:50%;border:1px solid var(--bg2);}
+    .content{padding:24px 28px;flex:1;max-width:900px;margin:0 auto;width:100%;}
+
+    /* PROGRESS TRACKER */
+    .progress-tracker{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:28px;}
+    .progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .progress-title{font-size:14px;font-weight:700;}
+    .progress-pct{font-size:14px;font-weight:700;color:var(--cyan);}
+    .progress-bar{height:6px;background:var(--bg3);border-radius:6px;overflow:hidden;margin-bottom:16px;}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));border-radius:6px;transition:width 0.5s;}
+    .steps-row{display:flex;gap:0;overflow:hidden;border-radius:10px;}
+    .step-item{flex:1;padding:10px 8px;text-align:center;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s;border-right:1px solid var(--bg);}
+    .step-item:last-child{border-right:none;}
+    .step-item.done{background:rgba(34,197,94,0.12);color:var(--green);}
+    .step-item.active{background:var(--cyan);color:#0a0e1a;}
+    .step-item.pending{background:var(--bg3);color:var(--text3);}
+    .step-num{font-size:16px;display:block;margin-bottom:3px;}
+
+    /* WELCOME BANNER */
+    .welcome-banner{background:linear-gradient(135deg,rgba(0,194,209,0.12),rgba(212,175,55,0.06));border:1px solid rgba(0,194,209,0.2);border-radius:14px;padding:28px;margin-bottom:24px;text-align:center;}
+    .welcome-banner h2{font-size:24px;font-weight:800;margin-bottom:8px;}
+    .welcome-banner h2 span{color:var(--orange);}
+    .welcome-banner p{font-size:14px;color:var(--text2);margin-bottom:16px;}
+    .welcome-checks{display:flex;flex-direction:column;gap:8px;text-align:left;max-width:400px;margin:0 auto;}
+    .welcome-check{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2);}
+    .welcome-check span{color:var(--green);}
+
+    /* AGENT TYPE CARDS */
+    .type-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+    .type-card{background:var(--bg2);border:2px solid var(--border);border-radius:14px;padding:24px;cursor:pointer;transition:all 0.2s;position:relative;}
+    .type-card:hover{border-color:rgba(0,194,209,0.3);}
+    .type-card.selected{border-color:var(--cyan);background:rgba(0,194,209,0.05);}
+    .type-badge{position:absolute;top:12px;right:12px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;}
+    .type-badge.recommended{background:rgba(34,197,94,0.1);color:var(--green);}
+    .type-badge.flexible{background:rgba(255,140,66,0.1);color:var(--orange);}
+    .type-icon{font-size:32px;margin-bottom:12px;}
+    .type-name{font-size:16px;font-weight:800;margin-bottom:6px;}
+    .type-desc{font-size:13px;color:var(--text3);margin-bottom:14px;}
+    .type-features{display:flex;flex-direction:column;gap:6px;}
+    .type-feature{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;}
+    .type-feature span{color:var(--green);}
+
+    /* STEP CONTENT */
+    .step-content{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:24px;}
+    .step-content-title{font-size:18px;font-weight:800;margin-bottom:6px;}
+    .step-content-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .form-grid .full{grid-column:1/-1;}
+    .form-group{display:flex;flex-direction:column;gap:6px;}
+    .form-group label{font-size:12px;font-weight:600;color:var(--text2);}
+    .form-group input,.form-group select,.form-group textarea{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;transition:border-color 0.2s;font-family:inherit;}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--cyan);}
+    .form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3);}
+    .form-group select option{background:var(--bg3);}
+
+    /* AGREEMENT */
+    .agreement-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:20px;max-height:300px;overflow-y:auto;font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;}
+    .agreement-box h4{color:var(--text);font-size:14px;margin-bottom:8px;}
+    .agreement-box p{margin-bottom:10px;}
+
+    /* COMMISSION TABLE */
+    .comm-table{width:100%;border-collapse:collapse;margin-bottom:16px;}
+    .comm-table th{text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .comm-table td{padding:10px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);}
+    .comm-table tr:last-child td{border-bottom:none;}
+    .comm-table tbody tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+
+    /* TRAINING */
+    .training-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;transition:all 0.15s;}
+    .training-item:hover{border-color:rgba(0,194,209,0.2);}
+    .training-item.done{border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.04);}
+    .training-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .training-title{font-size:13px;font-weight:600;color:var(--text);}
+    .training-sub{font-size:11px;color:var(--text3);}
+    .training-check{margin-left:auto;font-size:18px;}
+
+    /* NAV BUTTONS */
+    .step-nav{display:flex;gap:12px;justify-content:space-between;}
+    .btn{display:flex;align-items:center;gap:6px;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s;}
+    .btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
+    .btn-ghost:hover{background:var(--bg4);color:var(--text);}
+    .btn-primary{background:var(--cyan);color:#0a0e1a;}
+    .btn-primary:hover{background:#00d4e4;box-shadow:0 4px 16px rgba(0,194,209,0.3);}
+    .btn-success{background:var(--green);color:#fff;}
+    .btn-success:hover{background:#16a34a;}
+
+    /* MANAGER AGENTS TABLE */
+    .agents-table{width:100%;border-collapse:collapse;}
+    .agents-table th{text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .agents-table td{padding:12px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:middle;}
+    .agents-table tr:last-child td{border-bottom:none;}
+    .status-badge{display:inline-flex;font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;}
+    .status-invited{background:rgba(245,158,11,0.1);color:#f59e0b;}
+    .status-onboarded{background:rgba(0,194,209,0.1);color:var(--cyan);}
+    .status-active{background:rgba(34,197,94,0.1);color:var(--green);}
+    .status-inactive{background:rgba(74,85,104,0.2);color:var(--text3);}
+
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;color:var(--text);z-index:500;transform:translateY(80px);opacity:0;transition:all 0.3s;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.success{border-color:rgba(34,197,94,0.3);}
+    .toast.error{border-color:rgba(239,68,68,0.3);}
+    ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:5px;}
+    @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0!important;}.type-grid{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-logo">
+<div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div>
+<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
+</div>
+<nav class="sidebar-nav">
+<div class="nav-section">
+<div class="nav-label">Main</div>
+<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span class="nav-text"> Dashboard</span></a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item" href="activities.html"><span class="nav-icon">📋</span><span class="nav-text"> Activities</span></a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Performance</div>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item active" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Insights</div>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
+</div>
+<div class="nav-section" id="adminNav" style="display:none;">
+<div class="nav-label">Admin</div>
+<a class="nav-item" href="superadmin.html"><span class="nav-icon">🛡</span><span class="nav-text"> Super Admin</span></a>
+</div>
+</nav>
+<div class="sidebar-bottom">
+<div class="trial-pill"><div class="tp-label">⏱ 14-Day Free Trial</div><div class="tp-sub">No card needed</div><button class="btn-upgrade" onclick="window.location.href='billing.html'">Upgrade Plan</button></div>
+<div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Loading...</div><div class="user-role" id="sidebarRole">—</div></div></div>
+<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:8px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;">🚪 Sign Out</button>
+</div>
+</aside>
+<div class="main" id="mainContent">
+<header class="topbar">
+<div class="topbar-left"><h1 id="pageTitle">Agent Onboarding</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Onboarding</div></div>
+<div class="topbar-right">
+<div class="icon-btn">🔔<div class="notif-dot"></div></div>
+<div class="user-card" style="padding:4px 8px;border-radius:8px;">
+<div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
+<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Loading...</div><div class="user-role" id="topRole">—</div></div>
+</div>
+</div>
+</header>
+<div class="content" id="mainContent2">
+<!-- Content rendered by JS -->
+<div style="text-align:center;padding:60px;color:var(--text3);">⏳ Loading...</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const{createClient}=supabase;
+const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
+
+let currentUser=null,userRole='salesperson',currentStep=0,agentType='full-time',trainingDone={};
+const STEPS=['Profile','Agreement','Compensation','Training','Activation'];
+const STEP_ICONS=['👤','📋','💰','📚','🚀'];
+
+function ini(n){return(n||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);}
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
+async function signOut(){await db.auth.signOut();window.location.href='login.html';}
+
+(async()=>{
+  const{data:{session}}=await db.auth.getSession();
+  if(!session){window.location.href='login.html';return;}
+  currentUser=session.user;
+  let profile=null;
+  try{const{data:p}=await db.from('profiles').select('*').eq('id',currentUser.id).single();profile=p;}catch(e){}
+  if(!profile){const meta=currentUser.user_metadata||{};profile={full_name:meta.full_name||currentUser.email?.split('@')[0]||'User',role:meta.role||'salesperson'};}
+  userRole=profile?.role||'salesperson';
+  const name=profile?.full_name||currentUser.email?.split('@')[0]||'User';
+  ['sidebarName','topName'].forEach(id=>document.getElementById(id).textContent=name);
+  ['sidebarAvatar','topAvatar'].forEach(id=>document.getElementById(id).textContent=ini(name));
+  document.getElementById('sidebarRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
+  document.getElementById('topRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
+  if(userRole==='manager'||userRole==='owner'){
+    document.getElementById('adminNav').style.display='block';
+    document.getElementById('pageTitle').textContent='Agent Onboarding — Manager View';
+    renderManagerView();
+  } else {
+    renderOnboarding();
+  }
+})();
+
+function renderOnboarding(){
+  const pct=Math.round((currentStep/STEPS.length)*100);
+  const content=document.getElementById('mainContent2');
+  content.innerHTML=`
+    <!-- PROGRESS -->
+    <div class="progress-tracker">
+      <div class="progress-header">
+        <div class="progress-title">Step ${currentStep+1} of ${STEPS.length} — ${STEPS[currentStep]}</div>
+        <div class="progress-pct">${pct}% complete</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;"></div></div>
+      <div class="steps-row">
+        ${STEPS.map((s,i)=>`<div class="step-item ${i<currentStep?'done':i===currentStep?'active':'pending'}" onclick="goStep(${i})">
+          <span class="step-num">${i<currentStep?'✓':STEP_ICONS[i]}</span>${s}
+        </div>`).join('')}
+      </div>
+    </div>
+    ${renderStep()}`;
+}
+
+function renderStep(){
+  switch(currentStep){
+    case 0: return renderStepProfile();
+    case 1: return renderStepAgreement();
+    case 2: return renderStepCompensation();
+    case 3: return renderStepTraining();
+    case 4: return renderStepActivation();
+    default: return '';
+  }
+}
+
+function renderStepProfile(){
+  return`
+    <div class="welcome-banner">
+      <h2>Welcome to BluWav Growth, <span>Agent!</span></h2>
+      <p>Complete this 5-step onboarding in about 20 minutes. Here's what you'll do:</p>
+      <div class="welcome-checks">
+        <div class="welcome-check"><span>✅</span> Set up your profile</div>
+        <div class="welcome-check"><span>✅</span> Sign your agreement</div>
+        <div class="welcome-check"><span>✅</span> Accept your commission plan</div>
+        <div class="welcome-check"><span>✅</span> Complete training</div>
+        <div class="welcome-check"><span>✅</span> Go live and start earning</div>
+      </div>
+    </div>
+
+    <div class="step-content">
+      <div class="step-content-title">Select Your Agent Type</div>
+      <div class="step-content-sub">Choose the arrangement that works best for you</div>
+      <div class="type-grid">
+        <div class="type-card ${agentType==='full-time'?'selected':''}" onclick="selectType('full-time',this)">
+          <span class="type-badge recommended">⭐ Recommended</span>
+          <div class="type-icon">💼</div>
+          <div class="type-name">Full-Time Agent</div>
+          <div class="type-desc">Commission-only with dedicated support, territory, and monthly targets</div>
+          <div class="type-features">
+            <div class="type-feature"><span>✓</span> 20% commission per deal</div>
+            <div class="type-feature"><span>✓</span> Dedicated package portfolio</div>
+            <div class="type-feature"><span>✓</span> Assigned territory</div>
+            <div class="type-feature"><span>✓</span> Monthly targets + bonuses</div>
+            <div class="type-feature"><span>✓</span> Structured onboarding</div>
+          </div>
+        </div>
+        <div class="type-card ${agentType==='part-time'?'selected':''}" onclick="selectType('part-time',this)">
+          <span class="type-badge flexible">🔄 Flexible</span>
+          <div class="type-icon">⚡</div>
+          <div class="type-name">Part-Time / Commissioned</div>
+          <div class="type-desc">Flexible hours, open territory, fast activation</div>
+          <div class="type-features">
+            <div class="type-feature"><span>✓</span> 20% commission per deal</div>
+            <div class="type-feature"><span>✓</span> Flexible hours</div>
+            <div class="type-feature"><span>✓</span> Open territory access</div>
+            <div class="type-feature"><span>✓</span> 48-hour activation</div>
+            <div class="type-feature"><span>✓</span> Scale to full-time anytime</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-content">
+      <div class="step-content-title">Your Profile</div>
+      <div class="step-content-sub">Tell us about yourself</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Full Name *</label><input type="text" id="p_name" placeholder="Your full name" /></div>
+        <div class="form-group"><label>Email *</label><input type="email" id="p_email" placeholder="your@email.com" /></div>
+        <div class="form-group"><label>WhatsApp Number *</label><input type="tel" id="p_whatsapp" placeholder="+1 868 555 0000" /></div>
+        <div class="form-group"><label>Island / Territory</label>
+          <select id="p_island">
+            <option value="">Select your primary island...</option>
+            <option>Trinidad</option><option>Tobago</option><option>Barbados</option>
+            <option>Jamaica</option><option>St. Lucia</option><option>Grenada</option>
+            <option>Antigua</option><option>Guyana</option><option>Belize</option>
+            <option>Bahamas</option><option>Cayman Islands</option><option>Multiple Islands</option>
+          </select>
+        </div>
+        <div class="form-group full"><label>Brief Bio / Background</label><textarea id="p_bio" rows="3" placeholder="Tell us about your sales experience and why you want to represent BluWav Growth..."></textarea></div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <div></div>
+      <button class="btn btn-primary" onclick="nextStep()">Next: Agreement →</button>
+    </div>`;
+}
+
+function renderStepAgreement(){
+  return`
+    <div class="step-content">
+      <div class="step-content-title">📋 Business Development Partner Agreement</div>
+      <div class="step-content-sub">Read the full agreement carefully before signing</div>
+      <div class="agreement-box">
+        <h4>BluWav Growth — Business Development Partner Agreement</h4>
+        <p>This Business Development Partner Agreement ("Agreement") is entered into between BluWav Growth ("Company") and the individual identified above ("Business Development Partner").</p>
+        <h4>1. Commission Structure</h4>
+        <p>All partners earn 20% commission on Growth package setup fees (Ripple $1,200, Current $2,500, Surge $4,500+) and 20% on CRM monthly recurring revenue for the first 3 months per client. CRM setup fees are not commissionable. Partners who secure 3 active CRM clients unlock a 25% commission rate.</p>
+        <h4>2. Partner Responsibilities</h4>
+        <p>The Business Development Partner agrees to: represent BluWav Growth honestly and professionally at all times; use only approved pitch materials, pricing, and service descriptions; submit all leads through the agreed tracking method; not make promises or guarantees beyond what is stated in official materials; maintain confidentiality of all BluWav Growth business information.</p>
+        <h4>3. Payment Terms</h4>
+        <p>Commission is earned when the client's deposit payment is received and cleared. Commission is paid within 7 business days of the deposit clearing. Recurring commissions are paid monthly on the 1st of each month. All commissions are paid in USD.</p>
+        <h4>4. Performance Bonuses</h4>
+        <p>3-4 deals/month: +$100 · 5-6 deals/month: +$250 · 7-9 deals/month: +$500 · 10+ deals/month: +$1,000</p>
+        <h4>5. Termination</h4>
+        <p>Either party may terminate this Agreement with 14 days written notice. Upon termination, earned commissions on closed deals will be paid within 30 days.</p>
+        <h4>6. Confidentiality</h4>
+        <p>The Business Development Partner agrees to keep all BluWav Growth business information, pricing, client data, and strategies strictly confidential for 12 months after termination.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <input type="checkbox" id="agreeCheck" style="width:18px;height:18px;accent-color:var(--cyan);cursor:pointer;" />
+        <label for="agreeCheck" style="font-size:13px;color:var(--text2);cursor:pointer;">I have read, understood, and agree to all terms of this Business Development Partner Agreement</label>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="checkbox" id="agreeCheck2" style="width:18px;height:18px;accent-color:var(--cyan);cursor:pointer;" />
+        <label for="agreeCheck2" style="font-size:13px;color:var(--text2);cursor:pointer;">I confirm that the information I provided is accurate and I am authorized to enter this agreement</label>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+      <button class="btn btn-primary" onclick="signAgreement()">Sign & Continue →</button>
+    </div>`;
+}
+
+function renderStepCompensation(){
+  return`
+    <div class="step-content">
+      <div class="step-content-title">💰 Your Commission Plan</div>
+      <div class="step-content-sub">Here's exactly how you earn with BluWav Growth</div>
+
+      <div style="background:rgba(0,194,209,0.06);border:1px solid rgba(0,194,209,0.15);border-radius:10px;padding:16px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:var(--cyan);margin-bottom:4px;">Your Base Rate: 20% on all commissionable revenue</div>
+        <div style="font-size:13px;color:var(--text2);">Unlock 25% rate when you secure 3 active CRM clients</div>
+      </div>
+
+      <table class="comm-table">
+        <thead><tr><th>Product</th><th>Price</th><th>Your Commission (20%)</th><th>Unlocked (25%)</th></tr></thead>
+        <tbody>
+          <tr><td>🌊 BluWav Ripple</td><td>$1,200 setup</td><td style="color:var(--green);font-weight:600;">$240</td><td style="color:var(--gold);font-weight:600;">$300</td></tr>
+          <tr><td>⚡ BluWav Current</td><td>$2,500 setup</td><td style="color:var(--green);font-weight:600;">$500</td><td style="color:var(--gold);font-weight:600;">$625</td></tr>
+          <tr><td>🚀 BluWav Surge</td><td>$4,500+ setup</td><td style="color:var(--green);font-weight:600;">$900+</td><td style="color:var(--gold);font-weight:600;">$1,125+</td></tr>
+          <tr><td>🔧 Maintenance</td><td>$49/mo</td><td style="color:var(--green);font-weight:600;">$9.80/mo ×3</td><td style="color:var(--gold);font-weight:600;">$12.25/mo ×3</td></tr>
+          <tr><td>💼 CRM Lite</td><td>$99/mo</td><td style="color:var(--green);font-weight:600;">$19.80/mo ×3</td><td style="color:var(--gold);font-weight:600;">$24.75/mo ×3</td></tr>
+          <tr><td>🖤 CRM Premium</td><td>$179/mo</td><td style="color:var(--green);font-weight:600;">$35.80/mo ×3</td><td style="color:var(--gold);font-weight:600;">$44.75/mo ×3</td></tr>
+          <tr><td>⚡ White-Label</td><td>$697/mo</td><td style="color:var(--green);font-weight:600;">$139.40/mo ×3</td><td style="color:var(--gold);font-weight:600;">$174.25/mo ×3</td></tr>
+        </tbody>
+      </table>
+
+      <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:10px;padding:16px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;">🎯 Performance Bonuses</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+          ${[['3-4 deals','$100'],['5-6 deals','$250'],['7-9 deals','$500'],['10+ deals','$1,000']].map(([t,b])=>`
+            <div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center;">
+              <div style="font-size:12px;color:var(--text3);">${t}/month</div>
+              <div style="font-size:16px;font-weight:800;color:var(--gold);">+${b}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="checkbox" id="commCheck" style="width:18px;height:18px;accent-color:var(--cyan);cursor:pointer;" />
+        <label for="commCheck" style="font-size:13px;color:var(--text2);cursor:pointer;">I understand and accept my commission plan</label>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+      <button class="btn btn-primary" onclick="acceptComm()">Accept & Continue →</button>
+    </div>`;
+}
+
+function renderStepTraining(){
+  const modules=[
+    {id:'t1',icon:'🌊',title:'BluWav Growth Products & Pricing',sub:'Learn Ripple, Current, Surge + CRM packages',time:'15 mins'},
+    {id:'t2',icon:'💬',title:'Sales Script & Pitch Techniques',sub:'Opening, discovery, pitch, objection handling',time:'20 mins'},
+    {id:'t3',icon:'📋',title:'Using BluWav CRM',sub:'Contacts, deals, pipeline, activities',time:'15 mins'},
+    {id:'t4',icon:'🎯',title:'Lead Submission Process',sub:'How to submit leads and track commissions',time:'10 mins'},
+    {id:'t5',icon:'📜',title:'Partner Code of Conduct',sub:'Brand standards, dos and don\'ts',time:'10 mins'},
+  ];
+  const doneCount=Object.keys(trainingDone).length;
+  return`
+    <div class="step-content">
+      <div class="step-content-title">📚 Training Modules</div>
+      <div class="step-content-sub">Complete all ${modules.length} modules before activation (${doneCount}/${modules.length} done)</div>
+      ${modules.map(m=>`
+        <div class="training-item ${trainingDone[m.id]?'done':''}" onclick="completeTraining('${m.id}',this)">
+          <div class="training-icon" style="background:${trainingDone[m.id]?'rgba(34,197,94,0.12)':'var(--bg4)'};">${m.icon}</div>
+          <div>
+            <div class="training-title">${m.title}</div>
+            <div class="training-sub">${m.sub} · ${m.time}</div>
+          </div>
+          <div class="training-check">${trainingDone[m.id]?'✅':'▶️'}</div>
+        </div>`).join('')}
+    </div>
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+      <button class="btn btn-primary" onclick="completeTrainingStep(${modules.length})">Continue →</button>
+    </div>`;
+}
+
+function renderStepActivation(){
+  return`
+    <div class="step-content" style="text-align:center;">
+      <div style="font-size:64px;margin-bottom:16px;">🎉</div>
+      <div class="step-content-title" style="font-size:24px;">You're Ready to Go Live!</div>
+      <div class="step-content-sub" style="font-size:15px;">Your onboarding is complete. Welcome to the BluWav Growth team!</div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0;text-align:left;">
+        <div style="background:var(--bg3);border-radius:12px;padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">📱</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Save Andrea's WhatsApp</div>
+          <div style="font-size:12px;color:var(--text3);">+1 (868) 297-9960</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:12px;padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">📋</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Download Sales Materials</div>
+          <div style="font-size:12px;color:var(--text3);">Sales sheet, script, playbook</div>
+        </div>
+        <div style="background:var(--bg3);border-radius:12px;padding:16px;">
+          <div style="font-size:20px;margin-bottom:8px;">🎯</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Identify First 5 Prospects</div>
+          <div style="font-size:12px;color:var(--text3);">Start your pipeline today</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(0,194,209,0.06);border:1px solid rgba(0,194,209,0.15);border-radius:12px;padding:20px;margin-bottom:24px;">
+        <div style="font-size:14px;font-weight:700;color:var(--cyan);margin-bottom:8px;">Your First Deal Target</div>
+        <div style="font-size:13px;color:var(--text2);">Close your first Ripple deal ($1,200) and earn <strong style="color:var(--green);">$240</strong> commission. Then aim for Current ($2,500) for <strong style="color:var(--green);">$500</strong>.</div>
+      </div>
+
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <button class="btn btn-primary" onclick="window.location.href='agent-dashboard.html'" style="font-size:15px;padding:14px 28px;">🚀 Go to My Dashboard</button>
+        <button class="btn btn-ghost" onclick="window.location.href='deals.html'" style="font-size:15px;padding:14px 28px;">💼 Log First Deal</button>
+      </div>
+    </div>`;
+}
+
+function renderManagerView(){
+  const content=document.getElementById('mainContent2');
+  content.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <h2 style="font-size:20px;font-weight:800;">Agent Management</h2>
+        <p style="font-size:13px;color:var(--text3);">Manage your team's onboarding status and activation</p>
+      </div>
+      <button class="btn btn-primary" onclick="inviteAgent()">+ Invite Agent</button>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px;">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
+        <div style="font-size:14px;font-weight:700;">Team Members</div>
+      </div>
+      <div style="padding:0;" id="agentsTable">
+        <div style="text-align:center;padding:40px;color:var(--text3);">Loading agents...</div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;">
+      <div style="font-size:14px;font-weight:700;margin-bottom:16px;">📋 Onboarding Checklist for New Agents</div>
+      ${['Send partner agreement for signature','Complete 5-step onboarding in CRM','Connect WhatsApp number','Assign island/territory','Set monthly deal targets','Manager approval to go active'].map((item,i)=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="width:24px;height:24px;border-radius:50%;background:rgba(0,194,209,0.1);border:1px solid rgba(0,194,209,0.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--cyan);">${i+1}</div>
+          <span style="font-size:13px;color:var(--text2);">${item}</span>
+        </div>`).join('')}
+    </div>`;
+
+  loadAgentsTable();
+}
+
+async function loadAgentsTable(){
+  const{data:profiles}=await db.from('profiles').select('*');
+  const agents=(profiles||[]).filter(p=>p.role==='salesperson');
+  const table=document.getElementById('agentsTable');
+  if(!agents.length){
+    table.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3);">No agents yet — invite your first agent</div>`;
+    return;
+  }
+  table.innerHTML=`<table class="agents-table">
+    <thead><tr><th>Agent</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      ${agents.map(a=>`<tr>
+        <td><div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#0a0e1a;">${ini(a.full_name)}</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--text);">${a.full_name||'—'}</div></div>
+        </div></td>
+        <td>${a.role||'salesperson'}</td>
+        <td><span class="status-badge status-active">● Active</span></td>
+        <td><button style="padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;cursor:pointer;" onclick="showToast('Agent management coming soon','success')">Manage</button></td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function selectType(type,el){
+  agentType=type;
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function goStep(step){
+  if(step<=currentStep){currentStep=step;renderOnboarding();}
+}
+
+function nextStep(){currentStep=Math.min(currentStep+1,STEPS.length-1);renderOnboarding();}
+function prevStep(){currentStep=Math.max(currentStep-1,0);renderOnboarding();}
+
+function signAgreement(){
+  const c1=document.getElementById('agreeCheck')?.checked;
+  const c2=document.getElementById('agreeCheck2')?.checked;
+  if(!c1||!c2){showToast('Please check both boxes to continue','error');return;}
+  showToast('✅ Agreement signed','success');
+  nextStep();
+}
+
+function acceptComm(){
+  const c=document.getElementById('commCheck')?.checked;
+  if(!c){showToast('Please accept your commission plan','error');return;}
+  showToast('✅ Commission plan accepted','success');
+  nextStep();
+}
+
+function completeTraining(id,el){
+  trainingDone[id]=true;
+  el.classList.add('done');
+  el.querySelector('.training-check').textContent='✅';
+  el.querySelector('.training-icon').style.background='rgba(34,197,94,0.12)';
+  showToast('✅ Module completed','success');
+}
+
+function completeTrainingStep(total){
+  const done=Object.keys(trainingDone).length;
+  if(done<total){showToast(`Complete all ${total} modules first (${done}/${total} done)`,'error');return;}
+  nextStep();
+}
+
+function inviteAgent(){
+  const email=prompt('Enter agent email address to invite:');
+  if(!email)return;
+  showToast(`📧 Invitation sent to ${email}`,'success');
+}
+
+(function(){
+  const TIMEOUT_MS=5*60*1000;let timer;
+  function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
+  ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=>{document.addEventListener(evt,resetTimer,true);});
+  resetTimer();
+})();
+</script>
+</body>
+</html>
