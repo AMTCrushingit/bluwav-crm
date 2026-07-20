@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BluWav CRM — Agent Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;--border:rgba(255,255,255,0.06);--cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--text:#fff;--text2:#b0bec5;--text3:#4a5568;--sidebar:220px;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+    .sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;transition:width 0.3s;}
+    .sidebar.collapsed{width:60px;}
+    .sidebar.collapsed .nav-label,.sidebar.collapsed .nav-text,.sidebar.collapsed .nav-badge,.sidebar.collapsed .user-info,.sidebar.collapsed .trial-pill,.sidebar.collapsed .logo-badge{display:none;}
+    .sidebar.collapsed .nav-item{justify-content:center;padding:10px;}
+    .sidebar-logo{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .logo-text{font-size:22px;font-weight:800;white-space:nowrap;}.logo-text .blu{color:#fff;}.logo-text .wav{color:var(--cyan);}
+    .logo-badge{display:inline-block;background:rgba(0,194,209,0.15);border:1px solid rgba(0,194,209,0.3);color:var(--cyan);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:1px;margin-left:4px;vertical-align:middle;}
+    .collapse-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0;}
+    .sidebar-nav{flex:1;padding:12px 0;}.nav-section{padding:0 10px;margin-bottom:4px;}
+    .nav-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:8px 8px 4px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--text2);text-decoration:none;font-size:13.5px;font-weight:500;transition:all 0.15s;cursor:pointer;position:relative;}
+    .nav-item:hover{background:rgba(255,255,255,0.05);color:var(--text);}
+    .nav-item.active{background:rgba(0,194,209,0.12);color:var(--cyan);}
+    .nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--cyan);border-radius:0 3px 3px 0;}
+    .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+    .nav-text{white-space:nowrap;}
+    .nav-badge{margin-left:auto;background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;padding:1px 7px;border-radius:10px;}
+    .sidebar-bottom{padding:12px;border-top:1px solid var(--border);}
+    .trial-pill{background:rgba(255,140,66,0.1);border:1px solid rgba(255,140,66,0.25);border-radius:10px;padding:10px 12px;margin-bottom:10px;}
+    .trial-pill .tp-label{font-size:11px;color:var(--orange);font-weight:700;margin-bottom:4px;}
+    .trial-pill .tp-sub{font-size:11px;color:var(--text3);margin-bottom:8px;}
+    .btn-upgrade{width:100%;background:var(--gold);color:#0a0e1a;border:none;border-radius:7px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;}
+    .user-card{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;}
+    .user-card:hover{background:var(--bg3);}
+    .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#0099a8);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#0a0e1a;flex-shrink:0;}
+    .user-info{flex:1;min-width:0;}.user-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.user-role{font-size:11px;color:var(--text3);}
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;transition:margin-left 0.3s;}
+    .main.expanded{margin-left:60px;}
+    .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .topbar-left h1{font-size:18px;font-weight:700;}.topbar-left .breadcrumb{font-size:12px;color:var(--text3);}
+    .breadcrumb a{color:var(--cyan);text-decoration:none;}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;}
+    .btn-primary{background:var(--cyan);color:#0a0e1a;}
+    .btn-primary:hover{background:#00d4e4;}
+    .icon-btn{width:36px;height:36px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative;}
+    .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--orange);border-radius:50%;border:1px solid var(--bg2);}
+    .content{padding:24px 28px;flex:1;}
+
+    /* AGENT SELECTOR (manager only) */
+    .agent-selector{display:flex;align-items:center;gap:10px;margin-bottom:24px;flex-wrap:wrap;}
+    .agent-btn{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+    .agent-btn:hover{background:var(--bg3);color:var(--text);}
+    .agent-btn.active{background:rgba(0,194,209,0.1);border-color:var(--cyan);color:var(--cyan);}
+    .agent-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0a0e1a;flex-shrink:0;}
+
+    /* KPI CARDS */
+    .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+    .kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:transform 0.2s;}
+    .kpi-card:hover{transform:translateY(-2px);}
+    .kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+    .kpi-card.c1::after{background:var(--green);}
+    .kpi-card.c2::after{background:var(--cyan);}
+    .kpi-card.c3::after{background:var(--gold);}
+    .kpi-card.c4::after{background:var(--orange);}
+    .kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
+    .kpi-icon.c1{background:rgba(34,197,94,0.12);}
+    .kpi-icon.c2{background:rgba(0,194,209,0.12);}
+    .kpi-icon.c3{background:rgba(212,175,55,0.12);}
+    .kpi-icon.c4{background:rgba(255,140,66,0.12);}
+    .kpi-val{font-size:28px;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px;}
+    .kpi-lbl{font-size:13px;color:var(--text2);}
+    .kpi-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+
+    /* UNLOCK BAR */
+    .unlock-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px;}
+    .unlock-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .unlock-title{font-size:14px;font-weight:700;}
+    .unlock-badge{font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;}
+    .unlock-badge.locked{background:rgba(74,85,104,0.2);color:var(--text3);}
+    .unlock-badge.unlocked{background:rgba(34,197,94,0.1);color:var(--green);}
+    .unlock-progress{height:10px;background:var(--bg3);border-radius:10px;overflow:hidden;margin-bottom:8px;}
+    .unlock-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));border-radius:10px;transition:width 0.8s;}
+    .unlock-steps{display:flex;gap:8px;flex-wrap:wrap;}
+    .unlock-step{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);}
+    .unlock-step.done{color:var(--green);}
+
+    /* PIPELINE MINI */
+    .pipeline-mini{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:24px;}
+    .pipeline-stage{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+    .pipeline-stage-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+    .pipeline-stage-count{font-size:20px;font-weight:800;}
+    .pipeline-stage-val{font-size:11px;color:var(--text3);}
+
+    /* MAIN GRID */
+    .main-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .card-title{font-size:14px;font-weight:700;}
+    .card-action{font-size:12px;color:var(--cyan);cursor:pointer;text-decoration:none;}
+    .card-body{padding:16px 20px;}
+
+    /* LEADERBOARD */
+    .lb-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+    .lb-item:last-child{border-bottom:none;}
+    .lb-rank{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;}
+    .lb-rank.gold{background:var(--gold);color:#0a0e1a;}
+    .lb-rank.silver{background:#9ca3af;color:#0a0e1a;}
+    .lb-rank.bronze{background:#cd7c2f;color:#0a0e1a;}
+    .lb-rank.other{background:var(--bg3);color:var(--text3);}
+    .lb-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#0a0e1a;flex-shrink:0;}
+    .lb-info{flex:1;}
+    .lb-name{font-size:13px;font-weight:600;color:var(--text);}
+    .lb-sub{font-size:11px;color:var(--text3);}
+    .lb-val{font-size:13px;font-weight:700;color:var(--cyan);}
+    .lb-bar-wrap{width:60px;height:4px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+    .lb-bar{height:100%;background:var(--cyan);border-radius:4px;}
+    .lb-item.me .lb-name{color:var(--gold);}
+    .lb-item.me .lb-val{color:var(--gold);}
+
+    /* RECENT DEALS */
+    .deal-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+    .deal-row:last-child{border-bottom:none;}
+    .deal-name{font-size:13px;font-weight:600;color:var(--text);}
+    .deal-contact{font-size:11px;color:var(--text3);}
+    .deal-val{font-size:13px;font-weight:700;color:var(--cyan);}
+    .stage-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+    /* CHART */
+    .chart-container{position:relative;height:180px;}
+
+    /* QUICK ADD */
+    .quick-add{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:24px;}
+    .quick-add-title{font-size:14px;font-weight:700;margin-bottom:14px;}
+    .quick-add-btns{display:flex;gap:10px;flex-wrap:wrap;}
+    .quick-deal-btn{flex:1;min-width:120px;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;text-align:center;}
+    .quick-deal-btn:hover{background:var(--bg4);color:var(--text);}
+    .quick-deal-btn .qd-emoji{font-size:20px;display:block;margin-bottom:4px;}
+    .quick-deal-btn .qd-name{font-size:12px;font-weight:700;}
+    .quick-deal-btn .qd-val{font-size:11px;color:var(--text3);}
+    .quick-deal-btn .qd-comm{font-size:11px;color:var(--green);font-weight:600;}
+
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;color:var(--text);z-index:500;transform:translateY(80px);opacity:0;transition:all 0.3s;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.success{border-color:rgba(34,197,94,0.3);}
+    .toast.error{border-color:rgba(239,68,68,0.3);}
+    ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:5px;}
+    @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0!important;}.kpi-grid{grid-template-columns:repeat(2,1fr);}.main-grid{grid-template-columns:1fr;}.pipeline-mini{grid-template-columns:repeat(3,1fr);}}
+  </style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-logo">
+<div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div>
+<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
+</div>
+<nav class="sidebar-nav">
+<div class="nav-section">
+<div class="nav-label">Main</div>
+<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span class="nav-text"> Dashboard</span></a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item" href="activities.html"><span class="nav-icon">📋</span><span class="nav-text"> Activities</span></a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Performance</div>
+<a class="nav-item active" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Insights</div>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
+</div>
+<div class="nav-section" id="adminNav" style="display:none;">
+<div class="nav-label">Admin</div>
+<a class="nav-item" href="superadmin.html"><span class="nav-icon">🛡</span><span class="nav-text"> Super Admin</span></a>
+</div>
+</nav>
+<div class="sidebar-bottom">
+<div class="trial-pill"><div class="tp-label">⏱ 14-Day Free Trial</div><div class="tp-sub">No card needed</div><button class="btn-upgrade" onclick="window.location.href='billing.html'">Upgrade Plan</button></div>
+<div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Loading...</div><div class="user-role" id="sidebarRole">—</div></div></div>
+<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:8px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;">🚪 Sign Out</button>
+</div>
+</aside>
+<div class="main" id="mainContent">
+<header class="topbar">
+<div class="topbar-left"><h1>Agent Dashboard</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Agent Dashboard</div></div>
+<div class="topbar-right">
+<button class="btn btn-primary" onclick="window.location.href='deals.html'">+ New Deal</button>
+<div class="icon-btn">🔔<div class="notif-dot"></div></div>
+<div class="user-card" style="padding:4px 8px;border-radius:8px;">
+<div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
+<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Loading...</div><div class="user-role" id="topRole">—</div></div>
+</div>
+</div>
+</header>
+<div class="content">
+<!-- AGENT SELECTOR (manager only) -->
+<div class="agent-selector" id="agentSelector" style="display:none;">
+<span style="font-size:12px;color:var(--text3);font-weight:600;">Viewing:</span>
+<div id="agentBtns"></div>
+</div>
+<!-- QUICK ADD DEALS -->
+<div class="quick-add">
+<div class="quick-add-title">⚡ Quick Log a Deal</div>
+<div class="quick-add-btns">
+<button class="quick-deal-btn" onclick="quickDeal('Ripple',1200)">
+<span class="qd-emoji">🌊</span>
+<div class="qd-name">Ripple</div>
+<div class="qd-val">$1,200</div>
+<div class="qd-comm">+$240 comm</div>
+</button>
+<button class="quick-deal-btn" onclick="quickDeal('Current',2500)">
+<span class="qd-emoji">⚡</span>
+<div class="qd-name">Current</div>
+<div class="qd-val">$2,500</div>
+<div class="qd-comm">+$500 comm</div>
+</button>
+<button class="quick-deal-btn" onclick="quickDeal('Surge',4500)">
+<span class="qd-emoji">🚀</span>
+<div class="qd-name">Surge</div>
+<div class="qd-val">$4,500+</div>
+<div class="qd-comm">+$900 comm</div>
+</button>
+<button class="quick-deal-btn" onclick="quickDeal('CRM Premium',179)">
+<span class="qd-emoji">🖤</span>
+<div class="qd-name">CRM Premium</div>
+<div class="qd-val">$179/mo</div>
+<div class="qd-comm">+$35.80/mo</div>
+</button>
+<button class="quick-deal-btn" onclick="quickDeal('White-Label',697)">
+<span class="qd-emoji">⚡</span>
+<div class="qd-name">White-Label</div>
+<div class="qd-val">$697/mo</div>
+<div class="qd-comm">+$139.40/mo</div>
+</button>
+</div>
+</div>
+<!-- KPI CARDS -->
+<div class="kpi-grid">
+<div class="kpi-card c1">
+<div class="kpi-icon c1">💰</div>
+<div class="kpi-val" id="kpiComm">$0</div>
+<div class="kpi-lbl">Commission (MTD)</div>
+<div class="kpi-sub" id="kpiCommSub">This month</div>
+</div>
+<div class="kpi-card c2">
+<div class="kpi-icon c2">💼</div>
+<div class="kpi-val" id="kpiDeals">0</div>
+<div class="kpi-lbl">Deals Won (MTD)</div>
+<div class="kpi-sub" id="kpiDealsSub">This month</div>
+</div>
+<div class="kpi-card c3">
+<div class="kpi-icon c3">📊</div>
+<div class="kpi-val" id="kpiPipeline">$0</div>
+<div class="kpi-lbl">Pipeline Value</div>
+<div class="kpi-sub">Open deals</div>
+</div>
+<div class="kpi-card c4">
+<div class="kpi-icon c4">🎯</div>
+<div class="kpi-val" id="kpiContacts">0</div>
+<div class="kpi-lbl">My Contacts</div>
+<div class="kpi-sub">Total leads</div>
+</div>
+</div>
+<!-- UNLOCK BAR -->
+<div class="unlock-card">
+<div class="unlock-header">
+<div class="unlock-title">🔓 CRM Client Unlock — 25% Commission Rate</div>
+<span class="unlock-badge locked" id="unlockBadge">🔒 Locked</span>
+</div>
+<div class="unlock-progress"><div class="unlock-fill" id="unlockFill" style="width:0%;"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:12px;">
+<span id="unlockLabel">0 of 3 active CRM clients</span>
+<span id="unlockPct">0%</span>
+</div>
+<div class="unlock-steps" id="unlockSteps"></div>
+</div>
+<!-- PIPELINE MINI -->
+<div class="pipeline-mini" id="pipelineMini"></div>
+<!-- MAIN GRID -->
+<div class="main-grid">
+<!-- Leaderboard -->
+<div class="card">
+<div class="card-header">
+<div class="card-title">🏆 Team Leaderboard</div>
+<span id="lbMonth" style="font-size:12px;color:var(--text3);">This month</span>
+</div>
+<div class="card-body" id="leaderboard" style="padding:0 20px;">
+<div style="text-align:center;padding:20px;color:var(--text3);">Loading...</div>
+</div>
+</div>
+<!-- Recent Deals -->
+<div class="card">
+<div class="card-header">
+<div class="card-title">💼 My Recent Deals</div>
+<a class="card-action" href="deals.html">View all →</a>
+</div>
+<div class="card-body" id="recentDeals" style="padding:0 20px;">
+<div style="text-align:center;padding:20px;color:var(--text3);">Loading...</div>
+</div>
+</div>
+</div>
+<!-- COMMISSION CHART -->
+<div class="card">
+<div class="card-header">
+<div class="card-title">📈 Commission Trend</div>
+<span style="font-size:12px;color:var(--text3);">Last 6 months</span>
+</div>
+<div class="card-body">
+<div class="chart-container"><canvas id="commChart"></canvas></div>
+</div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const{createClient}=supabase;
+const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
+
+const RATES={Ripple:0.20,Current:0.20,Surge:0.20,'CRM Lite':0.20,'CRM Premium':0.20,'White-Label':0.20};
+const RATES_UNLOCKED=0.25;
+const UNLOCK_THRESHOLD=3;
+const STAGES=['Lead','Qualified','Proposal','Negotiation','Won','Lost'];
+const STAGE_COLORS={Lead:'#94a3b8',Qualified:'#00C2D1',Proposal:'#f59e0b',Negotiation:'#ff8c42',Won:'#22c55e',Lost:'#ef4444'};
+const AGENT_COLORS=['#00C2D1','#D4AF37','#22c55e','#ff8c42','#a78bfa','#f472b6'];
+
+let currentUser=null,userRole='salesperson',allDeals=[],allContacts=[],allProfiles=[],viewingAgentId=null;
+
+function ini(n){return(n||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);}
+function fmt$(v){return'$'+Number(v||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function fmtDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function calcComm(deal,unlocked){const rate=unlocked?RATES_UNLOCKED:(RATES[deal.deal_type]||0.20);return(deal.deal_value||0)*rate;}
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
+async function signOut(){await db.auth.signOut();window.location.href='login.html';}
+function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%AGENT_COLORS.length;return AGENT_COLORS[h];}
+
+(async()=>{
+  const{data:{session}}=await db.auth.getSession();
+  if(!session){window.location.href='login.html';return;}
+  currentUser=session.user;
+  let profile=null;
+  try{const{data:p}=await db.from('profiles').select('*').eq('id',currentUser.id).single();profile=p;}catch(e){}
+  if(!profile){const meta=currentUser.user_metadata||{};profile={full_name:meta.full_name||currentUser.email?.split('@')[0]||'User',role:meta.role||'salesperson'};}
+  userRole=profile?.role||'salesperson';
+  const name=profile?.full_name||currentUser.email?.split('@')[0]||'User';
+  ['sidebarName','topName'].forEach(id=>document.getElementById(id).textContent=name);
+  ['sidebarAvatar','topAvatar'].forEach(id=>document.getElementById(id).textContent=ini(name));
+  document.getElementById('sidebarRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
+  document.getElementById('topRole').textContent=userRole.charAt(0).toUpperCase()+userRole.slice(1);
+  if(userRole==='manager'||userRole==='owner'){
+    document.getElementById('adminNav').style.display='block';
+    document.getElementById('agentSelector').style.display='flex';
+  }
+  viewingAgentId=currentUser.id;
+  await loadAll();
+})();
+
+async function loadAll(){
+  // Load profiles
+  const{data:profiles}=await db.from('profiles').select('*');
+  allProfiles=profiles||[];
+
+  // Build agent selector for managers
+  if(userRole==='manager'||userRole==='owner'){
+    const btns=document.getElementById('agentBtns');
+    btns.innerHTML='';
+    const agents=allProfiles.filter(p=>p.role==='salesperson'||p.role==='manager');
+    agents.forEach(p=>{
+      const btn=document.createElement('button');
+      btn.className='agent-btn'+(p.id===viewingAgentId?' active':'');
+      btn.innerHTML=`<div class="agent-avatar" style="background:${getColor(p.full_name)};">${ini(p.full_name)}</div>${p.full_name||'Agent'}`;
+      btn.onclick=()=>{
+        viewingAgentId=p.id;
+        document.querySelectorAll('.agent-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        loadAgentData();
+      };
+      btns.appendChild(btn);
+    });
+  }
+
+  // Load contacts
+  const{data:contacts}=await db.from('contacts').select('id,full_name,business_name,user_id');
+  allContacts=contacts||[];
+
+  // Load all deals
+  const{data:deals}=await db.from('deals').select('*').order('created_at',{ascending:false});
+  allDeals=(deals||[]).map(d=>({
+    ...d,
+    deal_name:d.deal_name||d.title||'Untitled',
+    deal_value:d.deal_value||d.value||0,
+    deal_type:d.deal_type||'Ripple',
+    stage:d.stage||'Lead',
+    agent_id:d.agent_id||d.created_by||null,
+  }));
+
+  loadAgentData();
+  renderLeaderboard();
+  renderChart();
+}
+
+function loadAgentData(){
+  const agentId=viewingAgentId||currentUser.id;
+  const myDeals=allDeals.filter(d=>d.agent_id===agentId);
+  const myContacts=allContacts.filter(c=>c.user_id===agentId);
+
+  const now=new Date();
+  const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+  const crmClients=myDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
+  const unlocked=crmClients>=UNLOCK_THRESHOLD;
+  const wonMTD=myDeals.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
+  const totalComm=wonMTD.reduce((s,d)=>s+calcComm(d,unlocked),0);
+  const openDeals=myDeals.filter(d=>!['Won','Lost'].includes(d.stage));
+  const pipelineVal=openDeals.reduce((s,d)=>s+(d.deal_value||0),0);
+
+  document.getElementById('kpiComm').textContent=fmt$(totalComm);
+  document.getElementById('kpiDeals').textContent=wonMTD.length;
+  document.getElementById('kpiPipeline').textContent=fmt$(pipelineVal);
+  document.getElementById('kpiContacts').textContent=myContacts.length;
+
+  // Unlock bar
+  const pct=Math.min(100,(crmClients/UNLOCK_THRESHOLD)*100);
+  document.getElementById('unlockFill').style.width=pct+'%';
+  document.getElementById('unlockLabel').textContent=`${crmClients} of ${UNLOCK_THRESHOLD} active CRM clients`;
+  document.getElementById('unlockPct').textContent=Math.round(pct)+'%';
+  document.getElementById('unlockBadge').textContent=unlocked?'🎉 Unlocked — 25%':'🔒 Locked — 20%';
+  document.getElementById('unlockBadge').className='unlock-badge '+(unlocked?'unlocked':'locked');
+
+  // Unlock steps
+  const steps=document.getElementById('unlockSteps');
+  steps.innerHTML=['CRM Lite client','CRM Premium client','White-Label client'].map((s,i)=>`
+    <div class="unlock-step ${i<crmClients?'done':''}">
+      ${i<crmClients?'✅':'⬜'} ${s}
+    </div>`).join('');
+
+  // Pipeline mini
+  const pipeline=document.getElementById('pipelineMini');
+  pipeline.innerHTML=STAGES.map(stage=>{
+    const deals=myDeals.filter(d=>d.stage===stage);
+    const val=deals.reduce((s,d)=>s+(d.deal_value||0),0);
+    const color=STAGE_COLORS[stage];
+    return`<div class="pipeline-stage" style="border-top:2px solid ${color};">
+      <div class="pipeline-stage-name" style="color:${color};">${stage}</div>
+      <div class="pipeline-stage-count" style="color:${color};">${deals.length}</div>
+      ${val>0?`<div class="pipeline-stage-val">${fmt$(val)}</div>`:''}
+    </div>`;
+  }).join('');
+
+  // Recent deals
+  const recentDeals=document.getElementById('recentDeals');
+  const recent=myDeals.slice(0,6);
+  if(!recent.length){
+    recentDeals.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text3);">No deals yet — <a href="deals.html" style="color:var(--cyan);">Create first deal</a></div>`;
+  } else {
+    recentDeals.innerHTML=recent.map(d=>`
+      <div class="deal-row">
+        <div>
+          <div class="deal-name">${d.deal_name}</div>
+          <div class="deal-contact">${d.deal_type} · ${fmtDate(d.created_at)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="deal-val">${fmt$(d.deal_value)}</span>
+          <div class="stage-dot" style="background:${STAGE_COLORS[d.stage]||'#94a3b8'};"></div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function renderLeaderboard(){
+  const now=new Date();
+  const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const agents=allProfiles.filter(p=>p.role==='salesperson');
+  const lb=agents.map(agent=>{
+    const agentDeals=allDeals.filter(d=>d.agent_id===agent.id);
+    const crmClients=agentDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
+    const unlocked=crmClients>=UNLOCK_THRESHOLD;
+    const wonMTD=agentDeals.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
+    const comm=wonMTD.reduce((s,d)=>s+calcComm(d,unlocked),0);
+    return{...agent,comm,won:wonMTD.length};
+  }).sort((a,b)=>b.comm-a.comm);
+
+  const maxComm=Math.max(...lb.map(a=>a.comm),1);
+  const ranks=['gold','silver','bronze'];
+  const lbEl=document.getElementById('leaderboard');
+
+  if(!lb.length){
+    lbEl.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text3);">No agent data yet</div>`;
+    return;
+  }
+
+  lbEl.innerHTML=lb.map((agent,i)=>`
+    <div class="lb-item ${agent.id===currentUser.id?'me':''}">
+      <div class="lb-rank ${ranks[i]||'other'}">${i+1}</div>
+      <div class="lb-avatar" style="background:${getColor(agent.full_name)};">${ini(agent.full_name)}</div>
+      <div class="lb-info">
+        <div class="lb-name">${agent.full_name||'Agent'}${agent.id===currentUser.id?' (You)':''}</div>
+        <div class="lb-sub">${agent.won} won · ${agent.id===currentUser.id&&agent.comm>=0?'🎯 You':''}  </div>
+      </div>
+      <div style="text-align:right;">
+        <div class="lb-val">${fmt$(agent.comm)}</div>
+        <div class="lb-bar-wrap" style="margin-top:4px;margin-left:auto;"><div class="lb-bar" style="width:${Math.round((agent.comm/maxComm)*100)}%;"></div></div>
+      </div>
+    </div>`).join('');
+}
+
+function renderChart(){
+  const ctx=document.getElementById('commChart').getContext('2d');
+  const months=['Feb','Mar','Apr','May','Jun','Jul'];
+  // Calculate real commission by month from deals
+  const now=new Date();
+  const monthData=months.map((m,i)=>{
+    const year=now.getFullYear();
+    const month=String(now.getMonth()-5+i+1).padStart(2,'0');
+    const monthStr=`${year}-${month}`;
+    const myDeals=allDeals.filter(d=>d.agent_id===currentUser.id);
+    const crmClients=myDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
+    const unlocked=crmClients>=UNLOCK_THRESHOLD;
+    const wonInMonth=myDeals.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
+    return wonInMonth.reduce((s,d)=>s+calcComm(d,unlocked),0);
+  });
+
+  new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:months,
+      datasets:[{
+        label:'Commission Earned',
+        data:monthData,
+        backgroundColor:'rgba(0,194,209,0.7)',
+        borderRadius:5,
+        borderSkipped:false,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:'#4a5568',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
+        y:{ticks:{color:'#4a5568',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{color:'rgba(255,255,255,0.04)'}}
+      }
+    }
+  });
+}
+
+async function quickDeal(type,value){
+  const name=prompt(`Quick log a ${type} deal — enter client name:`);
+  if(!name)return;
+  const deal={
+    deal_name:`${type} — ${name}`,
+    title:`${type} — ${name}`,
+    deal_type:type,
+    deal_value:value,
+    value:value,
+    stage:'Lead',
+    agent_id:currentUser.id,
+    created_by:currentUser.id,
+    is_crm_client_deal:['CRM Lite','CRM Premium','White-Label'].includes(type),
+    updated_at:new Date().toISOString(),
+  };
+  const{data,error}=await db.from('deals').insert([deal]).select();
+  if(error){showToast('Failed: '+error.message,'error');return;}
+  const newDeal={...data[0],deal_name:data[0].deal_name||data[0].title,deal_value:data[0].deal_value||data[0].value||value,deal_type:data[0].deal_type||type,stage:data[0].stage||'Lead',agent_id:data[0].agent_id||data[0].created_by};
+  allDeals.unshift(newDeal);
+  showToast(`✅ ${type} deal logged for ${name}`,'success');
+  loadAgentData();
+  renderLeaderboard();
+}
+
+(function(){
+  const TIMEOUT_MS=5*60*1000;let timer;
+  function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
+  ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=>{document.addEventListener(evt,resetTimer,true);});
+  resetTimer();
+})();
+</script>
+</body>
+</html>
