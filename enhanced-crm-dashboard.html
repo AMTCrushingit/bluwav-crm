@@ -666,43 +666,52 @@ function showToast(msg,type=''){
 })();
 
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
-// Force re-auth if session is older than 5 minutes (300000ms)
-const AUTH_TIMEOUT = 5 * 60 * 1000;
-const lastActive = parseInt(sessionStorage.getItem('bw_last_active') || '0');
-const now = Date.now();
+const AUTH_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
-if (lastActive && (now - lastActive) > AUTH_TIMEOUT) {
-  // Session expired — sign out and force re-login
-  sessionStorage.removeItem('bw_last_active');
-  await db.auth.signOut();
-  window.location.href = 'login.html';
-} else {
-  // Update last active timestamp
-  sessionStorage.setItem('bw_last_active', now.toString());
-}
-
-// Track activity to reset the 5-min timer
-['mousedown','keydown','scroll','touchstart','click'].forEach(evt => {
-  document.addEventListener(evt, () => {
-    sessionStorage.setItem('bw_last_active', Date.now().toString());
-  }, true);
-});
-
-db.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_OUT') {
-    sessionStorage.removeItem('bw_last_active');
-    window.location.href = 'login.html';
-    return;
-  }
-  if (!session) {
-    window.location.href = 'login.html';
-    return;
-  }
-  if (currentUser) return; // already initialized
-  currentUser = session.user;
+// Activity tracker — resets on any user interaction
+function touchActivity() {
   sessionStorage.setItem('bw_last_active', Date.now().toString());
+}
+['mousedown','keydown','scroll','touchstart','click'].forEach(evt =>
+  document.addEventListener(evt, touchActivity, true)
+);
+
+// Main auth init — runs immediately
+(async function() {
+  // 1. Check if we have a session at all
+  const { data: { session } } = await db.auth.getSession();
+
+  if (!session) {
+    // No session — go to login
+    window.location.href = 'login.html';
+    return;
+  }
+
+  // 2. Check 5-minute inactivity timeout
+  const lastActive = parseInt(sessionStorage.getItem('bw_last_active') || '0');
+  const now = Date.now();
+
+  if (lastActive > 0 && (now - lastActive) > AUTH_TIMEOUT) {
+    // Timed out — sign out and force re-login
+    sessionStorage.removeItem('bw_last_active');
+    await db.auth.signOut();
+    window.location.href = 'login.html';
+    return;
+  }
+
+  // 3. Valid session within timeout — proceed
+  touchActivity(); // record this visit
+  currentUser = session.user;
   await initDashboard();
-});
+
+  // 4. Handle future sign-outs
+  db.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') {
+      sessionStorage.removeItem('bw_last_active');
+      window.location.href = 'login.html';
+    }
+  });
+})();
 
 async function initDashboard(){
 
@@ -812,25 +821,27 @@ function switchRep(userId,btn){
 
 // ── LOAD DATA ─────────────────────────────────────────────────────────────────
 async function loadData(){
-  // Contacts — try 'contacts' table first, fallback to 'leads'
+  // Load from leads table (primary data source)
   let contacts=[], cCount=0;
   try{
-    let cq = db.from('contacts').select('*',{count:'exact'}).order('created_at',{ascending:false});
-    if(viewingUserId) cq=cq.eq('user_id',viewingUserId);
-    const {data:cd,count:cc} = await cq;
-    contacts=cd||[]; cCount=cc||0;
-  }catch(e){
-    // fallback to leads table
     let lq = db.from('leads').select('*',{count:'exact'}).order('created_at',{ascending:false});
-    const {data:ld,count:lc} = await lq;
-    contacts=(ld||[]).map(l=>({
-      id:l.id,full_name:l.full_name,email:l.email,
-      business_name:l.business,phone:l.whatsapp,
-      status:l.status==='new'?'Lead':l.status,
-      island:l.island,created_at:l.created_at,user_id:l.user_id
-    }));
-    cCount=lc||contacts.length;
-  }
+    const {data:ld,count:lc,error:le} = await lq;
+    if(!le && ld){
+      contacts=ld.map(l=>({
+        id:l.id,
+        full_name:l.full_name||'Unknown',
+        email:l.email||'',
+        business_name:l.business||'',
+        phone:l.whatsapp||'',
+        status:({new:'Lead',contacted:'Qualified',qualified:'Qualified',proposal:'Proposal',won:'Won',lost:'Inactive'})[l.status]||'Lead',
+        island:l.island||l.location||'',
+        created_at:l.created_at,
+        user_id:l.user_id,
+        deal_value:0
+      }));
+      cCount=lc||contacts.length;
+    }
+  }catch(e){ console.warn('leads load error:',e); }
   allContacts=contacts;
 
   // Update metrics
@@ -839,20 +850,22 @@ async function loadData(){
   if(nb)nb.textContent=cCount;
   document.getElementById('countAll').textContent=cCount;
 
-  // Deals
+  // Deals from deals table
   let deals=[];
   try{
     let dq = db.from('deals').select('*').order('created_at',{ascending:false});
     if(viewingUserId) dq=dq.eq('agent_id',viewingUserId);
     else if(userRole==='salesperson') dq=dq.eq('agent_id',currentUser.id);
-    const {data:dd} = await dq;
-    deals=(dd||[]).map(d=>({
-      ...d,
-      deal_name:d.deal_name||d.title||'Untitled Deal',
-      deal_value:d.deal_value||d.value||0,
-      stage:d.stage||'Lead'
-    }));
-  }catch(e){}
+    const {data:dd,error:de} = await dq;
+    if(!de && dd){
+      deals=dd.map(d=>({
+        ...d,
+        deal_name:d.deal_name||d.title||'Untitled Deal',
+        deal_value:d.deal_value||d.value||0,
+        stage:d.stage||'Lead'
+      }));
+    }
+  }catch(e){ console.warn('deals load error:',e); }
   allDeals=deals;
 
   const openDeals=deals.filter(d=>!['Won','Lost'].includes(d.stage));
