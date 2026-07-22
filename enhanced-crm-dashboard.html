@@ -211,6 +211,11 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 .btn-danger{background:rgba(239,68,68,0.1);color:#EF4444;border:1px solid rgba(239,68,68,0.25);}
 .btn-danger:hover{background:rgba(239,68,68,0.2);}
 
+/* ══ STATUS SELECT ══ */
+.status-select{appearance:none;-webkit-appearance:none;outline:none;cursor:pointer;transition:all 0.15s;}
+.status-select:hover{border-color:var(--cyan)!important;}
+.status-select option{background:var(--navy-mid);color:var(--text);font-weight:600;}
+
 /* ══ SORT CONTROLS ══ */
 .sort-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--navy-border);}
 .sort-select{background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.75rem;padding:5px 10px;outline:none;font-family:var(--font-body);cursor:pointer;}
@@ -571,7 +576,34 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
       <div class="fg"><label class="fl">Deal Name <span class="req">*</span></label><input class="fi" id="md-name" placeholder="e.g. Website Redesign"/></div>
       <div class="fg-row">
         <div class="fg"><label class="fl">Value ($)</label><input class="fi" id="md-value" type="number" placeholder="0"/></div>
-        <div class="fg"><label class="fl">Stage</label><select class="fs" id="md-stage"><option>Lead</option><option>Qualified</option><option>Proposal</option><option>Won</option></select></div>
+        <div class="fg"><label class="fl">Stage</label>
+          <select class="fs" id="md-stage">
+            <option value="Lead">Lead</option>
+            <option value="Qualified">Qualified</option>
+            <option value="Proposal">Proposal</option>
+            <option value="Won">Won</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label class="fl">Package Type</label>
+          <select class="fs" id="md-type">
+            <option value="Ripple">Ripple ($1,800)</option>
+            <option value="Current">Current ($3,000)</option>
+            <option value="Surge">Surge ($5,000+)</option>
+            <option value="CRM Starter">CRM Starter</option>
+            <option value="CRM Lite">CRM Lite</option>
+            <option value="CRM Premium">CRM Premium</option>
+            <option value="CRM Enterprise">CRM Enterprise</option>
+            <option value="White-Label">White-Label</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Link to Contact</label>
+          <select class="fs" id="md-contact">
+            <option value="">No contact linked</option>
+          </select>
+        </div>
       </div>
       <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="md-notes" placeholder="Deal notes..."></textarea></div>
     </div>
@@ -939,7 +971,16 @@ function renderRecentContacts(){
       <td><div class="cnc"><div class="cav" style="background:${getColor(name)};color:var(--navy-deep);">${ini(name)}</div>
       <div><div class="cn">${name}</div><div class="ce">${c.email||''}</div></div></div></td>
       <td>${c.business_name||c.business||'—'}</td>
-      <td><span class="badge ${badge}">${status}</span></td>
+      <td>
+        <select class="status-select" data-id="${c.id}" onchange="updateContactStatus(this)" style="background:transparent;border:1px solid var(--navy-border);border-radius:6px;color:var(--text);font-size:0.7rem;font-weight:700;padding:2px 6px;cursor:pointer;font-family:var(--font-body);text-transform:uppercase;letter-spacing:0.04em;">
+          <option value="Lead" ${status==='Lead'?'selected':''}>Lead</option>
+          <option value="Prospect" ${status==='Prospect'?'selected':''}>Prospect</option>
+          <option value="Qualified" ${status==='Qualified'?'selected':''}>Qualified</option>
+          <option value="Proposal" ${status==='Proposal'?'selected':''}>Proposal</option>
+          <option value="Won" ${status==='Won'?'selected':''}>Won</option>
+          <option value="Inactive" ${status==='Inactive'?'selected':''}>Inactive</option>
+        </select>
+      </td>
       <td style="color:var(--text3);font-size:0.75rem;">${date}</td>
     </tr>`;
   }).join('');
@@ -1069,6 +1110,17 @@ function sortByCol(th){
   sortContacts();
 }
 
+async function updateContactStatus(sel){
+  const id=sel.getAttribute('data-id');
+  const newStatus=sel.value;
+  const {error}=await db.from('contacts').update({status:newStatus}).eq('id',id);
+  if(error){showToast('Error: '+error.message,'');sel.value=sel.getAttribute('data-prev')||newStatus;return;}
+  // Update local data
+  const contact=allContacts.find(c=>c.id===id);
+  if(contact)contact.status=newStatus;
+  showToast('Status updated to '+newStatus+' ✓','success');
+}
+
 function filterContacts(){
   const q=(document.getElementById('contactSearch')?.value||'').toLowerCase();
   const status=document.getElementById('contactStatusFilter')?.value||'';
@@ -1145,7 +1197,17 @@ function globalSearchFn(q){
 document.addEventListener('click',e=>{if(!e.target.closest('#globalSearch')&&!e.target.closest('#searchResults'))document.getElementById('searchResults').style.display='none';});
 
 // ── MODALS ────────────────────────────────────────────────────────────────────
-function openModal(id){document.getElementById('modal-'+id)?.classList.add('open');}
+function openModal(id){
+  document.getElementById('modal-'+id)?.classList.add('open');
+  // Populate contact dropdown for deal modal
+  if(id==='addDeal'){
+    const sel=document.getElementById('md-contact');
+    if(sel&&allContacts.length){
+      sel.innerHTML='<option value="">No contact linked</option>'+
+        allContacts.map(c=>`<option value="${c.id}">${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
+    }
+  }
+}
 function closeModal(id){document.getElementById('modal-'+id)?.classList.remove('open');}
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
 
@@ -1164,6 +1226,12 @@ async function saveContact(){
     notes:document.getElementById('mc-notes')?.value.trim()||null,
     user_id:currentUser?.id
   };
+  // Capture source from URL if available (for ad/campaign tracking)
+  const urlParams = new URLSearchParams(window.location.search);
+  const source = urlParams.get('utm_source')||urlParams.get('src')||'crm_manual';
+  const leadCode = source.toUpperCase().replace(/[^A-Z0-9]/g,'_')+'_'+Date.now().toString(36).toUpperCase();
+  contact.source = source;
+  contact.lead_code = leadCode;
   const {error} = await db.from('contacts').insert(contact);
   if(error){
     console.error('Save contact error:',error);
@@ -1185,12 +1253,23 @@ async function saveContact(){
 async function saveDeal(){
   const name=document.getElementById('md-name')?.value.trim();
   if(!name){showToast('Please enter a deal name','');return;}
+  const val=parseFloat(document.getElementById('md-value')?.value)||0;
+  const stage=document.getElementById('md-stage')?.value||'Lead';
+  const contactId=document.getElementById('md-contact')?.value||null;
+  const dealType=document.getElementById('md-type')?.value||'Ripple';
+  // Insert with both old and new column names for compatibility
   const {error} = await db.from('deals').insert({
     deal_name:name,
-    deal_value:parseFloat(document.getElementById('md-value')?.value)||0,
-    stage:document.getElementById('md-stage')?.value||'Lead',
+    title:name,
+    deal_value:val,
+    value:val,
+    deal_type:dealType,
+    stage:stage,
+    contact_id:contactId,
     notes:document.getElementById('md-notes')?.value.trim()||null,
-    agent_id:currentUser?.id
+    agent_id:currentUser?.id,
+    created_by:currentUser?.id,
+    updated_at:new Date().toISOString()
   });
   if(error){
     console.error('Save deal error:',error);
