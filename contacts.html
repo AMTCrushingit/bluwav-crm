@@ -123,7 +123,7 @@
 <th onclick="sortBy('full_name')">Name ↕</th>
 <th>Email</th><th>Phone</th><th>WhatsApp</th>
 <th onclick="sortBy('business_name')">Business</th>
-<th onclick="sortBy('island')">Island</th>
+<th onclick="sortBy('location')">Location</th>
 <th id="ownerCol" style="display:none;">Owner</th>
 <th>Added</th>
 <th style="width:100px;"></th>
@@ -169,7 +169,7 @@
 <div class="form-group"><label>Email</label><input id="f_email" placeholder="jordan@example.com" type="email"/></div>
 <div class="form-group"><label>Phone</label><input id="f_phone" placeholder="+1 868 555 0000" type="tel"/></div>
 <div class="form-group"><label>WhatsApp</label><input id="f_whatsapp" placeholder="+1 868 555 0000" type="tel"/></div>
-<div class="form-group"><label>Island</label>
+<div class="form-group"><label>Location</label>
 <select id="f_island"><option value="">Select island...</option>
 <option>Trinidad</option><option>Barbados</option><option>Jamaica</option><option>Antigua</option>
 <option>St. Lucia</option><option>Grenada</option><option>Guyana</option><option>Belize</option>
@@ -279,7 +279,7 @@ function applyFilters(){
   sortField=sort[0];sortDir=sort[1];
   filtered=allContacts.filter(c=>{
     const mq=!q||(c.full_name||'').toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q)||(c.business_name||'').toLowerCase().includes(q)||(c.phone||'').includes(q);
-    const mi=!island||c.island===island;
+    const mi=!island||c.location||c.island===island;
     const ms=statusFilter==='all'||c.status===statusFilter;
     const mo=!ownerFilter||c.user_id===ownerFilter;
     return mq&&mi&&ms&&mo;
@@ -305,7 +305,7 @@ function renderTable(){
       <td>${c.phone||'—'}</td>
       <td>${waNum?`<a href="https://wa.me/${waNum}" onclick="event.stopPropagation()" target="_blank" style="color:var(--green);text-decoration:none;">💬 ${c.whatsapp}</a>`:'—'}</td>
       <td>${c.business_name||'—'}</td>
-      <td>${c.island||'—'}</td>
+      <td>${c.location||c.island||'—'}</td>
       ${ownerCell}
       <td style="color:var(--text3);">${fmtDate(c.created_at)}</td>
       <td onclick="event.stopPropagation()"><div class="action-btns">
@@ -348,7 +348,7 @@ async function bulkDelete(){
 }
 function exportCSV(selOnly=false){
   const data=selOnly?allContacts.filter(c=>selected.has(c.id)):filtered;
-  const headers=['full_name','email','phone','whatsapp','business_name','island','notes','created_at'];
+  const headers=['full_name','email','phone','whatsapp','business_name','location','notes','created_at'];
   const rows=[headers.join(','),...data.map(c=>headers.map(h=>`"${(c[h]||'').toString().replace(/"/g,'""')}"`).join(','))];
   const blob=new Blob([rows.join('\n')],{type:'text/csv'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`bluwav-contacts-${new Date().toISOString().slice(0,10)}.csv`;a.click();
@@ -421,7 +421,7 @@ function renderPanelTab(){
         <div class="detail-row"><div class="detail-icon">📞</div><div><div class="detail-label">Phone</div><div class="detail-value">${c.phone||'—'}</div></div></div>
         <div class="detail-row"><div class="detail-icon">💬</div><div><div class="detail-label">WhatsApp</div><div class="detail-value">${c.whatsapp||'—'}</div></div></div>
         <div class="detail-row"><div class="detail-icon">🏢</div><div><div class="detail-label">Business</div><div class="detail-value">${c.business_name||'—'}</div></div></div>
-        <div class="detail-row"><div class="detail-icon">🌴</div><div><div class="detail-label">Island</div><div class="detail-value">${c.island||'—'}</div></div></div>
+        <div class="detail-row"><div class="detail-icon">🌴</div><div><div class="detail-label">Location</div><div class="detail-value">${c.location||c.island||'—'}</div></div></div>
         <div class="detail-row"><div class="detail-icon">📅</div><div><div class="detail-label">Added</div><div class="detail-value">${fmtDate(c.created_at)}</div></div></div>
       </div>
     </div>`;
@@ -518,7 +518,7 @@ async function addContact(){
     email:document.getElementById('f_email').value.trim()||null,
     phone:document.getElementById('f_phone').value.trim()||null,
     whatsapp:document.getElementById('f_whatsapp').value.trim()||null,
-    island:document.getElementById('f_island').value||null,
+    location:document.getElementById('f_island').value||null,
     notes:document.getElementById('f_notes').value.trim()||null,
     user_id:currentUser?.id||null,
   };

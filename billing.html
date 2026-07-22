@@ -580,6 +580,21 @@ const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUz
 let selectedPlan='premium', selectedBilling='monthly';
 
 function ini(n){return(n||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);}
+
+// ── ADMIN NOTIFICATION ────────────────────────────────────────────────────────
+// Sends email to BluWav admin when key events happen (new contact, deal, payment)
+function notifyAdmin(subject, body) {
+  var fd = new FormData();
+  fd.append('_replyto', 'hello@bluwavgrowth.com');
+  fd.append('email', 'hello@bluwavgrowth.com');
+  fd.append('_subject', subject);
+  fd.append('message', body);
+  fd.append('_template', 'table');
+  fetch('https://formspree.io/f/xpwzgvkd', {
+    method: 'POST', body: fd, headers: {'Accept': 'application/json'}
+  }).catch(function(e){ console.warn('Admin notify failed:', e); });
+}
+
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
 async function signOut(){await db.auth.signOut();window.location.href='login.html';}
@@ -716,6 +731,16 @@ async function processPayment(){
   if(cardNum==='4242424242424242'||cardNum.startsWith('4')){
     closePaymentModal();
     showToast('✅ Plan activated! Welcome to BluWav CRM.','success');
+    // Notify admin of new plan activation
+    notifyAdmin('🎉 New Plan Activated — BluWav CRM',
+      'Plan: '+selectedPlan+'\nBilling: '+selectedBilling+'\nName: '+name+'\nEmail: '+email+'\nTime: '+new Date().toLocaleString());
+    // Send confirmation to client
+    var cfd=new FormData();
+    cfd.append('_replyto',email);cfd.append('email',email);
+    cfd.append('_subject','✅ BluWav CRM — Your Plan is Active!');
+    cfd.append('message','Hi '+name+',\n\nYour BluWav CRM plan has been activated successfully!\n\nPlan: '+selectedPlan+'\nBilling: '+selectedBilling+'\n\nYou now have full access to your CRM dashboard at bluwavcrm.com\n\nQuestions? Email us at hello@bluwavgrowth.com\n\n— The BluWav Growth Team');
+    cfd.append('_template','table');
+    fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:cfd,headers:{'Accept':'application/json'}});
     // Update UI to show active plan
     document.querySelectorAll('.plan-btn.active-plan').forEach(b=>{
       b.textContent='✅ Your Current Plan';

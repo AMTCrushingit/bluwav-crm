@@ -679,6 +679,21 @@ function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS
 function fmt(v){return '$'+(v||0).toLocaleString();}
 
 // ── TOAST ─────────────────────────────────────────────────────────────────────
+
+// ── ADMIN NOTIFICATION ────────────────────────────────────────────────────────
+// Sends email to BluWav admin when key events happen (new contact, deal, payment)
+function notifyAdmin(subject, body) {
+  var fd = new FormData();
+  fd.append('_replyto', 'hello@bluwavgrowth.com');
+  fd.append('email', 'hello@bluwavgrowth.com');
+  fd.append('_subject', subject);
+  fd.append('message', body);
+  fd.append('_template', 'table');
+  fetch('https://formspree.io/f/xpwzgvkd', {
+    method: 'POST', body: fd, headers: {'Accept': 'application/json'}
+  }).catch(function(e){ console.warn('Admin notify failed:', e); });
+}
+
 function showToast(msg,type=''){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className=`toast ${type} show`;
@@ -868,7 +883,7 @@ async function loadData(){
     business_name:c.business_name||c.company||c.business||'',
     phone:c.phone||c.whatsapp||'',
     status:c.status||'Lead',
-    island:c.island||c.location||'',
+    location:c.location||c.island||c.location||'',
     created_at:c.created_at,
     user_id:c.user_id,
     deal_value:c.deal_value||0
@@ -1222,7 +1237,7 @@ async function saveContact(){
     phone:document.getElementById('mc-phone')?.value.trim()||null,
     business_name:document.getElementById('mc-biz')?.value.trim()||null,
     status:document.getElementById('mc-status')?.value||'Lead',
-    island:document.getElementById('mc-location')?.value.trim()||null,
+    location:document.getElementById('mc-location')?.value.trim()||null,
     notes:document.getElementById('mc-notes')?.value.trim()||null,
     user_id:currentUser?.id
   };
@@ -1239,6 +1254,8 @@ async function saveContact(){
     return;
   }
   showToast('Contact saved ✓','success');
+  notifyAdmin('👤 New Contact Added — BluWav CRM',
+    'Name: '+contact.full_name+'\nEmail: '+contact.email+'\nBusiness: '+contact.business_name+'\nSource: '+contact.source+'\nLead Code: '+contact.lead_code+'\nTime: '+new Date().toLocaleString());
   closeModal('addContact');
   // Clear form
   ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes'].forEach(id=>{
@@ -1277,6 +1294,8 @@ async function saveDeal(){
     return;
   }
   showToast('Deal saved ✓','success');
+  notifyAdmin('💼 New Deal Added — BluWav CRM',
+    'Deal: '+name+'\nValue: $'+val+'\nStage: '+stage+'\nType: '+dealType+'\nAgent: '+currentUser?.email+'\nTime: '+new Date().toLocaleString());
   closeModal('addDeal');
   ['md-name','md-value','md-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   await loadData();

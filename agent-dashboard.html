@@ -337,6 +337,19 @@ function ini(n){return(n||'?').split(' ').map(x=>x[0]).join('').toUpperCase().sl
 function fmt$(v){return'$'+Number(v||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
 function fmtDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 function calcComm(deal,unlocked){const rate=unlocked?RATES_UNLOCKED:(RATES[deal.deal_type]||0.20);return(deal.deal_value||0)*rate;}
+
+function notifyAdmin(subject, body) {
+  var fd = new FormData();
+  fd.append('_replyto', 'hello@bluwavgrowth.com');
+  fd.append('email', 'hello@bluwavgrowth.com');
+  fd.append('_subject', subject);
+  fd.append('message', body);
+  fd.append('_template', 'table');
+  fetch('https://formspree.io/f/xpwzgvkd', {
+    method: 'POST', body: fd, headers: {'Accept': 'application/json'}
+  }).catch(function(e){ console.warn('Notify failed:', e); });
+}
+
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
 async function signOut(){await db.auth.signOut();window.location.href='login.html';}
@@ -571,6 +584,8 @@ async function quickDeal(type,value){
   const newDeal={...data[0],deal_name:data[0].deal_name||data[0].title,deal_value:data[0].deal_value||data[0].value||value,deal_type:data[0].deal_type||type,stage:data[0].stage||'Lead',agent_id:data[0].agent_id||data[0].created_by};
   allDeals.unshift(newDeal);
   showToast(`✅ ${type} deal logged for ${name}`,'success');
+  notifyAdmin('💼 New Deal Logged — BluWav CRM Agent Dashboard',
+    'Agent: '+currentUser?.email+'\nContact: '+name+'\nType: '+type+'\nValue: $'+value+'\nTime: '+new Date().toLocaleString());
   loadAgentData();
   renderLeaderboard();
 }

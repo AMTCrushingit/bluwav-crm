@@ -380,7 +380,7 @@
 </div>
 <div style="padding:0;">
 <table class="mini-table">
-<thead><tr><th>Name</th><th>Business</th><th>Island</th></tr></thead>
+<thead><tr><th>Name</th><th>Business</th><th>Location</th></tr></thead>
 <tbody id="recentContactsBody"><tr><td colspan="3" style="text-align:center;padding:20px;color:var(--text3);">Loading...</td></tr></tbody>
 </table>
 </div>
@@ -581,7 +581,7 @@ function renderRecentContacts(){
         <div><div style="font-size:13px;font-weight:600;color:var(--text);">${c.full_name||'—'}</div><div style="font-size:11px;color:var(--text3);">${c.email||''}</div></div>
       </div></td>
       <td>${c.business_name||'—'}</td>
-      <td>${c.island||'—'}</td>
+      <td>${c.location||c.island||'—'}</td>
     </tr>`).join('');
 }
 
