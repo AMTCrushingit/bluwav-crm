@@ -821,28 +821,27 @@ function switchRep(userId,btn){
 
 // ── LOAD DATA ─────────────────────────────────────────────────────────────────
 async function loadData(){
-  // Load from leads table (primary data source)
+  // Load contacts — matches dashboard.html exactly (contacts table, RLS-filtered)
   let contacts=[], cCount=0;
-  try{
-    let lq = db.from('leads').select('*',{count:'exact'}).order('created_at',{ascending:false});
-    const {data:ld,count:lc,error:le} = await lq;
-    if(!le && ld){
-      contacts=ld.map(l=>({
-        id:l.id,
-        full_name:l.full_name||'Unknown',
-        email:l.email||'',
-        business_name:l.business||'',
-        phone:l.whatsapp||'',
-        status:({new:'Lead',contacted:'Qualified',qualified:'Qualified',proposal:'Proposal',won:'Won',lost:'Inactive'})[l.status]||'Lead',
-        island:l.island||l.location||'',
-        created_at:l.created_at,
-        user_id:l.user_id,
-        deal_value:0
-      }));
-      cCount=lc||contacts.length;
-    }
-  }catch(e){ console.warn('leads load error:',e); }
-  allContacts=contacts;
+  let cq = db.from('contacts').select('*',{count:'exact'}).order('created_at',{ascending:false});
+  if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
+    cq = cq.eq('user_id', viewingUserId);
+  }
+  const {data:cd, count:cc} = await cq;
+  contacts = (cd||[]).map(c=>({
+    id:c.id,
+    full_name:c.full_name||c.name||'Unknown',
+    email:c.email||'',
+    business_name:c.business_name||c.company||c.business||'',
+    phone:c.phone||c.whatsapp||'',
+    status:c.status||'Lead',
+    island:c.island||c.location||'',
+    created_at:c.created_at,
+    user_id:c.user_id,
+    deal_value:c.deal_value||0
+  }));
+  cCount = cc||contacts.length;
+  allContacts = contacts;
 
   // Update metrics
   document.getElementById('metricContacts').textContent=cCount;
@@ -850,23 +849,24 @@ async function loadData(){
   if(nb)nb.textContent=cCount;
   document.getElementById('countAll').textContent=cCount;
 
-  // Deals from deals table
+  // Deals — matches dashboard.html exactly
   let deals=[];
-  try{
-    let dq = db.from('deals').select('*').order('created_at',{ascending:false});
-    if(viewingUserId) dq=dq.eq('agent_id',viewingUserId);
-    else if(userRole==='salesperson') dq=dq.eq('agent_id',currentUser.id);
-    const {data:dd,error:de} = await dq;
-    if(!de && dd){
-      deals=dd.map(d=>({
-        ...d,
-        deal_name:d.deal_name||d.title||'Untitled Deal',
-        deal_value:d.deal_value||d.value||0,
-        stage:d.stage||'Lead'
-      }));
-    }
-  }catch(e){ console.warn('deals load error:',e); }
-  allDeals=deals;
+  let dq = db.from('deals').select('*').order('created_at',{ascending:false});
+  if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
+    dq = dq.eq('agent_id', viewingUserId);
+  } else if(userRole==='salesperson'){
+    dq = dq.eq('agent_id', currentUser.id);
+  }
+  const {data:dealsData} = await dq;
+  deals = (dealsData||[]).map(d=>({
+    ...d,
+    deal_name:d.deal_name||d.title||'Untitled Deal',
+    deal_value:d.deal_value||d.value||0,
+    deal_type:d.deal_type||'Ripple',
+    stage:d.stage||'Lead',
+    agent_id:d.agent_id||d.created_by||null,
+  }));
+  allDeals = deals;
 
   const openDeals=deals.filter(d=>!['Won','Lost'].includes(d.stage));
   const wonDeals=deals.filter(d=>d.stage==='Won');
@@ -1170,7 +1170,7 @@ async function saveContact(){
   }catch(e){
     // Also try leads table
     try{
-      await db.from('leads').insert({full_name:contact.full_name,email:contact.email,whatsapp:contact.phone,business:contact.business_name,status:'new',source:'crm',user_id:currentUser?.id});
+      await db.from('contacts').insert({full_name:contact.full_name,email:contact.email,phone:contact.phone,business_name:contact.business_name,status:contact.status||'Lead',island:contact.island,notes:contact.notes,user_id:currentUser?.id});
       showToast('Contact saved ✓','success');
       closeModal('addContact');
       loadData();
