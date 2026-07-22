@@ -714,7 +714,7 @@
 
     showAlert('Signed in successfully! Redirecting...', 'success');
     setTimeout(() => {
-      window.location.href = 'dashboard.html';
+      window.location.href = 'enhanced-crm-dashboard.html';
     }, 1000);
   });
 
@@ -722,7 +722,7 @@
   googleBtn.addEventListener('click', async () => {
     const { error } = await db.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin + '/dashboard.html' }
+      options: { redirectTo: window.location.origin + '/enhanced-crm-dashboard.html' }
     });
     if (error) showAlert(error.message);
   });
@@ -731,7 +731,7 @@
   msBtn.addEventListener('click', async () => {
     const { error } = await db.auth.signInWithOAuth({
       provider: 'azure',
-      options: { redirectTo: window.location.origin + '/dashboard.html' }
+      options: { redirectTo: window.location.origin + '/enhanced-crm-dashboard.html' }
     });
     if (error) showAlert(error.message);
   });
@@ -740,7 +740,7 @@
   (async () => {
     const { data: { session } } = await db.auth.getSession();
     if (session) {
-      window.location.href = 'dashboard.html';
+      window.location.href = 'enhanced-crm-dashboard.html';
     }
   })();
 
