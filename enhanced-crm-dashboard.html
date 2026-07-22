@@ -321,6 +321,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
       <div id="searchResults" style="position:absolute;top:100%;left:0;right:0;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-md);margin-top:4px;display:none;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
     </div>
     <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ Add Contact</button>
+    <button class="ib" onclick="loadData();showToast('Refreshed ✓','success')" title="Refresh data">&#8635;</button>
     <button class="ib" onclick="toggleNotif()" title="Notifications">&#128276;<span class="ndot"></span></button>
     <button class="ib" onclick="showView('settings')" title="Settings">&#9881;&#65039;</button>
     <div class="tb-div"></div>
@@ -1154,39 +1155,52 @@ async function saveContact(){
   const email=document.getElementById('mc-email')?.value.trim();
   if(!first||!email){showToast('Please fill in required fields','');return;}
   const contact={
-    full_name:(first+' '+last).trim(),email,
-    phone:document.getElementById('mc-phone')?.value.trim(),
-    business_name:document.getElementById('mc-biz')?.value.trim(),
+    full_name:(first+' '+last).trim(),
+    email:email,
+    phone:document.getElementById('mc-phone')?.value.trim()||null,
+    business_name:document.getElementById('mc-biz')?.value.trim()||null,
     status:document.getElementById('mc-status')?.value||'Lead',
-    island:document.getElementById('mc-location')?.value.trim(),
-    notes:document.getElementById('mc-notes')?.value.trim(),
+    island:document.getElementById('mc-location')?.value.trim()||null,
+    notes:document.getElementById('mc-notes')?.value.trim()||null,
     user_id:currentUser?.id
   };
-  try{
-    await db.from('contacts').insert(contact);
-    showToast('Contact saved ✓','success');
-    closeModal('addContact');
-    loadData();
-  }catch(e){
-    // Also try leads table
-    try{
-      await db.from('contacts').insert({full_name:contact.full_name,email:contact.email,phone:contact.phone,business_name:contact.business_name,status:contact.status||'Lead',island:contact.island,notes:contact.notes,user_id:currentUser?.id});
-      showToast('Contact saved ✓','success');
-      closeModal('addContact');
-      loadData();
-    }catch(e2){showToast('Error saving contact','');}
+  const {error} = await db.from('contacts').insert(contact);
+  if(error){
+    console.error('Save contact error:',error);
+    showToast('Error: '+error.message,'');
+    return;
   }
+  showToast('Contact saved ✓','success');
+  closeModal('addContact');
+  // Clear form
+  ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  await loadData();
+  // If contacts view is open, refresh it
+  filteredContacts=allContacts.slice();
+  sortContacts();
 }
 
 async function saveDeal(){
   const name=document.getElementById('md-name')?.value.trim();
   if(!name){showToast('Please enter a deal name','');return;}
-  try{
-    await db.from('deals').insert({deal_name:name,deal_value:parseFloat(document.getElementById('md-value')?.value)||0,stage:document.getElementById('md-stage')?.value||'Lead',notes:document.getElementById('md-notes')?.value.trim(),agent_id:currentUser?.id});
-    showToast('Deal saved ✓','success');
-    closeModal('addDeal');
-    loadData();
-  }catch(e){showToast('Error saving deal','');}
+  const {error} = await db.from('deals').insert({
+    deal_name:name,
+    deal_value:parseFloat(document.getElementById('md-value')?.value)||0,
+    stage:document.getElementById('md-stage')?.value||'Lead',
+    notes:document.getElementById('md-notes')?.value.trim()||null,
+    agent_id:currentUser?.id
+  });
+  if(error){
+    console.error('Save deal error:',error);
+    showToast('Error: '+error.message,'');
+    return;
+  }
+  showToast('Deal saved ✓','success');
+  closeModal('addDeal');
+  ['md-name','md-value','md-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  await loadData();
 }
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
