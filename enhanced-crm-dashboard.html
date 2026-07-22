@@ -22,7 +22,7 @@
   --shadow-card:0 4px 24px rgba(0,0,0,0.4);
   --sidebar:220px;
 }
-html,body{height:100%;font-family:var(--font-body);background:var(--navy-deep);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;}
+html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(--navy-deep);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;flex-direction:row;overflow:hidden;}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--navy-deep);}
 ::-webkit-scrollbar-thumb{background:var(--navy-border);border-radius:3px;}
@@ -68,7 +68,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--navy-deep);c
 .role-badge.salesperson{background:var(--cyan-glow);color:var(--cyan);}
 
 /* ══ MAIN ══ */
-.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;transition:margin-left 0.3s;min-height:100vh;}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;transition:margin-left 0.3s;height:100vh;overflow:hidden;}
 .main.expanded{margin-left:60px;}
 
 /* ══ TOPBAR ══ */
@@ -92,7 +92,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--navy-deep);c
 .role-banner.salesperson{background:var(--cyan-glow);border-bottom:1px solid rgba(0,200,224,0.1);color:var(--cyan);}
 
 /* ══ CONTENT ══ */
-.content{padding:22px 26px;flex:1;display:flex;flex-direction:column;gap:18px;}
+.content{padding:22px 26px;flex:1;display:flex;flex-direction:column;gap:18px;overflow-y:auto;height:calc(100vh - 56px);}
 
 /* ══ TEAM SWITCHER ══ */
 .team-switcher{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -666,15 +666,41 @@ function showToast(msg,type=''){
 })();
 
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
-// Use onAuthStateChange for reliable post-login session detection
+// Force re-auth if session is older than 5 minutes (300000ms)
+const AUTH_TIMEOUT = 5 * 60 * 1000;
+const lastActive = parseInt(sessionStorage.getItem('bw_last_active') || '0');
+const now = Date.now();
+
+if (lastActive && (now - lastActive) > AUTH_TIMEOUT) {
+  // Session expired — sign out and force re-login
+  sessionStorage.removeItem('bw_last_active');
+  await db.auth.signOut();
+  window.location.href = 'login.html';
+} else {
+  // Update last active timestamp
+  sessionStorage.setItem('bw_last_active', now.toString());
+}
+
+// Track activity to reset the 5-min timer
+['mousedown','keydown','scroll','touchstart','click'].forEach(evt => {
+  document.addEventListener(evt, () => {
+    sessionStorage.setItem('bw_last_active', Date.now().toString());
+  }, true);
+});
+
 db.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_OUT' || (!session && event !== 'INITIAL_SESSION')) {
+  if (event === 'SIGNED_OUT') {
+    sessionStorage.removeItem('bw_last_active');
     window.location.href = 'login.html';
     return;
   }
-  if (!session) return; // wait for INITIAL_SESSION
+  if (!session) {
+    window.location.href = 'login.html';
+    return;
+  }
   if (currentUser) return; // already initialized
   currentUser = session.user;
+  sessionStorage.setItem('bw_last_active', Date.now().toString());
   await initDashboard();
 });
 
@@ -968,6 +994,7 @@ function loadActivityFeed(){
 function renderContactsTable(){
   const tbody=document.getElementById('contactsTbody');
   if(!tbody)return;
+  if(!filteredContacts.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3);">No contacts found</td></tr>';const cc=document.getElementById('contactCount');if(cc)cc.textContent='0 contacts';return;}
   const start=(currentPage-1)*pageSize;
   const page=filteredContacts.slice(start,start+pageSize);
   const statusBadge={'Lead':'badge-muted','Qualified':'badge-cyan','Proposal':'badge-gold','Won':'badge-success','new':'badge-muted','contacted':'badge-cyan','Inactive':'badge-muted'};
@@ -1157,7 +1184,16 @@ function showView(name){
   if(view)view.classList.add('active');
   const nav=document.getElementById('nav-'+name);
   if(nav)nav.classList.add('active');
-  if(name==='contacts'){filteredContacts=allContacts.slice();sortContacts();}
+  if(name==='contacts'){
+    filteredContacts=allContacts.slice();
+    currentPage=1;
+    sortContacts();
+    // Reset search/filter UI
+    const cs=document.getElementById('contactSearch');if(cs)cs.value='';
+    const sf=document.getElementById('contactSortField');if(sf)sf.value='name';
+    const sd=document.getElementById('contactSortDir');if(sd)sd.value='asc';
+    const ssf=document.getElementById('contactStatusFilter');if(ssf)ssf.value='';
+  }
 }
 
 function toggleSidebar(){
