@@ -614,15 +614,15 @@
 </div>
 </div>
 <div class="alert" id="alert"></div>
-<form id="loginForm">
+<form id="loginForm" autocomplete="off">
 <div class="form-group">
 <label for="email">Email Address</label>
-<input autocomplete="email" id="email" placeholder="you@company.com" required="" type="email"/>
+<input autocomplete="off" id="email" placeholder="you@company.com" required="" type="email"/>
 </div>
 <div class="form-group">
 <label for="password">Password</label>
 <div class="password-wrapper">
-<input autocomplete="current-password" id="password" placeholder="••••••••" required="" type="password"/>
+<input autocomplete="new-password" id="password" placeholder="••••••••" required="" type="password"/>
 <button class="toggle-pw" id="togglePw" type="button">👁</button>
 </div>
 </div>
@@ -736,13 +736,35 @@
     if (error) showAlert(error.message);
   });
 
-  // ── Check if already logged in ──
+  // ── Always sign out on login page load — force fresh authentication ──
+  // This prevents auto-bypass when navigating back to login
   (async () => {
-    const { data: { session } } = await db.auth.getSession();
-    if (session) {
-      window.location.href = 'enhanced-crm-dashboard.html';
-    }
+    // Clear any existing session so login is always required
+    await db.auth.signOut();
+    // Clear our activity timestamp
+    sessionStorage.removeItem('bw_last_active');
+    // Clear the form fields (prevent browser autofill from persisting)
+    setTimeout(function() {
+      var emailEl = document.getElementById('email');
+      var pwEl = document.getElementById('password');
+      if (emailEl) emailEl.value = '';
+      if (pwEl) pwEl.value = '';
+    }, 100);
   })();
+
+  // ── Clear fields on page load and focus to prevent autofill ──
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      var emailEl = document.getElementById('email');
+      var pwEl = document.getElementById('password');
+      if (emailEl) { emailEl.value = ''; emailEl.setAttribute('readonly', true); }
+      if (pwEl) { pwEl.value = ''; pwEl.setAttribute('readonly', true); }
+      setTimeout(function() {
+        if (emailEl) emailEl.removeAttribute('readonly');
+        if (pwEl) pwEl.removeAttribute('readonly');
+      }, 200);
+    }, 50);
+  });
 
   // ── 30-Day Trial Countdown ──
   (function() {
