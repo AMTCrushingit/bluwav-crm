@@ -608,6 +608,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
       <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="md-notes" placeholder="Deal notes..."></textarea></div>
     </div>
     <div class="modal-footer">
+      <div id="dealError" style="display:none;color:#ef4444;font-size:12px;font-weight:700;padding:8px 0;"></div>
       <button class="btn btn-ghost" onclick="closeModal('addDeal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveDeal()">Save Deal</button>
     </div>
@@ -988,7 +989,7 @@ function renderRecentContacts(){
       <div><div class="cn">${name}</div><div class="ce">${c.email||''}</div></div></div></td>
       <td>${c.business_name||c.business||'—'}</td>
       <td>
-        <select class="status-select" data-id="${c.id}" onchange="updateContactStatus(this)" style="background:transparent;border:1px solid var(--navy-border);border-radius:6px;color:var(--text);font-size:0.7rem;font-weight:700;padding:2px 6px;cursor:pointer;font-family:var(--font-body);text-transform:uppercase;letter-spacing:0.04em;">
+        <select class="status-select" data-id="${c.id}" onchange="updateContactStatus(this)" style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:6px;color:var(--text);font-size:0.7rem;font-weight:700;padding:3px 8px;cursor:pointer;font-family:var(--font-body);outline:none;">
           <option value="Lead" ${status==='Lead'?'selected':''}>Lead</option>
           <option value="Prospect" ${status==='Prospect'?'selected':''}>Prospect</option>
           <option value="Qualified" ${status==='Qualified'?'selected':''}>Qualified</option>
@@ -1082,7 +1083,16 @@ function renderContactsTable(){
       <div><div class="cn">${name}</div><div class="ce">${c.email||''}</div></div></div></td>
       <td>${c.business_name||c.business||'—'}</td>
       <td style="color:var(--text3);font-size:0.75rem;">${c.phone||c.whatsapp||'—'}</td>
-      <td><span class="badge ${badge}">${status}</span></td>
+      <td>
+        <select onchange="updateContactStatus(this)" data-id="${c.id}" style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:6px;color:var(--text);font-size:0.7rem;font-weight:700;padding:3px 8px;cursor:pointer;font-family:var(--font-body);outline:none;">
+          <option value="Lead" ${status==='Lead'?'selected':''}>Lead</option>
+          <option value="Prospect" ${status==='Prospect'?'selected':''}>Prospect</option>
+          <option value="Qualified" ${status==='Qualified'?'selected':''}>Qualified</option>
+          <option value="Proposal" ${status==='Proposal'?'selected':''}>Proposal</option>
+          <option value="Won" ${status==='Won'?'selected':''}>Won</option>
+          <option value="Inactive" ${status==='Inactive'?'selected':''}>Inactive</option>
+        </select>
+      </td>
       <td style="color:var(--text3);font-size:0.75rem;">${date}</td>
       <td style="color:${valColor};font-weight:600;">${val?fmt(val):'—'}</td>
       <td><div style="display:flex;gap:4px;">
@@ -1129,12 +1139,21 @@ function sortByCol(th){
 async function updateContactStatus(sel){
   const id=sel.getAttribute('data-id');
   const newStatus=sel.value;
+  const prevStatus=sel.getAttribute('data-prev')||newStatus;
+  sel.setAttribute('data-prev',newStatus);
   const {error}=await db.from('contacts').update({status:newStatus}).eq('id',id);
-  if(error){showToast('Error: '+error.message,'');sel.value=sel.getAttribute('data-prev')||newStatus;return;}
+  if(error){
+    showToast('Error: '+error.message,'');
+    sel.value=prevStatus;
+    return;
+  }
   // Update local data
   const contact=allContacts.find(c=>c.id===id);
-  if(contact)contact.status=newStatus;
-  showToast('Status updated to '+newStatus+' ✓','success');
+  if(contact){contact.status=newStatus;}
+  // Update filtered contacts too
+  const fc=filteredContacts.find(c=>c.id===id);
+  if(fc){fc.status=newStatus;}
+  showToast('Status: '+newStatus+' ✓','success');
 }
 
 function filterContacts(){
@@ -1217,6 +1236,10 @@ function openModal(id){
   document.getElementById('modal-'+id)?.classList.add('open');
   // Populate contact dropdown for deal modal
   if(id==='addDeal'){
+    // Clear error
+    var errEl=document.getElementById('dealError');
+    if(errEl){errEl.style.display='none';errEl.textContent='';}
+    // Populate contact dropdown
     const sel=document.getElementById('md-contact');
     if(sel&&allContacts.length){
       sel.innerHTML='<option value="">No contact linked</option>'+
@@ -1276,22 +1299,29 @@ async function saveDeal(){
   const contactId=document.getElementById('md-contact')?.value||null;
   const dealType=document.getElementById('md-type')?.value||'Ripple';
   // Insert with both old and new column names for compatibility
-  const {error} = await db.from('deals').insert({
-    deal_name:name,
-    title:name,
-    deal_value:val,
-    value:val,
-    deal_type:dealType,
-    stage:stage,
-    contact_id:contactId,
-    notes:document.getElementById('md-notes')?.value.trim()||null,
-    agent_id:currentUser?.id,
-    created_by:currentUser?.id,
-    updated_at:new Date().toISOString()
-  });
+  // Build deal object — only include fields that exist in the schema
+  var dealObj = {
+    deal_name: name,
+    title: name,
+    deal_value: val,
+    value: val,
+    stage: stage,
+    agent_id: currentUser?.id,
+    created_by: currentUser?.id
+  };
+  // Add optional fields only if they have values
+  if(dealType) dealObj.deal_type = dealType;
+  if(contactId) dealObj.contact_id = contactId;
+  var notes = document.getElementById('md-notes')?.value.trim();
+  if(notes) dealObj.notes = notes;
+
+  var {data:dealData, error} = await db.from('deals').insert(dealObj).select();
   if(error){
-    console.error('Save deal error:',error);
-    showToast('Error: '+error.message,'');
+    console.error('Save deal error:', error);
+    // Show specific error in modal
+    var errEl = document.getElementById('dealError');
+    if(errEl){ errEl.textContent = 'Error: ' + error.message; errEl.style.display='block'; }
+    showToast('Deal error: '+error.message,'');
     return;
   }
   showToast('Deal saved ✓','success');
