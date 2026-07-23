@@ -466,6 +466,8 @@ async function loadAll(){
   setText('statTotalContacts', cCount||allContacts.length);
   setText('statTotalDeals', allDeals.length);
   setText('statTotalUsers', allProfiles.length);
+  var onlineNow = allProfiles.filter(p=>getPresenceStatus(p).online).length;
+  setText('statOnlineNow', onlineNow + ' online now');
   setText('statPipelineVal', fmt(pipeVal));
 
   renderUserBreakdown();
@@ -479,6 +481,14 @@ async function loadAll(){
 function setText(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
 
 function refreshAll(){loadAll();showToast('Refreshed ✓','success');}
+
+// Auto-refresh presence every 30 seconds
+setInterval(function(){
+  if(allProfiles.length > 0) {
+    db.from('profiles').select('*').order('created_at',{ascending:false})
+      .then(function(r){ if(r.data){ allProfiles=r.data; renderUsers(); renderTenants(); } });
+  }
+}, 30000);
 
 // ── USER BREAKDOWN ────────────────────────────────────────────────────────────
 function renderUserBreakdown(){
@@ -526,7 +536,7 @@ function renderTenants(){
       <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
       <td style="font-size:11px;color:var(--text3);font-family:monospace;">${p.id.substring(0,12)}...</td>
       <td style="color:var(--text3);font-size:12px;">${fmtDate(p.created_at)}</td>
-      <td><span class="badge badge-green">&#9679; Active</span></td>
+      <td><span class="badge ${getPresenceStatus(p).online ? 'badge-green' : 'badge-muted'}">${getPresenceStatus(p).label}</span></td>
       <td><div style="display:flex;gap:4px;">
         <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editUser('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}','${p.role||'salesperson'}')">&#9999;&#65039; Edit</button>
         <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();confirmDelete('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}')">&#128465; Delete</button>
@@ -535,15 +545,31 @@ function renderTenants(){
 }
 
 // ── USERS ─────────────────────────────────────────────────────────────────────
+
+function getPresenceStatus(p) {
+  if (!p.last_seen) return {dot:'#4a5568', label:'Never logged in', online:false};
+  var lastSeen = new Date(p.last_seen);
+  var diffMs = Date.now() - lastSeen.getTime();
+  var diffMin = Math.floor(diffMs / 60000);
+  if (p.is_online && diffMin < 2) return {dot:'#22c55e', label:'&#128994; Online now', online:true};
+  if (diffMin < 5) return {dot:'#22c55e', label:'&#128994; Just now', online:true};
+  if (diffMin < 60) return {dot:'#f59e0b', label:'&#128993; ' + diffMin + 'm ago', online:false};
+  var diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return {dot:'#f59e0b', label:'&#128993; ' + diffHr + 'h ago', online:false};
+  var diffDay = Math.floor(diffHr / 24);
+  return {dot:'#4a5568', label:'&#9899; ' + diffDay + 'd ago', online:false};
+}
+
 function renderUsers(){
   const tbody=document.getElementById('usersTbody');
   const countEl=document.getElementById('usersCount');
   if(!tbody)return;
-  if(countEl)countEl.textContent=`${allProfiles.length} users`;
+  var onlineCount=allProfiles.filter(p=>getPresenceStatus(p).online).length;
+  if(countEl)countEl.textContent=`${allProfiles.length} users · ${onlineCount} online now`;
   const roleBadge={manager:'badge-gold',admin:'badge-purple',salesperson:'badge-cyan',owner:'badge-red'};
   tbody.innerHTML=allProfiles.map(p=>`
     <tr>
-      <td><div style="display:flex;align-items:center;gap:8px;"><div class="av" style="background:${getColor(p.full_name)};">${ini(p.full_name)}</div><div><div style="font-size:13px;font-weight:600;">${p.full_name||'—'}</div></div></div></td>
+      <td><div style="display:flex;align-items:center;gap:8px;"><div style="position:relative;"><div class="av" style="background:${getColor(p.full_name)};">${ini(p.full_name)}</div><div style="position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;border-radius:50%;background:${getPresenceStatus(p).dot};border:2px solid var(--bg2);"></div></div><div><div style="font-size:13px;font-weight:600;">${p.full_name||'—'}</div><div style="font-size:11px;color:var(--text3);">${getPresenceStatus(p).label}</div></div></div></td>
       <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
       <td style="font-size:11px;color:var(--text3);font-family:monospace;">${p.id.substring(0,16)}...</td>
       <td style="color:var(--text3);font-size:12px;">${fmtDate(p.created_at)}</td>

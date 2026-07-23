@@ -839,6 +839,7 @@ async function initDashboard(){
 
   loadData();
   initChart();
+  startPresence();
 }
 
 // ── TEAM SWITCHER ─────────────────────────────────────────────────────────────
@@ -1334,6 +1335,41 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('#notifPanel')&&!e.target.closest('.ib'))
     document.getElementById('notifPanel').style.display='none';
 });
+
+
+// ── PRESENCE TRACKING ─────────────────────────────────────────────────────────
+// Updates last_seen + is_online every 30 seconds while user is active
+var presenceInterval = null;
+
+async function updatePresence(online) {
+  if (!currentUser) return;
+  try {
+    await db.from('profiles').update({
+      last_seen: new Date().toISOString(),
+      is_online: online
+    }).eq('id', currentUser.id);
+  } catch(e) { /* non-blocking */ }
+}
+
+function startPresence() {
+  // Mark online immediately
+  updatePresence(true);
+  // Heartbeat every 30 seconds
+  presenceInterval = setInterval(function() {
+    updatePresence(true);
+  }, 30000);
+  // Mark offline on page hide/close
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      updatePresence(false);
+    } else {
+      updatePresence(true);
+    }
+  });
+  window.addEventListener('beforeunload', function() {
+    updatePresence(false);
+  });
+}
 
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
 async function signOut(){await db.auth.signOut();window.location.href='login.html';}
