@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BluWav CRM — Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -256,410 +257,384 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </style>
 </head>
 <body>
-
 <!-- ══ SIDEBAR ══ -->
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-logo">
-  <a class="logo" href="#">
-    <span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
-    <span class="logo-sub">CRM</span>
-  </a>
-  <button class="collapse-btn" onclick="toggleSidebar()">&#9776;</button>
+<a class="logo" href="#">
+<span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
+<span class="logo-sub">CRM</span>
+</a>
+<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
-  <div class="ns">Main</div>
-  <a class="ni active" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">&#128202;</span><span class="nav-text">Dashboard</span></a>
-  <a class="ni" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">&#128101;</span><span class="nav-text">Contacts</span><span class="nb" id="navContactsBadge">—</span></a>
-  <a class="ni" id="nav-deals" onclick="showView('deals')"><span class="ni-icon">&#128188;</span><span class="nav-text">Deals</span><span class="nb" id="navDealsBadge">—</span></a>
-  <a class="ni" onclick="showView('dashboard')"><span class="ni-icon">&#9989;</span><span class="nav-text">Tasks</span></a>
-  <a class="ni" onclick="showView('dashboard')"><span class="ni-icon">&#128197;</span><span class="nav-text">Calendar</span></a>
-
-  <div class="ns">Communicate</div>
-  <a class="ni" onclick="showView('dashboard')"><span class="ni-icon">&#128231;</span><span class="nav-text">Email</span></a>
-  <a class="ni" onclick="showView('dashboard')"><span class="ni-icon">&#9889;</span><span class="nav-text">Automations</span></a>
-
-  <div class="ns">Performance</div>
-  <a class="ni" href="agent-dashboard.html"><span class="ni-icon">&#128200;</span><span class="nav-text">Agent Dashboard</span></a>
-  <a class="ni" href="commission-calculator.html"><span class="ni-icon">&#128176;</span><span class="nav-text">Commission Calc</span></a>
-  <a class="ni" href="agent-onboarding.html"><span class="ni-icon">&#128640;</span><span class="nav-text">Onboarding</span></a>
-
-  <div class="ns">Insights</div>
-  <a class="ni" id="nav-reports" onclick="showView('reports')"><span class="ni-icon">&#128200;</span><span class="nav-text">Reports</span></a>
-  <a class="ni" id="nav-settings" onclick="showView('settings')"><span class="ni-icon">&#9881;&#65039;</span><span class="nav-text">Settings</span></a>
-  <a class="ni" href="billing.html"><span class="ni-icon">&#128179;</span><span class="nav-text">Billing</span></a>
-
-  <!-- Manager/Admin only -->
-  <div class="ns" id="adminNav" style="display:none;">Admin</div>
-  <a class="ni" id="adminLink" href="superadmin.html" style="display:none;"><span class="ni-icon">&#128737;</span><span class="nav-text">Super Admin</span></a>
+<div class="ns">Main</div>
+<a class="ni active" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
+<a class="ni" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Contacts</span><span class="nb" id="navContactsBadge">—</span></a>
+<a class="ni" id="nav-deals" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Deals</span><span class="nb" id="navDealsBadge">—</span></a>
+<a class="ni" onclick="showView('dashboard')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
+<a class="ni" onclick="showView('dashboard')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
+<div class="ns">Communicate</div>
+<a class="ni" onclick="showView('dashboard')"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
+<a class="ni" onclick="showView('dashboard')"><span class="ni-icon">⚡</span><span class="nav-text">Automations</span></a>
+<div class="ns">Performance</div>
+<a class="ni" href="agent-dashboard.html"><span class="ni-icon">📈</span><span class="nav-text">Agent Dashboard</span></a>
+<a class="ni" href="commission-calculator.html"><span class="ni-icon">💰</span><span class="nav-text">Commission Calc</span></a>
+<a class="ni" href="agent-onboarding.html"><span class="ni-icon">🚀</span><span class="nav-text">Onboarding</span></a>
+<div class="ns">Insights</div>
+<a class="ni" id="nav-reports" onclick="showView('reports')"><span class="ni-icon">📈</span><span class="nav-text">Reports</span></a>
+<a class="ni" id="nav-settings" onclick="showView('settings')"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" href="billing.html"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
+<!-- Manager/Admin only -->
+<div class="ns" id="adminNav" style="display:none;">Admin</div>
+<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
-  <div class="trial-w">
-    <div class="tw-label">&#127881; Free Trial</div>
-    <div class="tw-days">30 days</div>
-    <div class="tw-sub">remaining &middot; No card needed</div>
-    <div class="tw-bar"><div class="tw-fill"></div></div>
-  </div>
-  <div class="user-card" onclick="showView('settings')">
-    <div class="avatar" id="sidebarAvatar">—</div>
-    <div class="user-info">
-      <div class="user-name" id="sidebarName">Loading...</div>
-      <div class="user-role-txt" id="sidebarRole">—</div>
-      <div class="role-badge" id="roleBadge"></div>
-    </div>
-  </div>
-  <button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md);color:var(--error);font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">&#128682; Sign Out</button>
+<div class="trial-w">
+<div class="tw-label">🎉 Free Trial</div>
+<div class="tw-days">30 days</div>
+<div class="tw-sub">remaining · No card needed</div>
+<div class="tw-bar"><div class="tw-fill"></div></div>
+</div>
+<div class="user-card" onclick="showView('settings')">
+<div class="avatar" id="sidebarAvatar">—</div>
+<div class="user-info">
+<div class="user-name" id="sidebarName">Loading...</div>
+<div class="user-role-txt" id="sidebarRole">—</div>
+<div class="role-badge" id="roleBadge"></div>
+</div>
+</div>
+<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md);color:var(--error);font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">🚪 Sign Out</button>
 </div>
 </aside>
-
 <!-- ══ MAIN ══ -->
 <div class="main" id="mainContent">
-
 <!-- TOPBAR -->
 <header class="topbar">
-  <div class="topbar-left">
-    <div class="greeting" id="dashDate"></div>
-    <h1 id="dashGreeting">Loading...</h1>
-  </div>
-  <div class="tb-actions">
-    <div style="position:relative;">
-      <input id="globalSearch" oninput="globalSearchFn(this.value)" placeholder="&#128269; Search contacts, deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.8rem;padding:7px 14px;outline:none;width:220px;transition:var(--transition);font-family:var(--font-body);" onfocus="this.style.borderColor='var(--cyan)';this.style.width='280px'" onblur="this.style.borderColor='var(--navy-border)';this.style.width='220px'"/>
-      <div id="searchResults" style="position:absolute;top:100%;left:0;right:0;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-md);margin-top:4px;display:none;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
-    </div>
-    <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ Add Contact</button>
-    <button class="ib" onclick="loadData();showToast('Refreshed ✓','success')" title="Refresh data">&#8635;</button>
-    <button class="ib" onclick="toggleNotif()" title="Notifications">&#128276;<span class="ndot"></span></button>
-    <button class="ib" onclick="showView('settings')" title="Settings">&#9881;&#65039;</button>
-    <div class="tb-div"></div>
-    <div class="user-chip" onclick="showView('settings')">
-      <div class="avatar" id="topAvatar" style="width:26px;height:26px;font-size:0.65rem;">—</div>
-      <div>
-        <div class="un" id="topName">Loading...</div>
-        <div class="ur" id="topRole">—</div>
-      </div>
-      <span style="color:var(--text3);font-size:0.65rem;margin-left:4px;">&#9662;</span>
-    </div>
-  </div>
+<div class="topbar-left">
+<div class="greeting" id="dashDate"></div>
+<h1 id="dashGreeting">Loading...</h1>
+</div>
+<div class="tb-actions">
+<div style="position:relative;">
+<input id="globalSearch" onblur="this.style.borderColor='var(--navy-border)';this.style.width='220px'" onfocus="this.style.borderColor='var(--cyan)';this.style.width='280px'" oninput="globalSearchFn(this.value)" placeholder="🔍 Search contacts, deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.8rem;padding:7px 14px;outline:none;width:220px;transition:var(--transition);font-family:var(--font-body);"/>
+<div id="searchResults" style="position:absolute;top:100%;left:0;right:0;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-md);margin-top:4px;display:none;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
+</div>
+<button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ Add Contact</button>
+<button class="ib" onclick="loadData();showToast('Refreshed ✓','success')" title="Refresh data">↻</button>
+<button class="ib" onclick="toggleNotif()" title="Notifications">🔔<span class="ndot"></span></button>
+<button class="ib" onclick="showView('settings')" title="Settings">⚙️</button>
+<div class="tb-div"></div>
+<div class="user-chip" onclick="showView('settings')">
+<div class="avatar" id="topAvatar" style="width:26px;height:26px;font-size:0.65rem;">—</div>
+<div>
+<div class="un" id="topName">Loading...</div>
+<div class="ur" id="topRole">—</div>
+</div>
+<span style="color:var(--text3);font-size:0.65rem;margin-left:4px;">▾</span>
+</div>
+</div>
 </header>
-
 <!-- ROLE BANNER -->
 <div class="role-banner" id="roleBanner"></div>
-
 <!-- ══ DASHBOARD VIEW ══ -->
 <div class="content">
 <div class="view active" id="view-dashboard">
-
-  <!-- Team Switcher (manager/admin only) -->
-  <div id="teamSwitcher" style="display:none;">
-    <div class="team-switcher" id="teamSwitcherBtns">
-      <span class="team-switcher-label">Viewing:</span>
-    </div>
-  </div>
-
-  <!-- Stats -->
-  <div class="stats-grid">
-    <div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Contacts</span><span>&#128101;</span></div><div class="stat-val" id="metricContacts">—</div><div class="stat-chg up" id="contactTrend">&#8593; loading</div></div>
-    <div class="stat g"><div class="stat-hd"><span class="stat-lbl">Open Deals</span><span>&#128188;</span></div><div class="stat-val" id="metricDeals">—</div><div class="stat-chg up">&#8593; active</div></div>
-    <div class="stat o"><div class="stat-hd"><span class="stat-lbl">Pipeline Value</span><span>&#128176;</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">&#8593; pipeline</div></div>
-    <div class="stat s"><div class="stat-hd"><span class="stat-lbl">Deals Won</span><span>&#127942;</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">This month</div></div>
-  </div>
-
-  <!-- Quick Actions -->
-  <div class="qa-grid">
-    <div class="qa" onclick="openModal('addContact')"><div class="qa-icon">&#10133;</div><div class="qa-lbl">New Contact</div></div>
-    <div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">&#128188;</div><div class="qa-lbl">New Deal</div></div>
-    <div class="qa" onclick="openModal('sendEmail')"><div class="qa-icon">&#128231;</div><div class="qa-lbl">Send Email</div></div>
-    <div class="qa" onclick="openModal('addTask')"><div class="qa-icon">&#9989;</div><div class="qa-lbl">Add Task</div></div>
-  </div>
-
-  <!-- Pipeline + Right Panel (Leaderboard or Activity) -->
-  <div class="two-col">
-    <div class="panel">
-      <div class="panel-hd">
-        <div class="panel-title">&#128188; Sales Pipeline</div>
-        <button class="btn btn-ghost btn-sm" onclick="showView('deals')">View All &#8594;</button>
-      </div>
-      <div class="panel-body">
-        <div class="pipe-cols">
-          <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--text3);">Lead</span><span class="pipe-cnt" id="colLead">0</span></div><div id="dealsLead"></div></div>
-          <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--cyan);">Qualified</span><span class="pipe-cnt" id="colQualified">0</span></div><div id="dealsQualified"></div></div>
-          <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--gold);">Proposal</span><span class="pipe-cnt" id="colProposal">0</span></div><div id="dealsProposal"></div></div>
-          <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--success);">Won &#10003;</span><span class="pipe-cnt" id="colWon">0</span></div><div id="dealsWon"></div></div>
-        </div>
-      </div>
-    </div>
-    <div class="panel" id="rightPanel">
-      <div class="panel-hd"><div class="panel-title" id="rightPanelTitle">&#9889; Activity</div><button class="btn btn-ghost btn-sm">All &#8594;</button></div>
-      <div class="panel-body" style="padding:0 20px;" id="rightPanelBody">
-        <div style="text-align:center;padding:32px;color:var(--text3);">Loading...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bottom: Pipeline Trend Chart + Recent Contacts -->
-  <div class="bottom-grid">
-    <div class="panel">
-      <div class="panel-hd"><div class="panel-title">&#128200; Pipeline Trend<span style="font-size:0.7rem;color:var(--text3);font-weight:400;margin-left:8px;">Last 6 months</span></div></div>
-      <div class="panel-body"><div class="chart-container"><canvas id="revenueChart"></canvas></div></div>
-    </div>
-    <div class="panel">
-      <div class="panel-hd">
-        <div class="panel-title">&#128101; Recent Contacts</div>
-        <button class="btn btn-ghost btn-sm" onclick="showView('contacts')">View All &#8594;</button>
-      </div>
-      <div style="overflow-x:auto;">
-        <table class="tbl">
-          <thead><tr><th>Name</th><th>Company</th><th>Status</th><th>Date</th></tr></thead>
-          <tbody id="recentContactsBody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Loading...</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
+<!-- Team Switcher (manager/admin only) -->
+<div id="teamSwitcher" style="display:none;">
+<div class="team-switcher" id="teamSwitcherBtns">
+<span class="team-switcher-label">Viewing:</span>
+</div>
+</div>
+<!-- Stats -->
+<div class="stats-grid">
+<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Contacts</span><span>👥</span></div><div class="stat-val" id="metricContacts">—</div><div class="stat-chg up" id="contactTrend">↑ loading</div></div>
+<div class="stat g"><div class="stat-hd"><span class="stat-lbl">Open Deals</span><span>💼</span></div><div class="stat-val" id="metricDeals">—</div><div class="stat-chg up">↑ active</div></div>
+<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Pipeline Value</span><span>💰</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">↑ pipeline</div></div>
+<div class="stat s"><div class="stat-hd"><span class="stat-lbl">Deals Won</span><span>🏆</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">This month</div></div>
+</div>
+<!-- Quick Actions -->
+<div class="qa-grid">
+<div class="qa" onclick="openModal('addContact')"><div class="qa-icon">➕</div><div class="qa-lbl">New Contact</div></div>
+<div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">💼</div><div class="qa-lbl">New Deal</div></div>
+<div class="qa" onclick="openModal('sendEmail')"><div class="qa-icon">📧</div><div class="qa-lbl">Send Email</div></div>
+<div class="qa" onclick="openModal('addTask')"><div class="qa-icon">✅</div><div class="qa-lbl">Add Task</div></div>
+</div>
+<!-- Pipeline + Right Panel (Leaderboard or Activity) -->
+<div class="two-col">
+<div class="panel">
+<div class="panel-hd">
+<div class="panel-title">💼 Sales Pipeline</div>
+<button class="btn btn-ghost btn-sm" onclick="showView('deals')">View All →</button>
+</div>
+<div class="panel-body">
+<div class="pipe-cols">
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--text3);">Lead</span><span class="pipe-cnt" id="colLead">0</span></div><div id="dealsLead"></div></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--cyan);">Qualified</span><span class="pipe-cnt" id="colQualified">0</span></div><div id="dealsQualified"></div></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--gold);">Proposal</span><span class="pipe-cnt" id="colProposal">0</span></div><div id="dealsProposal"></div></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--success);">Won ✓</span><span class="pipe-cnt" id="colWon">0</span></div><div id="dealsWon"></div></div>
+</div>
+</div>
+</div>
+<div class="panel" id="rightPanel">
+<div class="panel-hd"><div class="panel-title" id="rightPanelTitle">⚡ Activity</div><button class="btn btn-ghost btn-sm">All →</button></div>
+<div class="panel-body" id="rightPanelBody" style="padding:0 20px;">
+<div style="text-align:center;padding:32px;color:var(--text3);">Loading...</div>
+</div>
+</div>
+</div>
+<!-- Bottom: Pipeline Trend Chart + Recent Contacts -->
+<div class="bottom-grid">
+<div class="panel">
+<div class="panel-hd"><div class="panel-title">📈 Pipeline Trend<span style="font-size:0.7rem;color:var(--text3);font-weight:400;margin-left:8px;">Last 6 months</span></div></div>
+<div class="panel-body"><div class="chart-container"><canvas id="revenueChart"></canvas></div></div>
+</div>
+<div class="panel">
+<div class="panel-hd">
+<div class="panel-title">👥 Recent Contacts</div>
+<button class="btn btn-ghost btn-sm" onclick="showView('contacts')">View All →</button>
+</div>
+<div style="overflow-x:auto;">
+<table class="tbl">
+<thead><tr><th>Name</th><th>Company</th><th>Status</th><th>Date</th></tr></thead>
+<tbody id="recentContactsBody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
 </div><!-- /dashboard -->
-
 <!-- ══ CONTACTS VIEW ══ -->
 <div class="view" id="view-contacts">
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
-    <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">All Contacts</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Contact Manager</h1></div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-outline btn-sm">&#128229; Import CSV</button>
-      <button class="btn btn-outline btn-sm">&#128228; Export</button>
-      <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ New Contact</button>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="panel-hd">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-outline btn-sm" style="border-color:var(--cyan);color:var(--cyan);" onclick="filterByStatus('')">All (<span id="countAll">—</span>)</button>
-        <button class="btn btn-ghost btn-sm" onclick="filterByStatus('Lead')">Leads</button>
-        <button class="btn btn-ghost btn-sm" onclick="filterByStatus('Qualified')">Qualified</button>
-        <button class="btn btn-ghost btn-sm" onclick="filterByStatus('Proposal')">Proposal</button>
-        <button class="btn btn-ghost btn-sm" onclick="filterByStatus('Won')">Won</button>
-      </div>
-    </div>
-    <div class="sort-controls">
-      <input class="sort-input" id="contactSearch" placeholder="&#128269; Search by name, company, email..." oninput="filterContacts()"/>
-      <select class="sort-select" id="contactSortField" onchange="sortContacts()">
-        <option value="name">Sort: Name</option>
-        <option value="company">Sort: Company</option>
-        <option value="status">Sort: Status</option>
-        <option value="value">Sort: Deal Value</option>
-        <option value="lastContact">Sort: Last Contact</option>
-      </select>
-      <select class="sort-select" id="contactSortDir" onchange="sortContacts()">
-        <option value="asc">A &#8594; Z</option>
-        <option value="desc">Z &#8594; A</option>
-      </select>
-      <select class="sort-select" id="contactStatusFilter" onchange="filterContacts()">
-        <option value="">All Statuses</option>
-        <option value="Lead">Lead</option>
-        <option value="Qualified">Qualified</option>
-        <option value="Proposal">Proposal</option>
-        <option value="Won">Won</option>
-        <option value="Inactive">Inactive</option>
-      </select>
-    </div>
-    <div style="overflow-x:auto;">
-      <table class="tbl" id="contactsTable">
-        <thead><tr>
-          <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"/></th>
-          <th class="sortable" data-col="name" onclick="sortByCol(this)">Name <span class="sort-icon">&#9650;</span></th>
-          <th class="sortable" data-col="company" onclick="sortByCol(this)">Company <span class="sort-icon">&#9650;</span></th>
-          <th>Phone</th>
-          <th class="sortable" data-col="status" onclick="sortByCol(this)">Status <span class="sort-icon">&#9650;</span></th>
-          <th class="sortable" data-col="lastContact" onclick="sortByCol(this)">Last Contact <span class="sort-icon">&#9650;</span></th>
-          <th class="sortable" data-col="value" onclick="sortByCol(this)">Deal Value <span class="sort-icon">&#9650;</span></th>
-          <th>Actions</th>
-        </tr></thead>
-        <tbody id="contactsTbody"></tbody>
-      </table>
-    </div>
-    <div style="padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--navy-border);">
-      <span style="font-size:0.73rem;color:var(--text3);" id="contactCount">Loading...</span>
-      <div style="display:flex;gap:6px;">
-        <button class="btn btn-ghost btn-sm" onclick="prevPage()">&#8592; Prev</button>
-        <span id="pageIndicator" style="font-size:0.75rem;color:var(--text3);padding:6px 10px;"></span>
-        <button class="btn btn-ghost btn-sm" onclick="nextPage()">Next &#8594;</button>
-      </div>
-    </div>
-  </div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">All Contacts</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Contact Manager</h1></div>
+<div style="display:flex;gap:8px;">
+<button class="btn btn-outline btn-sm">📥 Import CSV</button>
+<button class="btn btn-outline btn-sm">📤 Export</button>
+<button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ New Contact</button>
+</div>
+</div>
+<div class="panel">
+<div class="panel-hd">
+<div style="display:flex;gap:8px;flex-wrap:wrap;">
+<button class="btn btn-outline btn-sm" onclick="filterByStatus('')" style="border-color:var(--cyan);color:var(--cyan);">All (<span id="countAll">—</span>)</button>
+<button class="btn btn-ghost btn-sm" onclick="filterByStatus('Lead')">Leads</button>
+<button class="btn btn-ghost btn-sm" onclick="filterByStatus('Qualified')">Qualified</button>
+<button class="btn btn-ghost btn-sm" onclick="filterByStatus('Proposal')">Proposal</button>
+<button class="btn btn-ghost btn-sm" onclick="filterByStatus('Won')">Won</button>
+</div>
+</div>
+<div class="sort-controls">
+<input class="sort-input" id="contactSearch" oninput="filterContacts()" placeholder="🔍 Search by name, company, email..."/>
+<select class="sort-select" id="contactSortField" onchange="sortContacts()">
+<option value="name">Sort: Name</option>
+<option value="company">Sort: Company</option>
+<option value="status">Sort: Status</option>
+<option value="value">Sort: Deal Value</option>
+<option value="lastContact">Sort: Last Contact</option>
+</select>
+<select class="sort-select" id="contactSortDir" onchange="sortContacts()">
+<option value="asc">A → Z</option>
+<option value="desc">Z → A</option>
+</select>
+<select class="sort-select" id="contactStatusFilter" onchange="filterContacts()">
+<option value="">All Statuses</option>
+<option value="Lead">Lead</option>
+<option value="Qualified">Qualified</option>
+<option value="Proposal">Proposal</option>
+<option value="Won">Won</option>
+<option value="Inactive">Inactive</option>
+</select>
+</div>
+<div style="overflow-x:auto;">
+<table class="tbl" id="contactsTable">
+<thead><tr>
+<th><input id="selectAll" onchange="toggleSelectAll(this)" type="checkbox"/></th>
+<th class="sortable" data-col="name" onclick="sortByCol(this)">Name <span class="sort-icon">▲</span></th>
+<th class="sortable" data-col="company" onclick="sortByCol(this)">Company <span class="sort-icon">▲</span></th>
+<th>Phone</th>
+<th class="sortable" data-col="status" onclick="sortByCol(this)">Status <span class="sort-icon">▲</span></th>
+<th class="sortable" data-col="lastContact" onclick="sortByCol(this)">Last Contact <span class="sort-icon">▲</span></th>
+<th class="sortable" data-col="value" onclick="sortByCol(this)">Deal Value <span class="sort-icon">▲</span></th>
+<th>Actions</th>
+</tr></thead>
+<tbody id="contactsTbody"></tbody>
+</table>
+</div>
+<div style="padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--navy-border);">
+<span id="contactCount" style="font-size:0.73rem;color:var(--text3);">Loading...</span>
+<div style="display:flex;gap:6px;">
+<button class="btn btn-ghost btn-sm" onclick="prevPage()">← Prev</button>
+<span id="pageIndicator" style="font-size:0.75rem;color:var(--text3);padding:6px 10px;"></span>
+<button class="btn btn-ghost btn-sm" onclick="nextPage()">Next →</button>
+</div>
+</div>
+</div>
 </div><!-- /contacts -->
-
 <!-- ══ DEALS VIEW ══ -->
 <div class="view" id="view-deals">
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
-    <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Sales Pipeline</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Deal Manager</h1></div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-outline btn-sm">&#128202; Reports</button>
-      <button class="btn btn-primary btn-sm" onclick="openModal('addDeal')">+ New Deal</button>
-    </div>
-  </div>
-  <div class="stats-grid">
-    <div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Pipeline</span><span>&#128176;</span></div><div class="stat-val" id="dealMetricPipeline">$0</div><div class="stat-chg up">&#8593; 18%</div></div>
-    <div class="stat g"><div class="stat-hd"><span class="stat-lbl">Avg Deal Size</span><span>&#128202;</span></div><div class="stat-val" id="dealMetricAvg">$0</div><div class="stat-chg nt" id="dealMetricCount">0 open deals</div></div>
-    <div class="stat s"><div class="stat-hd"><span class="stat-lbl">Won This Month</span><span>&#127942;</span></div><div class="stat-val" id="dealMetricWon">$0</div><div class="stat-chg up">&#8593; this month</div></div>
-    <div class="stat o"><div class="stat-hd"><span class="stat-lbl">Win Rate</span><span>&#127919;</span></div><div class="stat-val" id="dealMetricRate">0%</div><div class="stat-chg up">&#8593; vs last mo</div></div>
-  </div>
-  <div class="panel">
-    <div class="panel-hd"><div class="panel-title">&#128188; All Deals &mdash; Kanban View</div></div>
-    <div class="panel-body">
-      <div class="pipe-cols" style="grid-template-columns:repeat(4,1fr);">
-        <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--text3);">Lead</span><span class="pipe-cnt" id="dColLead">0</span></div><div id="dDealsLead"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
-        <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--cyan);">Qualified</span><span class="pipe-cnt" id="dColQualified">0</span></div><div id="dDealsQualified"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
-        <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--gold);">Proposal</span><span class="pipe-cnt" id="dColProposal">0</span></div><div id="dDealsProposal"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
-        <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--success);">Won &#10003;</span><span class="pipe-cnt" id="dColWon">0</span></div><div id="dDealsWon"></div></div>
-      </div>
-    </div>
-  </div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Sales Pipeline</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Deal Manager</h1></div>
+<div style="display:flex;gap:8px;">
+<button class="btn btn-outline btn-sm">📊 Reports</button>
+<button class="btn btn-primary btn-sm" onclick="openModal('addDeal')">+ New Deal</button>
+</div>
+</div>
+<div class="stats-grid">
+<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Pipeline</span><span>💰</span></div><div class="stat-val" id="dealMetricPipeline">$0</div><div class="stat-chg up">↑ 18%</div></div>
+<div class="stat g"><div class="stat-hd"><span class="stat-lbl">Avg Deal Size</span><span>📊</span></div><div class="stat-val" id="dealMetricAvg">$0</div><div class="stat-chg nt" id="dealMetricCount">0 open deals</div></div>
+<div class="stat s"><div class="stat-hd"><span class="stat-lbl">Won This Month</span><span>🏆</span></div><div class="stat-val" id="dealMetricWon">$0</div><div class="stat-chg up">↑ this month</div></div>
+<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Win Rate</span><span>🎯</span></div><div class="stat-val" id="dealMetricRate">0%</div><div class="stat-chg up">↑ vs last mo</div></div>
+</div>
+<div class="panel">
+<div class="panel-hd"><div class="panel-title">💼 All Deals — Kanban View</div></div>
+<div class="panel-body">
+<div class="pipe-cols" style="grid-template-columns:repeat(4,1fr);">
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--text3);">Lead</span><span class="pipe-cnt" id="dColLead">0</span></div><div id="dDealsLead"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--cyan);">Qualified</span><span class="pipe-cnt" id="dColQualified">0</span></div><div id="dDealsQualified"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--gold);">Proposal</span><span class="pipe-cnt" id="dColProposal">0</span></div><div id="dDealsProposal"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--success);">Won ✓</span><span class="pipe-cnt" id="dColWon">0</span></div><div id="dDealsWon"></div></div>
+</div>
+</div>
+</div>
 </div><!-- /deals -->
-
 <!-- ══ REPORTS VIEW ══ -->
 <div class="view" id="view-reports">
-  <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Analytics</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Reports &amp; Insights</h1></div>
-  <div class="stats-grid">
-    <div class="stat c"><div class="stat-hd"><span class="stat-lbl">Revenue (MTD)</span><span>&#128176;</span></div><div class="stat-val" id="rMetricRev">$0</div><div class="stat-chg up">&#8593; 22% vs last mo</div></div>
-    <div class="stat g"><div class="stat-hd"><span class="stat-lbl">New Leads</span><span>&#127919;</span></div><div class="stat-val" id="rMetricLeads">0</div><div class="stat-chg up">&#8593; this week</div></div>
-    <div class="stat s"><div class="stat-hd"><span class="stat-lbl">Conversion Rate</span><span>&#128200;</span></div><div class="stat-val" id="rMetricConv">0%</div><div class="stat-chg up">&#8593; 5%</div></div>
-    <div class="stat o"><div class="stat-hd"><span class="stat-lbl">Avg Response Time</span><span>&#9889;</span></div><div class="stat-val">2.4h</div><div class="stat-chg nt">Target: &lt;4h</div></div>
-  </div>
-  <div class="panel">
-    <div class="panel-hd"><div class="panel-title">&#128200; Pipeline Trend</div></div>
-    <div class="panel-body"><div class="chart-container" style="height:240px;"><canvas id="reportsChart"></canvas></div></div>
-  </div>
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Analytics</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Reports &amp; Insights</h1></div>
+<div class="stats-grid">
+<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Revenue (MTD)</span><span>💰</span></div><div class="stat-val" id="rMetricRev">$0</div><div class="stat-chg up">↑ 22% vs last mo</div></div>
+<div class="stat g"><div class="stat-hd"><span class="stat-lbl">New Leads</span><span>🎯</span></div><div class="stat-val" id="rMetricLeads">0</div><div class="stat-chg up">↑ this week</div></div>
+<div class="stat s"><div class="stat-hd"><span class="stat-lbl">Conversion Rate</span><span>📈</span></div><div class="stat-val" id="rMetricConv">0%</div><div class="stat-chg up">↑ 5%</div></div>
+<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Avg Response Time</span><span>⚡</span></div><div class="stat-val">2.4h</div><div class="stat-chg nt">Target: &lt;4h</div></div>
+</div>
+<div class="panel">
+<div class="panel-hd"><div class="panel-title">📈 Pipeline Trend</div></div>
+<div class="panel-body"><div class="chart-container" style="height:240px;"><canvas id="reportsChart"></canvas></div></div>
+</div>
 </div><!-- /reports -->
-
 <!-- ══ SETTINGS VIEW ══ -->
 <div class="view" id="view-settings">
-  <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Organization</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Settings</h1></div>
-  <div class="panel">
-    <div class="panel-hd"><div class="panel-title">&#9881;&#65039; Account Settings</div></div>
-    <div class="panel-body">
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
-        <div class="fg"><label class="fl">Email</label><input class="fi" id="settingsEmail" type="email" placeholder="your@email.com" readonly style="opacity:0.6;cursor:not-allowed;"/></div>
-        <div class="fg"><label class="fl">Role</label><input class="fi" id="settingsRole" readonly style="opacity:0.6;cursor:not-allowed;"/></div>
-        <button class="btn btn-primary btn-sm" style="align-self:flex-start;" onclick="showToast('Settings saved ✓','success')">Save Changes</button>
-      </div>
-    </div>
-  </div>
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Organization</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Settings</h1></div>
+<div class="panel">
+<div class="panel-hd"><div class="panel-title">⚙️ Account Settings</div></div>
+<div class="panel-body">
+<div style="display:flex;flex-direction:column;gap:16px;">
+<div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
+<div class="fg"><label class="fl">Email</label><input class="fi" id="settingsEmail" placeholder="your@email.com" readonly="" style="opacity:0.6;cursor:not-allowed;" type="email"/></div>
+<div class="fg"><label class="fl">Role</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
+<button class="btn btn-primary btn-sm" onclick="showToast('Settings saved ✓','success')" style="align-self:flex-start;">Save Changes</button>
+</div>
+</div>
+</div>
 </div><!-- /settings -->
-
 </div><!-- /content -->
 </div><!-- /main -->
-
 <!-- ══ MODALS ══ -->
 <div class="modal-overlay" id="modal-addContact">
-  <div class="modal">
-    <div class="modal-hd"><h3>&#128101; Add New Contact</h3><button class="modal-close" onclick="closeModal('addContact')">&#10005;</button></div>
-    <div class="modal-body">
-      <div class="fg-row"><div class="fg"><label class="fl">First Name <span class="req">*</span></label><input class="fi" id="mc-first" placeholder="First name"/></div><div class="fg"><label class="fl">Last Name <span class="req">*</span></label><input class="fi" id="mc-last" placeholder="Last name"/></div></div>
-      <div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="mc-email" type="email" placeholder="email@company.com"/></div>
-      <div class="fg"><label class="fl">Phone / WhatsApp</label><input class="fi" id="mc-phone" type="tel" placeholder="+1 (xxx) xxx-xxxx"/></div>
-      <div class="fg"><label class="fl">Business Name</label><input class="fi" id="mc-biz" placeholder="Company name"/></div>
-      <div class="fg-row">
-        <div class="fg"><label class="fl">Status</label><select class="fs" id="mc-status"><option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal">Proposal</option><option value="Won">Won</option></select></div>
-        <div class="fg"><label class="fl">Location</label><input class="fi" id="mc-location" placeholder="City, Country"/></div>
-      </div>
-      <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="mc-notes" placeholder="Any notes..."></textarea></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('addContact')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveContact()">Save Contact</button>
-    </div>
-  </div>
+<div class="modal">
+<div class="modal-hd"><h3>👥 Add New Contact</h3><button class="modal-close" onclick="closeModal('addContact')">✕</button></div>
+<div class="modal-body">
+<div class="fg-row"><div class="fg"><label class="fl">First Name <span class="req">*</span></label><input class="fi" id="mc-first" placeholder="First name"/></div><div class="fg"><label class="fl">Last Name <span class="req">*</span></label><input class="fi" id="mc-last" placeholder="Last name"/></div></div>
+<div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="mc-email" placeholder="email@company.com" type="email"/></div>
+<div class="fg"><label class="fl">Phone / WhatsApp</label><input class="fi" id="mc-phone" placeholder="+1 (xxx) xxx-xxxx" type="tel"/></div>
+<div class="fg"><label class="fl">Business Name</label><input class="fi" id="mc-biz" placeholder="Company name"/></div>
+<div class="fg-row">
+<div class="fg"><label class="fl">Status</label><select class="fs" id="mc-status"><option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal">Proposal</option><option value="Won">Won</option></select></div>
+<div class="fg"><label class="fl">Location</label><input class="fi" id="mc-location" placeholder="City, Country"/></div>
 </div>
-
+<div class="fg"><label class="fl">Notes</label><textarea class="fta" id="mc-notes" placeholder="Any notes..."></textarea></div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-ghost" onclick="closeModal('addContact')">Cancel</button>
+<button class="btn btn-primary" onclick="saveContact()">Save Contact</button>
+</div>
+</div>
+</div>
 <div class="modal-overlay" id="modal-addDeal">
-  <div class="modal">
-    <div class="modal-hd"><h3>&#128188; Add New Deal</h3><button class="modal-close" onclick="closeModal('addDeal')">&#10005;</button></div>
-    <div class="modal-body">
-      <div class="fg"><label class="fl">Deal Name <span class="req">*</span></label><input class="fi" id="md-name" placeholder="e.g. Website Redesign"/></div>
-      <div class="fg-row">
-        <div class="fg"><label class="fl">Value ($)</label><input class="fi" id="md-value" type="number" placeholder="0"/></div>
-        <div class="fg"><label class="fl">Stage</label>
-          <select class="fs" id="md-stage">
-            <option value="Lead">Lead</option>
-            <option value="Qualified">Qualified</option>
-            <option value="Proposal">Proposal</option>
-            <option value="Won">Won</option>
-          </select>
-        </div>
-      </div>
-      <div class="fg-row">
-        <div class="fg"><label class="fl">Package Type</label>
-          <select class="fs" id="md-type">
-            <option value="Ripple">Ripple ($1,800)</option>
-            <option value="Current">Current ($3,000)</option>
-            <option value="Surge">Surge ($5,000+)</option>
-            <option value="CRM Starter">CRM Starter</option>
-            <option value="CRM Lite">CRM Lite</option>
-            <option value="CRM Premium">CRM Premium</option>
-            <option value="CRM Enterprise">CRM Enterprise</option>
-            <option value="White-Label">White-Label</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="fg"><label class="fl">Link to Contact</label>
-          <select class="fs" id="md-contact">
-            <option value="">No contact linked</option>
-          </select>
-        </div>
-      </div>
-      <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="md-notes" placeholder="Deal notes..."></textarea></div>
-    </div>
-    <div class="modal-footer">
-      <div id="dealError" style="display:none;color:#ef4444;font-size:12px;font-weight:700;padding:8px 0;"></div>
-      <button class="btn btn-ghost" onclick="closeModal('addDeal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveDeal()">Save Deal</button>
-    </div>
-  </div>
+<div class="modal">
+<div class="modal-hd"><h3>💼 Add New Deal</h3><button class="modal-close" onclick="closeModal('addDeal')">✕</button></div>
+<div class="modal-body">
+<div class="fg"><label class="fl">Deal Name <span class="req">*</span></label><input class="fi" id="md-name" placeholder="e.g. Website Redesign"/></div>
+<div class="fg-row">
+<div class="fg"><label class="fl">Value ($)</label><input class="fi" id="md-value" placeholder="0" type="number"/></div>
+<div class="fg"><label class="fl">Stage</label>
+<select class="fs" id="md-stage">
+<option value="lead">Lead</option>
+<option value="qualified">Qualified</option>
+<option value="proposal">Proposal</option>
+<option value="won">Won</option>
+<option value="lost">Lost</option>
+</select>
 </div>
-
+</div>
+<div class="fg-row">
+<div class="fg"><label class="fl">Package Type</label>
+<select class="fs" id="md-type">
+<option value="Ripple">Ripple ($1,800)</option>
+<option value="Current">Current ($3,000)</option>
+<option value="Surge">Surge ($5,000+)</option>
+<option value="CRM Starter">CRM Starter</option>
+<option value="CRM Lite">CRM Lite</option>
+<option value="CRM Premium">CRM Premium</option>
+<option value="CRM Enterprise">CRM Enterprise</option>
+<option value="White-Label">White-Label</option>
+<option value="Other">Other</option>
+</select>
+</div>
+<div class="fg"><label class="fl">Link to Contact</label>
+<select class="fs" id="md-contact">
+<option value="">No contact linked</option>
+</select>
+</div>
+</div>
+<div class="fg"><label class="fl">Notes</label><textarea class="fta" id="md-notes" placeholder="Deal notes..."></textarea></div>
+</div>
+<div class="modal-footer">
+<div id="dealError" style="display:none;color:#ef4444;font-size:12px;font-weight:700;padding:8px 0;"></div>
+<button class="btn btn-ghost" onclick="closeModal('addDeal')">Cancel</button>
+<button class="btn btn-primary" onclick="saveDeal()">Save Deal</button>
+</div>
+</div>
+</div>
 <div class="modal-overlay" id="modal-sendEmail">
-  <div class="modal">
-    <div class="modal-hd"><h3>&#128231; Send Email</h3><button class="modal-close" onclick="closeModal('sendEmail')">&#10005;</button></div>
-    <div class="modal-body">
-      <div class="fg"><label class="fl">To</label><input class="fi" placeholder="recipient@email.com"/></div>
-      <div class="fg"><label class="fl">Subject</label><input class="fi" placeholder="Email subject"/></div>
-      <div class="fg"><label class="fl">Message</label><textarea class="fta" style="min-height:120px;" placeholder="Your message..."></textarea></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('sendEmail')">Cancel</button>
-      <button class="btn btn-primary" onclick="closeModal('sendEmail');showToast('Email sent ✓','success')">Send Email</button>
-    </div>
-  </div>
+<div class="modal">
+<div class="modal-hd"><h3>📧 Send Email</h3><button class="modal-close" onclick="closeModal('sendEmail')">✕</button></div>
+<div class="modal-body">
+<div class="fg"><label class="fl">To</label><input class="fi" placeholder="recipient@email.com"/></div>
+<div class="fg"><label class="fl">Subject</label><input class="fi" placeholder="Email subject"/></div>
+<div class="fg"><label class="fl">Message</label><textarea class="fta" placeholder="Your message..." style="min-height:120px;"></textarea></div>
 </div>
-
+<div class="modal-footer">
+<button class="btn btn-ghost" onclick="closeModal('sendEmail')">Cancel</button>
+<button class="btn btn-primary" onclick="closeModal('sendEmail');showToast('Email sent ✓','success')">Send Email</button>
+</div>
+</div>
+</div>
 <div class="modal-overlay" id="modal-addTask">
-  <div class="modal">
-    <div class="modal-hd"><h3>&#9989; Add Task</h3><button class="modal-close" onclick="closeModal('addTask')">&#10005;</button></div>
-    <div class="modal-body">
-      <div class="fg"><label class="fl">Task Title <span class="req">*</span></label><input class="fi" placeholder="Task description"/></div>
-      <div class="fg-row">
-        <div class="fg"><label class="fl">Due Date</label><input class="fi" type="date"/></div>
-        <div class="fg"><label class="fl">Priority</label><select class="fs"><option>High</option><option>Medium</option><option>Low</option></select></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('addTask')">Cancel</button>
-      <button class="btn btn-primary" onclick="closeModal('addTask');showToast('Task added ✓','success')">Add Task</button>
-    </div>
-  </div>
+<div class="modal">
+<div class="modal-hd"><h3>✅ Add Task</h3><button class="modal-close" onclick="closeModal('addTask')">✕</button></div>
+<div class="modal-body">
+<div class="fg"><label class="fl">Task Title <span class="req">*</span></label><input class="fi" placeholder="Task description"/></div>
+<div class="fg-row">
+<div class="fg"><label class="fl">Due Date</label><input class="fi" type="date"/></div>
+<div class="fg"><label class="fl">Priority</label><select class="fs"><option>High</option><option>Medium</option><option>Low</option></select></div>
 </div>
-
+</div>
+<div class="modal-footer">
+<button class="btn btn-ghost" onclick="closeModal('addTask')">Cancel</button>
+<button class="btn btn-primary" onclick="closeModal('addTask');showToast('Task added ✓','success')">Add Task</button>
+</div>
+</div>
+</div>
 <!-- Notifications panel -->
 <div id="notifPanel" style="position:fixed;top:56px;right:16px;width:300px;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);z-index:300;display:none;box-shadow:0 8px 32px rgba(0,0,0,0.4);">
-  <div style="padding:14px 16px;border-bottom:1px solid var(--navy-border);display:flex;align-items:center;justify-content:space-between;">
-    <span style="font-size:0.85rem;font-weight:700;">&#128276; Notifications</span>
-    <span style="font-size:0.75rem;color:var(--cyan);cursor:pointer;" onclick="document.getElementById('notifPanel').style.display='none'">Clear all</span>
-  </div>
-  <div style="padding:12px 16px;border-bottom:1px solid var(--navy-border);font-size:0.78rem;color:var(--text2);">&#128188; Deal <strong>Annual Retainer</strong> closing in 3 days<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">2h ago</div></div>
-  <div style="padding:12px 16px;border-bottom:1px solid var(--navy-border);font-size:0.78rem;color:var(--text2);">&#128101; New contact added by your team<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">4h ago</div></div>
-  <div style="padding:12px 16px;font-size:0.78rem;color:var(--text2);">&#127942; Deal won &mdash; <strong>E-Commerce Store</strong> $7,100<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">2d ago</div></div>
+<div style="padding:14px 16px;border-bottom:1px solid var(--navy-border);display:flex;align-items:center;justify-content:space-between;">
+<span style="font-size:0.85rem;font-weight:700;">🔔 Notifications</span>
+<span onclick="document.getElementById('notifPanel').style.display='none'" style="font-size:0.75rem;color:var(--cyan);cursor:pointer;">Clear all</span>
 </div>
-
+<div style="padding:12px 16px;border-bottom:1px solid var(--navy-border);font-size:0.78rem;color:var(--text2);">💼 Deal <strong>Annual Retainer</strong> closing in 3 days<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">2h ago</div></div>
+<div style="padding:12px 16px;border-bottom:1px solid var(--navy-border);font-size:0.78rem;color:var(--text2);">👥 New contact added by your team<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">4h ago</div></div>
+<div style="padding:12px 16px;font-size:0.78rem;color:var(--text2);">🏆 Deal won — <strong>E-Commerce Store</strong> $7,100<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">2d ago</div></div>
+</div>
 <div class="toast" id="toast"></div>
-
 <script>
 const {createClient} = supabase;
 const db = createClient(
@@ -913,13 +888,13 @@ async function loadData(){
     deal_name:d.deal_name||d.title||'Untitled Deal',
     deal_value:d.deal_value||d.value||0,
     deal_type:d.deal_type||'Ripple',
-    stage:d.stage||'Lead',
+    stage:d.stage||'lead',
     agent_id:d.agent_id||d.created_by||null,
   }));
   allDeals = deals;
 
-  const openDeals=deals.filter(d=>!['Won','Lost'].includes(d.stage));
-  const wonDeals=deals.filter(d=>d.stage==='Won');
+  const openDeals=deals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+  const wonDeals=deals.filter(d=>d.stage==='won');
   const pipeVal=openDeals.reduce((s,d)=>s+(d.deal_value||0),0);
   const wonVal=wonDeals.reduce((s,d)=>s+(d.deal_value||0),0);
 
@@ -950,8 +925,15 @@ async function loadData(){
 
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
 function renderPipeline(){
-  ['Lead','Qualified','Proposal','Won'].forEach(stage=>{
-    const deals=allDeals.filter(d=>d.stage===stage);
+  // Map display names to lowercase DB values
+  var stageMap = [
+    {key:'lead', label:'Lead', id:'Lead'},
+    {key:'qualified', label:'Qualified', id:'Qualified'},
+    {key:'proposal', label:'Proposal', id:'Proposal'},
+    {key:'won', label:'Won', id:'Won'}
+  ];
+  stageMap.forEach(function(s){ var stage=s.key; var stageId=s.id;
+    const deals=allDeals.filter(d=>(d.stage||'').toLowerCase()===(stage||'').toLowerCase());
     ['col','dCol'].forEach(prefix=>{
       const el=document.getElementById(prefix+stage);
       if(el)el.textContent=deals.length;
@@ -964,7 +946,7 @@ function renderPipeline(){
           <div class="deal-name">${d.deal_name}</div>
           <div class="deal-co">${d.contact_name||'—'}</div>
           <div class="deal-val">${fmt(d.deal_value)}</div>
-          <div class="deal-date">${stage==='Won'?'✓ Won':'Active'}</div>
+          <div class="deal-date">${(stage||'').toLowerCase()==='won'?'✓ Won':'Active'}</div>
         </div>`).join('')||`<div style="text-align:center;padding:12px;color:var(--text3);font-size:0.75rem;">No deals</div>`;
     });
   });
@@ -981,7 +963,7 @@ function renderRecentContacts(){
   const statusBadge={'Lead':'badge-muted','Qualified':'badge-cyan','Proposal':'badge-gold','Won':'badge-success','new':'badge-muted','contacted':'badge-cyan'};
   tbody.innerHTML=allContacts.slice(0,5).map(c=>{
     const name=c.full_name||'—';
-    const status=c.status||'Lead';
+    const status=c.pipeline_status||c.status||'Lead';
     const badge=statusBadge[status]||'badge-muted';
     const date=c.created_at?new Date(c.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
     return `<tr onclick="showView('contacts')" style="cursor:pointer;">
@@ -1015,7 +997,7 @@ async function loadLeaderboard(){
       lb=profiles.map(p=>({
         name:p.full_name||'Agent',
         deals:allDeals.filter(d=>d.agent_id===p.id).length,
-        won:allDeals.filter(d=>d.agent_id===p.id&&d.stage==='Won').length,
+        won:allDeals.filter(d=>d.agent_id===p.id&&d.stage==='won').length,
         val:allDeals.filter(d=>d.agent_id===p.id).reduce((s,d)=>s+(d.deal_value||0),0),
         color:getColor(p.full_name||p.id)
       })).sort((a,b)=>b.val-a.val);
@@ -1072,7 +1054,7 @@ function renderContactsTable(){
   const statusBadge={'Lead':'badge-muted','Qualified':'badge-cyan','Proposal':'badge-gold','Won':'badge-success','new':'badge-muted','contacted':'badge-cyan','Inactive':'badge-muted'};
   tbody.innerHTML=page.map(c=>{
     const name=c.full_name||'—';
-    const status=c.status||'Lead';
+    const status=c.pipeline_status||c.status||'Lead';
     const badge=statusBadge[status]||'badge-muted';
     const date=c.created_at?new Date(c.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
     const val=c.deal_value||0;
@@ -1141,7 +1123,15 @@ async function updateContactStatus(sel){
   const newStatus=sel.value;
   const prevStatus=sel.getAttribute('data-prev')||newStatus;
   sel.setAttribute('data-prev',newStatus);
-  const {error}=await db.from('contacts').update({status:newStatus}).eq('id',id);
+  // Try pipeline_status first, fall back to status
+  var updateObj = {};
+  updateObj['pipeline_status'] = newStatus;
+  var {error}=await db.from('contacts').update(updateObj).eq('id',id);
+  if(error && error.message && error.message.includes('pipeline_status')){
+    // Column doesn't exist, try status
+    var r2 = await db.from('contacts').update({status:newStatus}).eq('id',id);
+    error = r2.error;
+  }
   if(error){
     showToast('Error: '+error.message,'');
     sel.value=prevStatus;
@@ -1255,13 +1245,13 @@ async function saveContact(){
   const last=document.getElementById('mc-last')?.value.trim();
   const email=document.getElementById('mc-email')?.value.trim();
   if(!first||!email){showToast('Please fill in required fields','');return;}
+  // Build contact with only columns that exist in the contacts table
   const contact={
     full_name:(first+' '+last).trim(),
     email:email,
     phone:document.getElementById('mc-phone')?.value.trim()||null,
     business_name:document.getElementById('mc-biz')?.value.trim()||null,
-    status:document.getElementById('mc-status')?.value||'Lead',
-    location:document.getElementById('mc-location')?.value.trim()||null,
+    island:document.getElementById('mc-location')?.value.trim()||null,
     notes:document.getElementById('mc-notes')?.value.trim()||null,
     user_id:currentUser?.id
   };
@@ -1269,8 +1259,8 @@ async function saveContact(){
   const urlParams = new URLSearchParams(window.location.search);
   const source = urlParams.get('utm_source')||urlParams.get('src')||'crm_manual';
   const leadCode = source.toUpperCase().replace(/[^A-Z0-9]/g,'_')+'_'+Date.now().toString(36).toUpperCase();
-  contact.source = source;
-  contact.lead_code = leadCode;
+  // source tracking — only add if columns exist in contacts table
+  try { contact.source = source; contact.lead_code = leadCode; } catch(e){}
   const {error} = await db.from('contacts').insert(contact);
   if(error){
     console.error('Save contact error:',error);
@@ -1295,7 +1285,7 @@ async function saveDeal(){
   const name=document.getElementById('md-name')?.value.trim();
   if(!name){showToast('Please enter a deal name','');return;}
   const val=parseFloat(document.getElementById('md-value')?.value)||0;
-  const stage=document.getElementById('md-stage')?.value||'Lead';
+  const stage=(document.getElementById('md-stage')?.value||'lead').toLowerCase();
   const contactId=document.getElementById('md-contact')?.value||null;
   const dealType=document.getElementById('md-type')?.value||'Ripple';
   // Insert with both old and new column names for compatibility
