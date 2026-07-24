@@ -494,6 +494,24 @@
     }
   }
 
+  // Role hierarchy — higher number = more authority
+  const ROLE_RANK = { salesperson: 1, manager: 2, admin: 3, owner: 4 };
+
+  // Returns true if the current user can act on a target member's role
+  function canActOn(targetRole) {
+    const myRank = ROLE_RANK[userRole] || 0;
+    const targetRank = ROLE_RANK[(targetRole||'salesperson').toLowerCase()] || 0;
+    return myRank > targetRank; // must outrank the target
+  }
+
+  // Returns the role options the current user is allowed to assign
+  function allowedRoleOptions() {
+    const myRank = ROLE_RANK[userRole] || 0;
+    return Object.entries(ROLE_RANK)
+      .filter(([r, rank]) => rank < myRank && r !== 'owner')
+      .map(([r]) => r);
+  }
+
   function renderTeamTable(profiles) {
     const tbody = document.getElementById('teamTableBody');
     if (!tbody || !profiles) return;
@@ -515,7 +533,18 @@
         ? '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:5px;"></span>Active'
         : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--text3);margin-right:5px;"></span>Offline';
       const isCurrentUser = p.id === (currentUser && currentUser.id);
-      const isOwner = role === 'owner';
+      const canEdit = !isCurrentUser && canActOn(role);
+      let actionCell;
+      if (isCurrentUser) {
+        actionCell = '<span style="font-size:11px;color:var(--text3);">You</span>';
+      } else if (!canEdit) {
+        actionCell = '<span style="font-size:11px;color:var(--text3);">—</span>';
+      } else {
+        actionCell = '<div class="member-actions">' +
+          '<button class="btn-edit-member" onclick="openEditModal('' + p.id + '','' + (p.full_name||'').replace(/'/g,"\'") + '','' + role + '')">✏️ Edit</button>' +
+          '<button class="btn-delete-member" onclick="openDeleteModal('' + p.id + '','' + (p.full_name||'').replace(/'/g,"\'") + '')">🗑️</button>' +
+          '</div>';
+      }
       return '<tr>' +
         '<td><div class="member-cell">' +
           '<div class="member-avatar" style="background:' + avatarColor + ';">' + initials + '</div>' +
@@ -524,13 +553,7 @@
         '<td><span class="role-badge" style="background:' + rc.bg + ';color:' + rc.color + ';">' + rc.label + '</span></td>' +
         '<td style="font-size:12px;">' + statusDot + '</td>' +
         '<td style="font-size:12px;color:var(--text3);">' + lastSeen + '</td>' +
-        '<td>' + (!isCurrentUser && !isOwner
-          ? '<div class="member-actions">' +
-              '<button class="btn-edit-member" onclick="openEditModal('' + p.id + '','' + (p.full_name||'').replace(/'/g,"\'") + '','' + role + '')">✏️ Edit</button>' +
-              '<button class="btn-delete-member" onclick="openDeleteModal('' + p.id + '','' + (p.full_name||'').replace(/'/g,"\'") + '')">🗑️</button>' +
-            '</div>'
-          : '<span style="font-size:11px;color:var(--text3);">' + (isCurrentUser ? 'You' : 'Owner') + '</span>') +
-        '</td></tr>';
+        '<td>' + actionCell + '</td></tr>';
     }).join('');
     const card = document.querySelector('#section-team .card-title');
     if (card) card.textContent = 'Team (' + profiles.length + ' member' + (profiles.length !== 1 ? 's' : '') + ')';
@@ -551,7 +574,17 @@
     document.getElementById('emUserId').value = userId;
     document.getElementById('emName').textContent = name;
     document.getElementById('emEmail').textContent = 'ID: ' + userId.slice(0,8) + '...';
-    document.getElementById('emRole').value = role;
+    // Rebuild role dropdown with only permitted options
+    const sel = document.getElementById('emRole');
+    const allowed = allowedRoleOptions();
+    const roleLabels = { salesperson:'💼 Salesperson', manager:'📊 Manager', admin:'🛡️ Admin' };
+    sel.innerHTML = allowed.map(r =>
+      '<option value="' + r + '"' + (r === role ? ' selected' : '') + '>' + (roleLabels[r]||r) + '</option>'
+    ).join('');
+    if (!allowed.includes(role)) {
+      // Current role not in allowed list — add as disabled option for display
+      sel.innerHTML = '<option value="' + role + '" disabled selected>' + (roleLabels[role]||role) + ' (current)</option>' + sel.innerHTML;
+    }
     document.getElementById('editMemberOverlay').classList.add('open');
   }
 
@@ -563,12 +596,18 @@
     const userId = document.getElementById('emUserId').value;
     const newRole = document.getElementById('emRole').value;
     const btn = document.getElementById('emSaveBtn');
+    // Client-side escalation guard
+    const allowed = allowedRoleOptions();
+    if (!allowed.includes(newRole)) {
+      showToast('❌ You do not have permission to assign the role: ' + newRole, 'error');
+      return;
+    }
     btn.disabled = true; btn.textContent = 'Saving...';
     try {
       const { error } = await db.from('profiles').update({ role: newRole }).eq('id', userId);
       if (error) throw error;
       closeEditModal();
-      showToast('✅ Role updated successfully', 'success');
+      showToast('✅ Role updated to ' + newRole, 'success');
       await loadTeamMembers();
     } catch(e) {
       showToast('❌ Failed to update role: ' + e.message, 'error');
@@ -591,6 +630,13 @@
   async function confirmDeleteMember() {
     const userId = document.getElementById('cdUserId').value;
     const btn = document.getElementById('cdConfirmBtn');
+    // Find target member's role from cache
+    const target = teamMembers.find(m => m.id === userId);
+    if (target && !canActOn((target.role||'salesperson').toLowerCase())) {
+      showToast('❌ You do not have permission to remove this member', 'error');
+      closeDeleteModal();
+      return;
+    }
     btn.disabled = true; btn.textContent = 'Removing...';
     try {
       const { error } = await db.from('profiles').delete().eq('id', userId);
