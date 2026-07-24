@@ -290,12 +290,12 @@
 <div class="form-group"><label>Deal Value ($)</label><input id="f_value" placeholder="0" type="number"/></div>
 <div class="form-group"><label>Stage</label>
 <select id="f_stage">
-<option value="Lead">Lead</option>
-<option value="Qualified">Qualified</option>
-<option value="Proposal">Proposal</option>
-<option value="Negotiation">Negotiation</option>
-<option value="Won">Won</option>
-<option value="Lost">Lost</option>
+<option value="lead">Lead</option>
+<option value="qualified">Qualified</option>
+<option value="proposal">Proposal</option>
+<option value="negotiation">Negotiation</option>
+<option value="won">Won</option>
+<option value="lost">Lost</option>
 </select>
 </div>
 <div class="form-group"><label>CRM Client Deal?</label>
@@ -320,8 +320,8 @@ const RATES={Ripple:0.20,Current:0.20,Surge:0.20,'CRM Lite':0.20,'CRM Premium':0
 const RATES_UNLOCKED=0.25;
 const UNLOCK_THRESHOLD=3;
 const DEFAULT_VALUES={Ripple:1200,Current:2500,Surge:4500,'CRM Lite':99,'CRM Premium':179,'White-Label':697};
-const STAGES=['Lead','Qualified','Proposal','Negotiation','Won','Lost'];
-const STAGE_COLORS={Lead:'#94a3b8',Qualified:'#00C2D1',Proposal:'#f59e0b',Negotiation:'#ff8c42',Won:'#22c55e',Lost:'#ef4444'};
+const STAGES=['lead','qualified','proposal','negotiation','won','lost'];
+const STAGE_COLORS={lead:'#94a3b8',qualified:'#00C2D1',proposal:'#f59e0b',negotiation:'#ff8c42',won:'#22c55e',lost:'#ef4444'};
 const TYPE_COLORS={Ripple:'#00C2D1',Current:'#ff8c42',Surge:'#a78bfa','CRM Lite':'#D4AF37','CRM Premium':'#D4AF37','White-Label':'#a78bfa'};
 const TYPE_EMOJI={Ripple:'🌊',Current:'⚡',Surge:'🚀','CRM Lite':'💼','CRM Premium':'🖤','White-Label':'⚡'};
 
@@ -379,13 +379,11 @@ async function loadDeals(){
   if(error){showToast('Failed to load deals: '+error.message,'error');console.error(error);return;}
   allDeals=(data||[]).map(d=>({
     ...d,
-    // Map old column names to new ones for compatibility
-    deal_name: d.deal_name||d.title||'Untitled Deal',
-    deal_value: d.deal_value||d.value||0,
-    deal_type: d.deal_type||'Ripple',
-    stage: d.stage||'Lead',
+    deal_name: d.title||d.deal_name||'Untitled Deal',
+    deal_value: d.value||d.deal_value||0,
+    deal_type: d.deal_type||'Other',
+    stage: (d.stage||'lead').toLowerCase(),
     agent_id: d.agent_id||d.created_by||null,
-    is_crm_client_deal: d.is_crm_client_deal||false,
   }));
   updateStats();
   updateCommBar();
@@ -447,12 +445,12 @@ function getAgentName(id){const p=allProfiles.find(x=>x.id===id);return p?p.full
 function renderKanban(){
   const board=document.getElementById('kanbanBoard');
   board.innerHTML=STAGES.map(stage=>{
-    const deals=filtered.filter(d=>d.stage===stage);
+    const deals=filtered.filter(d=>(d.stage||'').toLowerCase()===stage);
     const totalVal=deals.reduce((s,d)=>s+(d.deal_value||0),0);
     const color=STAGE_COLORS[stage];
     return`<div class="kanban-col">
       <div class="kanban-header">
-        <div class="kanban-title" style="color:${color};">${stage}</div>
+        <div class="kanban-title" style="color:${color};">${stage.charAt(0).toUpperCase()+stage.slice(1)}</div>
         <div class="kanban-meta">
           ${totalVal>0?`<span class="kanban-value">${fmt$(totalVal)}</span>`:'<span></span>'}
           <span class="kanban-count">${deals.length}</span>
@@ -550,7 +548,7 @@ function openPanel(id){
     <div style="margin-bottom:16px;">
       <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Update Stage</div>
       <select id="panelStage" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;">
-        ${STAGES.map(s=>`<option value="${s}" ${d.stage===s?'selected':''}>${s}</option>`).join('')}
+        ${STAGES.map(s=>`<option value="${s}" ${(d.stage||'').toLowerCase()===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
       </select>
     </div>
     ${d.notes?`<div style="background:var(--bg3);border-radius:9px;padding:12px;font-size:13px;color:var(--text2);margin-bottom:16px;">${d.notes}</div>`:''}`;
@@ -608,23 +606,24 @@ async function addDeal(){
   const type=document.getElementById('f_type').value;
   if(!name){showToast('Deal name is required','error');return;}
   const value=parseFloat(document.getElementById('f_value').value)||DEFAULT_VALUES[type]||0;
+  const stageVal = (document.getElementById('f_stage').value||'lead').toLowerCase();
   const deal={
-    deal_name:name,
-    title:name, // also set title for compatibility with existing schema
-    contact_id:document.getElementById('f_contact').value||null,
-    agent_id:currentUser.id,
-    created_by:currentUser.id,
-    deal_type:type,
-    deal_value:value,
-    value:value, // also set value for compatibility
-    stage:document.getElementById('f_stage').value,
-    is_crm_client_deal:document.getElementById('f_crm').value==='true',
-    notes:document.getElementById('f_notes').value.trim()||null,
-    updated_at:new Date().toISOString(),
+    title: name,
+    value: value,
+    contact_id: document.getElementById('f_contact').value||null,
+    agent_id: currentUser.id,
+    stage: stageVal,
+    notes: document.getElementById('f_notes').value.trim()||null,
   };
   const{data,error}=await db.from('deals').insert([deal]).select();
   if(error){showToast('Failed: '+error.message,'error');console.error(error);return;}
-  const newDeal={...data[0],deal_name:data[0].deal_name||data[0].title||name,deal_value:data[0].deal_value||data[0].value||value,deal_type:data[0].deal_type||type};
+  const newDeal={
+    ...data[0],
+    deal_name: data[0].title||name,
+    deal_value: data[0].value||value,
+    deal_type: type,
+    stage: (data[0].stage||'lead').toLowerCase(),
+  };
   allDeals.unshift(newDeal);
   showToast(`✅ "${name}" created`,'success');
   closeModal();
