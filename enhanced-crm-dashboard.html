@@ -1216,16 +1216,116 @@ function initChart(){
 function globalSearchFn(q){
   const results=document.getElementById('searchResults');
   if(!q||q.length<2){results.style.display='none';return;}
-  const fc=allContacts.filter(c=>(c.full_name||'').toLowerCase().includes(q.toLowerCase())||(c.email||'').toLowerCase().includes(q.toLowerCase())||(c.business_name||c.business||'').toLowerCase().includes(q.toLowerCase()));
-  const fd=allDeals.filter(d=>(d.deal_name||'').toLowerCase().includes(q.toLowerCase()));
-  if(!fc.length&&!fd.length){results.innerHTML=`<div style="padding:12px 14px;font-size:0.78rem;color:var(--text3);">No results found</div>`;results.style.display='block';return;}
-  results.innerHTML=[
-    ...fc.slice(0,4).map(c=>`<div style="padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:0.78rem;color:var(--text2);" onclick="showView('contacts')" onmouseover="this.style.background='var(--navy-light)'" onmouseout="this.style.background=''">👤 ${c.full_name||c.email} <span style="color:var(--text3);font-size:0.7rem;margin-left:auto;">${c.business_name||c.business||''}</span></div>`),
-    ...fd.slice(0,3).map(d=>`<div style="padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:0.78rem;color:var(--text2);" onclick="showView('deals')" onmouseover="this.style.background='var(--navy-light)'" onmouseout="this.style.background=''">💼 ${d.deal_name} <span style="color:var(--cyan);font-size:0.7rem;margin-left:auto;">${fmt(d.deal_value)}</span></div>`)
-  ].join('');
+  const ql=q.toLowerCase();
+  const fc=allContacts.filter(c=>
+    (c.full_name||'').toLowerCase().includes(ql)||
+    (c.email||'').toLowerCase().includes(ql)||
+    (c.business_name||'').toLowerCase().includes(ql)||
+    (c.phone||'').toLowerCase().includes(ql)
+  );
+  const fd=allDeals.filter(d=>(d.deal_name||d.title||'').toLowerCase().includes(ql));
+
+  if(!fc.length&&!fd.length){
+    results.innerHTML=`<div style="padding:16px 14px;font-size:0.78rem;color:var(--text3);text-align:center;">
+      <div style="font-size:20px;margin-bottom:6px;">🔍</div>
+      No contacts or deals found for "<strong style="color:var(--text2);">${q}</strong>"
+      <div style="margin-top:10px;">
+        <button onclick="openModal('addContact');document.getElementById('mc-first').value='${q.split(' ')[0]}';document.getElementById('searchResults').style.display='none';" 
+          style="background:var(--cyan);color:var(--navy-deep);border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;">
+          + Add as New Contact
+        </button>
+      </div>
+    </div>`;
+    results.style.display='block';
+    return;
+  }
+
+  const contactRows = fc.slice(0,5).map(contact=>{
+    const initials=(contact.full_name||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);
+    return `<div style="padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:0.78rem;color:var(--text2);border-bottom:1px solid var(--navy-border);"
+      onclick="openContactProfile('${contact.id}');document.getElementById('searchResults').style.display='none';document.getElementById('globalSearch').value='';"
+      onmouseover="this.style.background='var(--navy-light)'" onmouseout="this.style.background=''">
+      <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#0099B0);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--navy-deep);flex-shrink:0;">${initials}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${contact.full_name||contact.email}</div>
+        <div style="color:var(--text3);font-size:0.7rem;">${contact.business_name||contact.email||''}</div>
+      </div>
+      <span style="color:var(--cyan);font-size:0.65rem;flex-shrink:0;">View →</span>
+    </div>`;
+  });
+
+  const dealRows = fd.slice(0,3).map(d=>`<div style="padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:0.78rem;color:var(--text2);"
+    onclick="showView('deals');document.getElementById('searchResults').style.display='none';"
+    onmouseover="this.style.background='var(--navy-light)'" onmouseout="this.style.background=''">
+    <span style="font-size:16px;">💼</span>
+    <div style="flex:1;">
+      <div style="font-weight:600;color:var(--text);">${d.deal_name||d.title}</div>
+      <div style="color:var(--text3);font-size:0.7rem;">${d.stage||'lead'} · ${fmt(d.deal_value||d.value||0)}</div>
+    </div>
+    <span style="color:var(--gold);font-size:0.7rem;">${fmt(d.deal_value||d.value||0)}</span>
+  </div>`);
+
+  const sections=[];
+  if(contactRows.length){
+    sections.push(`<div style="padding:6px 14px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;background:var(--navy-deep);">Contacts</div>`);
+    sections.push(...contactRows);
+  }
+  if(dealRows.length){
+    sections.push(`<div style="padding:6px 14px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;background:var(--navy-deep);">Deals</div>`);
+    sections.push(...dealRows);
+  }
+  results.innerHTML=sections.join('');
   results.style.display='block';
 }
-document.addEventListener('click',e=>{if(!e.target.closest('#globalSearch')&&!e.target.closest('#searchResults'))document.getElementById('searchResults').style.display='none';});
+
+// ── CONTACT PROFILE MODAL ─────────────────────────────────────────────────────
+function openContactProfile(contactId){
+  const contact = allContacts.find(c=>c.id===contactId);
+  if(!contact){
+    showToast('Contact not found','error');
+    return;
+  }
+  // Get related deals
+  const contactDeals = allDeals.filter(d=>d.contact_id===contactId);
+  const initials=(contact.full_name||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);
+  const createdDate = contact.created_at ? new Date(contact.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+
+  // Build deal rows
+  const dealHTML = contactDeals.length
+    ? contactDeals.map(d=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--navy-light);border-radius:8px;margin-bottom:8px;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">${d.deal_name||d.title||'Untitled'}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px;text-transform:capitalize;">${d.stage||'lead'}</div>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:var(--cyan);">${fmt(d.deal_value||d.value||0)}</div>
+        </div>`).join('')
+    : `<div style="text-align:center;padding:16px;color:var(--text3);font-size:13px;">No deals yet</div>`;
+
+  const modal = document.getElementById('contactProfileModal');
+  document.getElementById('cpInitials').textContent=initials;
+  document.getElementById('cpName').textContent=contact.full_name||'—';
+  document.getElementById('cpBusiness').textContent=contact.business_name||'—';
+  document.getElementById('cpEmail').textContent=contact.email||'—';
+  document.getElementById('cpPhone').textContent=contact.phone||contact.whatsapp||'—';
+  document.getElementById('cpLocation').textContent=contact.island||'—';
+  document.getElementById('cpNotes').textContent=contact.notes||'No notes';
+  document.getElementById('cpAdded').textContent='Added '+createdDate;
+  document.getElementById('cpDeals').innerHTML=dealHTML;
+  document.getElementById('cpEditBtn').onclick=()=>{closeContactProfile();openModal('addContact');};
+  modal.style.display='flex';
+}
+
+function closeContactProfile(){
+  document.getElementById('contactProfileModal').style.display='none';
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#globalSearch')&&!e.target.closest('#searchResults'))
+    document.getElementById('searchResults').style.display='none';
+  if(e.target.id==='contactProfileModal')
+    closeContactProfile();
+});
 
 // ── MODALS ────────────────────────────────────────────────────────────────────
 function openModal(id){
@@ -1400,5 +1500,54 @@ async function signOut(){await db.auth.signOut();window.location.href='login.htm
   reset();
 })();
 </script>
+
+<!-- CONTACT PROFILE MODAL -->
+<div id="contactProfileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111827;border:1px solid var(--navy-border);border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6);">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#0a0e1a,#0d1526);padding:28px 28px 20px;border-radius:20px 20px 0 0;position:relative;">
+      <button onclick="closeContactProfile()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">✕</button>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div id="cpInitials" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#0099B0);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#0a0e1a;flex-shrink:0;">—</div>
+        <div>
+          <div id="cpName" style="font-size:20px;font-weight:800;color:#fff;margin-bottom:2px;">—</div>
+          <div id="cpBusiness" style="font-size:13px;color:var(--text3);">—</div>
+          <div id="cpAdded" style="font-size:11px;color:var(--text3);margin-top:4px;"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Contact details -->
+    <div style="padding:20px 28px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+        <div style="background:var(--navy-light);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Email</div>
+          <div id="cpEmail" style="font-size:13px;color:var(--text);word-break:break-all;">—</div>
+        </div>
+        <div style="background:var(--navy-light);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Phone</div>
+          <div id="cpPhone" style="font-size:13px;color:var(--text);">—</div>
+        </div>
+        <div style="background:var(--navy-light);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Location</div>
+          <div id="cpLocation" style="font-size:13px;color:var(--text);">—</div>
+        </div>
+        <div style="background:var(--navy-light);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Notes</div>
+          <div id="cpNotes" style="font-size:13px;color:var(--text);max-height:60px;overflow-y:auto;">—</div>
+        </div>
+      </div>
+      <!-- Deals -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Deals & Pipeline</div>
+        <div id="cpDeals"></div>
+      </div>
+      <!-- Actions -->
+      <div style="display:flex;gap:10px;">
+        <button id="cpEditBtn" style="flex:1;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:10px;padding:11px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='var(--navy-border)'">✏️ Edit Contact</button>
+        <button onclick="closeContactProfile();openModal('addDeal');" style="flex:1;background:var(--cyan);border:none;border-radius:10px;padding:11px;color:var(--navy-deep);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">+ Add Deal</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
