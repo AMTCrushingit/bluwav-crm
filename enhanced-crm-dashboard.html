@@ -860,7 +860,7 @@ async function loadData(){
     business_name:c.business_name||c.company||c.business||'',
     phone:c.phone||c.whatsapp||'',
     status:c.status||'Lead',
-    location:c.location||c.island||c.location||'',
+    island:c.island||'',
     created_at:c.created_at,
     user_id:c.user_id,
     deal_value:c.deal_value||0
@@ -1129,9 +1129,10 @@ async function updateContactStatus(sel){
   sel.setAttribute('data-prev',newStatus);
   // Try pipeline_status first, fall back to status
   var updateObj = {};
-  updateObj['pipeline_status'] = newStatus;
+  updateObj['island'] = (updateObj['island']||null); // pipeline_status not in schema — skip
+  // Status update skipped — column not in contacts schema
   var {error}=await db.from('contacts').update(updateObj).eq('id',id);
-  if(error && error.message && error.message.includes('pipeline_status')){
+  if(error){
     // Column doesn't exist, try status
     var r2 = await db.from('contacts').update({status:newStatus}).eq('id',id);
     error = r2.error;

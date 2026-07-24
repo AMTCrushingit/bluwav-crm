@@ -261,7 +261,7 @@ async function loadContacts(){
 
 function updateStats(){
   const counts={customer:0,lead:0,prospect:0,inactive:0};
-  allContacts.forEach(c=>{if(counts[c.status]!==undefined)counts[c.status]++;});
+  // status column not in schema — skip counts
   document.getElementById('statTotal').textContent=allContacts.length;
   document.getElementById('statCustomer').textContent=counts.customer;
   document.getElementById('statLead').textContent=counts.lead;
@@ -280,7 +280,7 @@ function applyFilters(){
   filtered=allContacts.filter(c=>{
     const mq=!q||(c.full_name||'').toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q)||(c.business_name||'').toLowerCase().includes(q)||(c.phone||'').includes(q);
     const mi=!island||c.location||c.island===island;
-    const ms=statusFilter==='all'||c.status===statusFilter;
+    const ms=statusFilter==='all'||true; // status column not in schema
     const mo=!ownerFilter||c.user_id===ownerFilter;
     return mq&&mi&&ms&&mo;
   });
@@ -348,7 +348,7 @@ async function bulkDelete(){
 }
 function exportCSV(selOnly=false){
   const data=selOnly?allContacts.filter(c=>selected.has(c.id)):filtered;
-  const headers=['full_name','email','phone','whatsapp','business_name','location','notes','created_at'];
+  const headers=['full_name','email','phone','whatsapp','business_name','island','notes','created_at'];
   const rows=[headers.join(','),...data.map(c=>headers.map(h=>`"${(c[h]||'').toString().replace(/"/g,'""')}"`).join(','))];
   const blob=new Blob([rows.join('\n')],{type:'text/csv'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`bluwav-contacts-${new Date().toISOString().slice(0,10)}.csv`;a.click();
@@ -518,7 +518,7 @@ async function addContact(){
     email:document.getElementById('f_email').value.trim()||null,
     phone:document.getElementById('f_phone').value.trim()||null,
     whatsapp:document.getElementById('f_whatsapp').value.trim()||null,
-    location:document.getElementById('f_island').value||null,
+    island:document.getElementById('f_island').value||null,
     notes:document.getElementById('f_notes').value.trim()||null,
     user_id:currentUser?.id||null,
   };
