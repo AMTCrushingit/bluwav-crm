@@ -5,8 +5,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BluWav CRM — Settings</title>
-<link rel="stylesheet" href="bluwav.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="bluwav.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     :root{--bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;--border:rgba(255,255,255,0.06);--cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--text:#ffffff;--text2:#b0bec5;--text3:#4a5568;--sidebar:220px;}
@@ -106,6 +106,38 @@
     .role-badge.admin{background:rgba(0,194,209,0.1);color:var(--cyan);}
     .role-badge.manager{background:rgba(167,139,250,0.1);color:var(--purple);}
     .role-badge.salesperson{background:rgba(34,197,94,0.1);color:var(--green);}
+    /* Member action buttons */
+    .member-actions{display:flex;gap:6px;align-items:center;}
+    .btn-edit-member{padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .btn-edit-member:hover{border-color:var(--cyan);color:var(--cyan);}
+    .btn-delete-member{padding:5px 10px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:6px;color:#ef4444;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+    .btn-delete-member:hover{background:rgba(239,68,68,0.18);border-color:#ef4444;}
+    /* Edit member modal */
+    .em-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;}
+    .em-overlay.open{display:flex;}
+    .em-modal{background:#1a2235;border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:400px;box-shadow:0 24px 80px rgba(0,0,0,0.5);}
+    .em-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px;}
+    .em-sub{font-size:12px;color:var(--text3);margin-bottom:20px;}
+    .em-field{margin-bottom:16px;}
+    .em-label{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;display:block;}
+    .em-select{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;cursor:pointer;}
+    .em-select:focus{border-color:var(--cyan);}
+    .em-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+    .em-cancel{padding:9px 18px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;}
+    .em-save{padding:9px 18px;background:var(--cyan);border:none;border-radius:8px;color:#0a0e1a;font-size:13px;font-weight:800;cursor:pointer;transition:opacity 0.2s;}
+    .em-save:hover{opacity:0.85;}
+    .em-save:disabled{opacity:0.5;cursor:not-allowed;}
+    /* Confirm delete modal */
+    .cd-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;}
+    .cd-overlay.open{display:flex;}
+    .cd-modal{background:#1a2235;border:1px solid rgba(239,68,68,0.3);border-radius:16px;padding:28px;width:100%;max-width:380px;box-shadow:0 24px 80px rgba(0,0,0,0.5);text-align:center;}
+    .cd-icon{font-size:40px;margin-bottom:12px;}
+    .cd-title{font-size:16px;font-weight:800;color:#ef4444;margin-bottom:8px;}
+    .cd-msg{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px;}
+    .cd-footer{display:flex;gap:10px;justify-content:center;}
+    .cd-cancel{padding:10px 20px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;}
+    .cd-confirm{padding:10px 20px;background:#ef4444;border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;transition:opacity 0.2s;}
+    .cd-confirm:hover{opacity:0.85;}
 
     /* DANGER ZONE */
     .danger-card{background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.15);border-radius:14px;padding:20px;margin-bottom:20px;}
@@ -148,17 +180,16 @@
 <a class="nav-item" href="#"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
 <a class="nav-item" href="#"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
-</div>    <div class="nav-section">
-      <div class="nav-label">Performance</div>
-      <a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
-      <a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
+</div> <div class="nav-section">
+<div class="nav-label">Performance</div>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
 <a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
-    </div>
-
+</div>
 <div class="nav-section">
 <div class="nav-label">Insights</div>
 <a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
-<a class="nav-item" class="nav-item active" "settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a "settings.html"="" class="nav-item active"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </div>
 <div class="nav-section" id="adminNav" style="display:none;">
@@ -194,7 +225,7 @@
 <div class="settings-nav-item" onclick="switchSection('integrations',this)"><span class="settings-nav-icon">🔗</span> Integrations</div>
 <div class="settings-nav-item" onclick="switchSection('security',this)"><span class="settings-nav-icon">🔒</span> Security</div>
 <div class="settings-nav-divider"></div>
-<div class="settings-nav-item" onclick="switchSection('danger',this)" id="dangerNavItem"><span class="settings-nav-icon">⚠️</span> Danger Zone</div>
+<div class="settings-nav-item" id="dangerNavItem" onclick="switchSection('danger',this)"><span class="settings-nav-icon">⚠️</span> Danger Zone</div>
 </div>
 <!-- Settings Content -->
 <div>
@@ -292,30 +323,16 @@
 <button class="btn-save" onclick="openInviteModal()" style="padding:8px 16px;">+ Invite Member</button>
 </div>
 <div class="card-body" style="padding:0;">
-<table class="team-table">
-<thead><tr><th>Member</th><th>Role</th><th>Status</th><th>Last Active</th><th></th></tr></thead>
-<tbody>
-<tr>
-<td><div class="member-cell"><div class="member-avatar" style="background:var(--cyan);">AM</div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Andrea M. Tanguay</div><div style="font-size:11px;color:var(--text3);">andrea@bluwav.com</div></div></div></td>
-<td><span class="role-badge owner">👑 Owner</span></td>
-<td><span style="color:var(--green);font-size:12px;">● Active</span></td>
-<td style="color:var(--text3);">Now</td>
-<td><span style="color:var(--text3);font-size:12px;">You</span></td>
-</tr>
-<tr>
-<td><div class="member-cell"><div class="member-avatar" style="background:var(--gold);">KG</div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Kenric Gilpin</div><div style="font-size:11px;color:var(--text3);">kenric.gilpin@hotmail.com</div></div></div></td>
-<td><span class="role-badge salesperson">💼 Salesperson</span></td>
-<td><span style="color:var(--green);font-size:12px;">● Active</span></td>
-<td style="color:var(--text3);">2h ago</td>
-<td><button onclick="showToast('Role updated','success')" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;cursor:pointer;">Edit</button></td>
-</tr>
-<tr>
-<td><div class="member-cell"><div class="member-avatar" style="background:var(--orange);">RL</div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Ryan Leah</div><div style="font-size:11px;color:var(--text3);">ryanleah01@gmail.com</div></div></div></td>
-<td><span class="role-badge salesperson">💼 Salesperson</span></td>
-<td><span style="color:var(--text3);font-size:12px;">● Offline</span></td>
-<td style="color:var(--text3);">1d ago</td>
-<td><button onclick="showToast('Role updated','success')" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;cursor:pointer;">Edit</button></td>
-</tr>
+<table class="team-table" id="teamTable">
+<thead><tr>
+<th>Member</th>
+<th>Role</th>
+<th>Status</th>
+<th>Last Active</th>
+<th></th>
+</tr></thead>
+<tbody id="teamTableBody">
+<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text3);">Loading team...</td></tr>
 </tbody>
 </table>
 </div>
@@ -444,6 +461,7 @@
   })();
 
   function switchSection(id,el){
+    if(id==='team') loadTeamMembers();
     // Block danger zone for non-managers
     if(id==='danger' && userRole==='salesperson'){
       showToast('⚠️ Only managers can access the Danger Zone','error');
@@ -453,6 +471,138 @@
     el.classList.add('active');
     document.querySelectorAll('.settings-section').forEach(s=>s.classList.remove('active'));
     document.getElementById('section-'+id).classList.add('active');
+  }
+
+
+  // ── TEAM MANAGEMENT ──────────────────────────────────────────────────────────
+  let teamMembers = [];
+
+  async function loadTeamMembers() {
+    const tbody = document.getElementById('teamTableBody');
+    if (!tbody) return;
+    try {
+      const { data: profiles, error } = await db
+        .from('profiles')
+        .select('id, full_name, role, last_seen, is_online')
+        .order('full_name');
+      if (error) throw error;
+      teamMembers = profiles || [];
+      renderTeamTable(profiles);
+    } catch(e) {
+      console.error('loadTeamMembers:', e);
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:#ef4444;">Failed to load team — ' + e.message + '</td></tr>';
+    }
+  }
+
+  function renderTeamTable(profiles) {
+    const tbody = document.getElementById('teamTableBody');
+    if (!tbody || !profiles) return;
+    const roleColors = {
+      owner:       { bg:'rgba(212,175,55,0.1)',  color:'var(--gold)',   label:'👑 Owner' },
+      admin:       { bg:'rgba(0,194,209,0.1)',    color:'var(--cyan)',   label:'🛡️ Admin' },
+      manager:     { bg:'rgba(167,139,250,0.1)', color:'var(--purple)', label:'📊 Manager' },
+      salesperson: { bg:'rgba(34,197,94,0.1)',   color:'var(--green)',  label:'💼 Salesperson' },
+    };
+    const avatarColors = ['var(--cyan)','var(--gold)','var(--orange)','var(--purple)','var(--green)'];
+    tbody.innerHTML = profiles.map((p, i) => {
+      const role = (p.role || 'salesperson').toLowerCase();
+      const rc = roleColors[role] || roleColors.salesperson;
+      const initials = (p.full_name || '?').split(' ').map(x => x[0]).join('').toUpperCase().slice(0,2);
+      const avatarColor = avatarColors[i % avatarColors.length];
+      const isOnline = p.is_online;
+      const lastSeen = p.last_seen ? timeAgo(p.last_seen) : 'Never';
+      const statusDot = isOnline
+        ? '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:5px;"></span>Active'
+        : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--text3);margin-right:5px;"></span>Offline';
+      const isCurrentUser = p.id === (currentUser && currentUser.id);
+      const isOwner = role === 'owner';
+      return '<tr>' +
+        '<td><div class="member-cell">' +
+          '<div class="member-avatar" style="background:' + avatarColor + ';">' + initials + '</div>' +
+          '<div><div style="font-size:13px;font-weight:600;color:var(--text);">' + (p.full_name||'—') + (isCurrentUser ? ' <span style="font-size:10px;color:var(--text3);">(You)</span>' : '') + '</div>' +
+          '<div style="font-size:11px;color:var(--text3);">' + p.id.slice(0,8) + '...</div></div></div></td>' +
+        '<td><span class="role-badge" style="background:' + rc.bg + ';color:' + rc.color + ';">' + rc.label + '</span></td>' +
+        '<td style="font-size:12px;">' + statusDot + '</td>' +
+        '<td style="font-size:12px;color:var(--text3);">' + lastSeen + '</td>' +
+        '<td>' + (!isCurrentUser && !isOwner
+          ? '<div class="member-actions">' +
+              '<button class="btn-edit-member" onclick="openEditModal('' + p.id + '','' + (p.full_name||'').replace(/'/g,"\'") + '','' + role + '')">✏️ Edit</button>' +
+              '<button class="btn-delete-member" onclick="openDeleteModal('' + p.id + '','' + (p.full_name||'').replace(/'/g,"\'") + '')">🗑️</button>' +
+            '</div>'
+          : '<span style="font-size:11px;color:var(--text3);">' + (isCurrentUser ? 'You' : 'Owner') + '</span>') +
+        '</td></tr>';
+    }).join('');
+    const card = document.querySelector('#section-team .card-title');
+    if (card) card.textContent = 'Team (' + profiles.length + ' member' + (profiles.length !== 1 ? 's' : '') + ')';
+  }
+
+  function timeAgo(ts) {
+    const diff = Date.now() - new Date(ts).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 2) return 'Just now';
+    if (mins < 60) return mins + ' minutes ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + ' hour' + (hrs > 1 ? 's' : '') + ' ago';
+    const days = Math.floor(hrs / 24);
+    return days + ' day' + (days > 1 ? 's' : '') + ' ago';
+  }
+
+  function openEditModal(userId, name, role) {
+    document.getElementById('emUserId').value = userId;
+    document.getElementById('emName').textContent = name;
+    document.getElementById('emEmail').textContent = 'ID: ' + userId.slice(0,8) + '...';
+    document.getElementById('emRole').value = role;
+    document.getElementById('editMemberOverlay').classList.add('open');
+  }
+
+  function closeEditModal() {
+    document.getElementById('editMemberOverlay').classList.remove('open');
+  }
+
+  async function saveEditMember() {
+    const userId = document.getElementById('emUserId').value;
+    const newRole = document.getElementById('emRole').value;
+    const btn = document.getElementById('emSaveBtn');
+    btn.disabled = true; btn.textContent = 'Saving...';
+    try {
+      const { error } = await db.from('profiles').update({ role: newRole }).eq('id', userId);
+      if (error) throw error;
+      closeEditModal();
+      showToast('✅ Role updated successfully', 'success');
+      await loadTeamMembers();
+    } catch(e) {
+      showToast('❌ Failed to update role: ' + e.message, 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Save Changes';
+    }
+  }
+
+  function openDeleteModal(userId, name) {
+    document.getElementById('cdUserId').value = userId;
+    document.getElementById('cdMsg').textContent =
+      'This will remove ' + name + ' from your team. They will lose access immediately. Their data will be preserved.';
+    document.getElementById('deleteMemberOverlay').classList.add('open');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteMemberOverlay').classList.remove('open');
+  }
+
+  async function confirmDeleteMember() {
+    const userId = document.getElementById('cdUserId').value;
+    const btn = document.getElementById('cdConfirmBtn');
+    btn.disabled = true; btn.textContent = 'Removing...';
+    try {
+      const { error } = await db.from('profiles').delete().eq('id', userId);
+      if (error) throw error;
+      closeDeleteModal();
+      showToast('✅ Team member removed', 'success');
+      await loadTeamMembers();
+    } catch(e) {
+      showToast('❌ Failed to remove member: ' + e.message, 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Remove Member';
+    }
   }
 
   function openInviteModal(){
@@ -468,6 +618,13 @@
   }
 
   let userRole='salesperson';
+  // Load team members if team section is visible on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const teamSection = document.getElementById('section-team');
+    if (teamSection && !teamSection.classList.contains('hidden') && teamSection.style.display !== 'none') {
+      loadTeamMembers();
+    }
+  });
   function saveSettings(section){
     showToast(`✅ ${section} settings saved`,'success');
   }
@@ -501,5 +658,46 @@
   })();
 
 </script>
+<!-- EDIT MEMBER MODAL -->
+<div class="em-overlay" id="editMemberOverlay">
+<div class="em-modal">
+<div class="em-title" id="emTitle">Edit Team Member</div>
+<div class="em-sub" id="emSub">Update role and access level</div>
+<input id="emUserId" type="hidden"/>
+<div class="em-field">
+<label class="em-label">Name</label>
+<div id="emName" style="font-size:14px;font-weight:600;color:var(--text);padding:8px 0;"></div>
+</div>
+<div class="em-field">
+<label class="em-label">Email</label>
+<div id="emEmail" style="font-size:13px;color:var(--text3);padding:4px 0;"></div>
+</div>
+<div class="em-field">
+<label class="em-label">Role</label>
+<select class="em-select" id="emRole">
+<option value="salesperson">Salesperson</option>
+<option value="manager">Manager</option>
+<option value="admin">Admin</option>
+</select>
+</div>
+<div class="em-footer">
+<button class="em-cancel" onclick="closeEditModal()">Cancel</button>
+<button class="em-save" id="emSaveBtn" onclick="saveEditMember()">Save Changes</button>
+</div>
+</div>
+</div>
+<!-- CONFIRM DELETE MODAL -->
+<div class="cd-overlay" id="deleteMemberOverlay">
+<div class="cd-modal">
+<div class="cd-icon">🗑️</div>
+<div class="cd-title">Remove Team Member?</div>
+<div class="cd-msg" id="cdMsg">This will remove the member from your team. Their data will be preserved but they will lose access immediately.</div>
+<input id="cdUserId" type="hidden"/>
+<div class="cd-footer">
+<button class="cd-cancel" onclick="closeDeleteModal()">Cancel</button>
+<button class="cd-confirm" id="cdConfirmBtn" onclick="confirmDeleteMember()">Remove Member</button>
+</div>
+</div>
+</div>
 </body>
 </html>
