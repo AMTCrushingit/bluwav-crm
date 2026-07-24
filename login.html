@@ -7,614 +7,146 @@
 <title>BluWav CRM — Sign In</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: #0a0e1a;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      min-height: 100vh;
-      width: 100%;
-    }
-
-    /* ── LEFT PANEL ── */
-    .left {
-      background: linear-gradient(135deg, #0a0e1a 0%, #0d1526 50%, #0a1628 100%);
-      padding: 48px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .left::before {
-      content: '';
-      position: absolute;
-      top: -100px;
-      left: -100px;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(0,194,209,0.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .left::after {
-      content: '';
-      position: absolute;
-      bottom: -80px;
-      right: -80px;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(0,194,209,0.05) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      z-index: 1;
-    }
-
-    .logo-text {
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .logo-text span.blu { color: #ffffff; }
-    .logo-text span.wav { color: #00C2D1; }
-
-    .logo-badge {
-      background: rgba(0,194,209,0.15);
-      border: 1px solid rgba(0,194,209,0.3);
-      color: #00C2D1;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 4px;
-      letter-spacing: 1px;
-    }
-
-    .left-content {
-      z-index: 1;
-    }
-
-    .left-content h1 {
-      font-size: 42px;
-      font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 16px;
-      color: #fff;
-    }
-
-    .left-content h1 span {
-      color: #00C2D1;
-    }
-
-    .left-content p {
-      color: #8892a4;
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 36px;
-      max-width: 380px;
-    }
-
-    .features {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .feature-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: #b0bec5;
-      font-size: 14px;
-    }
-
-    .feature-icon {
-      width: 36px;
-      height: 36px;
-      background: rgba(0,194,209,0.1);
-      border: 1px solid rgba(0,194,209,0.2);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .bottom-card {
-      border: 1px solid rgba(212,175,55,0.25);
-      border-radius: 12px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(212,175,55,0.05);
-      z-index: 1;
-    }
-
-    .bottom-card span {
-      color: #8892a4;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .bottom-card span strong {
-      color: #D4AF37;
-    }
-
-    /* ── RIGHT PANEL ── */
-    .right {
-      background: #0f1623;
-      padding: 48px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      border-left: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .right-inner {
-      max-width: 400px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .right h2 {
-      font-size: 30px;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-
-    .right .subtitle {
-      color: #8892a4;
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-
-    /* Trial banner */
-    .trial-banner {
-      background: linear-gradient(135deg, rgba(255,140,66,0.08) 0%, rgba(0,194,209,0.08) 100%);
-      border: 1px solid rgba(255,140,66,0.3);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 24px;
-      font-size: 13px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .trial-banner::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #ff8c42, #00C2D1);
-    }
-
-    .trial-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .trial-badge {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .trial-badge .pulse {
-      width: 8px;
-      height: 8px;
-      background: #ff8c42;
-      border-radius: 50%;
-      animation: pulse 1.5s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(255,140,66,0.4); }
-      50% { opacity: 0.8; transform: scale(1.1); box-shadow: 0 0 0 4px rgba(255,140,66,0); }
-    }
-
-    .trial-badge span {
-      color: #ff8c42;
-      font-weight: 700;
-      font-size: 13px;
-    }
-
-    .trial-banner a {
-      color: #00C2D1;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 12px;
-      background: rgba(0,194,209,0.1);
-      border: 1px solid rgba(0,194,209,0.25);
-      padding: 4px 10px;
-      border-radius: 6px;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-
-    .trial-banner a:hover {
-      background: rgba(0,194,209,0.2);
-      border-color: #00C2D1;
-    }
-
-    .countdown-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .countdown-unit {
-      text-align: center;
-      background: rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 8px;
-      padding: 6px 10px;
-      min-width: 48px;
-    }
-
-    .countdown-unit .num {
-      font-size: 20px;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .countdown-unit .lbl {
-      font-size: 9px;
-      color: #4a5568;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-top: 2px;
-    }
-
-    .countdown-sep {
-      color: #4a5568;
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .trial-progress-bar {
-      height: 4px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .trial-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #ff8c42, #00C2D1);
-      border-radius: 4px;
-      transition: width 1s linear;
-    }
-
-    .trial-sub {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-      font-size: 11px;
-      color: #4a5568;
-    }
-
-    .trial-sub span:last-child { color: #00C2D1; }
-
-    /* Form */
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #b0bec5;
-      margin-bottom: 7px;
-    }
-
-    .form-group input {
-      width: 100%;
-      background: #1a2235;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 12px 16px;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .form-group input:focus {
-      border-color: #00C2D1;
-      background: #1e2840;
-    }
-
-    .form-group input::placeholder { color: #4a5568; }
-
-    .password-wrapper {
-      position: relative;
-    }
-
-    .password-wrapper input {
-      padding-right: 44px;
-    }
-
-    .toggle-pw {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: #4a5568;
-      cursor: pointer;
-      font-size: 16px;
-      padding: 0;
-      line-height: 1;
-    }
-
-    .toggle-pw:hover { color: #00C2D1; }
-
-    .form-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 22px;
-    }
-
-    .remember {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: #8892a4;
-      cursor: pointer;
-    }
-
-    .remember input[type="checkbox"] {
-      width: 15px;
-      height: 15px;
-      accent-color: #00C2D1;
-      cursor: pointer;
-    }
-
-    .forgot {
-      color: #00C2D1;
-      font-size: 13px;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .forgot:hover { text-decoration: underline; }
-
-    /* Buttons */
-    .btn-primary {
-      width: 100%;
-      background: #00C2D1;
-      color: #0a0e1a;
-      border: none;
-      border-radius: 10px;
-      padding: 13px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 16px;
-      letter-spacing: 0.3px;
-    }
-
-    .btn-primary:hover {
-      background: #00d4e4;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 20px rgba(0,194,209,0.3);
-    }
-
-    .btn-primary:active { transform: translateY(0); }
-
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.07);
-    }
-
-    .divider span {
-      color: #4a5568;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-
-    .btn-social {
-      width: 100%;
-      background: #1a2235;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 12px;
-      color: #b0bec5;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 10px;
-      transition: all 0.2s;
-    }
-
-    .btn-social:hover {
-      background: #1e2840;
-      border-color: rgba(255,255,255,0.15);
-      color: #fff;
-    }
-
-    .btn-social img {
-      width: 18px;
-      height: 18px;
-    }
-
-    .bottom-links {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 13px;
-      color: #4a5568;
-    }
-
-    .bottom-links a {
-      color: #00C2D1;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .bottom-links a:hover { text-decoration: underline; }
-
-    /* Alert */
-    .alert {
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 13px;
-      margin-bottom: 16px;
-      display: none;
-    }
-
-    .alert.error {
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
-      color: #f87171;
-      display: block;
-    }
-
-    .alert.success {
-      background: rgba(0,194,209,0.1);
-      border: 1px solid rgba(0,194,209,0.3);
-      color: #00C2D1;
-      display: block;
-    }
-
-    /* Loading spinner */
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(10,14,26,0.3);
-      border-top-color: #0a0e1a;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-      margin-right: 6px;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .container { grid-template-columns: 1fr; }
-      .left { display: none; }
-      .right { padding: 32px 24px; }
-    }
-  </style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1a;min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;}
+
+/* ── LAYOUT ── */
+.container{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;width:100%;}
+
+/* ── LEFT PANEL ── */
+.left{background:linear-gradient(135deg,#0a0e1a 0%,#0d1526 60%,#0a1628 100%);padding:56px 48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;}
+.left::before{content:'';position:absolute;top:-120px;left:-120px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,194,209,0.07) 0%,transparent 70%);pointer-events:none;}
+.left::after{content:'';position:absolute;bottom:-80px;right:-80px;width:350px;height:350px;background:radial-gradient(circle,rgba(0,194,209,0.04) 0%,transparent 70%);pointer-events:none;}
+
+/* Logo */
+.logo{display:flex;align-items:center;gap:10px;z-index:1;}
+.logo-text{font-size:28px;font-weight:800;letter-spacing:-0.5px;}
+.logo-text .blu{color:#fff;}
+.logo-text .wav{color:#00C2D1;}
+.logo-badge{background:rgba(0,194,209,0.12);border:1px solid rgba(0,194,209,0.25);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:#00C2D1;letter-spacing:1px;text-transform:uppercase;}
+
+/* Left content */
+.left-body{z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;padding:48px 0;}
+.left-body h1{font-size:clamp(28px,3vw,40px);font-weight:800;line-height:1.15;letter-spacing:-0.5px;margin-bottom:16px;color:#fff;}
+.left-body h1 span{color:#00C2D1;}
+.left-body p{font-size:16px;color:rgba(255,255,255,0.55);line-height:1.7;max-width:380px;margin-bottom:40px;}
+
+/* Feature list */
+.features{display:flex;flex-direction:column;gap:16px;}
+.feature-item{display:flex;align-items:center;gap:14px;font-size:14px;color:rgba(255,255,255,0.75);font-weight:500;}
+.feature-icon{width:36px;height:36px;border-radius:10px;background:rgba(0,194,209,0.1);border:1px solid rgba(0,194,209,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+
+/* Bottom tagline */
+.left-footer{z-index:1;border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;}
+.left-footer p{font-size:13px;color:rgba(255,255,255,0.3);line-height:1.6;}
+.left-footer strong{color:rgba(255,255,255,0.5);}
+
+/* ── RIGHT PANEL ── */
+.right{background:#111827;display:flex;align-items:center;justify-content:center;padding:48px 40px;}
+.right-inner{width:100%;max-width:380px;}
+
+.right-inner h2{font-size:26px;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-0.3px;}
+.subtitle{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:32px;}
+
+/* Form */
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:7px;letter-spacing:0.2px;}
+.form-group input{width:100%;background:#1a2235;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:13px 16px;font-size:15px;color:#fff;font-family:inherit;outline:none;transition:border 0.2s,box-shadow 0.2s;}
+.form-group input:focus{border-color:#00C2D1;box-shadow:0 0 0 3px rgba(0,194,209,0.1);}
+.form-group input::placeholder{color:rgba(255,255,255,0.2);}
+
+/* Password wrapper */
+.password-wrapper{position:relative;}
+.password-wrapper input{padding-right:48px;}
+.toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;transition:color 0.2s;}
+.toggle-pw:hover{color:rgba(255,255,255,0.7);}
+
+/* Form row */
+.form-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.remember{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.4);cursor:pointer;}
+.remember input{accent-color:#00C2D1;cursor:pointer;}
+.forgot{color:#00C2D1;font-size:13px;text-decoration:none;font-weight:500;}
+.forgot:hover{text-decoration:underline;}
+
+/* Buttons */
+.btn-primary{width:100%;background:#00C2D1;color:#0a0e1a;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;font-family:inherit;}
+.btn-primary:hover{background:#00d4e4;transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,194,209,0.3);}
+.btn-primary:active{transform:translateY(0);}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06);}
+.divider span{color:rgba(255,255,255,0.25);font-size:12px;white-space:nowrap;}
+
+/* Social buttons */
+.btn-social{width:100%;background:#1a2235;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px;color:rgba(255,255,255,0.6);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;transition:all 0.2s;font-family:inherit;}
+.btn-social:hover{background:#1e2840;border-color:rgba(255,255,255,0.14);color:#fff;}
+.btn-social img{width:18px;height:18px;}
+
+/* Bottom links */
+.bottom-links{text-align:center;margin-top:24px;font-size:13px;color:rgba(255,255,255,0.3);}
+.bottom-links a{color:#00C2D1;text-decoration:none;font-weight:500;}
+.bottom-links a:hover{text-decoration:underline;}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none;}
+.alert.error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;display:block;}
+.alert.success{background:rgba(0,194,209,0.1);border:1px solid rgba(0,194,209,0.3);color:#00C2D1;display:block;}
+
+/* Spinner */
+.spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(10,14,26,0.3);border-top-color:#0a0e1a;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Responsive */
+@media(max-width:768px){
+  .container{grid-template-columns:1fr;}
+  .left{display:none;}
+  .right{padding:40px 24px;align-items:flex-start;padding-top:80px;}
+}
+</style>
 </head>
 <body>
 <div class="container">
 <!-- LEFT PANEL -->
 <div class="left">
 <div class="logo">
-<div class="logo-text">
-<span class="blu">Blu</span><span class="wav">Wav</span>
-</div>
+<div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span></div>
 <div class="logo-badge">CRM</div>
 </div>
-<div class="left-content">
-<h1>Welcome back to your<br/><span>growth</span> engine.</h1>
-<p>Track leads, manage customers, and automate follow-ups — all in one place built for Modern businesses.</p>
+<div class="left-body">
+<h1>Your growth engine.<br/><span>Ready when you are.</span></h1>
+<p>Track leads, close deals, and automate follow-ups — built for modern businesses anywhere in the world.</p>
 <div class="features">
 <div class="feature-item">
 <div class="feature-icon">👥</div>
-          Manage all your contacts &amp; deals in one view
-        </div>
+        Contacts, deals &amp; pipeline in one view
+      </div>
 <div class="feature-item">
 <div class="feature-icon">📊</div>
-          Real-time pipeline &amp; revenue tracking
-        </div>
+        Real-time revenue &amp; performance tracking
+      </div>
 <div class="feature-item">
 <div class="feature-icon">⚡</div>
-          Automated follow-ups via email &amp; WhatsApp
-        </div>
+        Automated follow-ups that close deals for you
+      </div>
+<div class="feature-item">
+<div class="feature-icon">🔒</div>
+        You own your data — always
+      </div>
 </div>
 </div>
-<div class="bottom-card">
-<span>💙</span>
-<span><strong>BluWav CRM</strong> — Simple customer management that helps you grow online.</span>
+<div class="left-footer">
+<p><strong>BluWav CRM</strong> — Simple, powerful customer management.<br/>Built for growth. Ready for the world.</p>
 </div>
 </div>
 <!-- RIGHT PANEL -->
 <div class="right">
 <div class="right-inner">
-<h2>Sign in</h2>
-<p class="subtitle">Enter your credentials to access your dashboard</p>
-<div class="trial-banner">
-<div class="trial-top">
-<div class="trial-badge">
-<div class="pulse"></div>
-<span>30-Day Free Trial — No Credit Card Needed</span>
-</div>
-<a href="#">Claim Now →</a>
-</div>
-<div class="countdown-row">
-<div class="countdown-unit"><div class="num" id="cd-days">30</div><div class="lbl">Days</div></div>
-<div class="countdown-sep">:</div>
-<div class="countdown-unit"><div class="num" id="cd-hours">00</div><div class="lbl">Hours</div></div>
-<div class="countdown-sep">:</div>
-<div class="countdown-unit"><div class="num" id="cd-mins">00</div><div class="lbl">Mins</div></div>
-<div class="countdown-sep">:</div>
-<div class="countdown-unit"><div class="num" id="cd-secs">00</div><div class="lbl">Secs</div></div>
-</div>
-<div class="trial-progress-bar">
-<div class="trial-progress-fill" id="trialProgress" style="width:100%"></div>
-</div>
-<div class="trial-sub">
-<span>Trial started today</span>
-<span id="trialEndDate">Ends in 30 days</span>
-</div>
-</div>
+<h2>Welcome back</h2>
+<p class="subtitle">Sign in to access your dashboard</p>
 <div class="alert" id="alert"></div>
-<form id="loginForm" autocomplete="off">
+<form autocomplete="off" id="loginForm">
 <div class="form-group">
 <label for="email">Email Address</label>
 <input autocomplete="off" id="email" placeholder="you@company.com" required="" type="email"/>
@@ -627,199 +159,125 @@
 </div>
 </div>
 <div class="form-row">
-<label class="remember">
-<input id="remember" type="checkbox"/> Remember me
-          </label>
-<a class="forgot" href="#">Forgot password?</a>
+<label class="remember"><input id="remember" type="checkbox"/> Remember me</label>
+<a class="forgot" href="#" id="forgotLink">Forgot password?</a>
 </div>
-<button class="btn-primary" id="signInBtn" type="submit">
-          Sign In →
-        </button>
+<button class="btn-primary" id="signInBtn" type="submit">Sign In →</button>
 </form>
 <div class="divider"><span>or continue with</span></div>
 <button class="btn-social" id="googleBtn">
-<img alt="Google" src="https://www.google.com/favicon.ico"/>
-        Continue with Google
-      </button>
+<img alt="Google" src="https://www.google.com/favicon.ico"/> Continue with Google
+    </button>
 <button class="btn-social" id="microsoftBtn">
-<img alt="Microsoft" src="https://www.microsoft.com/favicon.ico"/>
-        Continue with Microsoft
-      </button>
+<img alt="Microsoft" src="https://www.microsoft.com/favicon.ico"/> Continue with Microsoft
+    </button>
 <div class="bottom-links">
-        Don't have an account? <a href="signup.html">Create account →</a><br/><br/>
-<a href="#">Terms of Service</a>  ·  <a href="#">Privacy Policy</a>
+      Don't have an account? <a href="signup.html">Start free trial →</a><br/><br/>
+<a href="#">Terms</a>  ·  <a href="#">Privacy</a>
 </div>
 </div>
 </div>
 </div>
 <script>
-  // ── Supabase Init ──
-  const { createClient } = supabase;
-  const SUPABASE_URL = 'https://izyuupdmlzcphvdpigrs.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog';
-  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const{createClient}=supabase;
+const db=createClient(
+  'https://izyuupdmlzcphvdpigrs.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog'
+);
 
-  // ── Elements ──
-  const loginForm   = document.getElementById('loginForm');
-  const emailInput  = document.getElementById('email');
-  const pwInput     = document.getElementById('password');
-  const togglePw    = document.getElementById('togglePw');
-  const signInBtn   = document.getElementById('signInBtn');
-  const googleBtn   = document.getElementById('googleBtn');
-  const msBtn       = document.getElementById('microsoftBtn');
-  const alertBox    = document.getElementById('alert');
+const loginForm  = document.getElementById('loginForm');
+const emailInput = document.getElementById('email');
+const pwInput    = document.getElementById('password');
+const togglePw   = document.getElementById('togglePw');
+const signInBtn  = document.getElementById('signInBtn');
+const googleBtn  = document.getElementById('googleBtn');
+const msBtn      = document.getElementById('microsoftBtn');
+const alertBox   = document.getElementById('alert');
+const forgotLink = document.getElementById('forgotLink');
 
-  // ── Toggle password visibility ──
-  togglePw.addEventListener('click', () => {
-    const isText = pwInput.type === 'text';
-    pwInput.type = isText ? 'password' : 'text';
-    togglePw.textContent = isText ? '👁' : '🙈';
+// Toggle password visibility
+togglePw.addEventListener('click',()=>{
+  const isText=pwInput.type==='text';
+  pwInput.type=isText?'password':'text';
+  togglePw.textContent=isText?'👁':'🙈';
+});
+
+// Alert helpers
+function showAlert(msg,type='error'){alertBox.textContent=msg;alertBox.className=`alert ${type}`;}
+function clearAlert(){alertBox.className='alert';alertBox.textContent='';}
+
+// Loading state
+function setLoading(loading){
+  signInBtn.disabled=loading;
+  signInBtn.innerHTML=loading?'<span class="spinner"></span>Signing in...':'Sign In →';
+}
+
+// Sign in
+loginForm.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  clearAlert();
+  setLoading(true);
+  const{data,error}=await db.auth.signInWithPassword({
+    email:emailInput.value.trim(),
+    password:pwInput.value
   });
-
-  // ── Show alert ──
-  function showAlert(msg, type = 'error') {
-    alertBox.textContent = msg;
-    alertBox.className = `alert ${type}`;
+  if(error){
+    showAlert(error.message||'Sign in failed. Please check your credentials.');
+    setLoading(false);
+    return;
   }
+  showAlert('Signed in successfully! Redirecting...','success');
+  sessionStorage.setItem('bw_last_active',Date.now().toString());
+  setTimeout(()=>{window.location.href='enhanced-crm-dashboard.html';},800);
+});
 
-  function clearAlert() {
-    alertBox.className = 'alert';
-    alertBox.textContent = '';
-  }
-
-  // ── Set loading state ──
-  function setLoading(loading) {
-    signInBtn.disabled = loading;
-    signInBtn.innerHTML = loading
-      ? '<span class="spinner"></span>Signing in...'
-      : 'Sign In →';
-  }
-
-  // ── Email/Password Sign In ──
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    clearAlert();
-    setLoading(true);
-
-    const email    = emailInput.value.trim();
-    const password = pwInput.value;
-
-    const { data, error } = await db.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      showAlert(error.message || 'Sign in failed. Please check your credentials.');
-      setLoading(false);
-      return;
-    }
-
-    showAlert('Signed in successfully! Redirecting...', 'success');
-    setTimeout(() => {
-      window.location.href = 'enhanced-crm-dashboard.html';
-    }, 1000);
+// Forgot password
+forgotLink.addEventListener('click',async(e)=>{
+  e.preventDefault();
+  const email=emailInput.value.trim();
+  if(!email){showAlert('Enter your email address above first.');return;}
+  const{error}=await db.auth.resetPasswordForEmail(email,{
+    redirectTo:window.location.origin+'/enhanced-crm-dashboard.html'
   });
+  if(error){showAlert(error.message);}
+  else{showAlert('Password reset email sent — check your inbox.','success');}
+});
 
-  // ── Google OAuth ──
-  googleBtn.addEventListener('click', async () => {
-    const { error } = await db.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin + '/enhanced-crm-dashboard.html' }
+// Google OAuth
+googleBtn.addEventListener('click',async()=>{
+  const{error}=await db.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:window.location.origin+'/enhanced-crm-dashboard.html'}
+  });
+  if(error)showAlert(error.message);
+});
+
+// Microsoft OAuth
+msBtn.addEventListener('click',async()=>{
+  const{error}=await db.auth.signInWithOAuth({
+    provider:'azure',
+    options:{redirectTo:window.location.origin+'/enhanced-crm-dashboard.html'}
+  });
+  if(error)showAlert(error.message);
+});
+
+// Always sign out on load — force fresh auth
+(async()=>{
+  await db.auth.signOut();
+  sessionStorage.removeItem('bw_last_active');
+})();
+
+// Prevent browser autofill
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    [emailInput,pwInput].forEach(el=>{
+      if(el){el.value='';el.setAttribute('readonly',true);}
     });
-    if (error) showAlert(error.message);
-  });
-
-  // ── Microsoft OAuth ──
-  msBtn.addEventListener('click', async () => {
-    const { error } = await db.auth.signInWithOAuth({
-      provider: 'azure',
-      options: { redirectTo: window.location.origin + '/enhanced-crm-dashboard.html' }
-    });
-    if (error) showAlert(error.message);
-  });
-
-  // ── Always sign out on login page load — force fresh authentication ──
-  // This prevents auto-bypass when navigating back to login
-  (async () => {
-    // Clear any existing session so login is always required
-    await db.auth.signOut();
-    // Clear our activity timestamp
-    sessionStorage.removeItem('bw_last_active');
-    // Clear the form fields (prevent browser autofill from persisting)
-    setTimeout(function() {
-      var emailEl = document.getElementById('email');
-      var pwEl = document.getElementById('password');
-      if (emailEl) emailEl.value = '';
-      if (pwEl) pwEl.value = '';
-    }, 100);
-  })();
-
-  // ── Clear fields on page load and focus to prevent autofill ──
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      var emailEl = document.getElementById('email');
-      var pwEl = document.getElementById('password');
-      if (emailEl) { emailEl.value = ''; emailEl.setAttribute('readonly', true); }
-      if (pwEl) { pwEl.value = ''; pwEl.setAttribute('readonly', true); }
-      setTimeout(function() {
-        if (emailEl) emailEl.removeAttribute('readonly');
-        if (pwEl) pwEl.removeAttribute('readonly');
-      }, 200);
-    }, 50);
-  });
-
-  // ── 30-Day Trial Countdown ──
-  (function() {
-    const TRIAL_DAYS = 30;
-    const TOTAL_SECS = TRIAL_DAYS * 24 * 60 * 60;
-
-    // Use localStorage to persist trial start time
-    let startTime = localStorage.getItem('bw_trial_start');
-    if (!startTime) {
-      startTime = Date.now();
-      localStorage.setItem('bw_trial_start', startTime);
-    } else {
-      startTime = parseInt(startTime);
-    }
-
-    const endTime = startTime + TOTAL_SECS * 1000;
-
-    // Set end date label
-    const endDate = new Date(endTime);
-    const opts = { month: 'short', day: 'numeric', year: 'numeric' };
-    document.getElementById('trialEndDate').textContent =
-      'Ends ' + endDate.toLocaleDateString('en-US', opts);
-
-    function pad(n) { return String(Math.floor(n)).padStart(2, '0'); }
-
-    function tick() {
-      const now = Date.now();
-      const remaining = Math.max(0, endTime - now);
-      const pct = (remaining / (TOTAL_SECS * 1000)) * 100;
-
-      const totalSecs = Math.floor(remaining / 1000);
-      const days  = Math.floor(totalSecs / 86400);
-      const hours = Math.floor((totalSecs % 86400) / 3600);
-      const mins  = Math.floor((totalSecs % 3600) / 60);
-      const secs  = totalSecs % 60;
-
-      document.getElementById('cd-days').textContent  = pad(days);
-      document.getElementById('cd-hours').textContent = pad(hours);
-      document.getElementById('cd-mins').textContent  = pad(mins);
-      document.getElementById('cd-secs').textContent  = pad(secs);
-      document.getElementById('trialProgress').style.width = pct.toFixed(2) + '%';
-
-      // Urgency color shift when < 3 days left
-      const urgency = days < 3;
-      document.querySelectorAll('.countdown-unit .num').forEach(el => {
-        el.style.color = urgency ? '#ff8c42' : '#ffffff';
-      });
-      document.querySelector('.trial-badge span').style.color =
-        urgency ? '#ff4444' : '#ff8c42';
-
-      if (remaining > 0) setTimeout(tick, 1000);
-    }
-
-    tick();
-  })();
+    setTimeout(()=>{
+      [emailInput,pwInput].forEach(el=>{if(el)el.removeAttribute('readonly');});
+    },200);
+  },50);
+});
 </script>
 </body>
 </html>
