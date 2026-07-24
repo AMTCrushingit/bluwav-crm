@@ -925,28 +925,32 @@ async function loadData(){
 
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
 function renderPipeline(){
-  // Map display names to lowercase DB values
+  // stageMap: key=DB value (lowercase), id=Title Case matching HTML element IDs
   var stageMap = [
-    {key:'lead', label:'Lead', id:'Lead'},
-    {key:'qualified', label:'Qualified', id:'Qualified'},
-    {key:'proposal', label:'Proposal', id:'Proposal'},
-    {key:'won', label:'Won', id:'Won'}
+    {key:'lead',      id:'Lead'},
+    {key:'qualified', id:'Qualified'},
+    {key:'proposal',  id:'Proposal'},
+    {key:'won',       id:'Won'}
   ];
-  stageMap.forEach(function(s){ var stage=s.key; var stageId=s.id;
-    const deals=allDeals.filter(d=>(d.stage||'').toLowerCase()===(stage||'').toLowerCase());
+  stageMap.forEach(function(s){
+    var stage = s.key;
+    var stageId = s.id; // matches colLead, dealsLead, dColLead, dDealsLead etc.
+    const deals = allDeals.filter(d=>(d.stage||'').toLowerCase()===stage);
+    // Update count badges
     ['col','dCol'].forEach(prefix=>{
-      const el=document.getElementById(prefix+stage);
-      if(el)el.textContent=deals.length;
+      const el=document.getElementById(prefix+stageId);
+      if(el) el.textContent=deals.length;
     });
+    // Update deal cards
     ['deals','dDeals'].forEach(prefix=>{
-      const el=document.getElementById(prefix+stage);
-      if(!el)return;
-      el.innerHTML=deals.slice(0,3).map(d=>`
-        <div class="deal" onclick="showView('deals')">
-          <div class="deal-name">${d.deal_name}</div>
+      const el=document.getElementById(prefix+stageId);
+      if(!el) return;
+      el.innerHTML=deals.slice(0,5).map(d=>`
+        <div class="deal" onclick="showView('deals')" style="cursor:pointer;">
+          <div class="deal-name">${d.deal_name||d.title||'Untitled'}</div>
           <div class="deal-co">${d.contact_name||'—'}</div>
-          <div class="deal-val">${fmt(d.deal_value)}</div>
-          <div class="deal-date">${(stage||'').toLowerCase()==='won'?'✓ Won':'Active'}</div>
+          <div class="deal-val">${fmt(d.deal_value||d.value||0)}</div>
+          <div class="deal-date">${stage==='won'?'✓ Won':'Active'}</div>
         </div>`).join('')||`<div style="text-align:center;padding:12px;color:var(--text3);font-size:0.75rem;">No deals</div>`;
     });
   });
@@ -1255,12 +1259,10 @@ async function saveContact(){
     notes:document.getElementById('mc-notes')?.value.trim()||null,
     user_id:currentUser?.id
   };
-  // Capture source from URL if available (for ad/campaign tracking)
+  // Source tracking stored separately — not inserted into contacts table
   const urlParams = new URLSearchParams(window.location.search);
   const source = urlParams.get('utm_source')||urlParams.get('src')||'crm_manual';
   const leadCode = source.toUpperCase().replace(/[^A-Z0-9]/g,'_')+'_'+Date.now().toString(36).toUpperCase();
-  // source tracking — only add if columns exist in contacts table
-  try { contact.source = source; contact.lead_code = leadCode; } catch(e){}
   const {error} = await db.from('contacts').insert(contact);
   if(error){
     console.error('Save contact error:',error);
@@ -1269,7 +1271,7 @@ async function saveContact(){
   }
   showToast('Contact saved ✓','success');
   notifyAdmin('👤 New Contact Added — BluWav CRM',
-    'Name: '+contact.full_name+'\nEmail: '+contact.email+'\nBusiness: '+contact.business_name+'\nSource: '+contact.source+'\nLead Code: '+contact.lead_code+'\nTime: '+new Date().toLocaleString());
+    'Name: '+contact.full_name+'\nEmail: '+contact.email+'\nBusiness: '+contact.business_name+'\nSource: '+source+'\nLead Code: '+leadCode+'\nTime: '+new Date().toLocaleString());
   closeModal('addContact');
   // Clear form
   ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes'].forEach(id=>{
@@ -1288,19 +1290,13 @@ async function saveDeal(){
   const stage=(document.getElementById('md-stage')?.value||'lead').toLowerCase();
   const contactId=document.getElementById('md-contact')?.value||null;
   const dealType=document.getElementById('md-type')?.value||'Ripple';
-  // Insert with both old and new column names for compatibility
-  // Build deal object — only include fields that exist in the schema
+  // Build deal object — only columns that exist in Supabase deals table
   var dealObj = {
-    deal_name: name,
     title: name,
-    deal_value: val,
     value: val,
     stage: stage,
     agent_id: currentUser?.id,
-    created_by: currentUser?.id
   };
-  // Add optional fields only if they have values
-  if(dealType) dealObj.deal_type = dealType;
   if(contactId) dealObj.contact_id = contactId;
   var notes = document.getElementById('md-notes')?.value.trim();
   if(notes) dealObj.notes = notes;
