@@ -172,8 +172,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 <img alt="Microsoft" src="https://www.microsoft.com/favicon.ico"/> Continue with Microsoft
     </button>
 <div class="bottom-links">
-      Don't have an account? <a href="signup.html">Start free trial →</a><br/><br/>
-<a href="#">Terms</a>  ·  <a href="#">Privacy</a>
+      <a href="#">Terms</a>  ·  <a href="#">Privacy</a>
 </div>
 </div>
 </div>
@@ -279,5 +278,75 @@ window.addEventListener('load',()=>{
   },50);
 });
 </script>
+
+<!-- ── ACCESS GATE ── -->
+<div id="accessGate" style="position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#001828 0%,#002B49 60%,#003d5c 100%);display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">
+  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,224,255,0.15);border-radius:20px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,0.4);">
+    <!-- Logo -->
+    <div style="font-size:32px;font-weight:900;color:#fff;margin-bottom:4px;letter-spacing:-1px;">Blu<span style="color:#00E0FF;">Wav</span></div>
+    <div style="font-size:9px;font-weight:700;color:#00E0FF;letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;">CRM Platform</div>
+    <!-- Lock icon -->
+    <div style="font-size:40px;margin-bottom:16px;">🔒</div>
+    <h2 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">Client Access Only</h2>
+    <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:28px;">This platform is available to BluWav Growth clients.<br/>Enter your access code to continue.</p>
+    <!-- Access code input -->
+    <div style="margin-bottom:16px;">
+      <input id="gateInput" type="password" placeholder="Enter access code" autocomplete="off"
+        style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(0,224,255,0.2);border-radius:10px;font-size:15px;color:#fff;font-family:inherit;outline:none;text-align:center;letter-spacing:4px;box-sizing:border-box;transition:border-color 0.2s;"
+        onkeydown="if(event.key==='Enter')checkGate()"
+        onfocus="this.style.borderColor='rgba(0,224,255,0.5)'"
+        onblur="this.style.borderColor='rgba(0,224,255,0.2)'"/>
+    </div>
+    <div id="gateError" style="display:none;font-size:12px;color:#FF5500;margin-bottom:12px;font-weight:700;">&#9888; Incorrect access code. Please try again.</div>
+    <button onclick="checkGate()"
+      style="width:100%;background:linear-gradient(135deg,#00C2D8,#007a85);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,194,216,0.3);"
+      onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 28px rgba(0,194,216,0.5)'"
+      onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(0,194,216,0.3)'">
+      Continue &#8594;
+    </button>
+    <p style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:20px;">Don&#39;t have an access code? Contact <a href="mailto:hello@bluwavgrowth.com" style="color:rgba(0,224,255,0.5);text-decoration:none;">hello@bluwavgrowth.com</a></p>
+  </div>
+</div>
+
+<script>
+// ── ACCESS GATE LOGIC ──────────────────────────────────────────────────────
+(function(){
+  // Check if already authenticated this session
+  if(sessionStorage.getItem('bw_gate_ok')==='1'){
+    document.getElementById('accessGate').style.display='none';
+    return;
+  }
+  // Show gate, hide main content
+  document.body.style.overflow='hidden';
+  // Focus input after short delay
+  setTimeout(function(){
+    var inp=document.getElementById('gateInput');
+    if(inp)inp.focus();
+  },300);
+})();
+
+function checkGate(){
+  var code=document.getElementById('gateInput').value.trim().toUpperCase();
+  var errEl=document.getElementById('gateError');
+  // Access codes — add more as needed, case-insensitive
+  var validCodes=['BW2026','BLUWAV','BWCRM26'];
+  if(validCodes.indexOf(code)!==-1){
+    sessionStorage.setItem('bw_gate_ok','1');
+    var gate=document.getElementById('accessGate');
+    gate.style.transition='opacity 0.4s ease';
+    gate.style.opacity='0';
+    setTimeout(function(){gate.style.display='none';},400);
+    document.body.style.overflow='';
+  } else {
+    errEl.style.display='block';
+    var inp=document.getElementById('gateInput');
+    inp.value='';
+    inp.style.borderColor='rgba(255,85,0,0.5)';
+    setTimeout(function(){inp.style.borderColor='rgba(0,224,255,0.2)';},1500);
+    inp.focus();
+  }
+}
+</script>
+
 </body>
 </html>
