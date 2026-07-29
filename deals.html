@@ -333,7 +333,7 @@ function fmtDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-
 function calcComm(deal,unlocked){const rate=unlocked?RATES_UNLOCKED:(RATES[deal.deal_type]||0.20);return(deal.deal_value||0)*rate;}
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
-async function signOut(){await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 function autoFillValue(type){document.getElementById('f_value').value=DEFAULT_VALUES[type]||'';}
 
 (async()=>{
@@ -647,7 +647,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePanel();closeM
 
 (function(){
   const TIMEOUT_MS=5*60*1000;let timer;
-  function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
+  function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=>{document.addEventListener(evt,resetTimer,true);});
   resetTimer();
 })();

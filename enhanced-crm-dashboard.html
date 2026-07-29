@@ -323,7 +323,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <button class="ib" onclick="loadData();showToast('Refreshed ✓','success')" title="Refresh data">↻</button>
 <button class="ib" onclick="toggleNotif()" title="Notifications">🔔<span class="ndot"></span></button>
 <button class="ib" onclick="showView('settings')" title="Settings">⚙️</button>
-<a href="signup.html" style="background:linear-gradient(135deg,#FF5500,#e84d00);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;white-space:nowrap;letter-spacing:0.3px;" onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">Start Free Trial →</a>
+
 <div class="tb-div"></div>
 <div class="user-chip" onclick="showView('settings')">
 <div class="avatar" id="topAvatar" style="width:26px;height:26px;font-size:0.65rem;">—</div>
@@ -719,6 +719,7 @@ function touchActivity() {
   if (lastActive > 0 && (now - lastActive) > AUTH_TIMEOUT) {
     // Timed out — sign out and force re-login
     sessionStorage.removeItem('bw_last_active');
+    sessionStorage.removeItem('bw_gate_ok');
     await db.auth.signOut();
     window.location.href = 'login.html';
     return;
@@ -1490,12 +1491,12 @@ function startPresence() {
 }
 
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
-async function signOut(){await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 
 // ── SESSION TIMEOUT (5 min) ───────────────────────────────────────────────────
 (function(){
   let timer;
-  function reset(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.signOut();window.location.href='login.html';},5*60*1000);}
+  function reset(){clearTimeout(timer);timer=setTimeout(async()=>{sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';},5*60*1000);}
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(e=>document.addEventListener(e,reset,true));
   reset();
 })();

@@ -650,7 +650,7 @@ function toggleSidebar(){
 }
 
 // SIGN OUT
-async function signOut(){await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 
 // CHART
 new Chart(document.getElementById('revenueChart').getContext('2d'),{

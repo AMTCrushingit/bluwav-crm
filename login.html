@@ -311,11 +311,8 @@ window.addEventListener('load',()=>{
 <script>
 // ── ACCESS GATE LOGIC ──────────────────────────────────────────────────────
 (function(){
-  // Check if already authenticated this session
-  if(sessionStorage.getItem('bw_gate_ok')==='1'){
-    document.getElementById('accessGate').style.display='none';
-    return;
-  }
+  // Always clear gate flag on login page — gate must be passed every time
+  sessionStorage.removeItem('bw_gate_ok');
   // Show gate, hide main content
   document.body.style.overflow='hidden';
   // Focus input after short delay

@@ -211,7 +211,7 @@ const STEP_ICONS=['👤','📋','💰','📚','🚀'];
 function ini(n){return(n||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);}
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
-async function signOut(){await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 
 (async()=>{
   const{data:{session}}=await db.auth.getSession();
@@ -606,7 +606,7 @@ function inviteAgent(){
 
 (function(){
   const TIMEOUT_MS=5*60*1000;let timer;
-  function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
+  function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=>{document.addEventListener(evt,resetTimer,true);});
   resetTimer();
 })();

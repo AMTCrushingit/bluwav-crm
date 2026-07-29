@@ -784,12 +784,12 @@ function initChart(){
 }
 
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
-async function signOut(){await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 
 // ── SESSION TIMEOUT ───────────────────────────────────────────────────────────
 (function(){
   let timer;
-  function reset(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.signOut();window.location.href='login.html';},5*60*1000);}
+  function reset(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';},5*60*1000);}
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(e=>document.addEventListener(e,reset,true));
   reset();
 })();
