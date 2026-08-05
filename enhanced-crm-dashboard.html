@@ -1786,15 +1786,6 @@ async function saveDeal(){
   var probability = document.getElementById('md-probability')?.value;
   if(probability) dealObj.probability = parseInt(probability);
 
-  // Ensure profile exists before inserting deal (agent_id FK constraint)
-  try{
-    await db.from('profiles').upsert({
-      id: currentUser.id,
-      full_name: currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User',
-      role: 'salesperson'
-    }, {onConflict:'id', ignoreDuplicates:true});
-  }catch(pe){ console.warn('Profile upsert warning:', pe.message); }
-
   var {data:dealData, error} = await db.from('deals').insert(dealObj).select();
   if(error){
     console.error('Save deal error:', error);
