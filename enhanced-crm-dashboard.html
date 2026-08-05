@@ -253,7 +253,23 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 
 /* ══ RESPONSIVE ══ */
 @media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr);}.two-col{grid-template-columns:1fr;}.pipe-cols{grid-template-columns:repeat(2,1fr);}.qa-grid{grid-template-columns:repeat(2,1fr);}.bottom-grid{grid-template-columns:1fr;}}
-@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0!important;}.content{padding:16px;}.stats-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);transition:transform 0.3s ease;position:fixed!important;top:0;left:0;bottom:0;z-index:200;width:240px!important;}
+  .sidebar.mobile-open{transform:translateX(0);}
+  .main{margin-left:0!important;}
+  .content{padding:16px;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .two-col{grid-template-columns:1fr!important;}
+  .bottom-grid{grid-template-columns:1fr!important;}
+  .topbar{padding:0 14px;}
+  #globalSearch{width:160px!important;}
+  #globalSearch:focus{width:200px!important;}
+}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:199;backdrop-filter:blur(2px);}
+.mobile-overlay.show{display:block;}
+.hamburger-btn{display:none;width:36px;height:36px;border-radius:var(--radius-sm);background:transparent;border:1px solid transparent;color:var(--text3);cursor:pointer;align-items:center;justify-content:center;font-size:1.1rem;transition:var(--transition);flex-shrink:0;}
+.hamburger-btn:hover{background:var(--navy-light);border-color:var(--navy-border);color:var(--text);}
+@media(max-width:768px){.hamburger-btn{display:flex;}}
 </style>
 </head>
 <body>
@@ -315,6 +331,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <h1 id="dashGreeting">Loading...</h1>
 </div>
 <div class="tb-actions">
+<button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileSidebar()" title="Menu" aria-label="Toggle menu">&#9776;</button>
 <div style="position:relative;">
 <input id="globalSearch" onblur="this.style.borderColor='var(--navy-border)';this.style.width='220px'" onfocus="this.style.borderColor='var(--cyan)';this.style.width='280px'" oninput="globalSearchFn(this.value)" placeholder="🔍 Search contacts, deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.8rem;padding:7px 14px;outline:none;width:220px;transition:var(--transition);font-family:var(--font-body);"/>
 <div id="searchResults" style="position:absolute;top:100%;left:0;right:0;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-md);margin-top:4px;display:none;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
@@ -686,6 +703,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div style="padding:12px 16px;font-size:0.78rem;color:var(--text2);">🏆 Deal won — <strong>E-Commerce Store</strong> $7,100<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">2d ago</div></div>
 </div>
 <div class="toast" id="toast"></div>
+<!-- Mobile sidebar overlay -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileSidebar()"></div>
 <script>
 const {createClient} = supabase;
 const db = createClient(
@@ -1139,6 +1158,7 @@ function renderContactsTable(){
       <td style="color:${valColor};font-weight:600;">${val?fmt(val):'—'}</td>
       <td><div style="display:flex;gap:4px;">
         <button class="btn btn-ghost btn-sm" onclick="emailContact('${c.id}')" title="Email">📧</button>
+        <button class="btn btn-ghost btn-sm" onclick="whatsappContact('${c.id}')" title="WhatsApp" style="color:#25D366;">📱</button>
         <button class="btn btn-ghost btn-sm" onclick="editContact('${c.id}')" title="Edit">✏️</button>
         <button class="btn btn-danger btn-sm" onclick="deleteContact('${c.id}')" title="Delete">🗑</button>
       </div></td>
@@ -1479,6 +1499,7 @@ async function saveDeal(){
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  if(window.innerWidth<=768) closeMobileSidebar();
   const view=document.getElementById('view-'+name);
   if(view)view.classList.add('active');
   const nav=document.getElementById('nav-'+name);
@@ -1925,6 +1946,51 @@ async function sendEmailFromModal(){
   }catch(e){
     showToast('Email error: '+e.message,'');
   }
+}
+
+
+// ── MOBILE SIDEBAR ────────────────────────────────────────────────────────────
+function openMobileSidebar(){
+  document.getElementById('sidebar').classList.add('mobile-open');
+  document.getElementById('mobileOverlay').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeMobileSidebar(){
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('mobileOverlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+function toggleMobileSidebar(){
+  const sidebar=document.getElementById('sidebar');
+  if(sidebar.classList.contains('mobile-open')) closeMobileSidebar();
+  else openMobileSidebar();
+}
+// Close mobile sidebar when a nav item is clicked on mobile
+document.querySelectorAll('.ni').forEach(function(item){
+  item.addEventListener('click',function(){
+    if(window.innerWidth<=768) closeMobileSidebar();
+  });
+});
+// Close on resize to desktop
+window.addEventListener('resize',function(){
+  if(window.innerWidth>768) closeMobileSidebar();
+});
+
+
+// ── WHATSAPP CLICK-TO-CHAT ────────────────────────────────────────────────────
+function whatsappContact(id){
+  const c = allContacts.find(x=>x.id===id);
+  if(!c){showToast('Contact not found','');return;}
+  const phone = (c.phone||c.whatsapp||'').replace(/[^0-9+]/g,'');
+  if(!phone){
+    showToast('No phone number for '+c.full_name,'');
+    return;
+  }
+  // Strip leading + for wa.me URL
+  const waPhone = phone.replace(/^\+/,'');
+  const name = c.full_name||'there';
+  const msg = encodeURIComponent('Hi '+name+', ');
+  window.open('https://wa.me/'+waPhone+'?text='+msg,'_blank');
 }
 
 </script>

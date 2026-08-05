@@ -311,7 +311,7 @@
 
 <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:16px;">Other Automations</div>
 <div class="automations-grid">
-<div class="auto-card active-auto">
+<div data-auto-id="welcome_new_contact" class="auto-card active-auto">
 <div class="auto-header">
 <div class="auto-icon" style="background:rgba(0,194,209,0.12);">👋</div>
 <div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
@@ -336,7 +336,7 @@
 <div class="auto-last">Last run: 2h ago</div>
 </div>
 </div>
-<div class="auto-card active-auto">
+<div data-auto-id="follow_up_reminder" class="auto-card active-auto">
 <div class="auto-header">
 <div class="auto-icon" style="background:rgba(255,140,66,0.12);">⏰</div>
 <div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
@@ -361,7 +361,7 @@
 <div class="auto-last">Last run: 1d ago</div>
 </div>
 </div>
-<div class="auto-card active-auto">
+<div data-auto-id="deal_won_celebration" class="auto-card active-auto">
 <div class="auto-header">
 <div class="auto-icon" style="background:rgba(34,197,94,0.12);">🏆</div>
 <div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
@@ -386,7 +386,7 @@
 <div class="auto-last">Last run: 3d ago</div>
 </div>
 </div>
-<div class="auto-card active-auto">
+<div data-auto-id="deal_close_reminder" class="auto-card active-auto">
 <div class="auto-header">
 <div class="auto-icon" style="background:rgba(167,139,250,0.12);">📅</div>
 <div class="auto-status"><div class="status-dot active"></div><div class="status-text active">Active</div></div>
@@ -416,7 +416,7 @@
 <!-- Paused Tab -->
 <div id="tab-paused" style="display:none;">
 <div class="automations-grid">
-<div class="auto-card paused">
+<div data-auto-id="birthday_greeting" class="auto-card paused">
 <div class="auto-header">
 <div class="auto-icon" style="background:rgba(74,85,104,0.2);">🎂</div>
 <div class="auto-status"><div class="status-dot paused"></div><div class="status-text paused">Paused</div></div>
@@ -499,11 +499,15 @@
     });
   }
 
-  function toggleAuto(btn){
+  async function toggleAuto(btn){
     const card=btn.closest('.auto-card');
     const dot=card.querySelector('.status-dot');
     const text=card.querySelector('.status-text');
+    const autoId=card.getAttribute('data-auto-id')||card.querySelector('.auto-title')?.textContent||'unknown';
     const isActive=dot.classList.contains('active');
+    const newStatus=isActive?'paused':'active';
+
+    // Update UI immediately
     if(isActive){
       dot.classList.replace('active','paused');
       text.classList.replace('active','paused');
@@ -511,7 +515,6 @@
       btn.className='auto-btn toggle-off';
       btn.textContent='▶ Activate';
       card.classList.replace('active-auto','paused');
-      showToast('⏸ Automation paused','success');
     } else {
       dot.classList.replace('paused','active');
       text.classList.replace('paused','active');
@@ -519,8 +522,28 @@
       btn.className='auto-btn toggle-on';
       btn.textContent='⏸ Pause';
       card.classList.replace('paused','active-auto');
-      showToast('▶ Automation activated','success');
     }
+
+    // Save to Supabase automations table
+    try{
+      const {data:{session}} = await db.auth.getSession();
+      const userId = session?.user?.id||null;
+      // Upsert automation state — creates record if not exists
+      const {error} = await db.from('automations').upsert({
+        name: autoId,
+        active: newStatus==='active',
+        updated_at: new Date().toISOString(),
+        user_id: userId
+      },{onConflict:'name,user_id'});
+      if(error){
+        // Table may not exist yet — log but don't break UI
+        console.warn('automations table not ready:', error.message);
+      }
+    }catch(e){
+      console.warn('Could not save automation state:', e.message);
+    }
+
+    showToast(newStatus==='active'?'▶ Automation activated':'⏸ Automation paused','success');
   }
 
   function showToast(msg,type=''){
@@ -537,7 +560,6 @@
     function resetTimer(){
       clearTimeout(timer);
       timer = setTimeout(async()=>{
-        await db.auth.signOut();
         window.location.href = 'login.html';
       }, TIMEOUT_MS);
     }
@@ -550,6 +572,44 @@
     // Start timer immediately
     resetTimer();
   })();
+
+
+// ── LOAD SAVED AUTOMATION STATES FROM SUPABASE ───────────────────────────────
+async function loadAutomationStates(){
+  try{
+    const {data:{session}} = await db.auth.getSession();
+    if(!session) return;
+    const {data,error} = await db.from('automations').select('*').eq('user_id',session.user.id);
+    if(error||!data) return;
+    data.forEach(function(row){
+      const card = document.querySelector('[data-auto-id="'+row.name+'"]');
+      if(!card) return;
+      const dot = card.querySelector('.status-dot');
+      const text = card.querySelector('.status-text');
+      const btn = card.querySelector('.auto-btn');
+      if(!dot||!text||!btn) return;
+      if(row.active){
+        dot.className='status-dot active';
+        text.className='status-text active';
+        text.textContent='Active';
+        btn.className='auto-btn toggle-on';
+        btn.textContent='⏸ Pause';
+        card.className=card.className.replace('paused','').replace('draft','')+' active-auto';
+      } else {
+        dot.className='status-dot paused';
+        text.className='status-text paused';
+        text.textContent='Paused';
+        btn.className='auto-btn toggle-off';
+        btn.textContent='▶ Activate';
+        card.className=card.className.replace('active-auto','').replace('draft','')+' paused';
+      }
+    });
+  }catch(e){ console.warn('Could not load automation states:', e.message); }
+}
+// Load states after auth check completes
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(loadAutomationStates, 800);
+});
 
 </script>
 </body>

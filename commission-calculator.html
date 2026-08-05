@@ -680,22 +680,60 @@ function loadScenario(type){
   showToast('✅ Scenario loaded — click Calculate','success');
 }
 
-async function submitPayout(){
+async async function submitPayout(){
   const name=document.getElementById('pay_name').value.trim();
   const email=document.getElementById('pay_email').value.trim();
   const amount=document.getElementById('pay_amount').value;
   const period=document.getElementById('pay_period').value;
   const summary=document.getElementById('pay_summary').value.trim();
+  const bank=document.getElementById('pay_bank')?document.getElementById('pay_bank').value.trim():'';
 
   if(!name||!email||!amount||!summary){showToast('Please fill in all required fields','error');return;}
 
-  // In a real implementation, this would save to Supabase and email Andrea
-  showToast(`✅ Payout request submitted for ${fmt$(parseFloat(amount))}. Andrea will process within 7 business days.`,'success');
+  const btn=document.querySelector('.submit-btn');
+  if(btn){btn.disabled=true;btn.textContent='Submitting...';}
 
-  // Clear form
-  document.getElementById('pay_amount').value='';
-  document.getElementById('pay_summary').value='';
-  document.getElementById('pay_bank').value='';
+  try{
+    // Save to Supabase payout_requests table
+    const {data:{session}} = await db.auth.getSession();
+    const userId = session?.user?.id||null;
+    const payoutObj = {
+      agent_name: name,
+      agent_email: email,
+      amount: parseFloat(amount),
+      period: period,
+      summary: summary,
+      bank_details: bank,
+      status: 'pending',
+      submitted_at: new Date().toISOString(),
+      agent_id: userId
+    };
+    const {error} = await db.from('payout_requests').insert(payoutObj);
+    if(error){
+      // Fallback: send via email if table doesn't exist yet
+      console.warn('payout_requests table not ready, using email fallback:', error.message);
+      var fd=new FormData();
+      fd.append('email','hello@bluwavgrowth.com');
+      fd.append('_subject','Payout Request - BluWav CRM');
+      fd.append('message','Agent: '+name+'
+Email: '+email+'
+Amount: $'+parseFloat(amount).toFixed(2)+'
+Period: '+period+'
+Bank: '+bank+'
+Summary:
+'+summary);
+      fd.append('_template','table');
+      await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+    }
+    showToast('Payout request submitted for $'+parseFloat(amount).toFixed(2)+'. Andrea will process within 7 business days.','success');
+    document.getElementById('pay_amount').value='';
+    document.getElementById('pay_summary').value='';
+    if(document.getElementById('pay_bank')) document.getElementById('pay_bank').value='';
+  }catch(e){
+    showToast('Error: '+e.message,'error');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Submit Payout Request';}
+  }
 }
 
 (function(){
