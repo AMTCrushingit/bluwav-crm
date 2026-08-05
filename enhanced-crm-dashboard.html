@@ -477,8 +477,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
 <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">All Contacts</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Contact Manager</h1></div>
 <div style="display:flex;gap:8px;">
-<button class="btn btn-outline btn-sm">📥 Import CSV</button>
-<button class="btn btn-outline btn-sm">📤 Export</button>
+<button class="btn btn-outline btn-sm" onclick="openCSVImport()">&#x1F4E5; Import CSV</button>
+<button class="btn btn-outline btn-sm" onclick="exportContactsCSV()">&#x1F4E4; Export</button>
 <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ New Contact</button>
 </div>
 </div>
@@ -606,16 +606,56 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div><!-- /deals -->
 <!-- ══ REPORTS VIEW ══ -->
 <div class="view" id="view-reports">
-<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Analytics</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Reports &amp; Insights</h1></div>
-<div class="stats-grid">
-<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Revenue (MTD)</span><span>💰</span></div><div class="stat-val" id="rMetricRev">$0</div><div class="stat-chg up">↑ 22% vs last mo</div></div>
-<div class="stat g"><div class="stat-hd"><span class="stat-lbl">New Leads</span><span>🎯</span></div><div class="stat-val" id="rMetricLeads">0</div><div class="stat-chg up">↑ this week</div></div>
-<div class="stat s"><div class="stat-hd"><span class="stat-lbl">Conversion Rate</span><span>📈</span></div><div class="stat-val" id="rMetricConv">0%</div><div class="stat-chg up">↑ 5%</div></div>
-<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Avg Response Time</span><span>⚡</span></div><div class="stat-val">2.4h</div><div class="stat-chg nt">Target: &lt;4h</div></div>
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Analytics</div>
+<h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Reports &amp; Insights</h1></div>
+
+<!-- Date range filter -->
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+  <span style="font-size:0.75rem;color:var(--text3);font-weight:600;">Period:</span>
+  <div style="display:flex;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);padding:3px;gap:2px;">
+    <button class="rng-btn active" onclick="setReportRange(3,this)" style="padding:5px 12px;border-radius:6px;border:none;background:var(--cyan);color:var(--navy-deep);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;">3 Months</button>
+    <button class="rng-btn" onclick="setReportRange(6,this)" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;">6 Months</button>
+    <button class="rng-btn" onclick="setReportRange(12,this)" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;">12 Months</button>
+  </div>
+  <button class="btn btn-outline btn-sm" onclick="exportReportsCSV()">&#x1F4E5; Export CSV</button>
 </div>
-<div class="panel">
-<div class="panel-hd"><div class="panel-title">📈 Pipeline Trend</div></div>
-<div class="panel-body"><div class="chart-container" style="height:240px;"><canvas id="reportsChart"></canvas></div></div>
+
+<!-- KPI Stats -->
+<div class="stats-grid">
+  <div class="stat c"><div class="stat-hd"><span class="stat-lbl">Revenue (Won)</span><span>&#x1F4B0;</span></div><div class="stat-val" id="rMetricRev">$0</div><div class="stat-chg" id="rMetricRevChg">Loading...</div></div>
+  <div class="stat g"><div class="stat-hd"><span class="stat-lbl">New Leads</span><span>&#x1F3AF;</span></div><div class="stat-val" id="rMetricLeads">0</div><div class="stat-chg" id="rMetricLeadsChg">Loading...</div></div>
+  <div class="stat s"><div class="stat-hd"><span class="stat-lbl">Conversion Rate</span><span>&#x1F4C8;</span></div><div class="stat-val" id="rMetricConv">0%</div><div class="stat-chg" id="rMetricConvChg">Loading...</div></div>
+  <div class="stat o"><div class="stat-hd"><span class="stat-lbl">Avg Deal Size</span><span>&#x26A1;</span></div><div class="stat-val" id="rMetricAvg">$0</div><div class="stat-chg nt" id="rMetricAvgChg">Loading...</div></div>
+</div>
+
+<!-- Charts row -->
+<div class="two-col">
+  <div class="panel">
+    <div class="panel-hd"><div class="panel-title">&#x1F4C8; Pipeline Trend</div></div>
+    <div class="panel-body"><div class="chart-container" style="height:220px;"><canvas id="reportsChart"></canvas></div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><div class="panel-title">&#x1F3AF; Stage Conversion Funnel</div></div>
+    <div class="panel-body" id="funnelBody" style="padding:16px 20px;">
+      <div style="text-align:center;color:var(--text3);padding:20px;">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom row: Agent leaderboard + Won/Lost reasons -->
+<div class="bottom-grid">
+  <div class="panel">
+    <div class="panel-hd"><div class="panel-title">&#x1F3C6; Agent Performance</div></div>
+    <div class="panel-body" id="agentPerfBody" style="padding:0 20px;">
+      <div style="text-align:center;color:var(--text3);padding:20px;">Loading...</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><div class="panel-title">&#x1F4CB; Won/Lost Reasons</div></div>
+    <div class="panel-body" id="reasonsBody" style="padding:16px 20px;">
+      <div style="text-align:center;color:var(--text3);padding:20px;">Loading...</div>
+    </div>
+  </div>
 </div>
 </div><!-- /reports -->
 <!-- ══ TASKS VIEW ══ -->
@@ -2800,6 +2840,414 @@ async function initDashboard(){
   setTimeout(loadNotifications, 2000);
 }
 
+
+// ── LIVE REPORTS ──────────────────────────────────────────────────────────────
+let reportMonths = 6;
+let reportsChartInstance = null;
+
+function setReportRange(months, btn){
+  reportMonths = months;
+  document.querySelectorAll('.rng-btn').forEach(b=>{
+    b.style.background = 'transparent';
+    b.style.color = 'var(--text3)';
+  });
+  if(btn){ btn.style.background='var(--cyan)'; btn.style.color='var(--navy-deep)'; }
+  loadReports();
+}
+
+async function loadReports(){
+  // Use already-loaded allDeals + allContacts — no extra DB calls needed
+  const now = new Date();
+  const cutoff = new Date(now);
+  cutoff.setMonth(cutoff.getMonth() - reportMonths);
+
+  // Filter to period
+  const periodDeals = allDeals.filter(d=> d.created_at && new Date(d.created_at) >= cutoff);
+  const periodContacts = allContacts.filter(c=> c.created_at && new Date(c.created_at) >= cutoff);
+  const wonDeals = periodDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const lostDeals = periodDeals.filter(d=>(d.stage||'').toLowerCase()==='lost');
+  const openDeals = periodDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+
+  // KPI metrics
+  const revenue = wonDeals.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const leads = periodContacts.filter(c=>(c.status||'').toLowerCase()==='lead').length;
+  const convRate = periodDeals.length ? Math.round((wonDeals.length/periodDeals.length)*100) : 0;
+  const avgDeal = wonDeals.length ? Math.round(revenue/wonDeals.length) : 0;
+
+  // Previous period for comparison
+  const prevCutoff = new Date(cutoff);
+  prevCutoff.setMonth(prevCutoff.getMonth() - reportMonths);
+  const prevDeals = allDeals.filter(d=> d.created_at && new Date(d.created_at) >= prevCutoff && new Date(d.created_at) < cutoff);
+  const prevWon = prevDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const prevRevenue = prevWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const prevConv = prevDeals.length ? Math.round((prevWon.length/prevDeals.length)*100) : 0;
+
+  // Update KPI cards
+  const revEl = document.getElementById('rMetricRev'); if(revEl) revEl.textContent = fmt(revenue);
+  const leadsEl = document.getElementById('rMetricLeads'); if(leadsEl) leadsEl.textContent = leads;
+  const convEl = document.getElementById('rMetricConv'); if(convEl) convEl.textContent = convRate+'%';
+  const avgEl = document.getElementById('rMetricAvg'); if(avgEl) avgEl.textContent = fmt(avgDeal);
+
+  // Change indicators
+  const revDiff = prevRevenue ? Math.round(((revenue-prevRevenue)/prevRevenue)*100) : 0;
+  const convDiff = convRate - prevConv;
+  const setChg = (id, val, suffix='%')=>{
+    const el = document.getElementById(id); if(!el) return;
+    const up = val >= 0;
+    el.className = 'stat-chg '+(up?'up':'dn');
+    el.textContent = (up?'↑ ':'↓ ')+Math.abs(val)+suffix+' vs prev period';
+  };
+  setChg('rMetricRevChg', revDiff);
+  setChg('rMetricLeadsChg', periodContacts.length - allContacts.filter(c=>c.created_at && new Date(c.created_at) < cutoff).length, '');
+  setChg('rMetricConvChg', convDiff);
+  setChg('rMetricAvgChg', 0, '');
+
+  // Pipeline trend chart — monthly breakdown
+  const months = [];
+  const pipelineData = [];
+  const wonData = [];
+  for(let i=reportMonths-1; i>=0; i--){
+    const mDate = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const mEnd = new Date(now.getFullYear(), now.getMonth()-i+1, 0);
+    const mLabel = mDate.toLocaleDateString('en-US',{month:'short'});
+    months.push(mLabel);
+    const mDeals = allDeals.filter(d=>{
+      if(!d.created_at) return false;
+      const cd = new Date(d.created_at);
+      return cd >= mDate && cd <= mEnd;
+    });
+    pipelineData.push(mDeals.reduce((s,d)=>s+(d.deal_value||d.value||0),0));
+    wonData.push(mDeals.filter(d=>(d.stage||'').toLowerCase()==='won').reduce((s,d)=>s+(d.deal_value||d.value||0),0));
+  }
+
+  const rctx = document.getElementById('reportsChart');
+  if(rctx){
+    if(reportsChartInstance) reportsChartInstance.destroy();
+    reportsChartInstance = new Chart(rctx.getContext('2d'),{
+      type:'bar',
+      data:{
+        labels: months,
+        datasets:[
+          {label:'Pipeline',data:pipelineData,backgroundColor:'rgba(0,200,224,0.7)',borderRadius:5,borderSkipped:false},
+          {label:'Won',data:wonData,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:5,borderSkipped:false}
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#B0BAD0',font:{size:11},boxWidth:12}}},
+        scales:{
+          x:{ticks:{color:'#6B7A99',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
+          y:{ticks:{color:'#6B7A99',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{color:'rgba(255,255,255,0.04)'}}
+        }
+      }
+    });
+  }
+
+  // Funnel
+  const stages = ['lead','qualified','proposal','won'];
+  const stageLabels = ['Lead','Qualified','Proposal','Won'];
+  const stageCounts = stages.map(s=>allDeals.filter(d=>(d.stage||'').toLowerCase()===s).length);
+  const maxCount = Math.max(...stageCounts, 1);
+  const stageColors = ['var(--text3)','var(--cyan)','var(--gold)','var(--success)'];
+  const funnelEl = document.getElementById('funnelBody');
+  if(funnelEl){
+    funnelEl.innerHTML = stages.map((s,i)=>{
+      const count = stageCounts[i];
+      const pct = Math.round((count/maxCount)*100);
+      const convPct = i>0 && stageCounts[i-1]>0 ? Math.round((count/stageCounts[i-1])*100) : null;
+      return `<div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+          <span style="font-size:0.78rem;font-weight:600;color:${stageColors[i]};">${stageLabels[i]}</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            ${convPct!==null?`<span style="font-size:0.68rem;color:var(--text3);">${convPct}% from prev</span>`:''}
+            <span style="font-size:0.82rem;font-weight:700;color:var(--text);">${count}</span>
+          </div>
+        </div>
+        <div style="height:8px;background:var(--navy-border);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${stageColors[i]};border-radius:4px;transition:width 0.5s;"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Agent performance
+  const agentEl = document.getElementById('agentPerfBody');
+  if(agentEl && allTeam && allTeam.length){
+    const agentStats = allTeam.map(p=>{
+      const agDeals = allDeals.filter(d=>d.agent_id===p.id);
+      const agWon = agDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+      const agVal = agWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+      return {name:p.full_name||'Agent',deals:agDeals.length,won:agWon.length,val:agVal,color:getColor(p.full_name||p.id)};
+    }).sort((a,b)=>b.val-a.val);
+    const maxVal = agentStats[0]?.val||1;
+    agentEl.innerHTML = agentStats.map((a,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--navy-border);">
+        <div style="width:22px;height:22px;border-radius:50%;background:${['var(--gold)','#9ca3af','#cd7c2f','var(--navy-light)'][Math.min(i,3)]};display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:var(--navy-deep);flex-shrink:0;">${i+1}</div>
+        <div style="width:28px;height:28px;border-radius:50%;background:${a.color};display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:var(--navy-deep);flex-shrink:0;">${ini(a.name)}</div>
+        <div style="flex:1;">
+          <div style="font-size:0.8rem;font-weight:600;color:var(--text);">${a.name}</div>
+          <div style="font-size:0.68rem;color:var(--text3);">${a.deals} deals &middot; ${a.won} won</div>
+          <div style="height:3px;background:var(--navy-border);border-radius:3px;margin-top:4px;overflow:hidden;">
+            <div style="height:100%;width:${Math.round((a.val/maxVal)*100)}%;background:var(--cyan);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="font-size:0.82rem;font-weight:700;color:var(--cyan);">${fmt(a.val)}</div>
+      </div>`).join('') || '<div style="padding:20px;text-align:center;color:var(--text3);">No agent data</div>';
+  } else if(agentEl){
+    agentEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:0.78rem;">Agent data loads for managers &amp; admins</div>';
+  }
+
+  // Won/Lost reasons
+  const reasonsEl = document.getElementById('reasonsBody');
+  if(reasonsEl){
+    const wonReasons = {}, lostReasons = {};
+    allDeals.forEach(d=>{
+      if(!d.won_lost_reason) return;
+      const s = (d.stage||'').toLowerCase();
+      if(s==='won') wonReasons[d.won_lost_reason] = (wonReasons[d.won_lost_reason]||0)+1;
+      if(s==='lost') lostReasons[d.won_lost_reason] = (lostReasons[d.won_lost_reason]||0)+1;
+    });
+    const hasData = Object.keys(wonReasons).length || Object.keys(lostReasons).length;
+    if(!hasData){
+      reasonsEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:0.78rem;">No won/lost reasons recorded yet.<br>Add reasons when closing deals to see insights here.</div>';
+    } else {
+      let html = '';
+      if(Object.keys(wonReasons).length){
+        html += '<div style="font-size:0.7rem;font-weight:700;color:var(--success);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Won Reasons</div>';
+        Object.entries(wonReasons).sort((a,b)=>b[1]-a[1]).forEach(([r,c])=>{
+          html += `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:0.78rem;color:var(--text2);border-bottom:1px solid var(--navy-border);"><span>${r}</span><span style="font-weight:700;color:var(--success);">${c}</span></div>`;
+        });
+      }
+      if(Object.keys(lostReasons).length){
+        html += '<div style="font-size:0.7rem;font-weight:700;color:var(--error);text-transform:uppercase;letter-spacing:0.08em;margin:12px 0 8px;">Lost Reasons</div>';
+        Object.entries(lostReasons).sort((a,b)=>b[1]-a[1]).forEach(([r,c])=>{
+          html += `<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:0.78rem;color:var(--text2);border-bottom:1px solid var(--navy-border);"><span>${r}</span><span style="font-weight:700;color:var(--error);">${c}</span></div>`;
+        });
+      }
+      reasonsEl.innerHTML = html;
+    }
+  }
+}
+
+function exportReportsCSV(){
+  const rows = [['Deal Name','Client','Value','Stage','Type','Close Date','Probability','Won/Lost Reason','Created']];
+  allDeals.forEach(d=>{
+    rows.push([
+      d.deal_name||d.title||'',
+      d.contact_name||'',
+      d.deal_value||d.value||0,
+      d.stage||'',
+      d.deal_type||'',
+      d.close_date||'',
+      d.probability||'',
+      d.won_lost_reason||'',
+      d.created_at ? new Date(d.created_at).toLocaleDateString() : ''
+    ]);
+  });
+  const csv = rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'bluwav-deals-report-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  showToast('Report exported \u2713','success');
+}
+
+// Patch showView to load reports when switching to reports tab
+const _origShowViewReports = showView;
+function showView(name){
+  _origShowViewReports(name);
+  if(name==='reports') setTimeout(loadReports, 100);
+}
+
+
+// ── CSV IMPORT / EXPORT ───────────────────────────────────────────────────────
+let _csvParsed = [];
+
+function openCSVImport(){
+  resetCSVImport();
+  document.getElementById('modal-csvImport').classList.add('open');
+}
+
+function resetCSVImport(){
+  _csvParsed = [];
+  document.getElementById('csvStep1').style.display='block';
+  document.getElementById('csvStep2').style.display='none';
+  document.getElementById('csvImportBtn').style.display='none';
+  document.getElementById('csvFileInput').value='';
+  const errEl = document.getElementById('csvImportError');
+  if(errEl){ errEl.style.display='none'; errEl.textContent=''; }
+}
+
+function handleCSVDrop(e){
+  e.preventDefault();
+  document.getElementById('csvDropZone').style.borderColor='var(--navy-border)';
+  const file = e.dataTransfer.files[0];
+  if(file) handleCSVFile(file);
+}
+
+function handleCSVFile(file){
+  if(!file){ return; }
+  if(!file.name.toLowerCase().endsWith('.csv')){
+    showToast('Please upload a .csv file','');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    parseCSV(e.target.result);
+  };
+  reader.readAsText(file);
+}
+
+function parseCSV(text){
+  // Handle different line endings
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l=>l.trim());
+  if(lines.length < 2){
+    showToast('CSV file appears empty or has no data rows','');
+    return;
+  }
+
+  // Parse header row — handle quoted fields
+  const parseRow = (line)=>{
+    const result = [];
+    let inQuote = false, cur = '';
+    for(let i=0;i<line.length;i++){
+      const ch = line[i];
+      if(ch==='"'){ inQuote=!inQuote; }
+      else if(ch===','&&!inQuote){ result.push(cur.trim()); cur=''; }
+      else { cur+=ch; }
+    }
+    result.push(cur.trim());
+    return result;
+  };
+
+  const headers = parseRow(lines[0]).map(h=>h.toLowerCase().replace(/[^a-z0-9_]/g,'_'));
+
+  // Column mapping — flexible header names
+  const colMap = {
+    full_name: headers.findIndex(h=>['name','full_name','contact_name','first_name','fullname'].includes(h)),
+    email:     headers.findIndex(h=>['email','email_address','e_mail'].includes(h)),
+    phone:     headers.findIndex(h=>['phone','phone_number','mobile','whatsapp','tel'].includes(h)),
+    business_name: headers.findIndex(h=>['company','business','business_name','company_name','organization'].includes(h)),
+    status:    headers.findIndex(h=>['status','stage','pipeline_status'].includes(h)),
+    island:    headers.findIndex(h=>['location','island','city','country','region'].includes(h)),
+    notes:     headers.findIndex(h=>['notes','note','comments','description'].includes(h)),
+  };
+
+  const errors = [];
+  if(colMap.full_name === -1 && colMap.email === -1){
+    errors.push('Could not find a "name" or "email" column. Please check your CSV headers.');
+  }
+
+  const parsed = [];
+  for(let i=1;i<Math.min(lines.length,5001);i++){
+    if(!lines[i].trim()) continue;
+    const row = parseRow(lines[i]);
+    const get = (col)=> col>=0 ? (row[col]||'').trim() : '';
+    const name = get(colMap.full_name);
+    const email = get(colMap.email);
+    if(!name && !email) continue; // skip empty rows
+    parsed.push({
+      full_name: name||email.split('@')[0]||'Unknown',
+      email: email,
+      phone: get(colMap.phone),
+      business_name: get(colMap.business_name),
+      status: get(colMap.status)||'Lead',
+      island: get(colMap.island),
+      notes: get(colMap.notes),
+      user_id: currentUser?.id
+    });
+  }
+
+  _csvParsed = parsed;
+
+  // Show preview
+  document.getElementById('csvStep1').style.display='none';
+  document.getElementById('csvStep2').style.display='block';
+  document.getElementById('csvImportBtn').style.display='block';
+
+  const errEl = document.getElementById('csvPreviewErrors');
+  if(errors.length){
+    errEl.style.display='block';
+    errEl.innerHTML = errors.map(e=>'&#x26A0; '+e).join('<br>');
+  } else {
+    errEl.style.display='none';
+  }
+
+  document.getElementById('csvPreviewTitle').textContent = 'Preview — '+parsed.length+' contacts found';
+  document.getElementById('csvPreviewCount').textContent = 'Showing first 10 of '+parsed.length+' contacts. All will be imported.';
+
+  // Build preview table
+  const thead = document.getElementById('csvPreviewHead');
+  const tbody = document.getElementById('csvPreviewBody');
+  thead.innerHTML = ['Name','Email','Phone','Company','Status'].map(h=>`<th>${h}</th>`).join('');
+  tbody.innerHTML = parsed.slice(0,10).map(c=>`<tr>
+    <td style="font-weight:600;color:var(--text);">${c.full_name||'—'}</td>
+    <td style="color:var(--text3);font-size:0.75rem;">${c.email||'—'}</td>
+    <td style="color:var(--text3);font-size:0.75rem;">${c.phone||'—'}</td>
+    <td style="color:var(--text3);font-size:0.75rem;">${c.business_name||'—'}</td>
+    <td><span class="badge badge-muted">${c.status||'Lead'}</span></td>
+  </tr>`).join('');
+}
+
+async function importCSVContacts(){
+  if(!_csvParsed.length){ showToast('No contacts to import',''); return; }
+  const btn = document.getElementById('csvImportBtn');
+  if(btn){ btn.disabled=true; btn.textContent='Importing...'; }
+
+  try{
+    // Insert in batches of 100
+    const batchSize = 100;
+    let imported = 0;
+    let errors = 0;
+    for(let i=0;i<_csvParsed.length;i+=batchSize){
+      const batch = _csvParsed.slice(i,i+batchSize);
+      const {error} = await db.from('contacts').insert(batch);
+      if(error){ errors += batch.length; console.warn('Batch error:',error.message); }
+      else { imported += batch.length; }
+    }
+    showToast(imported+' contacts imported ✓'+(errors?' ('+errors+' failed)':''),'success');
+    closeModal('csvImport');
+    await loadData();
+    filteredContacts = allContacts.slice();
+    sortContacts();
+    showView('contacts');
+  }catch(e){
+    const errEl = document.getElementById('csvImportError');
+    if(errEl){ errEl.textContent='Import failed: '+e.message; errEl.style.display='block'; }
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='&#x1F4E5; Import Contacts'; }
+  }
+}
+
+// ── EXPORT CONTACTS CSV ───────────────────────────────────────────────────────
+function exportContactsCSV(){
+  if(!allContacts.length){ showToast('No contacts to export',''); return; }
+  const headers = ['Name','Email','Phone','Company','Status','Location','Last Contacted','Deal Value','Added Date'];
+  const rows = [headers];
+  allContacts.forEach(c=>{
+    rows.push([
+      c.full_name||'',
+      c.email||'',
+      c.phone||'',
+      c.business_name||'',
+      c.status||'Lead',
+      c.island||'',
+      c.last_contacted ? new Date(c.last_contacted).toLocaleDateString() : '',
+      c.deal_value||0,
+      c.created_at ? new Date(c.created_at).toLocaleDateString() : ''
+    ]);
+  });
+  const csv = rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'bluwav-contacts-'+new Date().toISOString().split('T')[0]+'.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast(allContacts.length+' contacts exported ✓','success');
+}
+
 </script>
 
 <!-- CONTACT PROFILE MODAL — Rich tabbed detail view -->
@@ -2964,6 +3412,57 @@ async function initDashboard(){
 <div id="editContactError" style="display:none;color:#ef4444;font-size:12px;font-weight:700;padding:8px 0;"></div>
 <button class="btn btn-ghost" onclick="closeModal('editContact')">Cancel</button>
 <button class="btn btn-primary" onclick="saveEditContact()">Save Changes</button>
+</div>
+</div>
+</div>
+
+
+<!-- CSV IMPORT MODAL -->
+<div class="modal-overlay" id="modal-csvImport">
+<div class="modal" style="max-width:600px;">
+<div class="modal-hd"><h3>&#x1F4E5; Import Contacts from CSV</h3><button class="modal-close" onclick="closeModal('csvImport')">&#x2715;</button></div>
+<div class="modal-body">
+  <!-- Step 1: Upload -->
+  <div id="csvStep1">
+    <div style="border:2px dashed var(--navy-border);border-radius:var(--radius-md);padding:32px;text-align:center;cursor:pointer;transition:border-color 0.2s;" id="csvDropZone" onclick="document.getElementById('csvFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--cyan)'" ondragleave="this.style.borderColor='var(--navy-border)'" ondrop="handleCSVDrop(event)">
+      <div style="font-size:2rem;margin-bottom:8px;">&#x1F4C4;</div>
+      <div style="font-size:0.88rem;font-weight:600;color:var(--text2);margin-bottom:4px;">Drop your CSV file here or click to browse</div>
+      <div style="font-size:0.75rem;color:var(--text3);">Supports .csv files. Max 5,000 contacts.</div>
+      <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="handleCSVFile(this.files[0])"/>
+    </div>
+    <div style="margin-top:16px;background:var(--navy-light);border-radius:var(--radius-md);padding:14px;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Expected CSV columns (any order):</div>
+      <div style="font-size:0.78rem;color:var(--text2);line-height:1.8;">
+        <code style="background:var(--navy-deep);padding:1px 6px;border-radius:4px;font-size:0.72rem;">name</code> or <code style="background:var(--navy-deep);padding:1px 6px;border-radius:4px;font-size:0.72rem;">full_name</code> &nbsp;
+        <code style="background:var(--navy-deep);padding:1px 6px;border-radius:4px;font-size:0.72rem;">email</code> &nbsp;
+        <code style="background:var(--navy-deep);padding:1px 6px;border-radius:4px;font-size:0.72rem;">phone</code> &nbsp;
+        <code style="background:var(--navy-deep);padding:1px 6px;border-radius:4px;font-size:0.72rem;">company</code> or <code style="background:var(--navy-deep);padding:1px 6px;border-radius:4px;font-size:0.72rem;">business_name</code> &nbsp;
+        <code style="background:var(--navy-deep);padding:1px 6px;border-radius:4px;font-size:0.72rem;">status</code> &nbsp;
+        <code style="background:var(--navy-deep);padding:1px 6px;border-radius:4px;font-size:0.72rem;">location</code> &nbsp;
+        <code style="background:var(--navy-deep);padding:1px 6px;border-radius:4px;font-size:0.72rem;">notes</code>
+      </div>
+    </div>
+  </div>
+  <!-- Step 2: Preview -->
+  <div id="csvStep2" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:0.85rem;font-weight:600;color:var(--text);" id="csvPreviewTitle">Preview</div>
+      <button class="btn btn-ghost btn-sm" onclick="resetCSVImport()">&#x2190; Back</button>
+    </div>
+    <div id="csvPreviewErrors" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:12px;font-size:0.78rem;color:#f87171;"></div>
+    <div style="overflow-x:auto;max-height:280px;overflow-y:auto;border:1px solid var(--navy-border);border-radius:var(--radius-md);">
+      <table class="tbl" id="csvPreviewTable">
+        <thead><tr id="csvPreviewHead"></tr></thead>
+        <tbody id="csvPreviewBody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:12px;font-size:0.78rem;color:var(--text3);" id="csvPreviewCount"></div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div id="csvImportError" style="display:none;color:#ef4444;font-size:12px;font-weight:700;padding:8px 0;"></div>
+  <button class="btn btn-ghost" onclick="closeModal('csvImport')">Cancel</button>
+  <button class="btn btn-primary" id="csvImportBtn" onclick="importCSVContacts()" style="display:none;">&#x1F4E5; Import Contacts</button>
 </div>
 </div>
 </div>

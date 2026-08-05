@@ -227,8 +227,12 @@
 <div class="calc-panel" style="margin-top:16px;">
 <div class="calc-panel-title">Growth System Deals</div>
 <div class="calc-panel-sub">Add each Growth System deal you closed. Commission is 20% of the sale price.</div>
+<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+  <button class="add-btn" onclick="autoLoadWonDeals()" style="background:rgba(0,200,224,0.12);border:1px solid rgba(0,200,224,0.3);color:#00C8E0;">&#x1F504; Auto-load from CRM</button>
+  <button class="add-btn" onclick="addGrowthDeal()">+ Add Manually</button>
+</div>
+<div id="autoLoadStatus" style="font-size:12px;color:#6B7A99;margin-bottom:8px;display:none;"></div>
 <div id="growthDeals"></div>
-<button class="add-btn" onclick="addGrowthDeal()">+ Add a Deal</button>
 <hr class="section-divider"/>
 <div class="section-title">CRM Clients (Monthly Recurring)</div>
 <div class="section-sub">Commission is 20% of monthly fee for 3 months. 3+ CRM clients in 60 days unlocks 25% rate.</div>
@@ -260,6 +264,12 @@
 </div>
 <!-- PAYOUT TAB -->
 <div class="tab-content" id="tab-payout">
+<!-- Payout History (manager view) -->
+<div id="payoutHistorySection" style="display:none;margin-bottom:24px;">
+  <div class="calc-panel-title" style="margin-bottom:6px;">&#x1F4CB; Payout Requests</div>
+  <div class="calc-panel-sub" style="margin-bottom:12px;">All submitted payout requests from your team.</div>
+  <div id="payoutHistoryList" style="font-size:13px;color:#6B7A99;">Loading...</div>
+</div>
 <div class="payout-form">
 <div class="calc-panel-title" style="margin-bottom:6px;">💸 Request Payout</div>
 <div class="calc-panel-sub" style="margin-bottom:20px;">Submit your payout request. Processed within 7 business days.</div>
@@ -770,6 +780,160 @@ Summary:
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=>{document.addEventListener(evt,resetTimer,true);});
   resetTimer();
 })();
+
+// ── AUTO-LOAD WON DEALS FROM CRM ─────────────────────────────────────────────
+async function autoLoadWonDeals(){
+  const statusEl = document.getElementById('autoLoadStatus');
+  const container = document.getElementById('growthDeals');
+  if(statusEl){ statusEl.style.display='block'; statusEl.textContent='Loading won deals from CRM...'; }
+
+  try{
+    const {data:{session}} = await db.auth.getSession();
+    if(!session){ if(statusEl) statusEl.textContent='Not logged in.'; return; }
+
+    // Load won deals for this agent
+    const {data:wonDeals, error} = await db.from('deals')
+      .select('*')
+      .eq('agent_id', session.user.id)
+      .eq('stage','won')
+      .order('created_at',{ascending:false})
+      .limit(20);
+
+    if(error){ if(statusEl) statusEl.textContent='Error: '+error.message; return; }
+    if(!wonDeals||!wonDeals.length){
+      if(statusEl) statusEl.textContent='No won deals found in CRM for your account.';
+      return;
+    }
+
+    // Clear existing deals
+    container.innerHTML='';
+
+    // Add each won deal
+    wonDeals.forEach((d,i)=>{
+      const id = 'gd_auto_'+d.id;
+      const dealName = d.deal_name||d.title||'Deal '+(i+1);
+      const contactName = d.contact_name||'';
+      const value = d.deal_value||d.value||0;
+      const dealType = d.deal_type||'Other';
+
+      // Map deal type to package value
+      const packageMap = {
+        'Ripple':1800,'Current':3000,'Surge':5000,
+        'CRM Starter':99,'CRM Lite':149,'CRM Premium':249,'CRM Enterprise':499
+      };
+      const packageVal = packageMap[dealType]||value||1800;
+
+      const div = document.createElement('div');
+      div.className='deal-item';
+      div.id=id;
+      div.innerHTML=`
+        <div class="deal-item-header">
+          <div class="deal-item-title">${dealName}${contactName?' — '+contactName:''}</div>
+          <button class="remove-btn" onclick="removeDeal('${id}')">Remove</button>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Client Name</label><input type="text" value="${contactName||dealName}" onchange="updateCalc()"/></div>
+          <div class="form-group"><label>Package</label>
+            <select onchange="updateCalc()">
+              ${Object.keys(GROWTH_PACKAGES||{}).map(p=>`<option value="${(GROWTH_PACKAGES||{})[p]}" ${(GROWTH_PACKAGES||{})[p]===packageVal?'selected':''}>${p}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Upsell? (+$50)</label>
+            <select onchange="updateCalc()">
+              <option value="0">No upsell</option>
+              <option value="50">Yes — upsell bonus +$50</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Custom Value ($)</label><input type="number" value="${value!==packageVal?value:''}" placeholder="Override price" onchange="updateCalc()"/></div>
+        </div>`;
+      container.appendChild(div);
+    });
+
+    updateCalc();
+    if(statusEl) statusEl.textContent=wonDeals.length+' won deal'+(wonDeals.length!==1?'s':'')+' loaded from CRM ✓';
+    statusEl.style.color='#22C55E';
+
+  }catch(e){
+    if(statusEl){ statusEl.textContent='Error loading deals: '+e.message; statusEl.style.color='#EF4444'; }
+  }
+}
+
+// ── PAYOUT HISTORY FOR MANAGER ────────────────────────────────────────────────
+async function loadPayoutHistory(){
+  const section = document.getElementById('payoutHistorySection');
+  const list = document.getElementById('payoutHistoryList');
+  if(!section||!list) return;
+
+  try{
+    const {data:{session}} = await db.auth.getSession();
+    if(!session) return;
+
+    // Check if manager/admin
+    const {data:profile} = await db.from('profiles').select('role').eq('id',session.user.id).single();
+    const role = profile?.role||'salesperson';
+    if(role!=='manager'&&role!=='admin') return;
+
+    section.style.display='block';
+
+    const {data:requests,error} = await db.from('payout_requests')
+      .select('*').order('submitted_at',{ascending:false}).limit(50);
+
+    if(error||!requests||!requests.length){
+      list.innerHTML='<div style="padding:12px;text-align:center;color:#6B7A99;">No payout requests yet.</div>';
+      return;
+    }
+
+    const statusColors = {'pending':'#F59E0B','approved':'#22C55E','paid':'#00C8E0','rejected':'#EF4444'};
+    list.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead><tr style="border-bottom:1px solid rgba(30,42,69,0.6);">
+        <th style="padding:8px 12px;text-align:left;color:#6B7A99;font-size:11px;text-transform:uppercase;">Agent</th>
+        <th style="padding:8px 12px;text-align:left;color:#6B7A99;font-size:11px;text-transform:uppercase;">Amount</th>
+        <th style="padding:8px 12px;text-align:left;color:#6B7A99;font-size:11px;text-transform:uppercase;">Period</th>
+        <th style="padding:8px 12px;text-align:left;color:#6B7A99;font-size:11px;text-transform:uppercase;">Date</th>
+        <th style="padding:8px 12px;text-align:left;color:#6B7A99;font-size:11px;text-transform:uppercase;">Status</th>
+        <th style="padding:8px 12px;text-align:left;color:#6B7A99;font-size:11px;text-transform:uppercase;">Action</th>
+      </tr></thead>
+      <tbody>
+        ${requests.map(r=>{
+          const date = r.submitted_at ? new Date(r.submitted_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+          const sc = statusColors[r.status||'pending']||'#6B7A99';
+          return `<tr style="border-bottom:1px solid rgba(30,42,69,0.4);">
+            <td style="padding:10px 12px;color:#B0BAD0;">${r.agent_name||'—'}</td>
+            <td style="padding:10px 12px;font-weight:700;color:#00C8E0;">$${parseFloat(r.amount||0).toFixed(2)}</td>
+            <td style="padding:10px 12px;color:#6B7A99;">${r.period||'—'}</td>
+            <td style="padding:10px 12px;color:#6B7A99;">${date}</td>
+            <td style="padding:10px 12px;"><span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;background:${sc}20;color:${sc};border:1px solid ${sc}40;">${(r.status||'pending').toUpperCase()}</span></td>
+            <td style="padding:10px 12px;">
+              ${r.status==='pending'?`
+                <button onclick="updatePayoutStatus('${r.id}','approved')" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:#22C55E;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;margin-right:4px;">Approve</button>
+                <button onclick="updatePayoutStatus('${r.id}','rejected')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#EF4444;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;">Reject</button>
+              `:'<span style="color:#6B7A99;font-size:12px;">'+r.status+'</span>'}
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+  }catch(e){
+    if(list) list.innerHTML='<div style="padding:12px;color:#EF4444;font-size:12px;">Error: '+e.message+'</div>';
+  }
+}
+
+async function updatePayoutStatus(id, status){
+  const {error} = await db.from('payout_requests').update({status}).eq('id',id);
+  if(error){ showToast('Error: '+error.message,'error'); return; }
+  showToast('Payout '+status+' ✓','success');
+  loadPayoutHistory();
+}
+
+// Load payout history when payout tab is shown
+const origSwitchTab = switchTab;
+function switchTab(tab){
+  origSwitchTab(tab);
+  if(tab==='payout') loadPayoutHistory();
+}
+
 </script>
 </body>
 </html>
