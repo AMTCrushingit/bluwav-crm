@@ -343,7 +343,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns">Communicate</div>
 <a class="ni" id="nav-email" onclick="showView('email')"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
-<a class="ni" onclick="showView('dashboard')"><span class="ni-icon">⚡</span><span class="nav-text">Automations</span></a>
+<a class="ni" href="automations.html"><span class="ni-icon">⚡</span><span class="nav-text">Automations</span></a>
 <div class="ns">Performance</div>
 <a class="ni" href="agent-dashboard.html"><span class="ni-icon">📈</span><span class="nav-text">Agent Dashboard</span></a>
 <a class="ni" href="commission-calculator.html"><span class="ni-icon">💰</span><span class="nav-text">Commission Calc</span></a>
@@ -702,7 +702,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
       <div style="padding:8px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--navy-border);">Fri</div>
       <div style="padding:8px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--navy-border);">Sat</div>
     </div>
-    <div id="calDays" style="display:grid;grid-template-columns:repeat(7,1fr);"></div>
+    <div id="calDays" style="display:grid;grid-template-columns:repeat(7,1fr);min-height:400px;"></div>
   </div>
 </div>
 </div><!-- /calendar -->
@@ -2175,7 +2175,7 @@ function renderCalendar(){
   let html = '';
   // Empty cells before first day
   for(let i=0;i<firstDay;i++){
-    html += `<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:var(--navy-deep);opacity:0.3;"></div>`;
+    html += '<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:var(--navy-deep);opacity:0.3;"></div>';
   }
   for(let d=1;d<=daysInMonth;d++){
     const isToday = isCurrentMonth && d===today.getDate();
@@ -2184,10 +2184,12 @@ function renderCalendar(){
       const td = new Date(t.due_date);
       return td.getFullYear()===calYear && td.getMonth()===calMonth && td.getDate()===d;
     });
-    html += `<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:${isToday?'rgba(0,200,224,0.06)':'var(--navy-deep)'};cursor:pointer;" onclick="openModal('addTask')">
-      <div style="font-size:0.75rem;font-weight:${isToday?'800':'500'};color:${isToday?'var(--cyan)':'var(--text3)'};margin-bottom:4px;${isToday?'background:var(--cyan);color:var(--navy-deep);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;':''}">${d}</div>
-      ${dayTasks.map(t=>`<div style="font-size:0.62rem;background:var(--cyan-glow);border:1px solid rgba(0,200,224,0.2);border-radius:4px;padding:2px 5px;margin-bottom:2px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.title}</div>`).join('')}
-    </div>`;
+    const dateNum = isToday
+      ? '<div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--cyan);color:var(--navy-deep);font-size:0.75rem;font-weight:800;margin-bottom:4px;">'+d+'</div>'
+      : '<div style="font-size:0.75rem;font-weight:500;color:var(--text3);margin-bottom:4px;">'+d+'</div>';
+    const taskHtml = dayTasks.map(t=>'<div style="font-size:0.62rem;background:var(--cyan-glow);border:1px solid rgba(0,200,224,0.2);border-radius:4px;padding:2px 5px;margin-bottom:2px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+t.title+'</div>').join('');
+    const cellBg = isToday ? 'rgba(0,200,224,0.06)' : 'var(--navy-deep)';
+    html += '<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:'+cellBg+';cursor:pointer;" onclick="openModal(&quot;addTask&quot;)">'+dateNum+taskHtml+'</div>';
   }
   daysEl.innerHTML = html;
 }
