@@ -1091,8 +1091,7 @@ function switchRep(userId,btn){
 
 // ── LOAD DATA ─────────────────────────────────────────────────────────────────
 let _loadDataInFlight = false;
-  } finally { _loadDataInFlight = false; }
-}async function loadData(){
+async function loadData(){
   if(_loadDataInFlight) return; // prevent concurrent calls
   _loadDataInFlight = true;
   try {
@@ -1180,6 +1179,8 @@ let _loadDataInFlight = false;
   if(userRole==='manager'||userRole==='admin'){
     loadLeaderboard();
   }
+  } catch(e){ console.error('loadData error:',e); }
+  finally { _loadDataInFlight = false; }
 }
 
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
