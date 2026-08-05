@@ -780,6 +780,10 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <option value="Other">Other</option>
 </select>
 </div>
+<div class="fg-row">
+<div class="fg"><label class="fl">Expected Close Date</label><input class="fi" id="md-close-date" type="date"/></div>
+<div class="fg"><label class="fl">Probability %</label><input class="fi" id="md-probability" type="number" min="0" max="100" placeholder="e.g. 70"/></div>
+</div>
 <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="md-notes" placeholder="Deal notes..."></textarea></div>
 </div>
 <div class="modal-footer">
@@ -820,14 +824,17 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 <!-- Notifications panel -->
-<div id="notifPanel" style="position:fixed;top:56px;right:16px;width:300px;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);z-index:300;display:none;box-shadow:0 8px 32px rgba(0,0,0,0.4);">
-<div style="padding:14px 16px;border-bottom:1px solid var(--navy-border);display:flex;align-items:center;justify-content:space-between;">
-<span style="font-size:0.85rem;font-weight:700;">🔔 Notifications</span>
-<span onclick="document.getElementById('notifPanel').style.display='none'" style="font-size:0.75rem;color:var(--cyan);cursor:pointer;">Clear all</span>
+<div id="notifPanel" style="position:fixed;top:56px;right:16px;width:320px;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);z-index:300;display:none;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-height:480px;display:none;flex-direction:column;">
+<div style="padding:14px 16px;border-bottom:1px solid var(--navy-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+  <span style="font-size:0.85rem;font-weight:700;">&#x1F514; Notifications</span>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <span id="notifUnreadCount" style="font-size:0.7rem;color:var(--text3);"></span>
+    <span onclick="markAllNotifsRead()" style="font-size:0.75rem;color:var(--cyan);cursor:pointer;font-weight:600;">Mark all read</span>
+  </div>
 </div>
-<div style="padding:12px 16px;border-bottom:1px solid var(--navy-border);font-size:0.78rem;color:var(--text2);">💼 Deal <strong>Annual Retainer</strong> closing in 3 days<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">2h ago</div></div>
-<div style="padding:12px 16px;border-bottom:1px solid var(--navy-border);font-size:0.78rem;color:var(--text2);">👥 New contact added by your team<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">4h ago</div></div>
-<div style="padding:12px 16px;font-size:0.78rem;color:var(--text2);">🏆 Deal won — <strong>E-Commerce Store</strong> $7,100<div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">2d ago</div></div>
+<div id="notifList" style="overflow-y:auto;flex:1;">
+  <div style="padding:24px;text-align:center;color:var(--text3);font-size:0.8rem;">Loading...</div>
+</div>
 </div>
 <div class="toast" id="toast"></div>
 <!-- Mobile sidebar overlay -->
@@ -1061,7 +1068,9 @@ async function loadData(){
     island:c.island||'',
     created_at:c.created_at,
     user_id:c.user_id,
-    deal_value:c.deal_value||0
+    deal_value:c.deal_value||0,
+    last_contacted:c.last_contacted||null,
+    notes:c.notes||null
   }));
   cCount = cc||contacts.length;
   allContacts = contacts;
@@ -1088,6 +1097,9 @@ async function loadData(){
     deal_type:d.deal_type||'Ripple',
     stage:d.stage||'lead',
     agent_id:d.agent_id||d.created_by||null,
+    close_date:d.close_date||null,
+    probability:d.probability||null,
+    won_lost_reason:d.won_lost_reason||null,
   }));
   allDeals = deals;
 
@@ -1622,6 +1634,7 @@ async function logActivity(){
   document.getElementById('cpActivityNote').value='';
   renderContactActivities();
   showToast(type+' logged ✓','success');
+  updateLastContacted(_cpContactId);
 }
 
 function cpAddDeal(){
@@ -1722,6 +1735,10 @@ async function saveDeal(){
   }
   var notes = document.getElementById('md-notes')?.value.trim();
   if(notes) dealObj.notes = notes;
+  var closeDate = document.getElementById('md-close-date')?.value||null;
+  if(closeDate) dealObj.close_date = closeDate;
+  var probability = document.getElementById('md-probability')?.value;
+  if(probability) dealObj.probability = parseInt(probability);
 
   var {data:dealData, error} = await db.from('deals').insert(dealObj).select();
   if(error){
@@ -1770,7 +1787,9 @@ function toggleSidebar(){
 
 function toggleNotif(){
   const p=document.getElementById('notifPanel');
-  p.style.display=p.style.display==='none'?'block':'none';
+  const isHidden = p.style.display==='none'||p.style.display==='';
+  p.style.display = isHidden ? 'flex' : 'none';
+  if(isHidden) loadNotifications();
 }
 document.addEventListener('click',e=>{
   if(!e.target.closest('#notifPanel')&&!e.target.closest('.ib'))
@@ -1974,6 +1993,14 @@ function openEditDeal(dealId){
     sel.innerHTML = '<option value="">-- Select existing client --</option>' +
       allContacts.map(c=>`<option value="${c.id}" ${c.id===d.contact_id?'selected':''}>${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
   }
+  // Pre-fill new fields
+  const closeDateEl = document.getElementById('ed-close-date');
+  if(closeDateEl) closeDateEl.value = d.close_date||'';
+  const probEl = document.getElementById('ed-probability');
+  if(probEl) probEl.value = d.probability||'';
+  const reasonEl = document.getElementById('ed-reason');
+  if(reasonEl) reasonEl.value = d.won_lost_reason||'';
+  toggleWonLostReason(d.stage||'lead');
   document.getElementById('editDealError').style.display='none';
   document.getElementById('modal-editDeal').classList.add('open');
 }
@@ -1988,9 +2015,15 @@ async function updateDeal(){
   const contactId = document.getElementById('ed-contact').value||null;
   const dealType = document.getElementById('ed-type').value||'Ripple';
   const notes = document.getElementById('ed-notes').value.trim();
-  const updates = {title:name, value:val, stage:stage};
+  const updates = {title:name, deal_name:name, value:val, deal_value:val, stage:stage};
   if(contactId) updates.contact_id = contactId;
   if(notes) updates.notes = notes;
+  const closeDate = document.getElementById('ed-close-date')?.value||null;
+  if(closeDate) updates.close_date = closeDate;
+  const probability = document.getElementById('ed-probability')?.value;
+  if(probability) updates.probability = parseInt(probability);
+  const reason = document.getElementById('ed-reason')?.value||null;
+  if(reason) updates.won_lost_reason = reason;
   const {error} = await db.from('deals').update(updates).eq('id',id);
   if(error){errEl.textContent='Error: '+error.message;errEl.style.display='block';return;}
   showToast('Deal updated ✓','success');
@@ -2194,6 +2227,7 @@ async function sendEmailFromModal(){
       if(toField) toField.value='';
       if(subjectField) subjectField.value='';
       if(msgField) msgField.value='';
+      if(matchedContact) updateLastContacted(matchedContact.id);
     } else {
       showToast('Email failed to send. Check your connection.','');
     }
@@ -2284,6 +2318,8 @@ function whatsappContact(id){
   const name = c.full_name||'there';
   const msg = encodeURIComponent('Hi '+name+', ');
   window.open('https://wa.me/'+waPhone+'?text='+msg,'_blank');
+  // Update last contacted date
+  updateLastContacted(id);
 }
 
 
@@ -2503,6 +2539,267 @@ function showView(name){
   if(name==='email') loadEmailLog();
 }
 
+
+// ── DEAL CLOSE DATE + WON/LOST REASON HELPERS ────────────────────────────────
+function toggleWonLostReason(stage){
+  const group = document.getElementById('ed-reason-group');
+  const label = document.getElementById('ed-reason-label');
+  const sel   = document.getElementById('ed-reason');
+  if(!group) return;
+  const s = (stage||'').toLowerCase();
+  if(s==='won'||s==='lost'){
+    group.style.display='block';
+    if(label) label.textContent = s==='won' ? 'Why did you win this deal?' : 'Why was this deal lost?';
+    // Update options based on won vs lost
+    if(sel){
+      if(s==='won'){
+        sel.innerHTML = '<option value="">Select reason...</option>' +
+          ['Referral','Demo / Presentation','Price / Value','Relationship','Product Fit','Persistence','Other']
+          .map(r=>`<option value="${r}">${r}</option>`).join('');
+      } else {
+        sel.innerHTML = '<option value="">Select reason...</option>' +
+          ['Price Too High','Chose Competitor','Bad Timing','No Budget','No Response','Product Not a Fit','Other']
+          .map(r=>`<option value="${r}">${r}</option>`).join('');
+      }
+    }
+  } else {
+    group.style.display='none';
+  }
+}
+
+// Show closing-soon deals on dashboard pipeline
+function getClosingSoon(){
+  const today = new Date();
+  const in7 = new Date(today.getTime() + 7*24*60*60*1000);
+  return allDeals.filter(d=>{
+    if(!d.close_date) return false;
+    const cd = new Date(d.close_date);
+    return cd >= today && cd <= in7 && !['won','lost'].includes((d.stage||'').toLowerCase());
+  });
+}
+
+// ── LAST CONTACTED DATE AUTO-UPDATE ──────────────────────────────────────────
+// Called whenever an activity is logged, email sent, or WhatsApp opened
+async function updateLastContacted(contactId){
+  if(!contactId) return;
+  const now = new Date().toISOString();
+  try{
+    await db.from('contacts').update({last_contacted: now}).eq('id', contactId);
+    // Update local cache
+    const c = allContacts.find(x=>x.id===contactId);
+    if(c) c.last_contacted = now;
+    const fc = filteredContacts.find(x=>x.id===contactId);
+    if(fc) fc.last_contacted = now;
+  }catch(e){ console.warn('Could not update last_contacted:', e.message); }
+}
+
+
+// ── LIVE NOTIFICATIONS SYSTEM ─────────────────────────────────────────────────
+let _allNotifs = [];
+let _notifLoaded = false;
+
+async function loadNotifications(){
+  const list = document.getElementById('notifList');
+  if(!list) return;
+
+  try{
+    const {data:{session}} = await db.auth.getSession();
+    if(!session) return;
+    const userId = session.user.id;
+
+    // Build notifications from real data sources
+    const notifs = [];
+    const now = new Date();
+
+    // 1. Tasks due today or overdue
+    try{
+      const {data:tasks} = await db.from('tasks')
+        .select('*').eq('user_id',userId).eq('completed',false)
+        .lte('due_date', now.toISOString().split('T')[0]);
+      (tasks||[]).forEach(t=>{
+        const due = new Date(t.due_date);
+        const overdue = due < now;
+        notifs.push({
+          id:'task_'+t.id,
+          icon:'&#x2705;',
+          color:'var(--warning)',
+          title: overdue ? 'Overdue task: '+t.title : 'Task due today: '+t.title,
+          time: t.due_date,
+          type:'task',
+          read: false,
+          urgent: overdue
+        });
+      });
+    }catch(e){}
+
+    // 2. Deals closing within 7 days
+    const in7 = new Date(now.getTime()+7*24*60*60*1000);
+    const closingSoon = allDeals.filter(d=>{
+      if(!d.close_date) return false;
+      const cd = new Date(d.close_date);
+      return cd >= now && cd <= in7 && !['won','lost'].includes((d.stage||'').toLowerCase());
+    });
+    closingSoon.forEach(d=>{
+      const daysLeft = Math.ceil((new Date(d.close_date)-now)/(1000*60*60*24));
+      notifs.push({
+        id:'deal_'+d.id,
+        icon:'&#x1F4BC;',
+        color:'var(--gold)',
+        title: 'Deal closing in '+daysLeft+' day'+(daysLeft!==1?'s':'')+': '+(d.deal_name||d.title),
+        time: d.close_date,
+        type:'deal',
+        read: false,
+        urgent: daysLeft<=2
+      });
+    });
+
+    // 3. Recent team activity (manager/admin only)
+    if(userRole==='manager'||userRole==='admin'){
+      try{
+        const yesterday = new Date(now.getTime()-24*60*60*1000).toISOString();
+        const {data:recentContacts} = await db.from('contacts')
+          .select('full_name,created_at,user_id')
+          .gte('created_at', yesterday)
+          .order('created_at',{ascending:false}).limit(5);
+        (recentContacts||[]).forEach(c=>{
+          if(c.user_id !== userId){
+            notifs.push({
+              id:'contact_'+c.full_name+c.created_at,
+              icon:'&#x1F464;',
+              color:'var(--cyan)',
+              title: 'New contact added: '+c.full_name,
+              time: c.created_at,
+              type:'contact',
+              read: false,
+              urgent: false
+            });
+          }
+        });
+      }catch(e){}
+
+      // Recent deals won by team
+      try{
+        const lastWeek = new Date(now.getTime()-7*24*60*60*1000).toISOString();
+        const {data:wonDeals} = await db.from('deals')
+          .select('deal_name,title,deal_value,value,created_at,agent_id')
+          .eq('stage','won')
+          .gte('created_at',lastWeek)
+          .order('created_at',{ascending:false}).limit(3);
+        (wonDeals||[]).forEach(d=>{
+          notifs.push({
+            id:'won_'+d.deal_name+d.created_at,
+            icon:'&#x1F3C6;',
+            color:'var(--success)',
+            title: 'Deal won: '+(d.deal_name||d.title)+' — $'+((d.deal_value||d.value||0)).toLocaleString(),
+            time: d.created_at,
+            type:'won',
+            read: false,
+            urgent: false
+          });
+        });
+      }catch(e){}
+    }
+
+    // Sort: urgent first, then by time desc
+    notifs.sort((a,b)=>{
+      if(a.urgent && !b.urgent) return -1;
+      if(!a.urgent && b.urgent) return 1;
+      return new Date(b.time||0) - new Date(a.time||0);
+    });
+
+    _allNotifs = notifs;
+    _notifLoaded = true;
+    renderNotifications();
+    updateNotifBadge();
+
+  }catch(e){
+    if(list) list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:0.78rem;">Could not load notifications</div>';
+  }
+}
+
+function renderNotifications(){
+  const list = document.getElementById('notifList');
+  if(!list) return;
+  const unread = _allNotifs.filter(n=>!n.read);
+  const countEl = document.getElementById('notifUnreadCount');
+  if(countEl) countEl.textContent = unread.length ? unread.length+' unread' : 'All caught up';
+
+  if(!_allNotifs.length){
+    list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text3);"><div style="font-size:2rem;margin-bottom:8px;">&#x1F514;</div><div style="font-size:0.82rem;font-weight:600;color:var(--text2);margin-bottom:4px;">All caught up!</div><div style="font-size:0.75rem;">No new notifications</div></div>';
+    return;
+  }
+
+  list.innerHTML = _allNotifs.map(n=>{
+    const timeStr = n.time ? new Date(n.time).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+    return `<div onclick="markNotifRead('${n.id}')" style="padding:12px 16px;border-bottom:1px solid var(--navy-border);cursor:pointer;background:${n.read?'transparent':'rgba(0,200,224,0.03)'};transition:background 0.15s;" onmouseover="this.style.background='var(--navy-light)'" onmouseout="this.style.background='${n.read?'transparent':'rgba(0,200,224,0.03)'}'">
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.2);border:1px solid ${n.color};display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">${n.icon}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.78rem;color:${n.read?'var(--text3)':'var(--text)'};font-weight:${n.read?'400':'600'};line-height:1.4;">${n.urgent?'<span style="color:var(--error);font-size:10px;font-weight:700;margin-right:4px;">URGENT</span>':''}${n.title}</div>
+          <div style="font-size:0.68rem;color:var(--text3);margin-top:3px;">${timeStr}</div>
+        </div>
+        ${!n.read?'<div style="width:6px;height:6px;border-radius:50%;background:var(--cyan);flex-shrink:0;margin-top:5px;"></div>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function markNotifRead(id){
+  const n = _allNotifs.find(x=>x.id===id);
+  if(n) n.read = true;
+  renderNotifications();
+  updateNotifBadge();
+}
+
+function markAllNotifsRead(){
+  _allNotifs.forEach(n=>n.read=true);
+  renderNotifications();
+  updateNotifBadge();
+}
+
+function updateNotifBadge(){
+  const unread = _allNotifs.filter(n=>!n.read).length;
+  const dots = document.querySelectorAll('.ndot');
+  dots.forEach(dot=>{
+    dot.style.display = unread > 0 ? 'block' : 'none';
+  });
+}
+
+// Generate a notification when key events happen
+function createNotif(icon, color, title, type){
+  const n = {
+    id: type+'_'+Date.now(),
+    icon, color, title, type,
+    time: new Date().toISOString(),
+    read: false,
+    urgent: false
+  };
+  _allNotifs.unshift(n);
+  renderNotifications();
+  updateNotifBadge();
+}
+
+// Hook into existing events to generate real-time notifications
+const _origSaveContact = saveContact;
+async function saveContact(){
+  await _origSaveContact.apply(this, arguments);
+  createNotif('&#x1F464;','var(--cyan)','New contact added successfully','contact_new');
+}
+
+const _origSaveDeal = saveDeal;
+async function saveDeal(){
+  await _origSaveDeal.apply(this, arguments);
+  createNotif('&#x1F4BC;','var(--gold)','New deal created','deal_new');
+}
+
+// Load notifications on init (after auth)
+const _origInitDashboard = initDashboard;
+async function initDashboard(){
+  await _origInitDashboard.apply(this, arguments);
+  // Load notifications after a short delay to let data load first
+  setTimeout(loadNotifications, 2000);
+}
+
 </script>
 
 <!-- CONTACT PROFILE MODAL — Rich tabbed detail view -->
@@ -2594,7 +2891,7 @@ function showView(name){
 <div class="fg-row">
 <div class="fg"><label class="fl">Value ($)</label><input class="fi" id="ed-value" placeholder="0" type="number"/></div>
 <div class="fg"><label class="fl">Stage</label>
-<select class="fs" id="ed-stage">
+<select class="fs" id="ed-stage" onchange="toggleWonLostReason(this.value)">
 <option value="lead">Lead</option>
 <option value="qualified">Qualified</option>
 <option value="proposal">Proposal</option>
@@ -2615,6 +2912,27 @@ function showView(name){
 <option value="White-Label">White-Label</option>
 <option value="Other">Other</option>
 </select>
+</div>
+<div class="fg-row">
+<div class="fg"><label class="fl">Expected Close Date</label><input class="fi" id="ed-close-date" type="date"/></div>
+<div class="fg"><label class="fl">Probability %</label><input class="fi" id="ed-probability" type="number" min="0" max="100" placeholder="e.g. 70"/></div>
+</div>
+<div class="fg" id="ed-reason-group" style="display:none;">
+  <label class="fl" id="ed-reason-label">Won/Lost Reason</label>
+  <select class="fs" id="ed-reason">
+    <option value="">Select reason...</option>
+    <option value="Referral">Referral</option>
+    <option value="Demo / Presentation">Demo / Presentation</option>
+    <option value="Price / Value">Price / Value</option>
+    <option value="Relationship">Relationship</option>
+    <option value="Product Fit">Product Fit</option>
+    <option value="Price Too High">Price Too High</option>
+    <option value="Chose Competitor">Chose Competitor</option>
+    <option value="Bad Timing">Bad Timing</option>
+    <option value="No Budget">No Budget</option>
+    <option value="No Response">No Response</option>
+    <option value="Other">Other</option>
+  </select>
 </div>
 <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="ed-notes" placeholder="Deal notes..."></textarea></div>
 </div>
