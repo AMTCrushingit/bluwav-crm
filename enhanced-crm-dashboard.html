@@ -1090,19 +1090,24 @@ function switchRep(userId,btn){
 }
 
 // ── LOAD DATA ─────────────────────────────────────────────────────────────────
-async function loadData(){
+let _loadDataInFlight = false;
+  } finally { _loadDataInFlight = false; }
+}async function loadData(){
+  if(_loadDataInFlight) return; // prevent concurrent calls
+  _loadDataInFlight = true;
+  try {
   // Load contacts — matches dashboard.html exactly (contacts table, RLS-filtered)
   let contacts=[], cCount=0;
-  let cq = db.from('contacts').select('*',{count:'exact'}).order('created_at',{ascending:false});
+  let cq = db.from('contacts').select('id,full_name,email,phone,whatsapp,business_name,island,notes,user_id,created_at,status,deal_value,last_contacted',{count:'exact'}).order('created_at',{ascending:false});
   if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
     cq = cq.eq('user_id', viewingUserId);
   }
   const {data:cd, count:cc} = await cq;
   contacts = (cd||[]).map(c=>({
     id:c.id,
-    full_name:c.full_name||c.name||'Unknown',
+    full_name:c.full_name||'Unknown',
     email:c.email||'',
-    business_name:c.business_name||c.company||c.business||'',
+    business_name:c.business_name||'',
     phone:c.phone||c.whatsapp||'',
     status:c.status||'Lead',
     island:c.island||'',
@@ -1123,7 +1128,7 @@ async function loadData(){
 
   // Deals — matches dashboard.html exactly
   let deals=[];
-  let dq = db.from('deals').select('*').order('created_at',{ascending:false});
+  let dq = db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,contact_id,contact_name,deal_type,created_at,close_date,probability,won_lost_reason,notes').order('created_at',{ascending:false});
   if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
     dq = dq.eq('agent_id', viewingUserId);
   } else if(userRole==='salesperson'){
@@ -1661,6 +1666,7 @@ async function logActivity(){
   const actObj = {
     contact_id: _cpContactId,
     type: type,
+    title: type + ': ' + note.substring(0,50),
     description: note,
     user_id: session?.user?.id||null,
     created_at: new Date().toISOString()
@@ -1726,6 +1732,7 @@ async function saveContact(){
     business_name:document.getElementById('mc-biz')?.value.trim()||null,
     island:document.getElementById('mc-location')?.value.trim()||null,
     notes:document.getElementById('mc-notes')?.value.trim()||null,
+    status:document.getElementById('mc-status')?.value||'Lead',
     user_id:currentUser?.id
   };
   // Source tracking stored separately — not inserted into contacts table
@@ -2693,51 +2700,43 @@ async function loadNotifications(){
       });
     });
 
-    // 3. Recent team activity (manager/admin only)
+    // 3. Recent team activity (manager/admin only) — use in-memory data, no extra DB queries
     if(userRole==='manager'||userRole==='admin'){
-      try{
-        const yesterday = new Date(now.getTime()-24*60*60*1000).toISOString();
-        const {data:recentContacts} = await db.from('contacts')
-          .select('full_name,created_at,user_id')
-          .gte('created_at', yesterday)
-          .order('created_at',{ascending:false}).limit(5);
-        (recentContacts||[]).forEach(c=>{
-          if(c.user_id !== userId){
-            notifs.push({
-              id:'contact_'+c.full_name+c.created_at,
-              icon:'&#x1F464;',
-              color:'var(--cyan)',
-              title: 'New contact added: '+c.full_name,
-              time: c.created_at,
-              type:'contact',
-              read: false,
-              urgent: false
-            });
-          }
+      const yesterday = new Date(now.getTime()-24*60*60*1000);
+      const lastWeek = new Date(now.getTime()-7*24*60*60*1000);
+
+      // Recent contacts added by other team members
+      allContacts.filter(c=>{
+        return c.user_id !== userId && c.created_at && new Date(c.created_at) >= yesterday;
+      }).slice(0,5).forEach(c=>{
+        notifs.push({
+          id:'contact_'+c.id,
+          icon:'&#x1F464;',
+          color:'var(--cyan)',
+          title: 'New contact added: '+c.full_name,
+          time: c.created_at,
+          type:'contact',
+          read: false,
+          urgent: false
         });
-      }catch(e){}
+      });
 
       // Recent deals won by team
-      try{
-        const lastWeek = new Date(now.getTime()-7*24*60*60*1000).toISOString();
-        const {data:wonDeals} = await db.from('deals')
-          .select('deal_name,title,deal_value,value,created_at,agent_id')
-          .eq('stage','won')
-          .gte('created_at',lastWeek)
-          .order('created_at',{ascending:false}).limit(3);
-        (wonDeals||[]).forEach(d=>{
-          notifs.push({
-            id:'won_'+d.deal_name+d.created_at,
-            icon:'&#x1F3C6;',
-            color:'var(--success)',
-            title: 'Deal won: '+(d.deal_name||d.title)+' — $'+((d.deal_value||d.value||0)).toLocaleString(),
-            time: d.created_at,
-            type:'won',
-            read: false,
-            urgent: false
-          });
+      allDeals.filter(d=>{
+        return (d.stage||'').toLowerCase()==='won' &&
+               d.created_at && new Date(d.created_at) >= lastWeek;
+      }).slice(0,3).forEach(d=>{
+        notifs.push({
+          id:'won_'+d.id,
+          icon:'&#x1F3C6;',
+          color:'var(--success)',
+          title: 'Deal won: '+(d.deal_name||d.title)+' — $'+((d.deal_value||d.value||0)).toLocaleString(),
+          time: d.created_at,
+          type:'won',
+          read: false,
+          urgent: false
         });
-      }catch(e){}
+      });
     }
 
     // Sort: urgent first, then by time desc
@@ -2845,6 +2844,7 @@ async function initDashboard(){
 let reportMonths = 6;
 let reportsChartInstance = null;
 
+let _reportDebounce = null;
 function setReportRange(months, btn){
   reportMonths = months;
   document.querySelectorAll('.rng-btn').forEach(b=>{
@@ -2852,7 +2852,9 @@ function setReportRange(months, btn){
     b.style.color = 'var(--text3)';
   });
   if(btn){ btn.style.background='var(--cyan)'; btn.style.color='var(--navy-deep)'; }
-  loadReports();
+  // Debounce — only fire after 150ms of no clicks
+  clearTimeout(_reportDebounce);
+  _reportDebounce = setTimeout(loadReports, 150);
 }
 
 async function loadReports(){
@@ -2922,24 +2924,31 @@ async function loadReports(){
 
   const rctx = document.getElementById('reportsChart');
   if(rctx){
-    if(reportsChartInstance) reportsChartInstance.destroy();
-    reportsChartInstance = new Chart(rctx.getContext('2d'),{
-      type:'bar',
-      data:{
-        labels: months,
-        datasets:[
-          {label:'Pipeline',data:pipelineData,backgroundColor:'rgba(0,200,224,0.7)',borderRadius:5,borderSkipped:false},
-          {label:'Won',data:wonData,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:5,borderSkipped:false}
-        ]
-      },
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{labels:{color:'#B0BAD0',font:{size:11},boxWidth:12}}},
-        scales:{
-          x:{ticks:{color:'#6B7A99',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
-          y:{ticks:{color:'#6B7A99',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{color:'rgba(255,255,255,0.04)'}}
+    if(reportsChartInstance){
+      // Update in-place — no flicker, smooth animation
+      reportsChartInstance.data.labels = months;
+      reportsChartInstance.data.datasets[0].data = pipelineData;
+      reportsChartInstance.data.datasets[1].data = wonData;
+      reportsChartInstance.update('active');
+    } else {
+      reportsChartInstance = new Chart(rctx.getContext('2d'),{
+        type:'bar',
+        data:{
+          labels: months,
+          datasets:[
+            {label:'Pipeline',data:pipelineData,backgroundColor:'rgba(0,200,224,0.7)',borderRadius:5,borderSkipped:false},
+            {label:'Won',data:wonData,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:5,borderSkipped:false}
+          ]
+        },
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{labels:{color:'#B0BAD0',font:{size:11},boxWidth:12}}},
+          scales:{
+            x:{ticks:{color:'#6B7A99',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
+            y:{ticks:{color:'#6B7A99',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{color:'rgba(255,255,255,0.04)'}}
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   // Funnel
