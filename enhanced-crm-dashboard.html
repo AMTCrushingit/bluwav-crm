@@ -342,7 +342,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" id="nav-tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
 <a class="ni" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns">Communicate</div>
-<a class="ni" onclick="showView('dashboard')"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
+<a class="ni" id="nav-email" onclick="showView('email')"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
 <a class="ni" onclick="showView('dashboard')"><span class="ni-icon">⚡</span><span class="nav-text">Automations</span></a>
 <div class="ns">Performance</div>
 <a class="ni" href="agent-dashboard.html"><span class="ni-icon">📈</span><span class="nav-text">Agent Dashboard</span></a>
@@ -543,8 +543,11 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="view" id="view-deals">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
 <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Sales Pipeline</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Deal Manager</h1></div>
-<div style="display:flex;gap:8px;">
-<button class="btn btn-outline btn-sm">📊 Reports</button>
+<div style="display:flex;gap:8px;align-items:center;">
+<div style="display:flex;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);padding:3px;gap:2px;">
+  <button id="dealViewKanban" onclick="setDealsView('kanban')" style="padding:5px 12px;border-radius:6px;border:none;background:var(--cyan);color:var(--navy-deep);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;">Kanban</button>
+  <button id="dealViewList" onclick="setDealsView('list')" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;">List</button>
+</div>
 <button class="btn btn-primary btn-sm" onclick="openModal('addDeal')">+ New Deal</button>
 </div>
 </div>
@@ -564,6 +567,41 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--success);">Won ✓</span><span class="pipe-cnt" id="dColWon">0</span></div><div id="dDealsWon"></div></div>
 </div>
 </div>
+</div>
+<!-- DEALS LIST VIEW (hidden by default) -->
+<div id="dealsListView" style="display:none;">
+  <div class="panel">
+    <div class="panel-hd">
+      <div class="panel-title">&#x1F4CB; All Deals &mdash; List View</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input id="dealSearch" oninput="filterDealsList()" placeholder="&#x1F50D; Search deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.75rem;padding:5px 10px;outline:none;font-family:inherit;width:180px;"/>
+        <select id="dealStageFilter" onchange="filterDealsList()" style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.75rem;padding:5px 10px;outline:none;font-family:inherit;">
+          <option value="">All Stages</option>
+          <option value="lead">Lead</option>
+          <option value="qualified">Qualified</option>
+          <option value="proposal">Proposal</option>
+          <option value="won">Won</option>
+          <option value="lost">Lost</option>
+        </select>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="tbl" id="dealsListTable">
+        <thead><tr>
+          <th onclick="sortDealsList('deal_name')" style="cursor:pointer;">Deal <span class="sort-icon">&#x25B2;</span></th>
+          <th onclick="sortDealsList('contact_name')" style="cursor:pointer;">Client <span class="sort-icon">&#x25B2;</span></th>
+          <th onclick="sortDealsList('deal_value')" style="cursor:pointer;">Value <span class="sort-icon">&#x25B2;</span></th>
+          <th onclick="sortDealsList('stage')" style="cursor:pointer;">Stage <span class="sort-icon">&#x25B2;</span></th>
+          <th onclick="sortDealsList('deal_type')" style="cursor:pointer;">Type <span class="sort-icon">&#x25B2;</span></th>
+          <th>Actions</th>
+        </tr></thead>
+        <tbody id="dealsListBody"></tbody>
+      </table>
+    </div>
+    <div style="padding:12px 20px;border-top:1px solid var(--navy-border);">
+      <span id="dealsListCount" style="font-size:0.73rem;color:var(--text3);">Loading...</span>
+    </div>
+  </div>
 </div>
 </div><!-- /deals -->
 <!-- ══ REPORTS VIEW ══ -->
@@ -643,6 +681,43 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 </div><!-- /settings -->
+<!-- EMAIL VIEW -->
+<div class="view" id="view-email">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+  <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Communications</div>
+  <h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Email Log</h1></div>
+  <button class="btn btn-primary btn-sm" onclick="openModal('sendEmail')">+ Compose Email</button>
+</div>
+<div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+  <div class="stat c"><div class="stat-hd"><span class="stat-lbl">Emails Sent</span><span>&#x1F4E7;</span></div><div class="stat-val" id="emailMetricSent">0</div><div class="stat-chg nt">Total</div></div>
+  <div class="stat g"><div class="stat-hd"><span class="stat-lbl">This Week</span><span>&#x1F4C5;</span></div><div class="stat-val" id="emailMetricWeek">0</div><div class="stat-chg up">Last 7 days</div></div>
+  <div class="stat o"><div class="stat-hd"><span class="stat-lbl">Contacts Reached</span><span>&#x1F465;</span></div><div class="stat-val" id="emailMetricContacts">0</div><div class="stat-chg nt">Unique</div></div>
+</div>
+<div class="panel">
+  <div class="panel-hd">
+    <div class="panel-title">&#x1F4E4; Sent Emails</div>
+    <input id="emailSearch" oninput="filterEmailLog()" placeholder="&#x1F50D; Search emails..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.75rem;padding:5px 10px;outline:none;font-family:inherit;width:200px;"/>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="tbl">
+      <thead><tr>
+        <th>To</th>
+        <th>Subject</th>
+        <th>Contact</th>
+        <th>Sent</th>
+        <th>Status</th>
+      </tr></thead>
+      <tbody id="emailLogBody">
+        <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text3);">
+          <div style="font-size:2rem;margin-bottom:10px;">&#x1F4E7;</div>
+          <div style="font-weight:600;color:var(--text2);margin-bottom:6px;">No emails sent yet</div>
+          <div style="font-size:0.78rem;">Emails you send via the CRM will appear here.</div>
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div><!-- /email -->
 </div><!-- /content -->
 </div><!-- /main -->
 <!-- ══ MODALS ══ -->
@@ -1400,45 +1475,163 @@ function globalSearchFn(q){
 }
 
 // ── CONTACT PROFILE MODAL ─────────────────────────────────────────────────────
+// ── CONTACT PROFILE MODAL ────────────────────────────────────────────────────
+let _cpContactId = null;
+let _cpActivities = [];
+
 function openContactProfile(contactId){
   const contact = allContacts.find(c=>c.id===contactId);
-  if(!contact){
-    showToast('Contact not found','error');
-    return;
-  }
-  // Get related deals
+  if(!contact){ showToast('Contact not found',''); return; }
+  _cpContactId = contactId;
+
   const contactDeals = allDeals.filter(d=>d.contact_id===contactId);
+  const openDeals = contactDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+  const wonDeals = contactDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const totalVal = contactDeals.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
   const initials=(contact.full_name||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);
   const createdDate = contact.created_at ? new Date(contact.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
 
-  // Build deal rows
-  const dealHTML = contactDeals.length
+  const statusColors = {
+    'Lead':'rgba(107,122,153,0.15)','Qualified':'rgba(0,200,224,0.12)',
+    'Proposal':'rgba(201,168,76,0.12)','Won':'rgba(34,197,94,0.12)','Inactive':'rgba(239,68,68,0.1)'
+  };
+  const statusTextColors = {
+    'Lead':'var(--text3)','Qualified':'var(--cyan)',
+    'Proposal':'var(--gold)','Won':'var(--success)','Inactive':'var(--error)'
+  };
+  const status = contact.status||'Lead';
+
+  document.getElementById('cpInitials').textContent = initials;
+  document.getElementById('cpInitials').style.background = getColor(contact.full_name||'');
+  document.getElementById('cpName').textContent = contact.full_name||'—';
+  document.getElementById('cpBusiness').textContent = contact.business_name||'—';
+  document.getElementById('cpAdded').textContent = 'Added '+createdDate;
+  const badge = document.getElementById('cpStatusBadge');
+  badge.textContent = status;
+  badge.style.background = statusColors[status]||'rgba(107,122,153,0.15)';
+  badge.style.color = statusTextColors[status]||'var(--text3)';
+
+  const phone = (contact.phone||contact.whatsapp||'').replace(/[^0-9+]/g,'');
+  document.getElementById('cpWhatsAppBtn').onclick = ()=>whatsappContact(contactId);
+  document.getElementById('cpWhatsAppBtn').style.opacity = phone ? '1' : '0.4';
+  document.getElementById('cpEmailBtn').onclick = ()=>{ closeContactProfile(); emailContact(contactId); };
+
+  document.getElementById('cpEmail').textContent = contact.email||'—';
+  document.getElementById('cpPhone').textContent = contact.phone||contact.whatsapp||'—';
+  document.getElementById('cpLocation').textContent = contact.island||'—';
+  document.getElementById('cpNotes').textContent = contact.notes||'No notes';
+  document.getElementById('cpOpenDeals').textContent = openDeals.length;
+  document.getElementById('cpTotalValue').textContent = fmt(totalVal);
+  document.getElementById('cpWonDeals').textContent = wonDeals.length;
+
+  document.getElementById('cpDealsCount').textContent = contactDeals.length;
+  document.getElementById('cpDeals').innerHTML = contactDeals.length
     ? contactDeals.map(d=>`
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--navy-light);border-radius:8px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--navy-light);border-radius:10px;margin-bottom:8px;cursor:pointer;" onclick="openEditDeal('${d.id}')">
           <div>
             <div style="font-size:13px;font-weight:600;color:var(--text);">${d.deal_name||d.title||'Untitled'}</div>
             <div style="font-size:11px;color:var(--text3);margin-top:2px;text-transform:capitalize;">${d.stage||'lead'}</div>
           </div>
-          <div style="font-size:14px;font-weight:700;color:var(--cyan);">${fmt(d.deal_value||d.value||0)}</div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--cyan);">${fmt(d.deal_value||d.value||0)}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px;">click to edit</div>
+          </div>
         </div>`).join('')
-    : `<div style="text-align:center;padding:16px;color:var(--text3);font-size:13px;">No deals yet</div>`;
+    : '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;">No deals yet</div>';
 
-  const modal = document.getElementById('contactProfileModal');
-  document.getElementById('cpInitials').textContent=initials;
-  document.getElementById('cpName').textContent=contact.full_name||'—';
-  document.getElementById('cpBusiness').textContent=contact.business_name||'—';
-  document.getElementById('cpEmail').textContent=contact.email||'—';
-  document.getElementById('cpPhone').textContent=contact.phone||contact.whatsapp||'—';
-  document.getElementById('cpLocation').textContent=contact.island||'—';
-  document.getElementById('cpNotes').textContent=contact.notes||'No notes';
-  document.getElementById('cpAdded').textContent='Added '+createdDate;
-  document.getElementById('cpDeals').innerHTML=dealHTML;
-  document.getElementById('cpEditBtn').onclick=()=>{closeContactProfile();openModal('addContact');};
-  modal.style.display='flex';
+  document.getElementById('cpActivityCount').textContent = '...';
+  loadContactActivities(contactId);
+  document.getElementById('cpEditBtn').onclick = ()=>{ closeContactProfile(); editContact(contactId); };
+  switchCpTab('overview', document.querySelector('.cp-tab[data-tab="overview"]'));
+  document.getElementById('contactProfileModal').style.display='flex';
 }
 
 function closeContactProfile(){
   document.getElementById('contactProfileModal').style.display='none';
+  _cpContactId = null;
+}
+
+function switchCpTab(tab, btn){
+  ['overview','deals','activity'].forEach(t=>{
+    const el = document.getElementById('cpTab-'+t);
+    if(el) el.style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.cp-tab').forEach(b=>{
+    const isActive = b.getAttribute('data-tab')===tab;
+    b.style.color = isActive ? 'var(--cyan)' : 'var(--text3)';
+    b.style.borderBottom = isActive ? '2px solid var(--cyan)' : '2px solid transparent';
+  });
+}
+
+async function loadContactActivities(contactId){
+  try{
+    const {data,error} = await db.from('activities')
+      .select('*').eq('contact_id',contactId)
+      .order('created_at',{ascending:false}).limit(20);
+    _cpActivities = data||[];
+  }catch(e){ _cpActivities = []; }
+  renderContactActivities();
+}
+
+function renderContactActivities(){
+  const el = document.getElementById('cpActivity');
+  if(!el) return;
+  document.getElementById('cpActivityCount').textContent = _cpActivities.length;
+  if(!_cpActivities.length){
+    el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);"><div style="font-size:13px;">No activity logged yet</div></div>';
+    return;
+  }
+  const typeColors = {'Call':'var(--cyan)','Email':'var(--gold)','Meeting':'var(--success)','Note':'var(--text3)','WhatsApp':'#25D366'};
+  const typeIcons = {'Call':'&#128222;','Email':'&#128231;','Meeting':'&#129309;','Note':'&#128221;','WhatsApp':'&#128241;'};
+  el.innerHTML = _cpActivities.map(a=>{
+    const date = a.created_at ? new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+    const color = typeColors[a.type]||'var(--text3)';
+    const icon = typeIcons[a.type]||'&#128204;';
+    return `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--navy-border);">
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.2);border:1px solid ${color};display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">${icon}</div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+          <span style="font-size:11px;font-weight:700;color:${color};">${a.type||'Note'}</span>
+          <span style="font-size:11px;color:var(--text3);">${date}</span>
+        </div>
+        <div style="font-size:13px;color:var(--text2);">${a.description||a.note||a.desc||''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function logActivity(){
+  if(!_cpContactId){ showToast('No contact selected',''); return; }
+  const type = document.getElementById('cpActivityType').value;
+  const note = document.getElementById('cpActivityNote').value.trim();
+  if(!note){ showToast('Please enter a note',''); return; }
+  const {data:{session}} = await db.auth.getSession();
+  const actObj = {
+    contact_id: _cpContactId,
+    type: type,
+    description: note,
+    user_id: session?.user?.id||null,
+    created_at: new Date().toISOString()
+  };
+  const {error} = await db.from('activities').insert(actObj);
+  if(error){
+    _cpActivities.unshift({...actObj, id:'local_'+Date.now()});
+  } else {
+    _cpActivities.unshift(actObj);
+  }
+  document.getElementById('cpActivityNote').value='';
+  renderContactActivities();
+  showToast(type+' logged ✓','success');
+}
+
+function cpAddDeal(){
+  const savedId = _cpContactId;
+  closeContactProfile();
+  openModal('addDeal');
+  setTimeout(()=>{
+    const sel = document.getElementById('md-contact');
+    if(sel && savedId) sel.value = savedId;
+  }, 50);
 }
 
 document.addEventListener('click',e=>{
@@ -2093,53 +2286,294 @@ function whatsappContact(id){
   window.open('https://wa.me/'+waPhone+'?text='+msg,'_blank');
 }
 
+
+// ── DEALS VIEW TOGGLE ─────────────────────────────────────────────────────────
+let dealsViewMode = 'kanban';
+let dealsListFiltered = [];
+let dealsSortCol = 'deal_name';
+let dealsSortDir = 'asc';
+
+function setDealsView(mode){
+  dealsViewMode = mode;
+  const kanbanEl = document.querySelector('#view-deals .panel');
+  const listEl = document.getElementById('dealsListView');
+  const kanbanBtn = document.getElementById('dealViewKanban');
+  const listBtn = document.getElementById('dealViewList');
+  if(mode === 'kanban'){
+    if(kanbanEl) kanbanEl.style.display = '';
+    if(listEl) listEl.style.display = 'none';
+    if(kanbanBtn){ kanbanBtn.style.background='var(--cyan)'; kanbanBtn.style.color='var(--navy-deep)'; }
+    if(listBtn){ listBtn.style.background='transparent'; listBtn.style.color='var(--text3)'; }
+  } else {
+    if(kanbanEl) kanbanEl.style.display = 'none';
+    if(listEl) listEl.style.display = 'block';
+    if(kanbanBtn){ kanbanBtn.style.background='transparent'; kanbanBtn.style.color='var(--text3)'; }
+    if(listBtn){ listBtn.style.background='var(--cyan)'; listBtn.style.color='var(--navy-deep)'; }
+    renderDealsList();
+  }
+}
+
+function renderDealsList(){
+  const q = (document.getElementById('dealSearch')?.value||'').toLowerCase();
+  const stageF = document.getElementById('dealStageFilter')?.value||'';
+  dealsListFiltered = allDeals.filter(d=>{
+    const matchQ = !q || (d.deal_name||d.title||'').toLowerCase().includes(q) || (d.contact_name||'').toLowerCase().includes(q);
+    const matchS = !stageF || (d.stage||'').toLowerCase() === stageF;
+    return matchQ && matchS;
+  });
+  // Sort
+  dealsListFiltered.sort((a,b)=>{
+    let av = dealsSortCol==='deal_value' ? (a.deal_value||a.value||0) : (a[dealsSortCol]||'').toString().toLowerCase();
+    let bv = dealsSortCol==='deal_value' ? (b.deal_value||b.value||0) : (b[dealsSortCol]||'').toString().toLowerCase();
+    if(av<bv) return dealsSortDir==='asc'?-1:1;
+    if(av>bv) return dealsSortDir==='asc'?1:-1;
+    return 0;
+  });
+  const tbody = document.getElementById('dealsListBody');
+  if(!tbody) return;
+  const stageBadge = {
+    'lead':'badge-muted','qualified':'badge-cyan','proposal':'badge-gold',
+    'won':'badge-success','lost':'badge-muted'
+  };
+  tbody.innerHTML = dealsListFiltered.map(d=>{
+    const stage = (d.stage||'lead').toLowerCase();
+    const badge = stageBadge[stage]||'badge-muted';
+    const stageLabel = stage.charAt(0).toUpperCase()+stage.slice(1);
+    return `<tr>
+      <td><div style="font-weight:600;color:var(--text);font-size:0.82rem;">${d.deal_name||d.title||'Untitled'}</div></td>
+      <td style="color:var(--text2);font-size:0.78rem;">${d.contact_name||'—'}</td>
+      <td style="font-weight:700;color:var(--cyan);">${fmt(d.deal_value||d.value||0)}</td>
+      <td><span class="badge ${badge}">${stageLabel}</span></td>
+      <td style="color:var(--text3);font-size:0.75rem;">${d.deal_type||'—'}</td>
+      <td><div style="display:flex;gap:4px;">
+        <button class="btn btn-ghost btn-sm" onclick="openEditDeal('${d.id}')" title="Edit">&#x270F;&#xFE0F;</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteDeal('${d.id}')" title="Delete">&#x1F5D1;</button>
+      </div></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3);">No deals found</td></tr>';
+  const countEl = document.getElementById('dealsListCount');
+  if(countEl) countEl.textContent = dealsListFiltered.length + ' deal' + (dealsListFiltered.length!==1?'s':'');
+}
+
+function filterDealsList(){ renderDealsList(); }
+
+function sortDealsList(col){
+  if(dealsSortCol===col) dealsSortDir = dealsSortDir==='asc'?'desc':'asc';
+  else { dealsSortCol=col; dealsSortDir='asc'; }
+  renderDealsList();
+}
+
+async function deleteDeal(id){
+  const d = allDeals.find(x=>x.id===id);
+  const name = d ? (d.deal_name||d.title||'this deal') : 'this deal';
+  if(!confirm('Delete "'+name+'"? This cannot be undone.')) return;
+  const {error} = await db.from('deals').delete().eq('id',id);
+  if(error){ showToast('Error: '+error.message,''); return; }
+  showToast('Deal deleted','success');
+  await loadData();
+  if(dealsViewMode==='list') renderDealsList();
+}
+
+// Patch showView to render list when switching to deals in list mode
+const _origShowViewDeals = showView;
+function showView(name){
+  _origShowViewDeals(name);
+  if(name==='deals' && dealsViewMode==='list'){
+    setTimeout(renderDealsList, 100);
+  }
+}
+
+
+// ── EMAIL LOG ─────────────────────────────────────────────────────────────────
+let allEmailLog = [];
+
+async function loadEmailLog(){
+  try{
+    const {data:{session}} = await db.auth.getSession();
+    if(!session) return;
+    const {data,error} = await db.from('email_log')
+      .select('*')
+      .order('sent_at',{ascending:false})
+      .limit(100);
+    allEmailLog = data||[];
+  }catch(e){ allEmailLog = []; }
+  renderEmailLog();
+}
+
+function renderEmailLog(){
+  const q = (document.getElementById('emailSearch')?.value||'').toLowerCase();
+  const filtered = allEmailLog.filter(e=>
+    !q ||
+    (e.to_email||'').toLowerCase().includes(q) ||
+    (e.subject||'').toLowerCase().includes(q) ||
+    (e.contact_name||'').toLowerCase().includes(q)
+  );
+  const tbody = document.getElementById('emailLogBody');
+  if(!tbody) return;
+
+  // Update metrics
+  const weekAgo = new Date(Date.now()-7*24*60*60*1000);
+  const thisWeek = allEmailLog.filter(e=>new Date(e.sent_at)>weekAgo).length;
+  const uniqueContacts = new Set(allEmailLog.map(e=>e.to_email).filter(Boolean)).size;
+  const ms = document.getElementById('emailMetricSent'); if(ms) ms.textContent=allEmailLog.length;
+  const mw = document.getElementById('emailMetricWeek'); if(mw) mw.textContent=thisWeek;
+  const mc = document.getElementById('emailMetricContacts'); if(mc) mc.textContent=uniqueContacts;
+
+  if(!filtered.length){
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text3);"><div style="font-size:2rem;margin-bottom:10px;">&#x1F4E7;</div><div style="font-weight:600;color:var(--text2);margin-bottom:6px;">No emails sent yet</div><div style="font-size:0.78rem;">Emails you send via the CRM will appear here.</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(e=>{
+    const date = e.sent_at ? new Date(e.sent_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    return `<tr>
+      <td style="color:var(--text2);font-size:0.8rem;">${e.to_email||'—'}</td>
+      <td style="font-weight:600;color:var(--text);font-size:0.8rem;">${e.subject||'(no subject)'}</td>
+      <td style="color:var(--text3);font-size:0.75rem;">${e.contact_name||'—'}</td>
+      <td style="color:var(--text3);font-size:0.75rem;">${date}</td>
+      <td><span class="badge badge-success">Sent</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterEmailLog(){ renderEmailLog(); }
+
+// Override sendEmailFromModal to also save to email_log table
+const _origSendEmail = sendEmailFromModal;
+async function sendEmailFromModal(){
+  const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
+  const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
+  const msgField = document.querySelector('#modal-sendEmail .fta');
+  const to = toField ? toField.value.trim() : '';
+  const subject = subjectField ? subjectField.value.trim() : '';
+  const message = msgField ? msgField.value.trim() : '';
+  if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
+
+  // Find contact name for the log
+  const matchedContact = allContacts.find(c=>(c.email||'').toLowerCase()===to.toLowerCase());
+  const contactName = matchedContact ? matchedContact.full_name : null;
+
+  // Send via formspree
+  var fd = new FormData();
+  fd.append('email', to);
+  fd.append('_replyto', currentUser?.email||'');
+  fd.append('_subject', subject);
+  fd.append('message', message);
+  fd.append('_template', 'table');
+  try{
+    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+    if(res.ok){
+      // Save to email_log
+      const {data:{session}} = await db.auth.getSession();
+      const logEntry = {
+        to_email: to,
+        subject: subject,
+        message: message,
+        contact_name: contactName,
+        contact_id: matchedContact?.id||null,
+        sent_at: new Date().toISOString(),
+        sent_by: session?.user?.id||null,
+        sent_by_email: currentUser?.email||null
+      };
+      const {error} = await db.from('email_log').insert(logEntry);
+      if(error) console.warn('email_log table not ready:', error.message);
+      else allEmailLog.unshift(logEntry);
+
+      showToast('Email sent ✓','success');
+      closeModal('sendEmail');
+      if(toField) toField.value='';
+      if(subjectField) subjectField.value='';
+      if(msgField) msgField.value='';
+
+      // Refresh email log view if open
+      if(document.getElementById('view-email')?.classList.contains('active')){
+        renderEmailLog();
+      }
+    } else {
+      showToast('Email failed to send. Check your connection.','');
+    }
+  }catch(e){
+    showToast('Email error: '+e.message,'');
+  }
+}
+
+// Load email log when switching to email view
+const _origShowViewEmail = showView;
+function showView(name){
+  _origShowViewEmail(name);
+  if(name==='email') loadEmailLog();
+}
+
 </script>
 
-<!-- CONTACT PROFILE MODAL -->
-<div id="contactProfileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#111827;border:1px solid var(--navy-border);border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6);">
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#0a0e1a,#0d1526);padding:28px 28px 20px;border-radius:20px 20px 0 0;position:relative;">
-      <button onclick="closeContactProfile()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">✕</button>
+<!-- CONTACT PROFILE MODAL — Rich tabbed detail view -->
+<div id="contactProfileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#0F1628;border:1px solid var(--navy-border);border-radius:20px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6);display:flex;flex-direction:column;">
+    <div style="background:linear-gradient(135deg,#0a0e1a,#0d1526);padding:24px 28px 18px;border-radius:20px 20px 0 0;position:relative;flex-shrink:0;">
+      <button onclick="closeContactProfile()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;">&#x2715;</button>
       <div style="display:flex;align-items:center;gap:16px;">
-        <div id="cpInitials" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#0099B0);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#0a0e1a;flex-shrink:0;">—</div>
-        <div>
-          <div id="cpName" style="font-size:20px;font-weight:800;color:#fff;margin-bottom:2px;">—</div>
-          <div id="cpBusiness" style="font-size:13px;color:var(--text3);">—</div>
-          <div id="cpAdded" style="font-size:11px;color:var(--text3);margin-top:4px;"></div>
+        <div id="cpInitials" style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#0099B0);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#0a0e1a;flex-shrink:0;">&mdash;</div>
+        <div style="flex:1;min-width:0;">
+          <div id="cpName" style="font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:2px;">&mdash;</div>
+          <div id="cpBusiness" style="font-size:13px;color:var(--text3);">&mdash;</div>
+          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+            <span id="cpStatusBadge" style="font-size:11px;font-weight:700;padding:2px 10px;border-radius:100px;background:var(--cyan-glow);color:var(--cyan);border:1px solid rgba(0,200,224,0.25);">Lead</span>
+            <span id="cpAdded" style="font-size:11px;color:var(--text3);padding:2px 0;"></span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button id="cpWhatsAppBtn" style="background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.25);border-radius:8px;padding:7px 12px;color:#25D366;font-size:12px;font-weight:600;cursor:pointer;">&#x1F4F1; WhatsApp</button>
+          <button id="cpEmailBtn" style="background:var(--cyan-glow);border:1px solid rgba(0,200,224,0.25);border-radius:8px;padding:7px 12px;color:var(--cyan);font-size:12px;font-weight:600;cursor:pointer;">&#x1F4E7; Email</button>
         </div>
       </div>
     </div>
-    <!-- Contact details -->
-    <div style="padding:20px 28px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
-        <div style="background:var(--navy-light);border-radius:10px;padding:12px 14px;">
-          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Email</div>
-          <div id="cpEmail" style="font-size:13px;color:var(--text);word-break:break-all;">—</div>
+    <div style="display:flex;gap:2px;padding:12px 28px 0;border-bottom:1px solid var(--navy-border);flex-shrink:0;">
+      <button class="cp-tab active" data-tab="overview" onclick="switchCpTab('overview',this)" style="padding:8px 16px;border:none;background:none;color:var(--cyan);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid var(--cyan);font-family:inherit;">Overview</button>
+      <button class="cp-tab" data-tab="deals" onclick="switchCpTab('deals',this)" style="padding:8px 16px;border:none;background:none;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;">Deals <span id="cpDealsCount" style="font-size:11px;background:var(--navy-light);padding:1px 6px;border-radius:100px;margin-left:3px;">0</span></button>
+      <button class="cp-tab" data-tab="activity" onclick="switchCpTab('activity',this)" style="padding:8px 16px;border:none;background:none;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;">Activity <span id="cpActivityCount" style="font-size:11px;background:var(--navy-light);padding:1px 6px;border-radius:100px;margin-left:3px;">0</span></button>
+    </div>
+    <div style="padding:20px 28px;flex:1;overflow-y:auto;">
+      <div id="cpTab-overview">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div style="background:var(--navy-light);border-radius:10px;padding:14px;">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Contact Info</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Email: </span><span id="cpEmail">&mdash;</span></div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Phone: </span><span id="cpPhone">&mdash;</span></div>
+            <div style="font-size:13px;color:var(--text2);"><span style="color:var(--text3);">Location: </span><span id="cpLocation">&mdash;</span></div>
+          </div>
+          <div style="background:var(--navy-light);border-radius:10px;padding:14px;">
+            <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Deal Summary</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Open Deals: </span><span id="cpOpenDeals" style="font-weight:700;color:var(--orange);">0</span></div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Total Value: </span><span id="cpTotalValue" style="font-weight:700;color:var(--success);">$0</span></div>
+            <div style="font-size:13px;color:var(--text2);"><span style="color:var(--text3);">Won: </span><span id="cpWonDeals" style="font-weight:700;color:var(--cyan);">0</span></div>
+          </div>
         </div>
-        <div style="background:var(--navy-light);border-radius:10px;padding:12px 14px;">
-          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Phone</div>
-          <div id="cpPhone" style="font-size:13px;color:var(--text);">—</div>
-        </div>
-        <div style="background:var(--navy-light);border-radius:10px;padding:12px 14px;">
-          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Location</div>
-          <div id="cpLocation" style="font-size:13px;color:var(--text);">—</div>
-        </div>
-        <div style="background:var(--navy-light);border-radius:10px;padding:12px 14px;">
-          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Notes</div>
-          <div id="cpNotes" style="font-size:13px;color:var(--text);max-height:60px;overflow-y:auto;">—</div>
+        <div style="background:var(--navy-light);border-radius:10px;padding:14px;">
+          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Notes</div>
+          <div id="cpNotes" style="font-size:13px;color:var(--text2);line-height:1.6;">No notes</div>
         </div>
       </div>
-      <!-- Deals -->
-      <div style="margin-bottom:20px;">
-        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Deals & Pipeline</div>
-        <div id="cpDeals"></div>
+      <div id="cpTab-deals" style="display:none;"><div id="cpDeals"></div></div>
+      <div id="cpTab-activity" style="display:none;">
+        <div id="cpActivity"><div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;">No activity logged yet</div></div>
+        <div style="margin-top:16px;background:var(--navy-light);border-radius:10px;padding:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Log Activity</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <select id="cpActivityType" style="background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:8px;color:var(--text);font-size:12px;padding:7px 10px;outline:none;font-family:inherit;">
+              <option value="Call">Call</option>
+              <option value="Email">Email</option>
+              <option value="Meeting">Meeting</option>
+              <option value="Note">Note</option>
+              <option value="WhatsApp">WhatsApp</option>
+            </select>
+            <input id="cpActivityNote" placeholder="What happened?" style="flex:1;min-width:160px;background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:8px;color:var(--text);font-size:12px;padding:7px 10px;outline:none;font-family:inherit;"/>
+            <button onclick="logActivity()" style="background:var(--cyan);border:none;border-radius:8px;padding:7px 14px;color:var(--navy-deep);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Log</button>
+          </div>
+        </div>
       </div>
-      <!-- Actions -->
-      <div style="display:flex;gap:10px;">
-        <button id="cpEditBtn" style="flex:1;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:10px;padding:11px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor='var(--navy-border)'">✏️ Edit Contact</button>
-        <button onclick="closeContactProfile();openModal('addDeal');" style="flex:1;background:var(--cyan);border:none;border-radius:10px;padding:11px;color:var(--navy-deep);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">+ Add Deal</button>
-      </div>
+    </div>
+    <div style="padding:14px 28px;border-top:1px solid var(--navy-border);display:flex;gap:8px;flex-shrink:0;">
+      <button id="cpEditBtn" style="flex:1;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:10px;padding:10px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">&#x270F;&#xFE0F; Edit Contact</button>
+      <button onclick="cpAddDeal()" style="flex:1;background:var(--cyan);border:none;border-radius:10px;padding:10px;color:var(--navy-deep);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">+ Add Deal</button>
     </div>
   </div>
 </div>
@@ -2215,5 +2649,6 @@ function whatsappContact(id){
 </div>
 </div>
 </div>
+
 </body>
 </html>
