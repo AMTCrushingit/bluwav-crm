@@ -271,8 +271,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni active" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
 <a class="ni" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Contacts</span><span class="nb" id="navContactsBadge">—</span></a>
 <a class="ni" id="nav-deals" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Deals</span><span class="nb" id="navDealsBadge">—</span></a>
-<a class="ni" onclick="showView('dashboard')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
-<a class="ni" onclick="showView('dashboard')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
+<a class="ni" id="nav-tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
+<a class="ni" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns">Communicate</div>
 <a class="ni" onclick="showView('dashboard')"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
 <a class="ni" onclick="showView('dashboard')"><span class="ni-icon">⚡</span><span class="nav-text">Automations</span></a>
@@ -511,6 +511,54 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel-body"><div class="chart-container" style="height:240px;"><canvas id="reportsChart"></canvas></div></div>
 </div>
 </div><!-- /reports -->
+<!-- ══ TASKS VIEW ══ -->
+<div class="view" id="view-tasks">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+  <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Productivity</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Tasks</h1></div>
+  <button class="btn btn-primary btn-sm" onclick="openModal('addTask')">+ New Task</button>
+</div>
+<div class="panel">
+  <div class="panel-hd"><div class="panel-title">✅ My Tasks</div></div>
+  <div class="panel-body" id="tasksBody">
+    <div id="tasksList"></div>
+    <div id="noTasks" style="text-align:center;padding:40px;color:var(--text3);">
+      <div style="font-size:2.5rem;margin-bottom:12px;">✅</div>
+      <div style="font-size:0.9rem;font-weight:600;color:var(--text2);margin-bottom:6px;">No tasks yet</div>
+      <div style="font-size:0.78rem;margin-bottom:20px;">Add your first task to stay on top of your pipeline.</div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('addTask')">+ Add Task</button>
+    </div>
+  </div>
+</div>
+</div><!-- /tasks -->
+<!-- ══ CALENDAR VIEW ══ -->
+<div class="view" id="view-calendar">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+  <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Schedule</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Calendar</h1></div>
+  <button class="btn btn-primary btn-sm" onclick="openModal('addTask')">+ New Event</button>
+</div>
+<div class="panel">
+  <div class="panel-hd">
+    <div class="panel-title" id="calMonthTitle">📅 Calendar</div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-ghost btn-sm" onclick="calPrev()">← Prev</button>
+      <button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>
+      <button class="btn btn-ghost btn-sm" onclick="calNext()">Next →</button>
+    </div>
+  </div>
+  <div class="panel-body" style="padding:0;">
+    <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--navy-border);">
+      <div style="padding:8px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--navy-border);">Sun</div>
+      <div style="padding:8px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--navy-border);">Mon</div>
+      <div style="padding:8px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--navy-border);">Tue</div>
+      <div style="padding:8px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--navy-border);">Wed</div>
+      <div style="padding:8px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--navy-border);">Thu</div>
+      <div style="padding:8px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--navy-border);">Fri</div>
+      <div style="padding:8px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--navy-border);">Sat</div>
+    </div>
+    <div id="calDays" style="display:grid;grid-template-columns:repeat(7,1fr);"></div>
+  </div>
+</div>
+</div><!-- /calendar -->
 <!-- ══ SETTINGS VIEW ══ -->
 <div class="view" id="view-settings">
 <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Organization</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Settings</h1></div>
@@ -553,6 +601,15 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal">
 <div class="modal-hd"><h3>💼 Add New Deal</h3><button class="modal-close" onclick="closeModal('addDeal')">✕</button></div>
 <div class="modal-body">
+<div class="fg">
+  <label class="fl">Client <span class="req">*</span></label>
+  <select class="fs" id="md-contact">
+    <option value="">-- Select existing client --</option>
+  </select>
+  <div style="margin-top:6px;font-size:0.72rem;color:var(--text3);">
+    Don't see the client? <a href="#" onclick="closeModal('addDeal');openModal('addContact');return false;" style="color:var(--cyan);text-decoration:none;font-weight:600;">+ Add New Contact first</a>
+  </div>
+</div>
 <div class="fg"><label class="fl">Deal Name <span class="req">*</span></label><input class="fi" id="md-name" placeholder="e.g. Website Redesign"/></div>
 <div class="fg-row">
 <div class="fg"><label class="fl">Value ($)</label><input class="fi" id="md-value" placeholder="0" type="number"/></div>
@@ -566,7 +623,6 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </select>
 </div>
 </div>
-<div class="fg-row">
 <div class="fg"><label class="fl">Package Type</label>
 <select class="fs" id="md-type">
 <option value="Ripple">Ripple ($1,800)</option>
@@ -579,12 +635,6 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <option value="White-Label">White-Label</option>
 <option value="Other">Other</option>
 </select>
-</div>
-<div class="fg"><label class="fl">Link to Contact</label>
-<select class="fs" id="md-contact">
-<option value="">No contact linked</option>
-</select>
-</div>
 </div>
 <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="md-notes" placeholder="Deal notes..."></textarea></div>
 </div>
@@ -605,7 +655,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <div class="modal-footer">
 <button class="btn btn-ghost" onclick="closeModal('sendEmail')">Cancel</button>
-<button class="btn btn-primary" onclick="closeModal('sendEmail');showToast('Email sent ✓','success')">Send Email</button>
+<button class="btn btn-primary" onclick="sendEmailFromModal()">Send Email</button>
 </div>
 </div>
 </div>
@@ -621,7 +671,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <div class="modal-footer">
 <button class="btn btn-ghost" onclick="closeModal('addTask')">Cancel</button>
-<button class="btn btn-primary" onclick="closeModal('addTask');showToast('Task added ✓','success')">Add Task</button>
+<button class="btn btn-primary" onclick="saveTask()">Add Task</button>
 </div>
 </div>
 </div>
@@ -923,6 +973,10 @@ async function loadData(){
   renderPipeline();
   renderRecentContacts();
   renderContactsTable();
+  // Refresh leaderboard now that allDeals is populated
+  if(userRole==='manager'||userRole==='admin'){
+    loadLeaderboard();
+  }
 }
 
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
@@ -1003,8 +1057,8 @@ async function loadLeaderboard(){
       lb=profiles.map(p=>({
         name:p.full_name||'Agent',
         deals:allDeals.filter(d=>d.agent_id===p.id).length,
-        won:allDeals.filter(d=>d.agent_id===p.id&&d.stage==='won').length,
-        val:allDeals.filter(d=>d.agent_id===p.id).reduce((s,d)=>s+(d.deal_value||0),0),
+        won:allDeals.filter(d=>d.agent_id===p.id&&(d.stage||'').toLowerCase()==='won').length,
+        val:allDeals.filter(d=>d.agent_id===p.id).reduce((s,d)=>s+(d.deal_value||d.value||0),0),
         color:getColor(p.full_name||p.id)
       })).sort((a,b)=>b.val-a.val);
     }
@@ -1084,9 +1138,9 @@ function renderContactsTable(){
       <td style="color:var(--text3);font-size:0.75rem;">${date}</td>
       <td style="color:${valColor};font-weight:600;">${val?fmt(val):'—'}</td>
       <td><div style="display:flex;gap:4px;">
-        <button class="btn btn-ghost btn-sm" onclick="openModal('sendEmail')" title="Email">📧</button>
-        <button class="btn btn-ghost btn-sm" title="Edit">✏️</button>
-        <button class="btn btn-danger btn-sm" title="Delete">🗑</button>
+        <button class="btn btn-ghost btn-sm" onclick="emailContact('${c.id}')" title="Email">📧</button>
+        <button class="btn btn-ghost btn-sm" onclick="editContact('${c.id}')" title="Edit">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteContact('${c.id}')" title="Delete">🗑</button>
       </div></td>
     </tr>`;
   }).join('');
@@ -1127,30 +1181,24 @@ function sortByCol(th){
 async function updateContactStatus(sel){
   const id=sel.getAttribute('data-id');
   const newStatus=sel.value;
-  const prevStatus=sel.getAttribute('data-prev')||newStatus;
+  const prevStatus=sel.getAttribute('data-prev')||sel.value;
   sel.setAttribute('data-prev',newStatus);
-  // Try pipeline_status first, fall back to status
-  var updateObj = {};
-  updateObj['island'] = (updateObj['island']||null); // pipeline_status not in schema — skip
-  // Status update skipped — column not in contacts schema
-  var {error}=await db.from('contacts').update(updateObj).eq('id',id);
+  // Directly update status column in contacts table
+  const {error}=await db.from('contacts').update({status:newStatus}).eq('id',id);
   if(error){
-    // Column doesn't exist, try status
-    var r2 = await db.from('contacts').update({status:newStatus}).eq('id',id);
-    error = r2.error;
-  }
-  if(error){
-    showToast('Error: '+error.message,'');
+    showToast('Error saving status: '+error.message,'');
     sel.value=prevStatus;
+    sel.setAttribute('data-prev',prevStatus);
     return;
   }
-  // Update local data
+  // Update local data arrays so UI reflects change immediately
   const contact=allContacts.find(c=>c.id===id);
   if(contact){contact.status=newStatus;}
-  // Update filtered contacts too
   const fc=filteredContacts.find(c=>c.id===id);
   if(fc){fc.status=newStatus;}
-  showToast('Status: '+newStatus+' ✓','success');
+  showToast('Status updated: '+newStatus+' ✓','success');
+  // Re-render so badge/select reflects new status without full reload
+  renderContactsTable();
 }
 
 function filterContacts(){
@@ -1373,8 +1421,7 @@ async function saveContact(){
     return;
   }
   showToast('Contact saved ✓','success');
-  notifyAdmin('👤 New Contact Added — BluWav CRM',
-    'Name: '+contact.full_name+'\nEmail: '+contact.email+'\nBusiness: '+contact.business_name+'\nSource: '+source+'\nLead Code: '+leadCode+'\nTime: '+new Date().toLocaleString());
+  // Admin notification removed per user request
   closeModal('addContact');
   // Clear form
   ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes'].forEach(id=>{
@@ -1396,11 +1443,18 @@ async function saveDeal(){
   // Build deal object — only columns that exist in Supabase deals table
   var dealObj = {
     title: name,
+    deal_name: name,
     value: val,
+    deal_value: val,
     stage: stage,
     agent_id: currentUser?.id,
   };
   if(contactId) dealObj.contact_id = contactId;
+  // Attach contact name for display
+  if(contactId){
+    const linkedContact = allContacts.find(c=>c.id===contactId);
+    if(linkedContact) dealObj.contact_name = linkedContact.full_name||'';
+  }
   var notes = document.getElementById('md-notes')?.value.trim();
   if(notes) dealObj.notes = notes;
 
@@ -1494,12 +1548,385 @@ function startPresence() {
 async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 
 // ── SESSION TIMEOUT (5 min) ───────────────────────────────────────────────────
+// Shows a lock screen overlay after 5 min inactivity.
+// User re-enters password to unlock — status/data preserved in DB.
 (function(){
   let timer;
-  function reset(){clearTimeout(timer);timer=setTimeout(async()=>{sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';},5*60*1000);}
+  let locked = false;
+
+  function showLockScreen(){
+    if(locked) return;
+    locked = true;
+    const overlay = document.createElement('div');
+    overlay.id = 'lockOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(10,14,26,0.97);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);';
+    overlay.innerHTML = `
+      <div style="background:#0F1628;border:1px solid var(--navy-border);border-radius:20px;padding:36px 40px;width:100%;max-width:360px;text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🔒</div>
+        <h2 style="font-family:var(--font-display);font-size:1.3rem;color:#fff;margin-bottom:6px;">Session Locked</h2>
+        <p style="font-size:0.82rem;color:var(--text3);margin-bottom:24px;">5 minutes of inactivity. Enter your password to continue.</p>
+        <input id="lockEmail" type="email" placeholder="Email" style="width:100%;background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:10px;color:#fff;font-size:0.85rem;padding:10px 14px;outline:none;margin-bottom:10px;font-family:inherit;" readonly/>
+        <input id="lockPassword" type="password" placeholder="Password" style="width:100%;background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:10px;color:#fff;font-size:0.85rem;padding:10px 14px;outline:none;margin-bottom:16px;font-family:inherit;"/>
+        <div id="lockError" style="color:#ef4444;font-size:0.78rem;margin-bottom:10px;display:none;"></div>
+        <button id="lockUnlockBtn" style="width:100%;background:#00C8E0;color:#0a0e1a;border:none;border-radius:10px;padding:12px;font-size:0.88rem;font-weight:700;cursor:pointer;font-family:inherit;">Unlock →</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    // Pre-fill email
+    if(currentUser && currentUser.email){
+      document.getElementById('lockEmail').value = currentUser.email;
+    }
+    document.getElementById('lockPassword').focus();
+    document.getElementById('lockUnlockBtn').addEventListener('click', async function(){
+      const email = document.getElementById('lockEmail').value;
+      const pw = document.getElementById('lockPassword').value;
+      const errEl = document.getElementById('lockError');
+      if(!pw){errEl.textContent='Please enter your password.';errEl.style.display='block';return;}
+      this.textContent = 'Unlocking...';
+      this.disabled = true;
+      const {error} = await db.auth.signInWithPassword({email, password: pw});
+      if(error){
+        errEl.textContent = 'Incorrect password. Try again.';
+        errEl.style.display = 'block';
+        this.textContent = 'Unlock →';
+        this.disabled = false;
+        document.getElementById('lockPassword').value = '';
+        return;
+      }
+      // Unlock — remove overlay, restore activity tracking
+      overlay.remove();
+      locked = false;
+      touchActivity();
+      reset();
+      showToast('Session unlocked ✓','success');
+    });
+    document.getElementById('lockPassword').addEventListener('keydown', function(e){
+      if(e.key==='Enter') document.getElementById('lockUnlockBtn').click();
+    });
+  }
+
+  function reset(){
+    clearTimeout(timer);
+    timer = setTimeout(showLockScreen, 5*60*1000);
+  }
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(e=>document.addEventListener(e,reset,true));
   reset();
 })();
+
+
+// ── EDIT CONTACT ──────────────────────────────────────────────────────────────
+function editContact(id){
+  const c = allContacts.find(x=>x.id===id);
+  if(!c){showToast('Contact not found','');return;}
+  document.getElementById('ec-id').value = c.id;
+  const nameParts = (c.full_name||'').split(' ');
+  document.getElementById('ec-first').value = nameParts[0]||'';
+  document.getElementById('ec-last').value = nameParts.slice(1).join(' ')||'';
+  document.getElementById('ec-email').value = c.email||'';
+  document.getElementById('ec-phone').value = c.phone||c.whatsapp||'';
+  document.getElementById('ec-biz').value = c.business_name||'';
+  document.getElementById('ec-location').value = c.island||'';
+  document.getElementById('ec-notes').value = c.notes||'';
+  const statusEl = document.getElementById('ec-status');
+  if(statusEl) statusEl.value = c.status||'Lead';
+  document.getElementById('editContactError').style.display='none';
+  document.getElementById('modal-editContact').classList.add('open');
+}
+
+async function saveEditContact(){
+  const id = document.getElementById('ec-id').value;
+  const first = document.getElementById('ec-first').value.trim();
+  const last = document.getElementById('ec-last').value.trim();
+  const email = document.getElementById('ec-email').value.trim();
+  const errEl = document.getElementById('editContactError');
+  if(!first||!email){errEl.textContent='First name and email are required.';errEl.style.display='block';return;}
+  const updates = {
+    full_name: (first+' '+last).trim(),
+    email: email,
+    phone: document.getElementById('ec-phone').value.trim()||null,
+    business_name: document.getElementById('ec-biz').value.trim()||null,
+    island: document.getElementById('ec-location').value.trim()||null,
+    notes: document.getElementById('ec-notes').value.trim()||null,
+    status: document.getElementById('ec-status').value||'Lead'
+  };
+  const {error} = await db.from('contacts').update(updates).eq('id',id);
+  if(error){errEl.textContent='Error: '+error.message;errEl.style.display='block';return;}
+  showToast('Contact updated ✓','success');
+  closeModal('editContact');
+  await loadData();
+  filteredContacts=allContacts.slice();
+  sortContacts();
+}
+
+// ── DELETE CONTACT ────────────────────────────────────────────────────────────
+async function deleteContact(id){
+  const c = allContacts.find(x=>x.id===id);
+  const name = c ? c.full_name : 'this contact';
+  if(!confirm('Delete '+name+'? This cannot be undone.')) return;
+  const {error} = await db.from('contacts').delete().eq('id',id);
+  if(error){showToast('Error: '+error.message,'');return;}
+  showToast('Contact deleted','success');
+  await loadData();
+  filteredContacts=allContacts.slice();
+  sortContacts();
+}
+
+// ── EMAIL CONTACT ─────────────────────────────────────────────────────────────
+function emailContact(id){
+  const c = allContacts.find(x=>x.id===id);
+  openModal('sendEmail');
+  // Pre-fill the To field if it exists
+  setTimeout(()=>{
+    const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
+    if(toField && c) toField.value = c.email||'';
+  },50);
+}
+
+// ── EDIT DEAL ─────────────────────────────────────────────────────────────────
+function openEditDeal(dealId){
+  const d = allDeals.find(x=>x.id===dealId);
+  if(!d){showToast('Deal not found','');return;}
+  document.getElementById('ed-id').value = d.id;
+  document.getElementById('ed-name').value = d.deal_name||d.title||'';
+  document.getElementById('ed-value').value = d.deal_value||d.value||0;
+  const stageEl = document.getElementById('ed-stage');
+  if(stageEl) stageEl.value = (d.stage||'lead').toLowerCase();
+  const typeEl = document.getElementById('ed-type');
+  if(typeEl) typeEl.value = d.deal_type||'Ripple';
+  document.getElementById('ed-notes').value = d.notes||'';
+  // Populate contact dropdown
+  const sel = document.getElementById('ed-contact');
+  if(sel){
+    sel.innerHTML = '<option value="">-- Select existing client --</option>' +
+      allContacts.map(c=>`<option value="${c.id}" ${c.id===d.contact_id?'selected':''}>${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
+  }
+  document.getElementById('editDealError').style.display='none';
+  document.getElementById('modal-editDeal').classList.add('open');
+}
+
+async function updateDeal(){
+  const id = document.getElementById('ed-id').value;
+  const name = document.getElementById('ed-name').value.trim();
+  const errEl = document.getElementById('editDealError');
+  if(!name){errEl.textContent='Deal name is required.';errEl.style.display='block';return;}
+  const val = parseFloat(document.getElementById('ed-value').value)||0;
+  const stage = document.getElementById('ed-stage').value||'lead';
+  const contactId = document.getElementById('ed-contact').value||null;
+  const dealType = document.getElementById('ed-type').value||'Ripple';
+  const notes = document.getElementById('ed-notes').value.trim();
+  const updates = {title:name, value:val, stage:stage};
+  if(contactId) updates.contact_id = contactId;
+  if(notes) updates.notes = notes;
+  const {error} = await db.from('deals').update(updates).eq('id',id);
+  if(error){errEl.textContent='Error: '+error.message;errEl.style.display='block';return;}
+  showToast('Deal updated ✓','success');
+  closeModal('editDeal');
+  await loadData();
+}
+
+// ── TASKS ─────────────────────────────────────────────────────────────────────
+let allTasks = [];
+
+async function loadTasks(){
+  const {data} = await db.from('tasks').select('*').order('created_at',{ascending:false}).catch(()=>({data:[]}));
+  allTasks = data||[];
+  renderTasks();
+}
+
+function renderTasks(){
+  const list = document.getElementById('tasksList');
+  const noTasks = document.getElementById('noTasks');
+  if(!list) return;
+  if(!allTasks.length){
+    list.innerHTML='';
+    if(noTasks) noTasks.style.display='block';
+    return;
+  }
+  if(noTasks) noTasks.style.display='none';
+  list.innerHTML = allTasks.map(t=>{
+    const due = t.due_date ? new Date(t.due_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+    const done = t.completed||false;
+    const priColor = t.priority==='High'?'var(--error)':t.priority==='Medium'?'var(--warning)':'var(--success)';
+    return `<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--navy-border);${done?'opacity:0.5':''}">
+      <input type="checkbox" ${done?'checked':''} onchange="toggleTask('${t.id}',this.checked)"
+        style="width:16px;height:16px;accent-color:var(--cyan);cursor:pointer;flex-shrink:0;"/>
+      <div style="flex:1;">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--text);${done?'text-decoration:line-through':''};">${t.title||'Untitled Task'}</div>
+        <div style="font-size:0.7rem;color:var(--text3);margin-top:2px;">Due: ${due}</div>
+      </div>
+      <span style="font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:100px;background:rgba(0,0,0,0.2);color:${priColor};border:1px solid ${priColor};">${t.priority||'Medium'}</span>
+      <button onclick="deleteTask('${t.id}')" style="background:none;border:none;color:var(--error);cursor:pointer;font-size:0.8rem;padding:4px;" title="Delete">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+async function toggleTask(id, completed){
+  await db.from('tasks').update({completed}).eq('id',id).catch(()=>{});
+  const t = allTasks.find(x=>x.id===id);
+  if(t) t.completed = completed;
+  renderTasks();
+}
+
+async function deleteTask(id){
+  if(!confirm('Delete this task?')) return;
+  await db.from('tasks').delete().eq('id',id).catch(()=>{});
+  allTasks = allTasks.filter(x=>x.id!==id);
+  renderTasks();
+}
+
+// Override addTask modal save to actually persist
+async function saveTask(){
+  const titleEl = document.querySelector('#modal-addTask .fi[placeholder="Task description"]');
+  const dateEl = document.querySelector('#modal-addTask input[type="date"]');
+  const priEl = document.querySelector('#modal-addTask .fs');
+  const title = titleEl ? titleEl.value.trim() : '';
+  if(!title){showToast('Please enter a task title','');return;}
+  const taskObj = {
+    title: title,
+    due_date: dateEl&&dateEl.value ? dateEl.value : null,
+    priority: priEl ? priEl.value : 'Medium',
+    completed: false,
+    user_id: currentUser?.id
+  };
+  const {error} = await db.from('tasks').insert(taskObj).catch(e=>({error:e}));
+  if(error){
+    // tasks table may not exist yet — store locally
+    allTasks.unshift({...taskObj, id:'local_'+Date.now()});
+    renderTasks();
+  } else {
+    await loadTasks();
+  }
+  showToast('Task added ✓','success');
+  closeModal('addTask');
+  if(titleEl) titleEl.value='';
+  if(dateEl) dateEl.value='';
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function renderCalendar(){
+  const title = document.getElementById('calMonthTitle');
+  const daysEl = document.getElementById('calDays');
+  if(!daysEl) return;
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  if(title) title.textContent = '📅 '+months[calMonth]+' '+calYear;
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear()===calYear && today.getMonth()===calMonth;
+  let html = '';
+  // Empty cells before first day
+  for(let i=0;i<firstDay;i++){
+    html += `<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:var(--navy-deep);opacity:0.3;"></div>`;
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const isToday = isCurrentMonth && d===today.getDate();
+    const dayTasks = allTasks.filter(t=>{
+      if(!t.due_date) return false;
+      const td = new Date(t.due_date);
+      return td.getFullYear()===calYear && td.getMonth()===calMonth && td.getDate()===d;
+    });
+    html += `<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:${isToday?'rgba(0,200,224,0.06)':'var(--navy-deep)'};cursor:pointer;" onclick="openModal('addTask')">
+      <div style="font-size:0.75rem;font-weight:${isToday?'800':'500'};color:${isToday?'var(--cyan)':'var(--text3)'};margin-bottom:4px;${isToday?'background:var(--cyan);color:var(--navy-deep);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;':''}">${d}</div>
+      ${dayTasks.map(t=>`<div style="font-size:0.62rem;background:var(--cyan-glow);border:1px solid rgba(0,200,224,0.2);border-radius:4px;padding:2px 5px;margin-bottom:2px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.title}</div>`).join('')}
+    </div>`;
+  }
+  daysEl.innerHTML = html;
+}
+
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+function calToday(){ calYear=new Date().getFullYear(); calMonth=new Date().getMonth(); renderCalendar(); }
+
+// ── OVERRIDE showView to load tasks/calendar data ─────────────────────────────
+const _origShowView = showView;
+function showView(name){
+  _origShowView(name);
+  if(name==='tasks'){
+    loadTasks();
+  }
+  if(name==='calendar'){
+    loadTasks().then(()=>renderCalendar());
+  }
+}
+
+// ── OVERRIDE addTask modal button to use saveTask() ───────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  const addTaskBtn = document.querySelector('#modal-addTask .btn-primary');
+  if(addTaskBtn){
+    addTaskBtn.onclick = saveTask;
+  }
+});
+
+// ── ADD EDIT BUTTON TO DEAL CARDS in renderPipeline ──────────────────────────
+// Patch renderPipeline to include edit buttons on deal cards
+const _origRenderPipeline = renderPipeline;
+function renderPipeline(){
+  var stageMap = [
+    {key:'lead',      id:'Lead'},
+    {key:'qualified', id:'Qualified'},
+    {key:'proposal',  id:'Proposal'},
+    {key:'won',       id:'Won'}
+  ];
+  stageMap.forEach(function(s){
+    var stage = s.key;
+    var stageId = s.id;
+    const deals = allDeals.filter(d=>(d.stage||'').toLowerCase()===stage);
+    ['col','dCol'].forEach(prefix=>{
+      const el=document.getElementById(prefix+stageId);
+      if(el) el.textContent=deals.length;
+    });
+    ['deals','dDeals'].forEach(prefix=>{
+      const el=document.getElementById(prefix+stageId);
+      if(!el) return;
+      el.innerHTML=deals.slice(0,5).map(d=>`
+        <div class="deal" style="cursor:pointer;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div class="deal-name" onclick="showView('deals')">${d.deal_name||d.title||'Untitled'}</div>
+            <button onclick="openEditDeal('${d.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.7rem;padding:0 0 0 6px;flex-shrink:0;" title="Edit deal">✏️</button>
+          </div>
+          <div class="deal-co">${d.contact_name||'—'}</div>
+          <div class="deal-val">${fmt(d.deal_value||d.value||0)}</div>
+          <div class="deal-date">${stage==='won'?'✓ Won':'Active'}</div>
+        </div>`).join('')||`<div style="text-align:center;padding:12px;color:var(--text3);font-size:0.75rem;">No deals</div>`;
+    });
+  });
+}
+
+
+// ── SEND EMAIL FROM MODAL ─────────────────────────────────────────────────────
+async function sendEmailFromModal(){
+  const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
+  const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
+  const msgField = document.querySelector('#modal-sendEmail .fta');
+  const to = toField ? toField.value.trim() : '';
+  const subject = subjectField ? subjectField.value.trim() : '';
+  const message = msgField ? msgField.value.trim() : '';
+  if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
+  // Send via formspree
+  var fd = new FormData();
+  fd.append('email', to);
+  fd.append('_replyto', currentUser?.email||'');
+  fd.append('_subject', subject);
+  fd.append('message', message);
+  fd.append('_template', 'table');
+  try{
+    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+    if(res.ok){
+      showToast('Email sent ✓','success');
+      closeModal('sendEmail');
+      if(toField) toField.value='';
+      if(subjectField) subjectField.value='';
+      if(msgField) msgField.value='';
+    } else {
+      showToast('Email failed to send. Check your connection.','');
+    }
+  }catch(e){
+    showToast('Email error: '+e.message,'');
+  }
+}
+
 </script>
 
 <!-- CONTACT PROFILE MODAL -->
@@ -1549,6 +1976,78 @@ async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.s
       </div>
     </div>
   </div>
+</div>
+
+<!-- EDIT DEAL MODAL -->
+<div class="modal-overlay" id="modal-editDeal">
+<div class="modal">
+<div class="modal-hd"><h3>✏️ Edit Deal</h3><button class="modal-close" onclick="closeModal('editDeal')">✕</button></div>
+<div class="modal-body">
+<input type="hidden" id="ed-id"/>
+<div class="fg">
+  <label class="fl">Client</label>
+  <select class="fs" id="ed-contact">
+    <option value="">-- Select existing client --</option>
+  </select>
+</div>
+<div class="fg"><label class="fl">Deal Name <span class="req">*</span></label><input class="fi" id="ed-name" placeholder="e.g. Website Redesign"/></div>
+<div class="fg-row">
+<div class="fg"><label class="fl">Value ($)</label><input class="fi" id="ed-value" placeholder="0" type="number"/></div>
+<div class="fg"><label class="fl">Stage</label>
+<select class="fs" id="ed-stage">
+<option value="lead">Lead</option>
+<option value="qualified">Qualified</option>
+<option value="proposal">Proposal</option>
+<option value="won">Won</option>
+<option value="lost">Lost</option>
+</select>
+</div>
+</div>
+<div class="fg"><label class="fl">Package Type</label>
+<select class="fs" id="ed-type">
+<option value="Ripple">Ripple ($1,800)</option>
+<option value="Current">Current ($3,000)</option>
+<option value="Surge">Surge ($5,000+)</option>
+<option value="CRM Starter">CRM Starter</option>
+<option value="CRM Lite">CRM Lite</option>
+<option value="CRM Premium">CRM Premium</option>
+<option value="CRM Enterprise">CRM Enterprise</option>
+<option value="White-Label">White-Label</option>
+<option value="Other">Other</option>
+</select>
+</div>
+<div class="fg"><label class="fl">Notes</label><textarea class="fta" id="ed-notes" placeholder="Deal notes..."></textarea></div>
+</div>
+<div class="modal-footer">
+<div id="editDealError" style="display:none;color:#ef4444;font-size:12px;font-weight:700;padding:8px 0;"></div>
+<button class="btn btn-ghost" onclick="closeModal('editDeal')">Cancel</button>
+<button class="btn btn-primary" onclick="updateDeal()">Update Deal</button>
+</div>
+</div>
+</div>
+
+<!-- EDIT CONTACT MODAL -->
+<div class="modal-overlay" id="modal-editContact">
+<div class="modal">
+<div class="modal-hd"><h3>✏️ Edit Contact</h3><button class="modal-close" onclick="closeModal('editContact')">✕</button></div>
+<div class="modal-body">
+<input type="hidden" id="ec-id"/>
+<div class="fg-row"><div class="fg"><label class="fl">First Name <span class="req">*</span></label><input class="fi" id="ec-first" placeholder="First name"/></div><div class="fg"><label class="fl">Last Name</label><input class="fi" id="ec-last" placeholder="Last name"/></div></div>
+<div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="ec-email" placeholder="email@company.com" type="email"/></div>
+<div class="fg"><label class="fl">Phone / WhatsApp</label><input class="fi" id="ec-phone" placeholder="+1 (xxx) xxx-xxxx" type="tel"/></div>
+<div class="fg"><label class="fl">Business Name</label><input class="fi" id="ec-biz" placeholder="Company name"/></div>
+<div class="fg-row">
+<div class="fg"><label class="fl">Status</label><select class="fs" id="ec-status"><option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal">Proposal</option><option value="Won">Won</option><option value="Inactive">Inactive</option></select></div>
+<div class="fg"><label class="fl">Location</label><input class="fi" id="ec-location" placeholder="City, Country"/></div>
+</div>
+<div class="fg"><label class="fl">Notes</label><textarea class="fta" id="ec-notes" placeholder="Any notes..."></textarea></div>
+</div>
+<div class="modal-footer">
+<div id="editContactError" style="display:none;color:#ef4444;font-size:12px;font-weight:700;padding:8px 0;"></div>
+<button class="btn btn-ghost" onclick="closeModal('editContact')">Cancel</button>
+<button class="btn btn-primary" onclick="saveEditContact()">Save Changes</button>
+</div>
+</div>
 </div>
 </body>
 </html>
