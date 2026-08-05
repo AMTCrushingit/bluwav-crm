@@ -358,9 +358,9 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </nav>
 <div class="sb-bottom">
 <div class="trial-w">
-<div class="tw-label">🎉 Free Trial</div>
-<div class="tw-days">14 days</div>
-<div class="tw-sub">remaining · No card needed</div>
+<div class="tw-label">&#x23F1; 14-Day Free Trial</div>
+<div class="tw-days">14</div>
+<div class="tw-sub">days remaining · No card needed</div>
 <div class="tw-bar"><div class="tw-fill"></div></div>
 </div>
 <div class="user-card" onclick="showView('settings')">
@@ -1129,7 +1129,7 @@ async function loadData(){
 
   // Deals — matches dashboard.html exactly
   let deals=[];
-  let dq = db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,contact_id,contact_name,deal_type,created_at,close_date,probability,won_lost_reason,notes').order('created_at',{ascending:false});
+  let dq = db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,contact_id,deal_type,created_at,close_date,probability,won_lost_reason,notes').order('created_at',{ascending:false});
   if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
     dq = dq.eq('agent_id', viewingUserId);
   } else if(userRole==='salesperson'){
@@ -1143,6 +1143,7 @@ async function loadData(){
     deal_type:d.deal_type||'Ripple',
     stage:d.stage||'lead',
     agent_id:d.agent_id||d.created_by||null,
+    contact_name:(allContacts.find(c=>c.id===d.contact_id)||{}).full_name||null,
     close_date:d.close_date||null,
     probability:d.probability||null,
     won_lost_reason:d.won_lost_reason||null,
@@ -1778,11 +1779,6 @@ async function saveDeal(){
     agent_id: currentUser?.id,
   };
   if(contactId) dealObj.contact_id = contactId;
-  // Attach contact name for display
-  if(contactId){
-    const linkedContact = allContacts.find(c=>c.id===contactId);
-    if(linkedContact) dealObj.contact_name = linkedContact.full_name||'';
-  }
   var notes = document.getElementById('md-notes')?.value.trim();
   if(notes) dealObj.notes = notes;
   var closeDate = document.getElementById('md-close-date')?.value||null;
@@ -1790,17 +1786,25 @@ async function saveDeal(){
   var probability = document.getElementById('md-probability')?.value;
   if(probability) dealObj.probability = parseInt(probability);
 
+  // Ensure profile exists before inserting deal (agent_id FK constraint)
+  try{
+    await db.from('profiles').upsert({
+      id: currentUser.id,
+      full_name: currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User',
+      role: 'salesperson'
+    }, {onConflict:'id', ignoreDuplicates:true});
+  }catch(pe){ console.warn('Profile upsert warning:', pe.message); }
+
   var {data:dealData, error} = await db.from('deals').insert(dealObj).select();
   if(error){
     console.error('Save deal error:', error);
-    // Show specific error in modal
     var errEl = document.getElementById('dealError');
     if(errEl){ errEl.textContent = 'Error: ' + error.message; errEl.style.display='block'; }
     showToast('Deal error: '+error.message,'');
     return;
   }
   showToast('Deal saved ✓','success');
-  notifyAdmin('💼 New Deal Added — BluWav CRM',
+  notifyAdmin('💼 New Deal Added — BluWav CRM (14-Day Trial)',
     'Deal: '+name+'\nValue: $'+val+'\nStage: '+stage+'\nType: '+dealType+'\nAgent: '+currentUser?.email+'\nTime: '+new Date().toLocaleString());
   closeModal('addDeal');
   ['md-name','md-value','md-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
