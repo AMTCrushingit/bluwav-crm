@@ -93,7 +93,15 @@
     .toggle-slider::before{content:'';position:absolute;width:20px;height:20px;left:2px;top:2px;background:var(--cyan);border-radius:50%;transition:all 0.2s;}
     .toggle-switch input:checked+.toggle-slider::before{transform:translateX(22px);}
     .save-badge{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;}
-    .trial-note{background:rgba(0,194,209,0.06);border:1px solid rgba(0,194,209,0.15);border-radius:10px;padding:10px 16px;font-size:12px;color:var(--text2);text-align:center;margin-bottom:24px;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+@keyframes trialPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4);}70%{box-shadow:0 0 0 8px rgba(239,68,68,0);}}
+.trial-days-circle.urgent{border-color:rgba(239,68,68,0.5)!important;background:rgba(239,68,68,0.1)!important;animation:trialPulse 2s infinite;}
+.trial-days-circle.urgent .num{color:#ef4444!important;}
+.trial-days-circle.urgent .lbl{color:#ef4444!important;}
+.trial-days-circle.warning{border-color:rgba(245,158,11,0.5)!important;background:rgba(245,158,11,0.1)!important;}
+.trial-days-circle.warning .num{color:var(--gold)!important;}
+.trial-days-circle.warning .lbl{color:var(--gold)!important;}
+.trial-note{background:rgba(0,194,209,0.06);border:1px solid rgba(0,194,209,0.15);border-radius:10px;padding:10px 16px;font-size:12px;color:var(--text2);text-align:center;margin-bottom:24px;}
     .trial-note strong{color:var(--cyan);}
 
     /* PLAN CARDS */
@@ -256,17 +264,33 @@
 <!-- TRIAL BANNER -->
 <div class="trial-banner">
 <div class="trial-left">
-<div class="trial-days-circle"><div class="num" id="trialDays">14</div><div class="lbl">Days</div></div>
+<div class="trial-days-circle" id="trialCircle">
+  <div class="num" id="trialDays">14</div>
+  <div class="lbl">Days</div>
+</div>
 <div class="trial-info">
-<h3>🎉 Your 14-Day Free Trial is Active</h3>
-<p>Full access to all BluWav CRM features — no credit card required</p>
-<div class="trial-progress">
-<div class="trial-bar"><div class="trial-fill" id="trialFill" style="width:100%;"></div></div>
-<div class="trial-dates"><span id="trialStart">Started today</span><span id="trialEnd">Ends in 14 days — no card needed</span></div>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+    <h3 style="margin:0;" id="trialHeading">&#x1F389; Your 14-Day Free Trial is Active</h3>
+    <span id="trialUrgencyBadge" style="display:none;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);animation:pulse 1.5s infinite;">&#x26A0;&#xFE0F; EXPIRING SOON</span>
+  </div>
+  <p id="trialSubtext">Full access to all BluWav CRM features &#x2014; no credit card required</p>
+  <div class="trial-progress">
+    <div class="trial-bar"><div class="trial-fill" id="trialFill" style="width:100%;"></div></div>
+    <div class="trial-dates">
+      <span id="trialStart">Started today</span>
+      <span id="trialEnd" style="font-weight:600;">Ends in 14 days &#x2014; no card needed</span>
+    </div>
+  </div>
+  <div id="trialHoursRow" style="display:none;margin-top:6px;">
+    <span style="font-size:11px;color:var(--text3);">Time remaining: </span>
+    <span id="trialHoursCount" style="font-size:12px;font-weight:700;color:#ef4444;font-variant-numeric:tabular-nums;"></span>
+  </div>
 </div>
 </div>
+<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+  <button class="btn-activate" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">&#x26A1; Activate Plan Now</button>
+  <div id="trialCta" style="font-size:11px;color:var(--text3);text-align:right;max-width:180px;"></div>
 </div>
-<button class="btn-activate" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">⚡ Activate Plan Now</button>
 </div>
 <!-- CURRENT PLAN + PAYMENT -->
 <div class="plan-info-grid">
@@ -674,19 +698,70 @@ async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');a
   document.getElementById('cardName').value=name;
   if(role==='manager'||role==='owner')document.getElementById('adminNav').style.display='block';
 
-  // Trial countdown (14 days)
+  // ── TRIAL COUNTDOWN (14 days) ─────────────────────────────────────────────
   const TRIAL_DAYS=14;
   let start=localStorage.getItem('bw_trial_start');
   if(!start){start=Date.now();localStorage.setItem('bw_trial_start',start);}
   else start=parseInt(start);
-  const end=start+TRIAL_DAYS*86400000;
-  const remaining=Math.max(0,Math.ceil((end-Date.now())/86400000));
-  const pct=(remaining/TRIAL_DAYS)*100;
-  document.getElementById('trialDays').textContent=remaining;
-  document.getElementById('trialFill').style.width=pct+'%';
-  document.getElementById('trialStart').textContent='Started '+new Date(start).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  document.getElementById('trialEnd').textContent='Ends '+new Date(end).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  document.getElementById('trialEndDate').textContent=new Date(end).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const trialEnd=start+TRIAL_DAYS*86400000;
+
+  function updateTrialCountdown(){
+    const now=Date.now();
+    const msLeft=Math.max(0,trialEnd-now);
+    const daysLeft=Math.ceil(msLeft/86400000);
+    const pct=(daysLeft/TRIAL_DAYS)*100;
+    const circle=document.getElementById('trialCircle');
+    const badge=document.getElementById('trialUrgencyBadge');
+    const heading=document.getElementById('trialHeading');
+    const subtext=document.getElementById('trialSubtext');
+    const ctaEl=document.getElementById('trialCta');
+    const endEl=document.getElementById('trialEnd');
+    const hoursRow=document.getElementById('trialHoursRow');
+    const hoursCount=document.getElementById('trialHoursCount');
+    const fillEl=document.getElementById('trialFill');
+
+    document.getElementById('trialDays').textContent=daysLeft;
+    if(fillEl) fillEl.style.width=pct+'%';
+    document.getElementById('trialStart').textContent='Started '+new Date(start).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    document.getElementById('trialEndDate').textContent=new Date(trialEnd).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+    if(daysLeft<=0){
+      if(circle) circle.className='trial-days-circle urgent';
+      if(badge){badge.style.display='inline-block';badge.textContent='\u274c TRIAL EXPIRED';}
+      if(heading) heading.textContent='\u26a0\ufe0f Your Trial Has Expired';
+      if(subtext) subtext.textContent='Activate a plan now to keep your data and continue using BluWav CRM.';
+      if(endEl){endEl.textContent='Trial ended \u2014 activate now';endEl.style.color='#ef4444';}
+      if(ctaEl) ctaEl.textContent='Your data is safe for 7 days after expiry';
+      if(fillEl) fillEl.style.background='#ef4444';
+    } else if(daysLeft<=3){
+      if(circle) circle.className='trial-days-circle urgent';
+      if(badge) badge.style.display='inline-block';
+      if(heading) heading.textContent='\u26a0\ufe0f Only '+daysLeft+' Day'+(daysLeft!==1?'s':'')+' Left in Your Trial!';
+      if(subtext) subtext.textContent='Activate now to keep your contacts, deals, and data \u2014 no interruption.';
+      if(endEl){endEl.textContent='Expires '+new Date(trialEnd).toLocaleDateString('en-US',{month:'short',day:'numeric'});endEl.style.color='#ef4444';}
+      if(ctaEl) ctaEl.innerHTML='<span style="color:#ef4444;font-weight:700;">Don\'t lose your data \u2014 activate today</span>';
+      if(fillEl) fillEl.style.background='linear-gradient(90deg,#ef4444,#f97316)';
+      const hoursLeft=Math.floor(msLeft/3600000);
+      const minsLeft=Math.floor((msLeft%3600000)/60000);
+      if(hoursRow) hoursRow.style.display='block';
+      if(hoursCount) hoursCount.textContent=hoursLeft+'h '+minsLeft+'m remaining';
+    } else if(daysLeft<=7){
+      if(circle) circle.className='trial-days-circle warning';
+      if(heading) heading.textContent='\u23f1 '+daysLeft+' Days Remaining in Your Trial';
+      if(subtext) subtext.textContent='Full access to all BluWav CRM features \u2014 activate before your trial ends.';
+      if(endEl){endEl.textContent='Expires '+new Date(trialEnd).toLocaleDateString('en-US',{month:'short',day:'numeric'});endEl.style.color='var(--gold)';}
+      if(ctaEl) ctaEl.textContent='Activate now and keep everything you\'ve built';
+      if(fillEl) fillEl.style.background='linear-gradient(90deg,var(--orange),var(--gold))';
+    } else {
+      if(circle) circle.className='trial-days-circle';
+      if(heading) heading.textContent='\U0001f389 Your 14-Day Free Trial is Active';
+      if(subtext) subtext.textContent='Full access to all BluWav CRM features \u2014 no credit card required';
+      if(endEl){endEl.textContent='Ends in '+daysLeft+' days \u2014 no card needed';endEl.style.color='';}
+      if(ctaEl) ctaEl.textContent='';
+    }
+  }
+  updateTrialCountdown();
+  setInterval(updateTrialCountdown,60000);
   const invoiceDate=new Date(end);invoiceDate.setDate(invoiceDate.getDate()+1);
   document.getElementById('firstInvoiceDate').textContent=invoiceDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 
