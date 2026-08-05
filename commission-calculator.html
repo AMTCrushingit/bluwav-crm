@@ -688,15 +688,36 @@ async async function submitPayout(){
   const summary=document.getElementById('pay_summary').value.trim();
   const bank=document.getElementById('pay_bank')?document.getElementById('pay_bank').value.trim():'';
 
-  if(!name||!email||!amount||!summary){showToast('Please fill in all required fields','error');return;}
+  // Fix 9a: Validate zero/negative amount
+  if(!name||!email||!summary){showToast('Please fill in all required fields','error');return;}
+  if(!amount||parseFloat(amount)<=0){showToast('Commission amount must be greater than $0','error');return;}
 
   const btn=document.querySelector('.submit-btn');
   if(btn){btn.disabled=true;btn.textContent='Submitting...';}
 
   try{
-    // Save to Supabase payout_requests table
     const {data:{session}} = await db.auth.getSession();
     const userId = session?.user?.id||null;
+
+    // Fix 9b: Duplicate submission check — same agent + period
+    if(userId){
+      const {data:existing} = await db.from('payout_requests')
+        .select('id,submitted_at')
+        .eq('agent_id', userId)
+        .eq('period', period)
+        .eq('status','pending')
+        .limit(1);
+      if(existing && existing.length > 0){
+        const submittedAt = new Date(existing[0].submitted_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        const proceed = confirm('You already submitted a payout request for '+period+' on '+submittedAt+'. Submit another one?');
+        if(!proceed){
+          if(btn){btn.disabled=false;btn.textContent='Submit Payout Request';}
+          return;
+        }
+      }
+    }
+
+    // Save to Supabase payout_requests table
     const payoutObj = {
       agent_name: name,
       agent_email: email,
@@ -709,6 +730,7 @@ async async function submitPayout(){
       agent_id: userId
     };
     const {error} = await db.from('payout_requests').insert(payoutObj);
+
     if(error){
       // Fallback: send via email if table doesn't exist yet
       console.warn('payout_requests table not ready, using email fallback:', error.message);
@@ -723,12 +745,18 @@ Bank: '+bank+'
 Summary:
 '+summary);
       fd.append('_template','table');
-      await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+      const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+      if(!res.ok){
+        showToast('Submission failed. Please try again or contact hello@bluwavgrowth.com','error');
+        return;
+      }
     }
+
     showToast('Payout request submitted for $'+parseFloat(amount).toFixed(2)+'. Andrea will process within 7 business days.','success');
     document.getElementById('pay_amount').value='';
     document.getElementById('pay_summary').value='';
     if(document.getElementById('pay_bank')) document.getElementById('pay_bank').value='';
+
   }catch(e){
     showToast('Error: '+e.message,'error');
   }finally{

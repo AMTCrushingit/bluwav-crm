@@ -500,6 +500,10 @@
   }
 
   async function toggleAuto(btn){
+    // Race condition guard — prevent rapid double-clicks
+    if(btn.disabled) return;
+    btn.disabled = true;
+
     const card=btn.closest('.auto-card');
     const dot=card.querySelector('.status-dot');
     const text=card.querySelector('.status-text');
@@ -507,7 +511,15 @@
     const isActive=dot.classList.contains('active');
     const newStatus=isActive?'paused':'active';
 
-    // Update UI immediately
+    // Save previous UI state for rollback
+    const prevDotClass=dot.className;
+    const prevTextClass=text.className;
+    const prevTextContent=text.textContent;
+    const prevBtnClass=btn.className;
+    const prevBtnText=btn.textContent;
+    const prevCardClass=card.className;
+
+    // Optimistic UI update
     if(isActive){
       dot.classList.replace('active','paused');
       text.classList.replace('active','paused');
@@ -524,26 +536,44 @@
       card.classList.replace('paused','active-auto');
     }
 
-    // Save to Supabase automations table
+    // Save to Supabase
     try{
       const {data:{session}} = await db.auth.getSession();
       const userId = session?.user?.id||null;
-      // Upsert automation state — creates record if not exists
+
+      // Guard: if no session, redirect to login
+      if(!userId){
+        window.location.href='login.html';
+        return;
+      }
+
       const {error} = await db.from('automations').upsert({
         name: autoId,
         active: newStatus==='active',
         updated_at: new Date().toISOString(),
         user_id: userId
       },{onConflict:'name,user_id'});
+
       if(error){
-        // Table may not exist yet — log but don't break UI
+        // Table may not exist yet — log but keep optimistic UI
         console.warn('automations table not ready:', error.message);
+        showToast(newStatus==='active'?'▶ Activated (not yet saved)':'⏸ Paused (not yet saved)','success');
+      } else {
+        showToast(newStatus==='active'?'▶ Automation activated':'⏸ Automation paused','success');
       }
     }catch(e){
-      console.warn('Could not save automation state:', e.message);
+      // Rollback UI on unexpected error
+      dot.className=prevDotClass;
+      text.className=prevTextClass;
+      text.textContent=prevTextContent;
+      btn.className=prevBtnClass;
+      btn.textContent=prevBtnText;
+      card.className=prevCardClass;
+      showToast('Could not save: '+e.message,'');
+    }finally{
+      // Re-enable button after save completes
+      btn.disabled=false;
     }
-
-    showToast(newStatus==='active'?'▶ Automation activated':'⏸ Automation paused','success');
   }
 
   function showToast(msg,type=''){
@@ -606,9 +636,17 @@ async function loadAutomationStates(){
     });
   }catch(e){ console.warn('Could not load automation states:', e.message); }
 }
-// Load states after auth check completes
+// Load states immediately after DOM ready — no artificial delay
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(loadAutomationStates, 800);
+  // Hide cards briefly to prevent flash of wrong state
+  const grid = document.querySelector('.automations-grid');
+  if(grid) grid.style.opacity='0';
+  loadAutomationStates().then(function(){
+    if(grid){
+      grid.style.transition='opacity 0.25s ease';
+      grid.style.opacity='1';
+    }
+  });
 });
 
 </script>
