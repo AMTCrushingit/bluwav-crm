@@ -1061,6 +1061,8 @@ async function initDashboard(){
   loadData();
   initChart();
   startPresence();
+  // Load notifications after data loads
+  setTimeout(loadNotifications, 2000);
 }
 
 // ── TEAM SWITCHER ─────────────────────────────────────────────────────────────
@@ -1818,12 +1820,16 @@ function showView(name){
     filteredContacts=allContacts.slice();
     currentPage=1;
     sortContacts();
-    // Reset search/filter UI
     const cs=document.getElementById('contactSearch');if(cs)cs.value='';
     const sf=document.getElementById('contactSortField');if(sf)sf.value='name';
     const sd=document.getElementById('contactSortDir');if(sd)sd.value='asc';
     const ssf=document.getElementById('contactStatusFilter');if(ssf)ssf.value='';
   }
+  if(name==='tasks') loadTasks();
+  if(name==='calendar') loadTasks().then(()=>renderCalendar());
+  if(name==='deals' && dealsViewMode==='list') setTimeout(renderDealsList,100);
+  if(name==='email') loadEmailLog();
+  if(name==='reports') setTimeout(loadReports,100);
 }
 
 function toggleSidebar(){
@@ -2196,16 +2202,7 @@ function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCal
 function calToday(){ calYear=new Date().getFullYear(); calMonth=new Date().getMonth(); renderCalendar(); }
 
 // ── OVERRIDE showView to load tasks/calendar data ─────────────────────────────
-const _origShowView = showView;
-function showView(name){
-  _origShowView(name);
-  if(name==='tasks'){
-    loadTasks();
-  }
-  if(name==='calendar'){
-    loadTasks().then(()=>renderCalendar());
-  }
-}
+
 
 // ── OVERRIDE addTask modal button to use saveTask() ───────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
@@ -2459,13 +2456,7 @@ async function deleteDeal(id){
 }
 
 // Patch showView to render list when switching to deals in list mode
-const _origShowViewDeals = showView;
-function showView(name){
-  _origShowViewDeals(name);
-  if(name==='deals' && dealsViewMode==='list'){
-    setTimeout(renderDealsList, 100);
-  }
-}
+
 
 
 // ── EMAIL LOG ─────────────────────────────────────────────────────────────────
@@ -2581,11 +2572,7 @@ async function sendEmailFromModal(){
 }
 
 // Load email log when switching to email view
-const _origShowViewEmail = showView;
-function showView(name){
-  _origShowViewEmail(name);
-  if(name==='email') loadEmailLog();
-}
+
 
 
 // ── DEAL CLOSE DATE + WON/LOST REASON HELPERS ────────────────────────────────
@@ -2832,13 +2819,7 @@ async function saveDeal(){
   createNotif('&#x1F4BC;','var(--gold)','New deal created','deal_new');
 }
 
-// Load notifications on init (after auth)
-const _origInitDashboard = initDashboard;
-async function initDashboard(){
-  await _origInitDashboard.apply(this, arguments);
-  // Load notifications after a short delay to let data load first
-  setTimeout(loadNotifications, 2000);
-}
+// Notifications loaded inside initDashboard directly
 
 
 // ── LIVE REPORTS ──────────────────────────────────────────────────────────────
@@ -3063,11 +3044,7 @@ function exportReportsCSV(){
 }
 
 // Patch showView to load reports when switching to reports tab
-const _origShowViewReports = showView;
-function showView(name){
-  _origShowViewReports(name);
-  if(name==='reports') setTimeout(loadReports, 100);
-}
+
 
 
 // ── CSV IMPORT / EXPORT ───────────────────────────────────────────────────────
