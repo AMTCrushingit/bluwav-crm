@@ -175,8 +175,50 @@
 </select></div>
 <div class="form-group"><label>Business Name</label><input id="f_business" placeholder="e.g. Sunrise Digital" type="text"/></div>
 <div class="form-group"><label>Email</label><input id="f_email" placeholder="jordan@example.com" type="email"/></div>
-<div class="form-group"><label>Phone</label><input id="f_phone" placeholder="+1 868 555 0000" type="tel"/></div>
-<div class="form-group"><label>WhatsApp</label><input id="f_whatsapp" placeholder="+1 868 555 0000" type="tel"/></div>
+<div class="form-group"><label>Phone</label>
+<div style="display:flex;gap:6px;">
+  <select id="f_phone_cc" style="width:110px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;padding:10px 8px;outline:none;">
+    <option value="+1868">🇹🇹 +1868</option>
+    <option value="+1876">🇯🇲 +1876</option>
+    <option value="+1246">🇧🇧 +1246</option>
+    <option value="+592">🇬🇾 +592</option>
+    <option value="+1758">🇱🇨 +1758</option>
+    <option value="+1767">🇩🇲 +1767</option>
+    <option value="+1784">🇻🇨 +1784</option>
+    <option value="+1473">🇬🇩 +1473</option>
+    <option value="+1869">🇰🇳 +1869</option>
+    <option value="+1268">🇦🇬 +1268</option>
+    <option value="+1">🇺🇸 +1</option>
+    <option value="+44">🇬🇧 +44</option>
+    <option value="+1416">🇨🇦 +1416</option>
+    <option value="+52">🇲🇽 +52</option>
+    <option value="+55">🇧🇷 +55</option>
+    <option value="+other">🌍 Other</option>
+  </select>
+  <input id="f_phone" placeholder="555 0000" type="tel" style="flex:1;"/>
+</div></div>
+<div class="form-group"><label>WhatsApp</label>
+<div style="display:flex;gap:6px;">
+  <select id="f_whatsapp_cc" style="width:110px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;padding:10px 8px;outline:none;">
+    <option value="+1868">🇹🇹 +1868</option>
+    <option value="+1876">🇯🇲 +1876</option>
+    <option value="+1246">🇧🇧 +1246</option>
+    <option value="+592">🇬🇾 +592</option>
+    <option value="+1758">🇱🇨 +1758</option>
+    <option value="+1767">🇩🇲 +1767</option>
+    <option value="+1784">🇻🇨 +1784</option>
+    <option value="+1473">🇬🇩 +1473</option>
+    <option value="+1869">🇰🇳 +1869</option>
+    <option value="+1268">🇦🇬 +1268</option>
+    <option value="+1">🇺🇸 +1</option>
+    <option value="+44">🇬🇧 +44</option>
+    <option value="+1416">🇨🇦 +1416</option>
+    <option value="+52">🇲🇽 +52</option>
+    <option value="+55">🇧🇷 +55</option>
+    <option value="+other">🌍 Other</option>
+  </select>
+  <input id="f_whatsapp" placeholder="555 0000" type="tel" style="flex:1;"/>
+</div></div>
 <div class="form-group"><label>Location</label>
 <select id="f_island"><option value="">Select island...</option>
 <option>Trinidad</option><option>Barbados</option><option>Jamaica</option><option>Antigua</option>
@@ -535,6 +577,8 @@ function openModal(){document.getElementById('modalOverlay').classList.add('open
 function closeModal(){
   document.getElementById('modalOverlay').classList.remove('open');
   ['f_name','f_business','f_email','f_phone','f_whatsapp','f_notes'].forEach(id=>document.getElementById(id).value='');
+  const pcc=document.getElementById('f_phone_cc');if(pcc)pcc.value='+1868';
+  const wcc=document.getElementById('f_whatsapp_cc');if(wcc)wcc.value='+1868';
   document.getElementById('f_island').value='';
   const fs=document.getElementById('f_status'); if(fs) fs.value='Lead';
 }
@@ -542,19 +586,20 @@ function closeModal(){
 async function addContact(){
   const name=document.getElementById('f_name').value.trim();
   if(!name){showToast('Full name is required','error');return;}
+  if(!currentUser){showToast('Session expired — please sign in again','error');setTimeout(()=>window.location.href='login.html',1500);return;}
   const contact={
     full_name:name,
     status:document.getElementById('f_status')?.value||'Lead',
     business_name:document.getElementById('f_business').value.trim()||null,
     email:document.getElementById('f_email').value.trim()||null,
-    phone:document.getElementById('f_phone').value.trim()||null,
-    whatsapp:document.getElementById('f_whatsapp').value.trim()||null,
+    phone:(()=>{const cc=document.getElementById('f_phone_cc')?.value||'';const num=document.getElementById('f_phone').value.trim();return num?(cc+num):null;})(),
+    whatsapp:(()=>{const cc=document.getElementById('f_whatsapp_cc')?.value||'';const num=document.getElementById('f_whatsapp').value.trim();return num?(cc+num):null;})(),
     island:document.getElementById('f_island').value||null,
     notes:document.getElementById('f_notes').value.trim()||null,
     user_id:currentUser?.id||null,
   };
   const{error}=await db.from('contacts').insert([contact]);
-  if(error){showToast('Failed: '+error.message,'error');return;}
+  if(error){showToast('Failed: '+error.message,'error');console.error('Contact insert error:',error);return;}
   showToast(`✅ ${name} added successfully`,'success');closeModal();loadContacts();
 }
 

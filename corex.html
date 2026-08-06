@@ -1564,7 +1564,11 @@ document.getElementById('copy-digest-btn').addEventListener('click',function(){
   if(content){navigator.clipboard.writeText(content.innerText).then(()=>toast('📋 Digest copied to clipboard'));}
 });
 document.getElementById('email-digest-btn').addEventListener('click',function(){
-  toast('📧 Digest sent to andrea@bluwav.com (simulated)');
+  (function(){
+  const mailtoUrl='mailto:andrea@bluwav.com?subject=COREX+Intelligence+Digest&body=See+COREX+dashboard+for+full+digest.';
+  window.open(mailtoUrl,'_blank');
+  toast('📧 Opening email client to send digest...');
+})();
 });
 
 // Sources view delegation

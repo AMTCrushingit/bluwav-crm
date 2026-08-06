@@ -17,7 +17,7 @@
   --corex:#8b5cf6;--corex-light:#c4b5fd;--corex-dark:#7c3aed;
   --lavender:#ede9fe;--lavender2:#ddd6fe;--lavender3:#c4b5fd;
 }
-html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:row;overflow:hidden;font-size:15px;}
+html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:row;overflow:hidden;font-size:15px;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
@@ -42,10 +42,10 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .signout-btn{width:100%;padding:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
 
 /* MAIN */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;width:100%;}
 
 /* TOPBAR */
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:56px;width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .topbar-left{display:flex;align-items:center;gap:12px;}
 .topbar-title{font-size:17px;font-weight:700;color:var(--text);}
 .topbar-sub{font-size:13px;color:var(--text3);}
@@ -55,7 +55,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .last-updated{font-size:13px;color:var(--text3);}
 
 /* COMMAND STRIP */
-.command-strip{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 28px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;flex-shrink:0;}
+.command-strip{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 28px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;flex-shrink:0;width:100%;box-sizing:border-box;}
 .cmd-tile{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px 18px;position:relative;overflow:hidden;}
 .cmd-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
 .cmd-tile.t-cyan::before{background:var(--corex);}
@@ -69,17 +69,17 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .cmd-sub{font-size:13px;color:var(--text3);margin-top:3px;}
 
 /* CONTENT */
-.content{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:20px;}
+.content{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:20px;width:100%;box-sizing:border-box;}
 .view{display:none;flex-direction:column;gap:16px;}
 .view.active{display:flex;}
 
 /* CARDS */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;width:100%;box-sizing:border-box;}
 .card-header{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .card-title{font-size:16px;font-weight:700;color:var(--text);}
 .card-sub{font-size:13px;color:var(--text3);margin-top:3px;}
 .card-body{padding:20px 22px;}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
 .chart-wrap{height:220px;position:relative;}
 
@@ -2091,7 +2091,7 @@ function corexToast(msg){
       </div>
 
       <!-- COREX CONTENT (shown after auth) -->
-      <div id="corex-content" style="display:none;">
+      <div id="corex-content" style="display:none;width:100%;">
 
         <!-- COREX Top Bar -->
         <div style="background:linear-gradient(135deg,#241e50,#1c1640);border:1px solid rgba(167,139,250,0.25);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">

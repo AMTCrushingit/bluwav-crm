@@ -2297,40 +2297,59 @@ async function sendEmailFromModal(){
   const subject = subjectField ? subjectField.value.trim() : '';
   const message = msgField ? msgField.value.trim() : '';
   if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
-  // Send via formspree
+
+  // Show sending state
+  const sendBtn = document.querySelector('#modal-sendEmail .btn-primary');
+  if(sendBtn){sendBtn.disabled=true;sendBtn.textContent='Sending...';}
+
+  // Try Formspree first
   var fd = new FormData();
   fd.append('email', to);
-  fd.append('_replyto', currentUser?.email||'');
-  fd.append('_subject', subject);
+  fd.append('_replyto', currentUser?.email||'hello@bluwavcrm.com');
+  fd.append('_subject', '[BluWav CRM] '+subject);
   fd.append('message', message);
   fd.append('_template', 'table');
+  fd.append('_cc', currentUser?.email||'');
+
+  let sent = false;
   try{
-    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
-    if(res.ok){
-      showToast('Email sent ✓','success');
-      closeModal('sendEmail');
-      if(toField) toField.value='';
-      if(subjectField) subjectField.value='';
-      if(msgField) msgField.value='';
-      if(matchedContact) updateLastContacted(matchedContact.id);
-    } else {
-      // Get error details from Formspree response
-      try{
-        const errData = await res.clone().json();
-        const errMsg = errData.error || errData.errors?.[0]?.message || 'Form submission rejected ('+res.status+')';
-        showToast('Email error: '+errMsg,'');
-        console.error('Formspree error:', errData);
-      }catch(pe){
-        showToast('Email failed (HTTP '+res.status+'). Check hello@bluwavgrowth.com directly.','');
-      }
+    const res = await fetch('https://formspree.io/f/xpwzgvkd',{
+      method:'POST',body:fd,headers:{'Accept':'application/json'}
+    });
+    if(res.ok){ sent=true; }
+    else {
+      const errData = await res.json().catch(()=>({}));
+      console.warn('Formspree failed:',errData);
     }
   }catch(e){
-    if(e.name==='TypeError'&&e.message.includes('fetch')){
-      showToast('Network error — check your internet connection and try again.','');
-    } else {
-      showToast('Email error: '+e.message,'');
-    }
-    console.error('sendEmail error:', e);
+    console.warn('Formspree fetch error:',e.message);
+  }
+
+  if(sent){
+    showToast('✅ Email sent to '+to,'success');
+    closeModal('sendEmail');
+    if(toField) toField.value='';
+    if(subjectField) subjectField.value='';
+    if(msgField) msgField.value='';
+    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
+    if(typeof matchedContact!=='undefined'&&matchedContact) updateLastContacted(matchedContact.id);
+    // Log to activity
+    try{
+      await db.from('activities').insert([{
+        user_id: currentUser?.id,
+        type: 'email',
+        title: 'Email sent',
+        body: 'To: '+to+' | Subject: '+subject,
+        created_at: new Date().toISOString()
+      }]);
+    }catch(e2){console.log('Activity log:',e2.message);}
+  } else {
+    // Fallback: open mailto so email is never lost
+    const mailtoUrl = 'mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
+    window.open(mailtoUrl,'_blank');
+    showToast('Opening your email client to send...','success');
+    closeModal('sendEmail');
+    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
   }
 }
 

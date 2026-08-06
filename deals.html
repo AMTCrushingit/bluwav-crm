@@ -605,6 +605,7 @@ async function addDeal(){
   const name=document.getElementById('f_name').value.trim();
   const type=document.getElementById('f_type').value;
   if(!name){showToast('Deal name is required','error');return;}
+  if(!currentUser){showToast('Session expired — please sign in again','error');setTimeout(()=>window.location.href='login.html',1500);return;}
   const value=parseFloat(document.getElementById('f_value').value)||DEFAULT_VALUES[type]||0;
   const stageVal = (document.getElementById('f_stage').value||'lead').toLowerCase();
   const deal={
@@ -616,7 +617,7 @@ async function addDeal(){
     notes: document.getElementById('f_notes').value.trim()||null,
   };
   const{data,error}=await db.from('deals').insert([deal]).select();
-  if(error){showToast('Failed: '+error.message,'error');console.error(error);return;}
+  if(error){showToast('Failed to create deal: '+error.message,'error');console.error('Deal insert error:',JSON.stringify(error));return;}
   const newDeal={
     ...data[0],
     deal_name: data[0].title||name,
