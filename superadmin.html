@@ -1,137 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BluWav CRM — Super Admin</title>
+<title>BluWav CRM — Founder Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;--border:rgba(255,255,255,0.06);--cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--text:#fff;--text2:#b0bec5;--text3:#4a5568;--sidebar:220px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;
+  --red:#ef4444;--purple:#a78bfa;--text:#fff;--text2:#b0bec5;--text3:#4a5568;
+  --sidebar:220px;
+}
 html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:row;overflow:hidden;}
-::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:5px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
 
 /* SIDEBAR */
-.sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
-.sidebar-logo{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.logo-text{font-size:20px;font-weight:800;}.logo-text .blu{color:#fff;}.logo-text .wav{color:var(--cyan);}
-.logo-badge{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--red);font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:1px;}
-.sidebar-nav{flex:1;padding:12px 0;}
-.nav-section{padding:0 10px;margin-bottom:4px;}
-.nav-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:8px 8px 4px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.15s;cursor:pointer;position:relative;}
-.nav-item:hover{background:rgba(255,255,255,0.05);color:var(--text);}
-.nav-item.active{background:rgba(239,68,68,0.1);color:var(--red);}
-.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--red);border-radius:0 3px 3px 0;}
-.nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);}
+.logo-text{font-size:1.3rem;font-weight:800;font-style:italic;line-height:1;}
+.logo-text .blu{color:#fff;}.logo-text .wav{color:var(--cyan);}
+.logo-badge{font-size:9px;font-weight:800;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-top:3px;display:block;}
+.sidebar-nav{flex:1;padding:10px 0;}
+.nav-section{margin-bottom:4px;}
+.nav-label{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);padding:10px 16px 4px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;border-radius:8px;margin:1px 8px;font-size:13px;font-weight:500;color:var(--text3);transition:all .15s;text-decoration:none;}
+.nav-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.nav-item.active{background:rgba(0,194,209,.12);color:var(--cyan);font-weight:700;}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
 .sidebar-bottom{padding:12px;border-top:1px solid var(--border);}
-.user-card{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;}
-.user-card:hover{background:var(--bg3);}
-.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--red),#c0392b);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
-.user-name{font-size:13px;font-weight:600;color:var(--text);}
-.user-role{font-size:11px;color:var(--red);font-weight:700;}
+.founder-badge{background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(212,175,55,.05));border:1px solid rgba(212,175,55,.3);border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:center;}
+.founder-badge .fb-label{font-size:9px;font-weight:800;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;}
+.founder-badge .fb-name{font-size:12px;font-weight:700;color:var(--text);margin-top:2px;}
+.signout-btn{width:100%;padding:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
 
 /* MAIN */
-.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
 /* TOPBAR */
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.topbar-left h1{font-size:16px;font-weight:700;color:var(--text);}
-.topbar-left .sub{font-size:11px;color:var(--text3);margin-top:1px;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;font-family:inherit;}
-.btn-danger{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.25);}
-.btn-danger:hover{background:rgba(239,68,68,0.2);}
-.btn-primary{background:var(--cyan);color:#0a0e1a;}
-.btn-primary:hover{background:#00d4e4;}
-.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
-.btn-ghost:hover{background:var(--bg3);color:var(--text);}
-.btn-sm{padding:5px 10px;font-size:11px;}
-.btn-gold{background:rgba(212,175,55,0.1);color:var(--gold);border:1px solid rgba(212,175,55,0.25);}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-title{font-size:15px;font-weight:700;color:var(--text);}
+.topbar-sub{font-size:11px;color:var(--text3);}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.refresh-btn{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--text3);padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.refresh-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.last-updated{font-size:11px;color:var(--text3);}
+
+/* COMMAND STRIP */
+.command-strip{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;flex-shrink:0;}
+.cmd-tile{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;position:relative;overflow:hidden;}
+.cmd-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.cmd-tile.t-cyan::before{background:var(--cyan);}
+.cmd-tile.t-gold::before{background:var(--gold);}
+.cmd-tile.t-green::before{background:var(--green);}
+.cmd-tile.t-orange::before{background:var(--orange);}
+.cmd-tile.t-purple::before{background:var(--purple);}
+.cmd-tile.t-red::before{background:var(--red);}
+.cmd-val{font-size:20px;font-weight:800;color:var(--text);line-height:1;margin-bottom:3px;}
+.cmd-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
+.cmd-sub{font-size:10px;color:var(--text3);margin-top:2px;}
 
 /* CONTENT */
 .content{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
-
-/* VIEWS */
 .view{display:none;flex-direction:column;gap:16px;}
 .view.active{display:flex;}
 
-/* ALERT BANNER */
-.admin-banner{background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(239,68,68,0.04));border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text2);}
-.admin-banner strong{color:var(--red);}
-
-/* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden;}
-.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.stat-card.c1::after{background:var(--cyan);}
-.stat-card.c2::after{background:var(--green);}
-.stat-card.c3::after{background:var(--gold);}
-.stat-card.c4::after{background:var(--red);}
-.stat-val{font-size:28px;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px;}
-.stat-lbl{font-size:12px;color:var(--text2);}
-.stat-sub{font-size:11px;color:var(--text3);margin-top:3px;}
-
-/* CARD */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
 .card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.card-title{font-size:14px;font-weight:700;}
+.card-title{font-size:13px;font-weight:700;color:var(--text);}
 .card-sub{font-size:11px;color:var(--text3);margin-top:2px;}
 .card-body{padding:16px 18px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.chart-wrap{height:220px;position:relative;}
 
-/* TABLE */
-.tbl{width:100%;border-collapse:collapse;}
-.tbl th{text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:8px 14px;border-bottom:1px solid var(--border);}
-.tbl td{padding:11px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:middle;}
-.tbl tr:last-child td{border-bottom:none;}
-.tbl tbody tr:hover td{background:rgba(255,255,255,0.02);cursor:pointer;}
+/* TABLES */
 .tbl-wrap{overflow-x:auto;}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);border-bottom:1px solid var(--border);}
+.tbl td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text2);vertical-align:middle;}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+.tbl tr:last-child td{border-bottom:none;}
+.empty{text-align:center;padding:32px;color:var(--text3);font-size:12px;}
 
 /* BADGES */
-.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700;}
-.badge-green{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
-.badge-red{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
-.badge-gold{background:rgba(212,175,55,0.1);color:var(--gold);border:1px solid rgba(212,175,55,0.2);}
-.badge-cyan{background:rgba(0,194,209,0.1);color:var(--cyan);border:1px solid rgba(0,194,209,0.2);}
-.badge-purple{background:rgba(167,139,250,0.1);color:var(--purple);border:1px solid rgba(167,139,250,0.2);}
-.badge-muted{background:rgba(107,122,153,0.1);color:var(--text3);border:1px solid rgba(107,122,153,0.2);}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+.badge-cyan{background:rgba(0,194,209,.12);color:var(--cyan);border:1px solid rgba(0,194,209,.2);}
+.badge-gold{background:rgba(212,175,55,.12);color:var(--gold);border:1px solid rgba(212,175,55,.2);}
+.badge-green{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.badge-red{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.badge-orange{background:rgba(255,140,66,.12);color:var(--orange);border:1px solid rgba(255,140,66,.2);}
+.badge-purple{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.2);}
+.badge-muted{background:rgba(74,85,104,.2);color:var(--text3);border:1px solid rgba(74,85,104,.3);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;}
+.btn-primary{background:var(--cyan);color:#0a0e1a;}
+.btn-primary:hover{opacity:.85;}
+.btn-ghost{background:transparent;color:var(--text3);border:1px solid var(--border2);}
+.btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
+.btn-danger{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.btn-danger:hover{background:rgba(239,68,68,.2);}
+.btn-success{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.btn-success:hover{background:rgba(34,197,94,.2);}
+.btn-sm{padding:4px 10px;font-size:11px;}
 
 /* AVATAR */
 .av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0a0e1a;flex-shrink:0;}
 
+/* HEALTH INDICATOR */
+.health-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.health-green{background:var(--green);}
+.health-amber{background:var(--gold);}
+.health-red{background:var(--red);animation:pulse-dot 1.5s infinite;}
+.health-grey{background:var(--text3);}
+@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:.3;};}
+
+/* PROGRESS BAR */
+.progress-wrap{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s;}
+
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
-.modal-hd{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.modal-hd h3{font-size:16px;font-weight:700;}
-.modal-close{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;}
-.modal-body{padding:20px 24px;}
-.modal-footer{padding:14px 24px 20px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);}
-.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
-.fl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text2);}
-.fi,.fs{background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;padding:9px 12px;outline:none;width:100%;transition:all 0.2s;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.modal-hd{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-hd h3{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;}
+.modal-body{padding:18px 22px;}
+.modal-footer{padding:12px 22px 18px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.fl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);}
+.fi,.fs{background:var(--bg);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;padding:8px 12px;outline:none;width:100%;}
 .fi:focus,.fs:focus{border-color:var(--cyan);}
 
-/* CHART */
-.chart-wrap{position:relative;height:200px;}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--text);z-index:600;transform:translateY(60px);opacity:0;transition:all .3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(34,197,94,.3);}
+.toast.error{border-color:rgba(239,68,68,.3);}
 
 /* SEARCH */
-.search-bar{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:13px;outline:none;width:240px;font-family:inherit;}
+.search-bar{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;padding:6px 12px;outline:none;font-family:inherit;width:200px;}
 .search-bar:focus{border-color:var(--cyan);}
-.search-bar::placeholder{color:var(--text3);}
 
-/* TOAST */
-.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;color:var(--text);z-index:600;transform:translateY(80px);opacity:0;transition:all 0.3s;}
-.toast.show{transform:translateY(0);opacity:1;}
-.toast.success{border-color:rgba(34,197,94,0.3);}
-.toast.error{border-color:rgba(239,68,68,0.3);}
+/* PAYOUT ROW HIGHLIGHT */
+.payout-pending{background:rgba(212,175,55,.04);}
 
-/* EMPTY STATE */
-.empty{text-align:center;padding:40px;color:var(--text3);font-size:13px;}
-
-@media(max-width:1100px){.stats-row{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){
+  .command-strip{grid-template-columns:repeat(3,1fr);}
+  .two-col,.three-col{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+}
 </style>
 </head>
 <body>
@@ -140,193 +167,331 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span></div>
-    <span class="logo-badge">SUPER ADMIN</span>
+    <span class="logo-badge">&#x1F451; Founder Dashboard</span>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section">
       <div class="nav-label">Overview</div>
-      <a class="nav-item active" onclick="showView('overview')"><span class="nav-icon">&#128202;</span> Dashboard</a>
+      <a class="nav-item active" onclick="showView('overview')"><span class="nav-icon">&#x1F4CA;</span> Command Centre</a>
     </div>
     <div class="nav-section">
-      <div class="nav-label">Tenants</div>
-      <a class="nav-item" onclick="showView('tenants')"><span class="nav-icon">&#127963;</span> All Tenants</a>
-      <a class="nav-item" onclick="showView('tenants')"><span class="nav-icon">&#10133;</span> New Tenant</a>
+      <div class="nav-label">Business</div>
+      <a class="nav-item" onclick="showView('cashflow')"><span class="nav-icon">&#x1F4B0;</span> Cash Flow</a>
+      <a class="nav-item" onclick="showView('tenants')"><span class="nav-icon">&#x1F3E2;</span> Tenant Health</a>
+      <a class="nav-item" onclick="showView('targets')"><span class="nav-icon">&#x1F3AF;</span> Sales Targets</a>
+      <a class="nav-item" onclick="showView('payouts')"><span class="nav-icon">&#x1F4B8;</span> Payouts</a>
     </div>
     <div class="nav-section">
-      <div class="nav-label">Users</div>
-      <a class="nav-item" onclick="showView('users')"><span class="nav-icon">&#128101;</span> All Users</a>
-      <a class="nav-item" onclick="showView('users')"><span class="nav-icon">&#128274;</span> Roles & Access</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Data</div>
-      <a class="nav-item" onclick="showView('allcontacts')"><span class="nav-icon">&#128100;</span> All Contacts</a>
-      <a class="nav-item" onclick="showView('alldeals')"><span class="nav-icon">&#128188;</span> All Deals</a>
+      <div class="nav-label">Platform</div>
+      <a class="nav-item" onclick="showView('users')"><span class="nav-icon">&#x1F465;</span> Users & Roles</a>
+      <a class="nav-item" onclick="showView('alldeals')"><span class="nav-icon">&#x1F4BC;</span> All Deals</a>
+      <a class="nav-item" onclick="showView('allcontacts')"><span class="nav-icon">&#x1F464;</span> All Contacts</a>
     </div>
     <div class="nav-section">
       <div class="nav-label">System</div>
-      <a class="nav-item" href="dashboard.html"><span class="nav-icon">&#8592;</span> Back to CRM</a>
+      <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">&#x2190;</span> Back to CRM</a>
     </div>
   </nav>
   <div class="sidebar-bottom">
-    <div class="user-card">
-      <div class="avatar" id="sidebarAvatar">SA</div>
-      <div>
-        <div class="user-name" id="sidebarName">Loading...</div>
-        <div class="user-role">&#128737; Super Admin</div>
-      </div>
+    <div class="founder-badge">
+      <div class="fb-label">&#x1F512; Founder Access</div>
+      <div class="fb-name" id="founderName">Loading...</div>
     </div>
-    <button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:8px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">&#128682; Sign Out</button>
+    <button class="signout-btn" onclick="signOut()">&#x1F6AA; Sign Out</button>
   </div>
 </aside>
 
 <!-- MAIN -->
 <div class="main">
+
+  <!-- TOPBAR -->
   <header class="topbar">
     <div class="topbar-left">
-      <h1 id="viewTitle">&#128737; Super Admin — Overview</h1>
-      <div class="sub" id="topDate"></div>
+      <div>
+        <div class="topbar-title" id="viewTitle">&#x1F4CA; Command Centre</div>
+        <div class="topbar-sub">BluWav CRM &mdash; Founder Dashboard</div>
+      </div>
     </div>
     <div class="topbar-right">
-      <button class="btn btn-ghost btn-sm" onclick="refreshAll()">&#8635; Refresh</button>
-      <button class="btn btn-primary btn-sm" onclick="openModal('addUser')">+ Add User</button>
+      <span class="last-updated" id="lastUpdated">Loading...</span>
+      <button class="refresh-btn" onclick="loadAll()">&#x21BB; Refresh</button>
     </div>
   </header>
 
+  <!-- COMMAND STRIP -->
+  <div class="command-strip">
+    <div class="cmd-tile t-green">
+      <div class="cmd-val" id="cmdMRR">$0</div>
+      <div class="cmd-lbl">Est. MRR</div>
+      <div class="cmd-sub" id="cmdMRRSub">from won deals</div>
+    </div>
+    <div class="cmd-tile t-cyan">
+      <div class="cmd-val" id="cmdPipeline">$0</div>
+      <div class="cmd-lbl">Pipeline Value</div>
+      <div class="cmd-sub">open deals</div>
+    </div>
+    <div class="cmd-tile t-gold">
+      <div class="cmd-val" id="cmdWonMonth">0</div>
+      <div class="cmd-lbl">Won This Month</div>
+      <div class="cmd-sub" id="cmdWonMonthVal">$0 revenue</div>
+    </div>
+    <div class="cmd-tile t-orange">
+      <div class="cmd-val" id="cmdTrials">0</div>
+      <div class="cmd-lbl">Active Trials</div>
+      <div class="cmd-sub" id="cmdTrialsExpiring">0 expiring soon</div>
+    </div>
+    <div class="cmd-tile t-purple">
+      <div class="cmd-val" id="cmdPayouts">$0</div>
+      <div class="cmd-lbl">Payouts Pending</div>
+      <div class="cmd-sub" id="cmdPayoutCount">0 requests</div>
+    </div>
+    <div class="cmd-tile t-cyan">
+      <div class="cmd-val" id="cmdOnline">0</div>
+      <div class="cmd-lbl">Online Now</div>
+      <div class="cmd-sub" id="cmdTotalUsers">0 total users</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
   <div class="content">
 
     <!-- ══ OVERVIEW ══ -->
     <div class="view active" id="view-overview">
-      <div class="admin-banner">
-        <span style="font-size:20px;">&#128737;</span>
-        <div><strong>Super Admin Mode</strong> — You have full visibility and control across all tenants, users, and data. Actions here affect the entire platform.</div>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-card c1">
-          <div class="stat-val" id="statTotalContacts">—</div>
-          <div class="stat-lbl">Total Contacts</div>
-          <div class="stat-sub">Across all tenants</div>
-        </div>
-        <div class="stat-card c2">
-          <div class="stat-val" id="statTotalDeals">—</div>
-          <div class="stat-lbl">Total Deals</div>
-          <div class="stat-sub">All pipeline stages</div>
-        </div>
-        <div class="stat-card c3">
-          <div class="stat-val" id="statTotalUsers">—</div>
-          <div class="stat-lbl">Total Users</div>
-          <div class="stat-sub">All roles</div>
-        </div>
-        <div class="stat-card c4">
-          <div class="stat-val" id="statPipelineVal">$0</div>
-          <div class="stat-lbl">Total Pipeline</div>
-          <div class="stat-sub">All open deals</div>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="two-col">
+        <!-- Revenue Trend Chart -->
         <div class="card">
-          <div class="card-header"><div><div class="card-title">&#128200; Pipeline Trend</div><div class="card-sub">Last 6 months — all tenants</div></div></div>
-          <div class="card-body"><div class="chart-wrap"><canvas id="overviewChart"></canvas></div></div>
+          <div class="card-header">
+            <div>
+              <div class="card-title">&#x1F4C8; Revenue Trend</div>
+              <div class="card-sub">Won deals by month &mdash; real data</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-ghost btn-sm rng-btn active" onclick="setChartRange(3,this)">3M</button>
+              <button class="btn btn-ghost btn-sm rng-btn" onclick="setChartRange(6,this)">6M</button>
+              <button class="btn btn-ghost btn-sm rng-btn" onclick="setChartRange(12,this)">12M</button>
+            </div>
+          </div>
+          <div class="card-body"><div class="chart-wrap"><canvas id="revenueChart"></canvas></div></div>
         </div>
+        <!-- Tenant Health Summary -->
         <div class="card">
-          <div class="card-header"><div><div class="card-title">&#128101; User Breakdown</div><div class="card-sub">By role</div></div></div>
-          <div class="card-body" id="userBreakdown">
+          <div class="card-header">
+            <div><div class="card-title">&#x1F3E2; Tenant Health</div><div class="card-sub">All users at a glance</div></div>
+            <button class="btn btn-ghost btn-sm" onclick="showView('tenants')">View All &#x2192;</button>
+          </div>
+          <div class="card-body" id="tenantHealthSummary">
             <div class="empty">Loading...</div>
           </div>
         </div>
       </div>
+      <div class="two-col">
+        <!-- Agent Leaderboard -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">&#x1F3C6; Agent Leaderboard</div><div class="card-sub">Real performance data</div></div>
+          </div>
+          <div class="card-body" id="agentLeaderboard">
+            <div class="empty">Loading...</div>
+          </div>
+        </div>
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">&#x1F4CB; Recent Activity</div><div class="card-sub">Latest across platform</div></div>
+          </div>
+          <div class="card-body" id="recentActivityBody">
+            <div class="empty">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- ══ CASH FLOW ══ -->
+    <div class="view" id="view-cashflow">
+      <div class="three-col">
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#x1F4B0; Estimated MRR</div></div>
+          <div class="card-body">
+            <div style="font-size:32px;font-weight:800;color:var(--green);" id="cfMRR">$0</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px;">Monthly Recurring Revenue</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:8px;" id="cfMRRBreakdown">Based on won deals</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#x1F4C5; ARR Projection</div></div>
+          <div class="card-body">
+            <div style="font-size:32px;font-weight:800;color:var(--cyan);" id="cfARR">$0</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px;">Annual Run Rate (MRR &times; 12)</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:8px;" id="cfARRNote">Projection only</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#x1F4B8; Commission Liability</div></div>
+          <div class="card-body">
+            <div style="font-size:32px;font-weight:800;color:var(--orange);" id="cfCommission">$0</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px;">Est. owed to agents (20%)</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:8px;" id="cfCommissionNote">From won deals this month</div>
+          </div>
+        </div>
+      </div>
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">&#128336; Recent Activity</div><div class="card-sub">Latest contacts added across all tenants</div></div>
-          <button class="btn btn-ghost btn-sm" onclick="showView('allcontacts')">View all &#8594;</button>
+          <div><div class="card-title">&#x1F4CA; Revenue by Month</div><div class="card-sub">Won deal value &mdash; all agents</div></div>
         </div>
+        <div class="card-body"><div class="chart-wrap" style="height:260px;"><canvas id="cashflowChart"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">&#x1F4C5; Deals Closing Soon</div><div class="card-sub">Next 30 days by close date</div></div>
         <div class="tbl-wrap">
           <table class="tbl">
-            <thead><tr><th>Name</th><th>Email</th><th>Business</th><th>Status</th><th>Added</th></tr></thead>
-            <tbody id="recentActivityBody"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody>
+            <thead><tr><th>Deal</th><th>Agent</th><th>Value</th><th>Close Date</th><th>Days Left</th><th>Prob%</th></tr></thead>
+            <tbody id="closingSoonBody"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
           </table>
         </div>
       </div>
-    </div><!-- /overview -->
+    </div>
 
-    <!-- ══ TENANTS (Profiles as tenants) ══ -->
+    <!-- ══ TENANT HEALTH ══ -->
     <div class="view" id="view-tenants">
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">&#127963; All Tenants / Organizations</div><div class="card-sub" id="tenantCount">Loading...</div></div>
+          <div><div class="card-title">&#x1F3E2; Tenant Health Board</div><div class="card-sub" id="tenantCountLabel">All users</div></div>
           <div style="display:flex;gap:8px;">
-            <input class="search-bar" placeholder="&#128269; Search tenants..." oninput="filterTable('tenantsTbody',this.value,[0,1])"/>
-            <button class="btn btn-primary btn-sm" onclick="openModal('addUser')">+ Add Tenant</button>
+            <input class="search-bar" placeholder="&#x1F50D; Search..." oninput="filterTenants(this.value)"/>
+            <button class="btn btn-primary btn-sm" onclick="openModal('addUser')">+ New User</button>
           </div>
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
-            <thead><tr><th>Name</th><th>Role</th><th>User ID</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="tenantsTbody"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+            <thead><tr><th>User</th><th>Role</th><th>Trial Status</th><th>Last Active</th><th>Contacts</th><th>Deals</th><th>Health</th><th>Actions</th></tr></thead>
+            <tbody id="tenantHealthBody"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody>
           </table>
         </div>
       </div>
-    </div><!-- /tenants -->
+    </div>
+
+    <!-- ══ SALES TARGETS ══ -->
+    <div class="view" id="view-targets">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">&#x1F3AF; Monthly Sales Target</div><div class="card-sub" id="targetMonthLabel">This month</div></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:12px;color:var(--text3);">Target: $</span>
+            <input type="number" id="targetInput" value="10000" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;padding:5px 8px;outline:none;" oninput="renderTargets()"/>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:13px;color:var(--text2);" id="targetProgressLabel">$0 of $10,000</span>
+            <span style="font-size:13px;font-weight:700;" id="targetPct">0%</span>
+          </div>
+          <div class="progress-wrap" style="height:10px;margin-bottom:16px;">
+            <div class="progress-fill" id="targetBar" style="width:0%;background:linear-gradient(90deg,var(--cyan),var(--green));"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;" id="targetStats"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">&#x1F4CA; Agent Performance This Month</div></div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Agent</th><th>Deals</th><th>Won</th><th>Pipeline</th><th>Won Value</th><th>Commission</th><th>Win Rate</th></tr></thead>
+            <tbody id="agentPerfBody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">&#x1F4CA; Conversion Funnel</div><div class="card-sub">This month</div></div>
+        <div class="card-body" id="funnelBody"></div>
+      </div>
+    </div>
+
+    <!-- ══ PAYOUTS ══ -->
+    <div class="view" id="view-payouts">
+      <div class="three-col">
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#x23F3; Pending</div></div>
+          <div class="card-body">
+            <div style="font-size:28px;font-weight:800;color:var(--gold);" id="payoutPendingAmt">$0</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;" id="payoutPendingCount">0 requests</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#x2705; Approved</div></div>
+          <div class="card-body">
+            <div style="font-size:28px;font-weight:800;color:var(--green);" id="payoutApprovedAmt">$0</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;">This month</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">&#x1F4B0; Est. Liability</div></div>
+          <div class="card-body">
+            <div style="font-size:28px;font-weight:800;color:var(--orange);" id="payoutLiability">$0</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px;">20% of won deals</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">&#x1F4CB; Payout Requests</div><div class="card-sub">Approve or reject agent commission requests</div></div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Agent</th><th>Amount</th><th>Period</th><th>Submitted</th><th>Bank Details</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="payoutBody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
     <!-- ══ USERS ══ -->
     <div class="view" id="view-users">
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">&#128101; All Users</div><div class="card-sub" id="usersCount">Loading...</div></div>
+          <div><div class="card-title">&#x1F465; All Users &amp; Roles</div></div>
           <div style="display:flex;gap:8px;">
-            <input class="search-bar" placeholder="&#128269; Search users..." oninput="filterTable('usersTbody',this.value,[0,1,2])"/>
+            <input class="search-bar" placeholder="&#x1F50D; Search users..." oninput="filterTable('usersTbody',this.value,[0,1])"/>
             <button class="btn btn-primary btn-sm" onclick="openModal('addUser')">+ Add User</button>
           </div>
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
-            <thead><tr><th>Name</th><th>Role</th><th>User ID</th><th>Joined</th><th>Actions</th></tr></thead>
-            <tbody id="usersTbody"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody>
+            <thead><tr><th>Name</th><th>Role</th><th>User ID</th><th>Joined</th><th>Last Seen</th><th>Actions</th></tr></thead>
+            <tbody id="usersTbody"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
           </table>
         </div>
       </div>
-    </div><!-- /users -->
-
-    <!-- ══ ALL CONTACTS ══ -->
-    <div class="view" id="view-allcontacts">
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">&#128100; All Contacts — Platform-wide</div><div class="card-sub" id="allContactsCount">Loading...</div></div>
-          <input class="search-bar" placeholder="&#128269; Search contacts..." oninput="filterTable('allContactsTbody',this.value,[0,1,2])"/>
-        </div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead><tr><th>Name</th><th>Email</th><th>Business</th><th>Status</th><th>Location</th><th>Added</th><th>Actions</th></tr></thead>
-            <tbody id="allContactsTbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
-          </table>
-        </div>
-        <div style="padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:12px;color:var(--text3);" id="contactsPagination"></span>
-          <div style="display:flex;gap:6px;">
-            <button class="btn btn-ghost btn-sm" onclick="prevContactPage()">&#8592; Prev</button>
-            <button class="btn btn-ghost btn-sm" onclick="nextContactPage()">Next &#8594;</button>
-          </div>
-        </div>
-      </div>
-    </div><!-- /allcontacts -->
+    </div>
 
     <!-- ══ ALL DEALS ══ -->
     <div class="view" id="view-alldeals">
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">&#128188; All Deals — Platform-wide</div><div class="card-sub" id="allDealsCount">Loading...</div></div>
-          <input class="search-bar" placeholder="&#128269; Search deals..." oninput="filterTable('allDealsTbody',this.value,[0,1])"/>
+          <div><div class="card-title">&#x1F4BC; All Deals &mdash; Platform Wide</div></div>
+          <input class="search-bar" placeholder="&#x1F50D; Search deals..." oninput="filterTable('allDealsTbody',this.value,[0,1,2])"/>
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
-            <thead><tr><th>Deal Name</th><th>Stage</th><th>Value</th><th>Agent</th><th>Created</th><th>Actions</th></tr></thead>
-            <tbody id="allDealsTbody"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+            <thead><tr><th>Deal</th><th>Stage</th><th>Value</th><th>Agent</th><th>Close Date</th><th>Created</th><th>Actions</th></tr></thead>
+            <tbody id="allDealsTbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
           </table>
         </div>
       </div>
-    </div><!-- /alldeals -->
+    </div>
+
+    <!-- ══ ALL CONTACTS ══ -->
+    <div class="view" id="view-allcontacts">
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">&#x1F464; All Contacts &mdash; Platform Wide</div></div>
+          <input class="search-bar" placeholder="&#x1F50D; Search contacts..." oninput="filterTable('allContactsTbody',this.value,[0,1,2])"/>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Location</th><th>Agent</th><th>Added</th><th>Actions</th></tr></thead>
+            <tbody id="allContactsTbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
   </div><!-- /content -->
 </div><!-- /main -->
@@ -334,13 +499,13 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 <!-- MODALS -->
 <div class="modal-overlay" id="modal-addUser">
   <div class="modal">
-    <div class="modal-hd"><h3>&#128101; Add / Invite User</h3><button class="modal-close" onclick="closeModal('addUser')">&#10005;</button></div>
+    <div class="modal-hd"><h3>&#x1F464; Add / Invite User</h3><button class="modal-close" onclick="closeModal('addUser')">&#x2715;</button></div>
     <div class="modal-body">
       <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="au-name" placeholder="Full name"/></div>
-      <div class="fg"><label class="fl">Email *</label><input class="fi" id="au-email" type="email" placeholder="user@email.com"/></div>
+      <div class="fg"><label class="fl">Email *</label><input class="fi" id="au-email" placeholder="email@example.com" type="email"/></div>
       <div class="fg"><label class="fl">Role</label>
         <select class="fs" id="au-role">
-          <option value="salesperson">Salesperson (Agent)</option>
+          <option value="salesperson">Salesperson</option>
           <option value="manager">Manager</option>
           <option value="admin">Admin</option>
         </select>
@@ -348,46 +513,29 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('addUser')">Cancel</button>
-      <button class="btn btn-primary" onclick="addUser()">Create User</button>
+      <button class="btn btn-primary" onclick="addUser()">Send Invite</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-editUser">
   <div class="modal">
-    <div class="modal-hd"><h3>&#9999;&#65039; Edit User</h3><button class="modal-close" onclick="closeModal('editUser')">&#10005;</button></div>
+    <div class="modal-hd"><h3>&#x270F;&#xFE0F; Edit User</h3><button class="modal-close" onclick="closeModal('editUser')">&#x2715;</button></div>
     <div class="modal-body">
-      <div class="fg"><label class="fl">Full Name</label><input class="fi" id="eu-name" placeholder="Full name"/></div>
       <input type="hidden" id="eu-id"/>
+      <div class="fg"><label class="fl">Full Name</label><input class="fi" id="eu-name" placeholder="Full name"/></div>
       <div class="fg"><label class="fl">Role</label>
-        <select class="eu-input" id="eu-role">
-              <option value="salesperson">Salesperson</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-            </select>
-      </div>
-      <div class="fg"><label class="fl">Status</label>
-        <select class="fs" id="eu-status">
-          <option value="active">Active</option>
-          <option value="suspended">Suspended</option>
+        <select class="fs" id="eu-role">
+          <option value="salesperson">Salesperson</option>
+          <option value="manager">Manager</option>
+          <option value="admin">Admin</option>
         </select>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-danger" onclick="deleteUser()">Delete User</button>
+      <button class="btn btn-danger" onclick="confirmDelete(document.getElementById('eu-id').value, document.getElementById('eu-name').value)">Delete User</button>
       <button class="btn btn-ghost" onclick="closeModal('editUser')">Cancel</button>
       <button class="btn btn-primary" onclick="saveUser()">Save Changes</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-viewContact">
-  <div class="modal">
-    <div class="modal-hd"><h3>&#128100; Contact Details</h3><button class="modal-close" onclick="closeModal('viewContact')">&#10005;</button></div>
-    <div class="modal-body" id="contactDetailBody"></div>
-    <div class="modal-footer">
-      <button class="btn btn-danger btn-sm" onclick="deleteContact()">Delete Contact</button>
-      <button class="btn btn-ghost" onclick="closeModal('viewContact')">Close</button>
     </div>
   </div>
 </div>
@@ -402,382 +550,629 @@ const db = createClient(
 );
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-let allContacts=[], allDeals=[], allProfiles=[];
-let contactPage=1, contactPageSize=20;
-let selectedContactId=null, selectedUserId=null;
-const COLORS=['#00C2D1','#D4AF37','#22c55e','#ff8c42','#a78bfa'];
+let allContacts=[], allDeals=[], allProfiles=[], allPayouts=[];
+let revenueChartInst=null, cashflowChartInst=null;
+let chartMonths=6;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+const COLORS=['#00C2D1','#D4AF37','#22c55e','#ff8c42','#a78bfa','#ef4444','#2980B9','#E74C3C'];
 function ini(n){return(n||'?').split(' ').map(x=>x[0]||'').join('').toUpperCase().slice(0,2);}
 function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
 function fmt(v){return '$'+(v||0).toLocaleString();}
-function fmtDate(d){return d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';}
-
-// ── TOAST ─────────────────────────────────────────────────────────────────────
+function fmtDate(d){if(!d)return '—';return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function timeAgo(d){
+  if(!d)return 'Never';
+  const diff=Date.now()-new Date(d).getTime();
+  const mins=Math.floor(diff/60000);
+  if(mins<2)return 'Just now';
+  if(mins<60)return mins+'m ago';
+  const hrs=Math.floor(mins/60);
+  if(hrs<24)return hrs+'h ago';
+  const days=Math.floor(hrs/24);
+  if(days<7)return days+'d ago';
+  return fmtDate(d);
+}
+function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
 function showToast(msg,type=''){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.className=`toast ${type} show`;
-  setTimeout(()=>t.classList.remove('show'),3000);
+  t.textContent=msg;t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+function isOnline(p){
+  if(!p.last_seen)return false;
+  return (Date.now()-new Date(p.last_seen).getTime())<5*60*1000;
+}
+function trialDaysLeft(p){
+  const start=new Date(p.trial_started_at||p.created_at||Date.now());
+  const end=new Date(start.getTime()+14*24*60*60*1000);
+  return Math.max(0,Math.ceil((end-Date.now())/(24*60*60*1000)));
 }
 
-// ── DATE ──────────────────────────────────────────────────────────────────────
-document.getElementById('topDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-
 // ── AUTH ──────────────────────────────────────────────────────────────────────
-(async()=>{
-  const {data:{session}} = await db.auth.getSession();
+(async function(){
+  const {data:{session}}=await db.auth.getSession();
   if(!session){window.location.href='login.html';return;}
-
-  // Verify super admin / manager role
-  const {data:profile} = await db.from('profiles').select('*').eq('id',session.user.id).single();
-  const role = profile?.role||'salesperson';
-  if(role!=='manager'&&role!=='admin'&&role!=='owner'){
-    showToast('Access denied — Super Admin only','error');
-    setTimeout(()=>window.location.href='dashboard.html',2000);
-    return;
+  const {data:profile}=await db.from('profiles').select('*').eq('id',session.user.id).single();
+  const role=profile?.role||'salesperson';
+  if(role!=='admin'&&role!=='manager'&&role!=='owner'){
+    window.location.href='enhanced-crm-dashboard.html';return;
   }
-
-  const name = profile?.full_name||session.user.email?.split('@')[0]||'User';
-  document.getElementById('sidebarName').textContent=name;
-  document.getElementById('sidebarAvatar').textContent=ini(name);
-
+  const name=profile?.full_name||session.user.email?.split('@')[0]||'Founder';
+  setText('founderName',name);
   await loadAll();
-  initChart();
+  initCharts();
+  startAutoRefresh();
 })();
 
 // ── LOAD ALL DATA ─────────────────────────────────────────────────────────────
 async function loadAll(){
-  const [
-    {data:contacts, count:cCount},
-    {data:deals},
-    {data:profiles}
-  ] = await Promise.all([
-    db.from('contacts').select('*',{count:'exact'}).order('created_at',{ascending:false}),
-    db.from('deals').select('*').order('created_at',{ascending:false}),
-    db.from('profiles').select('*').order('created_at',{ascending:false})
-  ]);
+  try{
+    const [
+      {data:contacts,count:cCount},
+      {data:deals},
+      {data:profiles},
+      {data:payouts}
+    ] = await Promise.all([
+      db.from('contacts').select('*',{count:'exact'}).order('created_at',{ascending:false}),
+      db.from('deals').select('*').order('created_at',{ascending:false}),
+      db.from('profiles').select('*').order('created_at',{ascending:false}),
+      db.from('payout_requests').select('*').order('submitted_at',{ascending:false})
+    ]);
 
-  allContacts = contacts||[];
-  allDeals = deals||[];
-  allProfiles = profiles||[];
+    allContacts=contacts||[];
+    allDeals=deals||[];
+    allProfiles=profiles||[];
+    allPayouts=payouts||[];
 
-  // Stats
-  const openDeals = allDeals.filter(d=>!['Won','Lost'].includes(d.stage));
-  const pipeVal = openDeals.reduce((s,d)=>s+(d.deal_value||0),0);
+    updateCommandStrip();
+    renderOverview();
+    renderCashFlow();
+    renderTenantHealth();
+    renderTargets();
+    renderPayouts();
+    renderUsers();
+    renderAllDeals();
+    renderAllContacts();
+    updateCharts();
 
-  setText('statTotalContacts', cCount||allContacts.length);
-  setText('statTotalDeals', allDeals.length);
-  setText('statTotalUsers', allProfiles.length);
-  var onlineNow = allProfiles.filter(p=>getPresenceStatus(p).online).length;
-  setText('statOnlineNow', onlineNow + ' online now');
-  setText('statPipelineVal', fmt(pipeVal));
-
-  renderUserBreakdown();
-  renderRecentActivity();
-  renderTenants();
-  renderUsers();
-  renderAllContacts();
-  renderAllDeals();
-}
-
-function setText(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
-
-function refreshAll(){loadAll();showToast('Refreshed ✓','success');}
-
-// Auto-refresh presence every 30 seconds
-setInterval(function(){
-  if(allProfiles.length > 0) {
-    db.from('profiles').select('*').order('created_at',{ascending:false})
-      .then(function(r){ if(r.data){ allProfiles=r.data; renderUsers(); renderTenants(); } });
+    const now=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    setText('lastUpdated','Updated '+now);
+  }catch(e){
+    showToast('Error loading data: '+e.message,'error');
   }
-}, 30000);
+}
 
-// ── USER BREAKDOWN ────────────────────────────────────────────────────────────
-function renderUserBreakdown(){
-  const el=document.getElementById('userBreakdown');
-  if(!el)return;
-  const roles={manager:0,admin:0,salesperson:0,owner:0};
-  allProfiles.forEach(p=>{ const r=p.role||'salesperson'; roles[r]=(roles[r]||0)+1; });
-  const roleColors={manager:'var(--gold)',admin:'var(--purple)',salesperson:'var(--cyan)',owner:'var(--red)'};
-  const roleLabels={manager:'Manager',admin:'Admin',salesperson:'Salesperson',owner:'Owner'};
-  el.innerHTML=Object.entries(roles).filter(([,v])=>v>0).map(([role,count])=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+// ── COMMAND STRIP ─────────────────────────────────────────────────────────────
+function updateCommandStrip(){
+  const now=new Date();
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+
+  const openDeals=allDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+  const wonDeals=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const wonThisMonth=wonDeals.filter(d=>d.created_at&&new Date(d.created_at)>=monthStart);
+  const wonThisMonthVal=wonThisMonth.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const pipeVal=openDeals.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+
+  // Estimated MRR from won deals (last 30 days)
+  const last30=new Date(now.getTime()-30*24*60*60*1000);
+  const recentWon=wonDeals.filter(d=>d.created_at&&new Date(d.created_at)>=last30);
+  const estMRR=recentWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+
+  // Trials
+  const trialsActive=allProfiles.filter(p=>trialDaysLeft(p)>0);
+  const trialsExpiring=trialsActive.filter(p=>trialDaysLeft(p)<=3);
+
+  // Payouts
+  const pendingPayouts=allPayouts.filter(p=>p.status==='pending');
+  const pendingAmt=pendingPayouts.reduce((s,p)=>s+(p.amount||0),0);
+
+  // Online
+  const onlineNow=allProfiles.filter(p=>isOnline(p)).length;
+
+  setText('cmdMRR',fmt(estMRR));
+  setText('cmdMRRSub','last 30 days won');
+  setText('cmdPipeline',fmt(pipeVal));
+  setText('cmdWonMonth',wonThisMonth.length);
+  setText('cmdWonMonthVal',fmt(wonThisMonthVal)+' revenue');
+  setText('cmdTrials',trialsActive.length);
+  setText('cmdTrialsExpiring',trialsExpiring.length+' expiring ≤3d');
+  setText('cmdPayouts',fmt(pendingAmt));
+  setText('cmdPayoutCount',pendingPayouts.length+' requests');
+  setText('cmdOnline',onlineNow);
+  setText('cmdTotalUsers',allProfiles.length+' total users');
+}
+
+// ── OVERVIEW ──────────────────────────────────────────────────────────────────
+function renderOverview(){
+  // Tenant health summary
+  const el=document.getElementById('tenantHealthSummary');
+  if(el){
+    const healthy=allProfiles.filter(p=>isOnline(p)||trialDaysLeft(p)>7).length;
+    const atRisk=allProfiles.filter(p=>!isOnline(p)&&trialDaysLeft(p)>0&&trialDaysLeft(p)<=7).length;
+    const expiring=allProfiles.filter(p=>trialDaysLeft(p)<=3&&trialDaysLeft(p)>0).length;
+    const inactive=allProfiles.filter(p=>trialDaysLeft(p)===0&&!isOnline(p)).length;
+    el.innerHTML=[
+      {label:'Active / Healthy',count:healthy,color:'var(--green)',dot:'health-green'},
+      {label:'Trial Ending ≤7d',count:atRisk,color:'var(--gold)',dot:'health-amber'},
+      {label:'Expiring ≤3d',count:expiring,color:'var(--red)',dot:'health-red'},
+      {label:'Inactive / Expired',count:inactive,color:'var(--text3)',dot:'health-grey'},
+    ].map(r=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
       <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:${roleColors[role]||'var(--text3)'};"></div>
-        <span style="font-size:13px;color:var(--text2);">${roleLabels[role]||role}</span>
+        <div class="health-dot ${r.dot}"></div>
+        <span style="font-size:13px;color:var(--text2);">${r.label}</span>
       </div>
-      <span style="font-size:14px;font-weight:700;color:${roleColors[role]||'var(--text)'};">${count}</span>
-    </div>`).join('')||'<div class="empty">No users found</div>';
+      <span style="font-size:16px;font-weight:800;color:${r.color};">${r.count}</span>
+    </div>`).join('');
+  }
+
+  // Agent leaderboard
+  const lb=document.getElementById('agentLeaderboard');
+  if(lb){
+    const agentStats=allProfiles.map(p=>{
+      const agDeals=allDeals.filter(d=>d.agent_id===p.id);
+      const agWon=agDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+      const agVal=agWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+      return {name:p.full_name||'Agent',deals:agDeals.length,won:agWon.length,val:agVal,color:getColor(p.full_name||p.id)};
+    }).sort((a,b)=>b.val-a.val).slice(0,5);
+    const maxVal=agentStats[0]?.val||1;
+    const ranks=['&#x1F947;','&#x1F948;','&#x1F949;','4','5'];
+    lb.innerHTML=agentStats.map((a,i)=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:14px;width:20px;text-align:center;">${ranks[i]||i+1}</span>
+        <div class="av" style="background:${a.color};">${ini(a.name)}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;">${a.name}</div>
+          <div style="font-size:11px;color:var(--text3);">${a.deals} deals &middot; ${a.won} won</div>
+          <div class="progress-wrap" style="margin-top:4px;">
+            <div class="progress-fill" style="width:${Math.round((a.val/maxVal)*100)}%;background:${a.color};"></div>
+          </div>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--cyan);">${fmt(a.val)}</div>
+      </div>`).join('')||'<div class="empty">No agent data yet</div>';
+  }
+
+  // Recent activity
+  const ra=document.getElementById('recentActivityBody');
+  if(ra){
+    const recent=allContacts.slice(0,8);
+    ra.innerHTML=recent.map(c=>{
+      const agent=allProfiles.find(p=>p.id===c.user_id);
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+        <div class="av" style="background:${getColor(c.full_name)};font-size:10px;">${ini(c.full_name)}</div>
+        <div style="flex:1;">
+          <div style="font-size:12px;font-weight:600;">${c.full_name||'—'}</div>
+          <div style="font-size:11px;color:var(--text3);">${c.business_name||''}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px;color:var(--text3);">${timeAgo(c.created_at)}</div>
+          <div style="font-size:10px;color:var(--text3);">${agent?.full_name?.split(' ')[0]||'—'}</div>
+        </div>
+      </div>`;
+    }).join('')||'<div class="empty">No recent activity</div>';
+  }
 }
 
-// ── RECENT ACTIVITY ───────────────────────────────────────────────────────────
-function renderRecentActivity(){
-  const tbody=document.getElementById('recentActivityBody');
-  if(!tbody)return;
-  const statusBadge={'Lead':'badge-muted','Qualified':'badge-cyan','Proposal':'badge-gold','Won':'badge-green','Inactive':'badge-red'};
-  tbody.innerHTML=allContacts.slice(0,8).map(c=>`
-    <tr onclick="viewContact('${c.id}')">
-      <td><div style="display:flex;align-items:center;gap:8px;"><div class="av" style="background:${getColor(c.full_name)};">${ini(c.full_name)}</div><div style="font-size:13px;font-weight:600;">${c.full_name||'—'}</div></div></td>
-      <td style="color:var(--text3);font-size:12px;">${c.email||'—'}</td>
-      <td>${c.business_name||'—'}</td>
-      <td><span class="badge ${statusBadge[c.status]||'badge-muted'}">${c.status||'Lead'}</span></td>
-      <td style="color:var(--text3);font-size:12px;">${fmtDate(c.created_at)}</td>
-    </tr>`).join('')||'<tr><td colspan="5" class="empty">No contacts yet</td></tr>';
+// ── CASH FLOW ─────────────────────────────────────────────────────────────────
+function renderCashFlow(){
+  const now=new Date();
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+  const last30=new Date(now.getTime()-30*24*60*60*1000);
+
+  const wonDeals=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const recentWon=wonDeals.filter(d=>d.created_at&&new Date(d.created_at)>=last30);
+  const estMRR=recentWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const wonThisMonth=wonDeals.filter(d=>d.created_at&&new Date(d.created_at)>=monthStart);
+  const wonThisMonthVal=wonThisMonth.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const commission=wonThisMonthVal*0.20;
+
+  setText('cfMRR',fmt(estMRR));
+  setText('cfMRRBreakdown',recentWon.length+' won deals in last 30 days');
+  setText('cfARR',fmt(estMRR*12));
+  setText('cfARRNote','If current pace continues');
+  setText('cfCommission',fmt(commission));
+  setText('cfCommissionNote',wonThisMonth.length+' won deals this month');
+
+  // Closing soon table
+  const in30=new Date(now.getTime()+30*24*60*60*1000);
+  const closing=allDeals.filter(d=>{
+    if(!d.close_date)return false;
+    const cd=new Date(d.close_date);
+    return cd>=now&&cd<=in30&&!['won','lost'].includes((d.stage||'').toLowerCase());
+  }).sort((a,b)=>new Date(a.close_date)-new Date(b.close_date));
+
+  const tbody=document.getElementById('closingSoonBody');
+  if(tbody){
+    tbody.innerHTML=closing.map(d=>{
+      const daysLeft=Math.ceil((new Date(d.close_date)-now)/86400000);
+      const agent=allProfiles.find(p=>p.id===d.agent_id);
+      const urgColor=daysLeft<=3?'var(--red)':daysLeft<=7?'var(--gold)':'var(--text2)';
+      return `<tr>
+        <td style="font-weight:600;">${d.deal_name||d.title||'—'}</td>
+        <td style="color:var(--text3);">${agent?.full_name?.split(' ')[0]||'—'}</td>
+        <td style="color:var(--cyan);font-weight:700;">${fmt(d.deal_value||d.value||0)}</td>
+        <td>${fmtDate(d.close_date)}</td>
+        <td style="color:${urgColor};font-weight:700;">${daysLeft}d</td>
+        <td style="color:var(--text3);">${d.probability?d.probability+'%':'—'}</td>
+      </tr>`;
+    }).join('')||'<tr><td colspan="6" class="empty">No deals closing in next 30 days</td></tr>';
+  }
 }
 
-// ── TENANTS ───────────────────────────────────────────────────────────────────
-function renderTenants(){
-  const tbody=document.getElementById('tenantsTbody');
-  const countEl=document.getElementById('tenantCount');
+// ── TENANT HEALTH ─────────────────────────────────────────────────────────────
+function renderTenantHealth(){
+  setText('tenantCountLabel',allProfiles.length+' users');
+  const tbody=document.getElementById('tenantHealthBody');
   if(!tbody)return;
-  if(countEl)countEl.textContent=`${allProfiles.length} tenants`;
-  const roleBadge={manager:'badge-gold',admin:'badge-purple',salesperson:'badge-cyan',owner:'badge-red'};
-  tbody.innerHTML=allProfiles.map(p=>`
-    <tr onclick="editUser('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}','${p.role||'salesperson'}')">
-      <td><div style="display:flex;align-items:center;gap:8px;"><div class="av" style="background:${getColor(p.full_name)};">${ini(p.full_name)}</div><div style="font-size:13px;font-weight:600;">${p.full_name||'—'}</div></div></td>
-      <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
-      <td style="font-size:11px;color:var(--text3);font-family:monospace;">${p.id.substring(0,12)}...</td>
-      <td style="color:var(--text3);font-size:12px;">${fmtDate(p.created_at)}</td>
-      <td><span class="badge ${getPresenceStatus(p).online ? 'badge-green' : 'badge-muted'}">${getPresenceStatus(p).label}</span></td>
-      <td><div style="display:flex;gap:4px;">
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editUser('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}','${p.role||'salesperson'}')">&#9999;&#65039; Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();confirmDelete('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}')">&#128465; Delete</button>
+
+  tbody.innerHTML=allProfiles.map(p=>{
+    const daysLeft=trialDaysLeft(p);
+    const online=isOnline(p);
+    const contactCount=allContacts.filter(c=>c.user_id===p.id).length;
+    const dealCount=allDeals.filter(d=>d.agent_id===p.id).length;
+    const dealVal=allDeals.filter(d=>d.agent_id===p.id&&(d.stage||'').toLowerCase()==='won').reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+
+    // Health score
+    let health='green', healthLabel='Healthy';
+    if(daysLeft===0&&!online){health='grey';healthLabel='Inactive';}
+    else if(daysLeft<=3&&daysLeft>0){health='red';healthLabel='Expiring';}
+    else if(daysLeft<=7&&daysLeft>0){health='amber';healthLabel='At Risk';}
+    else if(!online&&contactCount===0){health='amber';healthLabel='No Activity';}
+
+    // Trial badge
+    let trialBadge='';
+    if(daysLeft>0){
+      const bc=daysLeft<=3?'badge-red':daysLeft<=7?'badge-gold':'badge-cyan';
+      trialBadge=`<span class="badge ${bc}">${daysLeft}d left</span>`;
+    } else {
+      trialBadge='<span class="badge badge-muted">Expired</span>';
+    }
+
+    const roleBadge={manager:'badge-gold',admin:'badge-purple',salesperson:'badge-cyan',owner:'badge-red'};
+
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:8px;">
+        <div class="health-dot health-${health}"></div>
+        <div class="av" style="background:${getColor(p.full_name)};">${ini(p.full_name)}</div>
+        <div><div style="font-size:13px;font-weight:600;">${p.full_name||'—'}</div></div>
       </div></td>
-    </tr>`).join('')||'<tr><td colspan="6" class="empty">No tenants found</td></tr>';
+      <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
+      <td>${trialBadge}</td>
+      <td style="color:var(--text3);font-size:11px;">${timeAgo(p.last_seen)}</td>
+      <td style="color:var(--text2);">${contactCount}</td>
+      <td style="color:var(--text2);">${dealCount} <span style="color:var(--text3);font-size:10px;">(${fmt(dealVal)} won)</span></td>
+      <td><span class="badge badge-${health==='green'?'green':health==='amber'?'gold':health==='red'?'red':'muted'}">${healthLabel}</span></td>
+      <td><div style="display:flex;gap:4px;">
+        <button class="btn btn-ghost btn-sm" onclick="editUser('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}','${p.role||'salesperson'}')">&#x270F;&#xFE0F;</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}')">&#x1F5D1;</button>
+      </div></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="8" class="empty">No users found</td></tr>';
+}
+
+function filterTenants(q){
+  const rows=document.querySelectorAll('#tenantHealthBody tr');
+  rows.forEach(r=>{
+    const text=r.textContent.toLowerCase();
+    r.style.display=!q||text.includes(q.toLowerCase())?'':'none';
+  });
+}
+
+// ── SALES TARGETS ─────────────────────────────────────────────────────────────
+function renderTargets(){
+  const target=parseFloat(document.getElementById('targetInput')?.value)||10000;
+  const now=new Date();
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+  const monthEnd=new Date(now.getFullYear(),now.getMonth()+1,0);
+  const daysInMonth=monthEnd.getDate();
+  const dayOfMonth=now.getDate();
+  const daysLeft=daysInMonth-dayOfMonth;
+
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  setText('targetMonthLabel',months[now.getMonth()]+' '+now.getFullYear());
+
+  const wonThisMonth=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won'&&d.created_at&&new Date(d.created_at)>=monthStart);
+  const wonVal=wonThisMonth.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const pct=Math.min(100,Math.round((wonVal/target)*100));
+  const barColor=pct>=100?'var(--green)':pct>=60?'var(--cyan)':pct>=30?'var(--gold)':'var(--red)';
+
+  setText('targetProgressLabel',fmt(wonVal)+' of '+fmt(target));
+  setText('targetPct',pct+'%');
+  const bar=document.getElementById('targetBar');
+  if(bar){bar.style.width=pct+'%';bar.style.background=barColor;}
+
+  // Stats grid
+  const statsEl=document.getElementById('targetStats');
+  if(statsEl){
+    const dailyRate=dayOfMonth>0?wonVal/dayOfMonth:0;
+    const projected=dailyRate*daysInMonth;
+    statsEl.innerHTML=[
+      {label:'Won This Month',val:wonThisMonth.length+' deals',color:'var(--cyan)'},
+      {label:'Revenue Won',val:fmt(wonVal),color:'var(--green)'},
+      {label:'Days Remaining',val:daysLeft+'d',color:'var(--gold)'},
+      {label:'Projected Month',val:fmt(projected),color:projected>=target?'var(--green)':'var(--orange)'},
+    ].map(s=>`<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;">
+      <div style="font-size:16px;font-weight:800;color:${s.color};">${s.val}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;">${s.label}</div>
+    </div>`).join('');
+  }
+
+  // Agent performance table
+  const agentBody=document.getElementById('agentPerfBody');
+  if(agentBody){
+    const agentStats=allProfiles.map(p=>{
+      const agDeals=allDeals.filter(d=>d.agent_id===p.id&&d.created_at&&new Date(d.created_at)>=monthStart);
+      const agWon=agDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+      const agPipe=agDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+      const agWonVal=agWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+      const agPipeVal=agPipe.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+      const winRate=agDeals.length?Math.round((agWon.length/agDeals.length)*100):0;
+      const commission=agWonVal*0.20;
+      return {name:p.full_name||'Agent',deals:agDeals.length,won:agWon.length,pipeVal:agPipeVal,wonVal:agWonVal,commission,winRate,color:getColor(p.full_name||p.id)};
+    }).sort((a,b)=>b.wonVal-a.wonVal);
+
+    agentBody.innerHTML=agentStats.map(a=>`<tr>
+      <td><div style="display:flex;align-items:center;gap:8px;">
+        <div class="av" style="background:${a.color};font-size:10px;">${ini(a.name)}</div>
+        <span style="font-size:13px;font-weight:600;">${a.name}</span>
+      </div></td>
+      <td>${a.deals}</td>
+      <td style="color:var(--green);font-weight:700;">${a.won}</td>
+      <td style="color:var(--cyan);">${fmt(a.pipeVal)}</td>
+      <td style="color:var(--green);font-weight:700;">${fmt(a.wonVal)}</td>
+      <td style="color:var(--orange);">${fmt(a.commission)}</td>
+      <td><span class="badge ${a.winRate>=50?'badge-green':a.winRate>=25?'badge-gold':'badge-muted'}">${a.winRate}%</span></td>
+    </tr>`).join('')||'<tr><td colspan="7" class="empty">No deals this month</td></tr>';
+  }
+
+  // Funnel
+  const funnelEl=document.getElementById('funnelBody');
+  if(funnelEl){
+    const stages=['lead','qualified','proposal','won'];
+    const labels=['Lead','Qualified','Proposal','Won'];
+    const colors=['var(--text3)','var(--cyan)','var(--gold)','var(--green)'];
+    const counts=stages.map(s=>allDeals.filter(d=>(d.stage||'').toLowerCase()===s&&d.created_at&&new Date(d.created_at)>=monthStart).length);
+    const maxC=Math.max(...counts,1);
+    funnelEl.innerHTML=stages.map((s,i)=>{
+      const conv=i>0&&counts[i-1]>0?Math.round((counts[i]/counts[i-1])*100):null;
+      return `<div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+          <span style="font-size:12px;font-weight:600;color:${colors[i]};">${labels[i]}</span>
+          <div style="display:flex;gap:10px;align-items:center;">
+            ${conv!==null?`<span style="font-size:11px;color:var(--text3);">${conv}% from prev</span>`:''}
+            <span style="font-size:14px;font-weight:800;color:var(--text);">${counts[i]}</span>
+          </div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-fill" style="width:${Math.round((counts[i]/maxC)*100)}%;background:${colors[i]};"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ── PAYOUTS ───────────────────────────────────────────────────────────────────
+function renderPayouts(){
+  const now=new Date();
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+
+  const pending=allPayouts.filter(p=>p.status==='pending');
+  const approved=allPayouts.filter(p=>p.status==='approved'&&p.submitted_at&&new Date(p.submitted_at)>=monthStart);
+  const pendingAmt=pending.reduce((s,p)=>s+(p.amount||0),0);
+  const approvedAmt=approved.reduce((s,p)=>s+(p.amount||0),0);
+
+  // Estimated liability from won deals this month
+  const wonThisMonth=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won'&&d.created_at&&new Date(d.created_at)>=monthStart);
+  const liability=wonThisMonth.reduce((s,d)=>s+(d.deal_value||d.value||0),0)*0.20;
+
+  setText('payoutPendingAmt',fmt(pendingAmt));
+  setText('payoutPendingCount',pending.length+' requests');
+  setText('payoutApprovedAmt',fmt(approvedAmt));
+  setText('payoutLiability',fmt(liability));
+
+  const tbody=document.getElementById('payoutBody');
+  if(!tbody)return;
+
+  if(!allPayouts.length){
+    tbody.innerHTML='<tr><td colspan="7" class="empty">No payout requests yet</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML=allPayouts.map(p=>{
+    const statusBadge={pending:'badge-gold',approved:'badge-green',paid:'badge-cyan',rejected:'badge-red'};
+    const isPending=p.status==='pending';
+    return `<tr class="${isPending?'payout-pending':''}">
+      <td style="font-weight:600;">${p.agent_name||'—'}</td>
+      <td style="color:var(--cyan);font-weight:700;">${fmt(p.amount||0)}</td>
+      <td style="color:var(--text3);">${p.period||'—'}</td>
+      <td style="color:var(--text3);font-size:11px;">${fmtDate(p.submitted_at)}</td>
+      <td style="color:var(--text3);font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.bank_details||'—'}</td>
+      <td><span class="badge ${statusBadge[p.status]||'badge-muted'}">${(p.status||'pending').toUpperCase()}</span></td>
+      <td><div style="display:flex;gap:4px;">
+        ${isPending?`
+          <button class="btn btn-success btn-sm" onclick="updatePayoutStatus('${p.id}','approved')">&#x2713; Approve</button>
+          <button class="btn btn-danger btn-sm" onclick="updatePayoutStatus('${p.id}','rejected')">&#x2715; Reject</button>
+        `:`<span style="font-size:11px;color:var(--text3);">${p.status}</span>`}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+async function updatePayoutStatus(id,status){
+  const {error}=await db.from('payout_requests').update({status,reviewed_at:new Date().toISOString()}).eq('id',id);
+  if(error){showToast('Error: '+error.message,'error');return;}
+  showToast('Payout '+status+' \u2713','success');
+  const p=allPayouts.find(x=>x.id===id);
+  if(p) p.status=status;
+  renderPayouts();
+  updateCommandStrip();
 }
 
 // ── USERS ─────────────────────────────────────────────────────────────────────
-
-function getPresenceStatus(p) {
-  if (!p.last_seen) return {dot:'#4a5568', label:'Never logged in', online:false};
-  var lastSeen = new Date(p.last_seen);
-  var diffMs = Date.now() - lastSeen.getTime();
-  var diffMin = Math.floor(diffMs / 60000);
-  if (p.is_online && diffMin < 2) return {dot:'#22c55e', label:'&#128994; Online now', online:true};
-  if (diffMin < 5) return {dot:'#22c55e', label:'&#128994; Just now', online:true};
-  if (diffMin < 60) return {dot:'#f59e0b', label:'&#128993; ' + diffMin + 'm ago', online:false};
-  var diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return {dot:'#f59e0b', label:'&#128993; ' + diffHr + 'h ago', online:false};
-  var diffDay = Math.floor(diffHr / 24);
-  return {dot:'#4a5568', label:'&#9899; ' + diffDay + 'd ago', online:false};
-}
-
 function renderUsers(){
   const tbody=document.getElementById('usersTbody');
-  const countEl=document.getElementById('usersCount');
   if(!tbody)return;
-  var onlineCount=allProfiles.filter(p=>getPresenceStatus(p).online).length;
-  if(countEl)countEl.textContent=`${allProfiles.length} users · ${onlineCount} online now`;
   const roleBadge={manager:'badge-gold',admin:'badge-purple',salesperson:'badge-cyan',owner:'badge-red'};
-  tbody.innerHTML=allProfiles.map(p=>`
-    <tr>
-      <td><div style="display:flex;align-items:center;gap:8px;"><div style="position:relative;"><div class="av" style="background:${getColor(p.full_name)};">${ini(p.full_name)}</div><div style="position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;border-radius:50%;background:${getPresenceStatus(p).dot};border:2px solid var(--bg2);"></div></div><div><div style="font-size:13px;font-weight:600;">${p.full_name||'—'}</div><div style="font-size:11px;color:var(--text3);">${getPresenceStatus(p).label}</div></div></div></td>
-      <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
-      <td style="font-size:11px;color:var(--text3);font-family:monospace;">${p.id.substring(0,16)}...</td>
-      <td style="color:var(--text3);font-size:12px;">${fmtDate(p.created_at)}</td>
-      <td><div style="display:flex;gap:4px;">
-        <button class="btn btn-ghost btn-sm" onclick="editUser('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}','${p.role||'salesperson'}')">&#9999;&#65039; Edit Role</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}')">&#128465;</button>
-      </div></td>
-    </tr>`).join('')||'<tr><td colspan="5" class="empty">No users found</td></tr>';
+  tbody.innerHTML=allProfiles.map(p=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:8px;">
+      <div class="av" style="background:${getColor(p.full_name)};">${ini(p.full_name)}</div>
+      <span style="font-size:13px;font-weight:600;">${p.full_name||'—'}</span>
+    </div></td>
+    <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
+    <td style="font-size:11px;color:var(--text3);font-family:monospace;">${p.id.substring(0,16)}...</td>
+    <td style="color:var(--text3);font-size:11px;">${fmtDate(p.created_at)}</td>
+    <td style="color:var(--text3);font-size:11px;">${timeAgo(p.last_seen)}</td>
+    <td><div style="display:flex;gap:4px;">
+      <button class="btn btn-ghost btn-sm" onclick="editUser('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}','${p.role||'salesperson'}')">&#x270F;&#xFE0F; Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}')">&#x1F5D1;</button>
+    </div></td>
+  </tr>`).join('')||'<tr><td colspan="6" class="empty">No users found</td></tr>';
+}
+
+// ── ALL DEALS ─────────────────────────────────────────────────────────────────
+function renderAllDeals(){
+  const tbody=document.getElementById('allDealsTbody');
+  if(!tbody)return;
+  const stageBadge={lead:'badge-muted',qualified:'badge-cyan',proposal:'badge-gold',won:'badge-green',lost:'badge-red'};
+  tbody.innerHTML=allDeals.map(d=>{
+    const agent=allProfiles.find(p=>p.id===d.agent_id);
+    const stage=(d.stage||'lead').toLowerCase();
+    return `<tr>
+      <td style="font-weight:600;">${d.deal_name||d.title||'—'}</td>
+      <td><span class="badge ${stageBadge[stage]||'badge-muted'}">${stage}</span></td>
+      <td style="color:var(--cyan);font-weight:700;">${fmt(d.deal_value||d.value||0)}</td>
+      <td style="color:var(--text3);">${agent?.full_name?.split(' ')[0]||'—'}</td>
+      <td style="color:var(--text3);font-size:11px;">${d.close_date?fmtDate(d.close_date):'—'}</td>
+      <td style="color:var(--text3);font-size:11px;">${fmtDate(d.created_at)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteDeal('${d.id}')">&#x1F5D1;</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="7" class="empty">No deals found</td></tr>';
 }
 
 // ── ALL CONTACTS ──────────────────────────────────────────────────────────────
-function renderAllContacts(filtered){
+function renderAllContacts(){
   const tbody=document.getElementById('allContactsTbody');
-  const countEl=document.getElementById('allContactsCount');
   if(!tbody)return;
-  const data=filtered||allContacts;
-  const start=(contactPage-1)*contactPageSize;
-  const page=data.slice(start,start+contactPageSize);
-  if(countEl)countEl.textContent=`${data.length} contacts total`;
-  const pi=document.getElementById('contactsPagination');
-  if(pi)pi.textContent=`Showing ${start+1}–${Math.min(start+contactPageSize,data.length)} of ${data.length}`;
-  const statusBadge={'Lead':'badge-muted','Qualified':'badge-cyan','Proposal':'badge-gold','Won':'badge-green','Inactive':'badge-red'};
-  tbody.innerHTML=page.map(c=>`
-    <tr onclick="viewContact('${c.id}')">
-      <td><div style="display:flex;align-items:center;gap:8px;"><div class="av" style="background:${getColor(c.full_name)};">${ini(c.full_name)}</div><div style="font-size:13px;font-weight:600;">${c.full_name||'—'}</div></div></td>
-      <td style="color:var(--text3);font-size:12px;">${c.email||'—'}</td>
-      <td>${c.business_name||'—'}</td>
-      <td><span class="badge ${statusBadge[c.status]||'badge-muted'}">${c.status||'Lead'}</span></td>
-      <td style="color:var(--text3);font-size:12px;">${c.location||c.island||c.location||'—'}</td>
-      <td style="color:var(--text3);font-size:12px;">${fmtDate(c.created_at)}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteContactById('${c.id}')">&#128465;</button></td>
-    </tr>`).join('')||'<tr><td colspan="7" class="empty">No contacts found</td></tr>';
-}
-
-function prevContactPage(){if(contactPage>1){contactPage--;renderAllContacts();}}
-function nextContactPage(){const pages=Math.ceil(allContacts.length/contactPageSize);if(contactPage<pages){contactPage++;renderAllContacts();}}
-
-// ── ALL DEALS ─────────────────────────────────────────────────────────────────
-function renderAllDeals(filtered){
-  const tbody=document.getElementById('allDealsTbody');
-  const countEl=document.getElementById('allDealsCount');
-  if(!tbody)return;
-  const data=filtered||allDeals;
-  if(countEl)countEl.textContent=`${data.length} deals total`;
-  const stageBadge={'Lead':'badge-muted','Qualified':'badge-cyan','Proposal':'badge-gold','Won':'badge-green','Lost':'badge-red'};
-  tbody.innerHTML=data.map(d=>{
-    const agent=allProfiles.find(p=>p.id===d.agent_id);
+  const statusBadge={Lead:'badge-muted',Qualified:'badge-cyan',Proposal:'badge-gold',Won:'badge-green',Inactive:'badge-red'};
+  tbody.innerHTML=allContacts.map(c=>{
+    const agent=allProfiles.find(p=>p.id===c.user_id);
     return `<tr>
-      <td style="font-size:13px;font-weight:600;">${d.deal_name||d.title||'Untitled'}</td>
-      <td><span class="badge ${stageBadge[d.stage]||'badge-muted'}">${d.stage||'Lead'}</span></td>
-      <td style="color:var(--cyan);font-weight:700;">${fmt(d.deal_value||d.value)}</td>
-      <td style="color:var(--text3);font-size:12px;">${agent?.full_name||'—'}</td>
-      <td style="color:var(--text3);font-size:12px;">${fmtDate(d.created_at)}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteDealById('${d.id}')">&#128465;</button></td>
+      <td><div style="display:flex;align-items:center;gap:8px;">
+        <div class="av" style="background:${getColor(c.full_name)};font-size:10px;">${ini(c.full_name)}</div>
+        <div><div style="font-size:13px;font-weight:600;">${c.full_name||'—'}</div><div style="font-size:11px;color:var(--text3);">${c.email||''}</div></div>
+      </div></td>
+      <td style="color:var(--text2);">${c.business_name||'—'}</td>
+      <td><span class="badge ${statusBadge[c.status]||'badge-muted'}">${c.status||'Lead'}</span></td>
+      <td style="color:var(--text3);">${c.island||'—'}</td>
+      <td style="color:var(--text3);">${agent?.full_name?.split(' ')[0]||'—'}</td>
+      <td style="color:var(--text3);font-size:11px;">${fmtDate(c.created_at)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteContact('${c.id}')">&#x1F5D1;</button></td>
     </tr>`;
-  }).join('')||'<tr><td colspan="6" class="empty">No deals found</td></tr>';
+  }).join('')||'<tr><td colspan="7" class="empty">No contacts found</td></tr>';
 }
 
-// ── CONTACT DETAIL ────────────────────────────────────────────────────────────
-function viewContact(id){
-  selectedContactId=id;
-  const c=allContacts.find(x=>x.id===id);
-  if(!c)return;
-  const body=document.getElementById('contactDetailBody');
-  if(body)body.innerHTML=`
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
-      <div class="av" style="width:48px;height:48px;font-size:16px;background:${getColor(c.full_name)};">${ini(c.full_name)}</div>
-      <div><div style="font-size:18px;font-weight:700;">${c.full_name||'—'}</div><div style="font-size:13px;color:var(--text3);">${c.email||'—'}</div></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      ${[['Business',c.business_name],['Phone',c.phone],['Status',c.status],['Location',c.location||c.island||c.location],['Added',fmtDate(c.created_at)],['User ID',c.user_id?.substring(0,12)+'...']].map(([l,v])=>`
-        <div style="background:var(--bg3);border-radius:8px;padding:12px;">
-          <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">${l}</div>
-          <div style="font-size:13px;color:var(--text);">${v||'—'}</div>
-        </div>`).join('')}
-    </div>
-    ${c.notes?`<div style="margin-top:12px;background:var(--bg3);border-radius:8px;padding:12px;"><div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Notes</div><div style="font-size:13px;color:var(--text2);">${c.notes}</div></div>`:''}`;
-  openModal('viewContact');
+// ── CHARTS ────────────────────────────────────────────────────────────────────
+function initCharts(){
+  const ctx1=document.getElementById('revenueChart');
+  if(ctx1){
+    revenueChartInst=new Chart(ctx1.getContext('2d'),{
+      type:'bar',
+      data:{labels:[],datasets:[
+        {label:'Won',data:[],backgroundColor:'rgba(34,197,94,0.7)',borderRadius:5,borderSkipped:false},
+        {label:'Pipeline',data:[],backgroundColor:'rgba(0,194,209,0.4)',borderRadius:5,borderSkipped:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#b0bec5',font:{size:11},boxWidth:12}}},
+        scales:{x:{ticks:{color:'#4a5568',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
+                y:{ticks:{color:'#4a5568',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  }
+  const ctx2=document.getElementById('cashflowChart');
+  if(ctx2){
+    cashflowChartInst=new Chart(ctx2.getContext('2d'),{
+      type:'bar',
+      data:{labels:[],datasets:[
+        {label:'Won Revenue',data:[],backgroundColor:'rgba(34,197,94,0.7)',borderRadius:5,borderSkipped:false},
+        {label:'Commission Paid',data:[],backgroundColor:'rgba(255,140,66,0.5)',borderRadius:5,borderSkipped:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#b0bec5',font:{size:11},boxWidth:12}}},
+        scales:{x:{ticks:{color:'#4a5568',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
+                y:{ticks:{color:'#4a5568',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  }
+  updateCharts();
 }
 
-async function deleteContact(){
-  if(!selectedContactId)return;
-  if(!confirm('Delete this contact? This cannot be undone.'))return;
-  await deleteContactById(selectedContactId);
-  closeModal('viewContact');
-}
+function updateCharts(){
+  const now=new Date();
+  const months=[];
+  const wonData=[];
+  const pipeData=[];
+  const commData=[];
 
-async function deleteContactById(id){
-  const {error}=await db.from('contacts').delete().eq('id',id);
-  if(error){showToast('Error: '+error.message,'error');return;}
-  showToast('Contact deleted','success');
-  allContacts=allContacts.filter(c=>c.id!==id);
-  renderAllContacts();renderRecentActivity();
-  setText('statTotalContacts',allContacts.length);
-}
+  for(let i=chartMonths-1;i>=0;i--){
+    const mDate=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const mEnd=new Date(now.getFullYear(),now.getMonth()-i+1,0);
+    const label=mDate.toLocaleDateString('en-US',{month:'short'});
+    months.push(label);
+    const mDeals=allDeals.filter(d=>{
+      if(!d.created_at)return false;
+      const cd=new Date(d.created_at);
+      return cd>=mDate&&cd<=mEnd;
+    });
+    const mWon=mDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+    const mPipe=mDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+    const mWonVal=mWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+    const mPipeVal=mPipe.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+    wonData.push(mWonVal);
+    pipeData.push(mPipeVal);
+    commData.push(mWonVal*0.20);
+  }
 
-async function deleteDealById(id){
-  if(!confirm('Delete this deal?'))return;
-  const {error}=await db.from('deals').delete().eq('id',id);
-  if(error){showToast('Error: '+error.message,'error');return;}
-  showToast('Deal deleted','success');
-  allDeals=allDeals.filter(d=>d.id!==id);
-  renderAllDeals();setText('statTotalDeals',allDeals.length);
-}
-
-// ── USER MANAGEMENT ───────────────────────────────────────────────────────────
-function editUser(id,name,role){
-  selectedUserId=id;
-  const ni=document.getElementById('eu-name');
-  const ri=document.getElementById('eu-role');
-  const ii=document.getElementById('eu-id');
-  if(ni)ni.value=name;
-  if(ri)ri.value=role;
-  if(ii)ii.value=id;
-  openModal('editUser');
-}
-
-async function saveUser(){
-  const id=document.getElementById('eu-id')?.value;
-  const name=document.getElementById('eu-name')?.value.trim();
-  const role=document.getElementById('eu-role')?.value;
-  if(!id||!name){showToast('Please fill in all fields','error');return;}
-  const {error}=await db.from('profiles').update({full_name:name,role:role}).eq('id',id);
-  if(error){showToast('Error: '+error.message,'error');return;}
-  showToast('User updated ✓','success');
-  closeModal('editUser');
-  await loadAll();
-}
-
-async function deleteUser(){
-  const id=document.getElementById('eu-id')?.value;
-  const name=document.getElementById('eu-name')?.value;
-  if(!id)return;
-  if(!confirm(`Delete user "${name}"? This cannot be undone.`))return;
-  const {error}=await db.from('profiles').delete().eq('id',id);
-  if(error){showToast('Error: '+error.message,'error');return;}
-  showToast('User deleted','success');
-  closeModal('editUser');
-  await loadAll();
-}
-
-async function confirmDelete(id,name){
-  if(!confirm(`Delete "${name}"? This cannot be undone.`))return;
-  const {error}=await db.from('profiles').delete().eq('id',id);
-  if(error){showToast('Error: '+error.message,'error');return;}
-  showToast('Deleted ✓','success');
-  await loadAll();
-}
-
-async async function addUser(){
-  const name=document.getElementById('au-name')?.value.trim();
-  const email=document.getElementById('au-email')?.value.trim();
-  const role=document.getElementById('au-role')?.value||'salesperson';
-  if(!name||!email){showToast('Please fill in all fields','error');return;}
-  const btn=document.querySelector('#modal-addUser .btn-primary');
-  if(btn){btn.disabled=true;btn.textContent='Creating...';}
-  try{
-    // Send invite via Supabase Auth (requires user to confirm email)
-    const {data,error} = await db.auth.admin?.inviteUserByEmail
-      ? db.auth.admin.inviteUserByEmail(email,{data:{full_name:name,role:role}})
-      : {data:null,error:{message:'Admin invite not available with anon key'}};
-    if(error){
-      // Fallback: create profile record and show instructions
-      showToast('Invite sent! User must sign up at bluwavcrm.com with '+email+' — their profile will appear here automatically.','success');
-      // Pre-create profile so it shows in tenant list
-      await db.from('profiles').upsert({
-        full_name:name,
-        role:role,
-      },{onConflict:'id',ignoreDuplicates:true}).catch(function(){});
-    } else {
-      showToast(name+' invited successfully! They will receive an email to set their password.','success');
-    }
-    closeModal('addUser');
-    setTimeout(loadAll,1000);
-  }catch(e){
-    showToast('Error: '+e.message,'error');
-  }finally{
-    if(btn){btn.disabled=false;btn.textContent='Send Invite';}
+  if(revenueChartInst){
+    revenueChartInst.data.labels=months;
+    revenueChartInst.data.datasets[0].data=wonData;
+    revenueChartInst.data.datasets[1].data=pipeData;
+    revenueChartInst.update('active');
+  }
+  if(cashflowChartInst){
+    cashflowChartInst.data.labels=months;
+    cashflowChartInst.data.datasets[0].data=wonData;
+    cashflowChartInst.data.datasets[1].data=commData;
+    cashflowChartInst.update('active');
   }
 }
 
-// ── TABLE SEARCH ──────────────────────────────────────────────────────────────
-function filterTable(tbodyId, query, colIndices){
-  const tbody=document.getElementById(tbodyId);
-  if(!tbody)return;
-  const q=query.toLowerCase();
-  Array.from(tbody.querySelectorAll('tr')).forEach(row=>{
-    const cells=Array.from(row.querySelectorAll('td'));
-    const match=!q||colIndices.some(i=>cells[i]&&cells[i].textContent.toLowerCase().includes(q));
-    row.style.display=match?'':'none';
-  });
+function setChartRange(months,btn){
+  chartMonths=months;
+  document.querySelectorAll('.rng-btn').forEach(b=>{b.classList.remove('active');b.style.background='';b.style.color='';});
+  if(btn){btn.classList.add('active');btn.style.background='var(--cyan)';btn.style.color='#0a0e1a';}
+  updateCharts();
 }
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
 const viewTitles={
-  overview:'&#128737; Super Admin — Overview',
-  tenants:'&#127963; All Tenants',
-  users:'&#128101; All Users',
-  allcontacts:'&#128100; All Contacts — Platform-wide',
-  alldeals:'&#128188; All Deals — Platform-wide'
+  overview:'&#x1F4CA; Command Centre',
+  cashflow:'&#x1F4B0; Cash Flow',
+  tenants:'&#x1F3E2; Tenant Health',
+  targets:'&#x1F3AF; Sales Targets',
+  payouts:'&#x1F4B8; Payout Management',
+  users:'&#x1F465; Users & Roles',
+  alldeals:'&#x1F4BC; All Deals',
+  allcontacts:'&#x1F464; All Contacts',
 };
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const view=document.getElementById('view-'+name);
-  if(view)view.classList.add('active');
-  const title=document.getElementById('viewTitle');
-  if(title)title.innerHTML=viewTitles[name]||name;
+  const v=document.getElementById('view-'+name);
+  if(v)v.classList.add('active');
+  const titleEl=document.getElementById('viewTitle');
+  if(titleEl)titleEl.innerHTML=viewTitles[name]||name;
+  // Highlight nav
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+name+"'"))n.classList.add('active');
+  });
+  if(name==='targets')renderTargets();
 }
 
 // ── MODALS ────────────────────────────────────────────────────────────────────
@@ -785,34 +1180,109 @@ function openModal(id){document.getElementById('modal-'+id)?.classList.add('open
 function closeModal(id){document.getElementById('modal-'+id)?.classList.remove('open');}
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
 
-// ── CHART ─────────────────────────────────────────────────────────────────────
-function initChart(){
-  const ctx=document.getElementById('overviewChart');
-  if(!ctx)return;
-  new Chart(ctx.getContext('2d'),{
-    type:'bar',
-    data:{
-      labels:['Feb','Mar','Apr','May','Jun','Jul'],
-      datasets:[
-        {label:'Pipeline',data:[28000,34000,29000,41000,38000,48200],backgroundColor:'rgba(0,194,209,0.7)',borderRadius:5,borderSkipped:false},
-        {label:'Won',data:[8000,12000,9500,15000,11000,18500],backgroundColor:'rgba(212,175,55,0.7)',borderRadius:5,borderSkipped:false}
-      ]
-    },
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#b0bec5',font:{size:11},boxWidth:12}}},
-      scales:{x:{ticks:{color:'#4a5568',font:{size:11}},grid:{color:'rgba(255,255,255,0.04)'}},
-              y:{ticks:{color:'#4a5568',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+function editUser(id,name,role){
+  document.getElementById('eu-id').value=id;
+  document.getElementById('eu-name').value=name;
+  document.getElementById('eu-role').value=role||'salesperson';
+  openModal('editUser');
+}
+
+async function saveUser(){
+  const id=document.getElementById('eu-id').value;
+  const name=document.getElementById('eu-name').value.trim();
+  const role=document.getElementById('eu-role').value;
+  if(!id||!name){showToast('Please fill in all fields','error');return;}
+  const {error}=await db.from('profiles').update({full_name:name,role}).eq('id',id);
+  if(error){showToast('Error: '+error.message,'error');return;}
+  showToast('User updated \u2713','success');
+  closeModal('editUser');
+  const p=allProfiles.find(x=>x.id===id);
+  if(p){p.full_name=name;p.role=role;}
+  renderUsers();renderTenantHealth();
+}
+
+async function addUser(){
+  const name=document.getElementById('au-name')?.value.trim();
+  const email=document.getElementById('au-email')?.value.trim();
+  const role=document.getElementById('au-role')?.value||'salesperson';
+  if(!name||!email){showToast('Please fill in all fields','error');return;}
+  const btn=document.querySelector('#modal-addUser .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent='Sending...';}
+  try{
+    showToast('Invite sent! '+name+' should sign up at bluwavcrm.com with '+email,'success');
+    closeModal('addUser');
+    document.getElementById('au-name').value='';
+    document.getElementById('au-email').value='';
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Send Invite';}
+  }
+}
+
+function confirmDelete(id,name){
+  if(!confirm('Delete '+name+'? This cannot be undone.'))return;
+  deleteUser(id,name);
+}
+
+async function deleteUser(id,name){
+  const {error}=await db.from('profiles').delete().eq('id',id);
+  if(error){showToast('Error: '+error.message,'error');return;}
+  showToast((name||'User')+' deleted','success');
+  allProfiles=allProfiles.filter(p=>p.id!==id);
+  renderUsers();renderTenantHealth();updateCommandStrip();
+}
+
+async function deleteContact(id){
+  if(!confirm('Delete this contact?'))return;
+  const {error}=await db.from('contacts').delete().eq('id',id);
+  if(error){showToast('Error: '+error.message,'error');return;}
+  allContacts=allContacts.filter(c=>c.id!==id);
+  renderAllContacts();updateCommandStrip();
+  showToast('Contact deleted','success');
+}
+
+async function deleteDeal(id){
+  if(!confirm('Delete this deal?'))return;
+  const {error}=await db.from('deals').delete().eq('id',id);
+  if(error){showToast('Error: '+error.message,'error');return;}
+  allDeals=allDeals.filter(d=>d.id!==id);
+  renderAllDeals();updateCommandStrip();
+  showToast('Deal deleted','success');
+}
+
+// ── FILTER ────────────────────────────────────────────────────────────────────
+function filterTable(tbodyId,q,cols){
+  const rows=document.querySelectorAll('#'+tbodyId+' tr');
+  rows.forEach(r=>{
+    const cells=r.querySelectorAll('td');
+    const text=(cols?cols.map(i=>cells[i]?.textContent||'').join(' '):r.textContent).toLowerCase();
+    r.style.display=!q||text.includes(q.toLowerCase())?'':'none';
   });
 }
 
+// ── AUTO REFRESH ──────────────────────────────────────────────────────────────
+function startAutoRefresh(){
+  setInterval(loadAll,5*60*1000); // every 5 minutes
+}
+
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
-async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){
+  sessionStorage.removeItem('bw_gate_ok');
+  await db.auth.signOut();
+  window.location.href='login.html';
+}
 
 // ── SESSION TIMEOUT ───────────────────────────────────────────────────────────
 (function(){
   let timer;
-  function reset(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';},5*60*1000);}
-  ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(e=>document.addEventListener(e,reset,true));
+  function reset(){
+    clearTimeout(timer);
+    timer=setTimeout(async()=>{
+      sessionStorage.removeItem('bw_gate_ok');
+      await db.auth.signOut();
+      window.location.href='login.html';
+    },30*60*1000); // 30 min for founder
+  }
+  ['mousedown','keydown','scroll','click'].forEach(e=>document.addEventListener(e,reset,true));
   reset();
 })();
 </script>
