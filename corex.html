@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>COREX — BluWav Super Admin Intelligence Engine</title>
+  <title>COREX Intelligence Engine — BluWav Super Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -26,7 +27,7 @@
   <script src="https://unpkg.com/lucide@latest" defer></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #f0f9ff; color: #1e293b; }
+    body { font-family: 'Inter', 'Source Sans Pro', sans-serif; background: #f0f9ff; color: #1e293b; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
@@ -151,7 +152,7 @@
   <a class="crm-nav-item" href="enhanced-crm-dashboard.html#onboarding"><span class="crm-nav-icon">🚀</span><span class="crm-nav-label">Onboarding</span></a>
   <div class="crm-section-label">INSIGHTS</div>
   <a class="crm-nav-item" href="reports.html"><span class="crm-nav-icon">📊</span><span class="crm-nav-label">Reports</span></a>
-  <a class="crm-nav-item" href="settings.html"><span class="crm-nav-icon">⚙️</span><span class="crm-nav-label">Settings</span></a>
+  <a class="crm-nav-item" href="settings.html"><span class="crm-nav-icon">⚙️</span><span class="crm-nav-label">System Controls</span></a>
   <a class="crm-nav-item" href="billing.html"><span class="crm-nav-icon">💳</span><span class="crm-nav-label">Billing</span></a>
   <div class="crm-section-label">ADMIN</div>
   <a class="crm-nav-item" href="superadmin.html"><span class="crm-nav-icon">🛡️</span><span class="crm-nav-label">Super Admin</span></a>
@@ -163,7 +164,7 @@
   <div style="padding:2px 14px 10px;" class="crm-nav-label"><span style="font-size:9px;color:#1e3a5f;letter-spacing:0.06em;">INTELLIGENCE ENGINE</span></div>
   <div style="flex:1;"></div>
   <div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,0.04);">
-    <div style="font-size:9px;color:#1e3a5f;text-transform:uppercase;letter-spacing:0.08em;">Logged in as</div>
+    <div style="font-size:9px;color:#1e3a5f;text-transform:uppercase;letter-spacing:0.08em;">COREX Access</div>
     <div style="font-size:12px;color:#334155;font-weight:600;margin-top:2px;">Andrea M. Tanguay</div>
     <div style="font-size:10px;color:#1e3a5f;margin-top:1px;">Founder & Executive Director</div>
   </div>
@@ -232,19 +233,19 @@
     <!-- TOP HEADER -->
     <header data-id="23" id="top-header" style="background:#fff; border-bottom:1px solid #e2e8f0; padding:0 28px; height:56px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
       <div data-id="24" style="display:flex; align-items:center; gap:16px;">
-        <h1 style="font-size:15px; font-weight:700; color:#0f172a;">🧠 COREX — Command Center</h1>
+        <h1 style="font-size:15px; font-weight:700; color:#0f172a;">🧠 COREX Intelligence Engine</h1>
         <span data-id="26" style="font-size:12px; color:#64748b;">Last Run: <span data-id="27" id="last-run-time">Aug 5, 2026 3:42 PM EDT</span></span>
       </div>
       <div data-id="28" style="display:flex; align-items:center; gap:14px;">
-        <span data-id="29" id="status-badge" class="badge" style="background:#dcfce7; color:#166534; font-size:12px; padding:4px 14px;"><span data-id="30" id="status-dot" style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:6px;"></span><span data-id="31" id="status-text">Active</span></span>
-        <button data-id="32" id="run-now-btn" class="btn-primary" style="font-size:13px; padding:8px 18px;"><i data-id="33" data-lucide="play" class="w-4 h-4"></i> Run Now</button>
+        <span data-id="29" id="status-badge" class="badge" style="background:#dcfce7; color:#166534; font-size:12px; padding:4px 14px;"><span data-id="30" id="status-dot" style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:6px;"></span><span data-id="31" id="status-text">Active — Running</span></span>
+        <button data-id="32" id="run-now-btn" class="btn-primary" style="font-size:13px; padding:8px 18px;"><i data-id="33" data-lucide="play" class="w-4 h-4"></i> Run Intelligence Cycle</button>
       </div>
     </header>
 
     <!-- SCROLLABLE MAIN -->
     <main data-id="34" id="main-content" style="flex:1; overflow-y:auto; padding:24px 28px;">
 
-      <!-- VIEW: DASHBOARD -->
+      <!-- COREX MODULE: COMMAND CENTER -->
       <section data-id="35" id="view-dashboard">
         <!-- STATS ROW -->
         <div data-id="36" id="stats-row" style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px;"></div>
@@ -257,7 +258,7 @@
               <div data-id="40" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                 <div data-id="41" style="position:relative; flex:1; min-width:180px;">
                   <i data-id="42" data-lucide="search" class="w-4 h-4" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8;"></i>
-                  <input data-id="43" type="text" id="search-input" placeholder="Search leads..." style="padding-left:36px; height:38px; font-size:13px;" />
+                  <input data-id="43" type="text" id="search-input" placeholder="Search opportunities..." style="padding-left:36px; height:38px; font-size:13px;" />
                 </div>
                 <select data-id="44" id="filter-source" style="width:140px; height:38px; font-size:13px;"><option data-id="45" value="">All Sources</option><option data-id="46" value="rfp">📋 RFP</option><option data-id="47" value="directory">🏢 Directory</option><option data-id="48" value="jobboard">💼 Job Board</option><option data-id="49" value="donor">🌱 Donor</option><option data-id="50" value="founder">📣 Founder</option></select>
                 <select data-id="51" id="filter-country" style="width:160px; height:38px; font-size:13px;"><option data-id="52" value="">All Countries</option><option data-id="53" value="Trinidad">🇹🇹 Trinidad & Tobago</option><option data-id="54" value="Jamaica">🇯🇲 Jamaica</option><option data-id="55" value="Barbados">🇧🇧 Barbados</option><option data-id="56" value="Guyana">🇬🇾 Guyana</option><option data-id="57" value="St. Lucia">🇱🇨 St. Lucia</option><option data-id="58" value="Dominica">🇩🇲 Dominica</option></select>
@@ -267,11 +268,11 @@
             </div>
             <div data-id="70" style="max-height:520px; overflow-y:auto;">
               <table data-id="71" id="leads-table"><thead data-id="72"><tr data-id="73">
-                <th data-id="74" style="cursor:pointer;" data-sort="name">Lead Name</th>
+                <th data-id="74" style="cursor:pointer;" data-sort="name">Opportunity</th>
                 <th data-id="75">Org</th>
                 <th data-id="76">Source</th>
                 <th data-id="77">Country</th>
-                <th data-id="78" style="cursor:pointer;" data-sort="score">Score</th>
+                <th data-id="78" style="cursor:pointer;" data-sort="score">COREX Fit Index</th>
                 <th data-id="79">Fit Tags</th>
                 <th data-id="80">Status</th>
                 <th data-id="81">Actions</th>
@@ -282,7 +283,7 @@
           <!-- RIGHT: ACTIVITY FEED -->
           <div data-id="83" style="background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06); display:flex; flex-direction:column; max-height:600px;">
             <div data-id="84" style="padding:14px 18px; border-bottom:1px solid #f1f5f9; font-size:14px; font-weight:600; color:#0f172a; display:flex; align-items:center; gap:8px;">
-              <i data-id="85" data-lucide="activity" class="w-4 h-4" style="color:#0ea5e9;"></i> Live Activity Feed
+              <i data-id="85" data-lucide="activity" class="w-4 h-4" style="color:#0ea5e9;"></i> COREX Activity Stream
             </div>
             <div data-id="86" id="activity-feed" style="flex:1; overflow-y:auto; padding:4px 0;"></div>
           </div>
@@ -295,7 +296,7 @@
         </div>
       </section>
 
-      <!-- VIEW: PIPELINE -->
+      <!-- COREX MODULE: OPPORTUNITY INTELLIGENCE -->
       <section data-id="90" id="view-pipeline" style="display:none;">
         <div data-id="91" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
           <h2 style="font-size:18px; font-weight:700; color:#0f172a;">🎯 Opportunity Intelligence</h2>
@@ -306,43 +307,43 @@
         </div>
         <div data-id="98" id="pipeline-table-view" style="background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06); overflow:hidden;">
           <div data-id="99" style="overflow-x:auto;"><table data-id="100" id="pipeline-full-table"><thead data-id="101"><tr data-id="102">
-            <th data-id="103">Lead Name</th><th data-id="104">Org / Company</th><th data-id="105">Source</th><th data-id="106">Country</th><th data-id="107">Score</th><th data-id="108">Fit Tags</th><th data-id="109">Status</th><th data-id="110">Deadline</th><th data-id="111">Budget</th><th data-id="112">Actions</th>
+            <th data-id="103">Opportunity</th><th data-id="104">Org / Company</th><th data-id="105">Source</th><th data-id="106">Country</th><th data-id="107">COREX Fit Index</th><th data-id="108">Fit Tags</th><th data-id="109">Status</th><th data-id="110">Deadline</th><th data-id="111">Budget</th><th data-id="112">Actions</th>
           </tr></thead><tbody data-id="113" id="pipeline-tbody"></tbody></table></div>
         </div>
         <div data-id="114" id="pipeline-kanban-view" style="display:none; gap:16px;"></div>
       </section>
 
-      <!-- VIEW: SOURCES -->
+      <!-- COREX MODULE: PROCUREMENT SCANNER -->
       <section data-id="115" id="view-sources" style="display:none;">
         <h2 style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:6px;">📡 Procurement Scanner</h2><p style="font-size:13px;color:#64748b;margin-bottom:20px;">Autonomous monitoring of UNGM, ReliefWeb, Devex, CCCCC, JBDC, IDB, EU-LAC and more</p>
         <div data-id="117" id="sources-grid" style="display:grid; grid-template-columns:repeat(2,1fr); gap:20px;"></div>
       </section>
 
-      <!-- VIEW: DIGEST -->
+      <!-- COREX MODULE: INTELLIGENCE DIGEST -->
       <section data-id="118" id="view-digest" style="display:none;">
         <div data-id="119" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
           <div data-id="120">
-            <h2 style="font-size:18px; font-weight:700; color:#0f172a;">📊 COREX Daily Intelligence Digest</h2>
+            <h2 style="font-size:18px; font-weight:700; color:#0f172a;">📊 COREX Intelligence Digest</h2>
             <p data-id="122" style="font-size:14px; color:#64748b; margin-top:4px;">August 5, 2026</p>
           </div>
           <div data-id="123" style="display:flex; gap:10px;">
-            <button data-id="124" id="generate-digest-btn" class="btn-primary"><i data-id="125" data-lucide="sparkles" class="w-4 h-4"></i> Generate Digest</button>
-            <button data-id="126" id="copy-digest-btn" class="btn-secondary" style="display:none;"><i data-id="127" data-lucide="copy" class="w-4 h-4"></i> Copy to Clipboard</button>
-            <button data-id="128" id="email-digest-btn" class="btn-secondary" style="display:none;"><i data-id="129" data-lucide="mail" class="w-4 h-4"></i> Send via Email</button>
+            <button data-id="124" id="generate-digest-btn" class="btn-primary"><i data-id="125" data-lucide="sparkles" class="w-4 h-4"></i> Generate Intelligence Digest</button>
+            <button data-id="126" id="copy-digest-btn" class="btn-secondary" style="display:none;"><i data-id="127" data-lucide="copy" class="w-4 h-4"></i> Copy Digest</button>
+            <button data-id="128" id="email-digest-btn" class="btn-secondary" style="display:none;"><i data-id="129" data-lucide="mail" class="w-4 h-4"></i> Email to Andrea</button>
           </div>
         </div>
         <div data-id="130" id="digest-output" style="background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06); padding:32px; min-height:300px;">
           <div data-id="131" style="text-align:center; padding:60px 20px; color:#94a3b8;">
             <i data-id="132" data-lucide="file-text" class="w-12 h-12" style="margin:0 auto 12px; display:block; opacity:0.4;"></i>
-            <p data-id="133" style="font-size:15px; font-weight:500;">No digest generated yet</p>
-            <p data-id="134" style="font-size:13px; margin-top:4px;">Click "Generate Digest" to create an AI-powered daily intelligence report.</p>
+            <p data-id="133" style="font-size:15px; font-weight:500;">No intelligence digest generated yet</p>
+            <p data-id="134" style="font-size:13px; margin-top:4px;">Click "Generate Intelligence Digest" to create an AI-powered daily intelligence report.</p>
           </div>
         </div>
       </section>
 
-      <!-- VIEW: SETTINGS -->
+      <!-- COREX MODULE: SYSTEM CONTROLS -->
       <section data-id="135" id="view-settings" style="display:none;">
-        <h2 style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:6px;">🔄 CRM Sync Layer</h2><p style="font-size:13px;color:#64748b;margin-bottom:20px;">COREX → BluWav CRM pipeline integration</p>
+        <h2 style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:6px;">🔄 COREX → CRM Sync</h2><p style="font-size:13px;color:#64748b;margin-bottom:20px;">COREX → BluWav CRM pipeline integration</p>
 
         <div data-id="137" class="settings-section">
           <h3 data-id="138" style="font-size:16px; font-weight:600; color:#0f172a; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="139" data-lucide="database" class="w-5 h-5" style="color:#0ea5e9;"></i> CRM Integration</h3>
@@ -358,7 +359,7 @@
               </div>
             </div>
           </div>
-          <button data-id="159" id="test-crm-btn" class="btn-secondary" style="margin-top:14px;"><i data-id="160" data-lucide="plug" class="w-4 h-4"></i> Test Connection</button>
+          <button data-id="159" id="test-crm-btn" class="btn-secondary" style="margin-top:14px;"><i data-id="160" data-lucide="plug" class="w-4 h-4"></i> Test CRM Connection</button>
         </div>
 
         <div data-id="161" class="settings-section">
@@ -371,15 +372,15 @@
           </div>
           <div data-id="178" style="margin-top:14px;">
             <label data-id="179" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Message Template</label>
-            <textarea data-id="180" id="wa-template" rows="6" style="font-size:13px;">🌊 New Bluwav Lead Alert!
+            <textarea data-id="180" id="wa-template" rows="6" style="font-size:13px;">🌊 COREX Intelligence Alert — BluWav
 
 *{{lead_name}}* from *{{company}}*
 📍 {{country}} | 🎯 Score: {{score}}/100
 📋 Source: {{source}}
 
-💡 This lead is a strong fit for BluwavCRM & Bluwav Growth.
+💡 High COREX Fit Index — qualified for CRM sync.
 
-👉 Review now in Bluwav Lead-Gen Dashboard</textarea>
+👉 Review in COREX → BluWav Super Admin</textarea>
           </div>
         </div>
 
@@ -422,12 +423,12 @@
           </div>
         </div>
 
-        <button data-id="229" id="save-settings-btn" class="btn-primary" style="padding:12px 32px; font-size:15px;"><i data-id="230" data-lucide="save" class="w-5 h-5"></i> Save Settings</button>
+        <button data-id="229" id="save-settings-btn" class="btn-primary" style="padding:12px 32px; font-size:15px;"><i data-id="230" data-lucide="save" class="w-5 h-5"></i> Save System Controls</button>
       </section>
 
     </main>
     <footer data-id="231" style="padding:8px 28px; text-align:center; border-top:1px solid #e2e8f0; background:#fff; flex-shrink:0;">
-      <p style="font-size:11px; color:#94a3b8;">🧠 COREX Intelligence Engine · BluWav Super Admin · Internal Use Only</p>
+      <p style="font-size:11px; color:#94a3b8;">COREX Intelligence Engine · BluWav Super Admin · Internal Use Only · Not for public distribution</p>
     </footer>
   </div>
 </div>
@@ -447,7 +448,7 @@ if (localStorage.getItem('bluwav_version') !== CURRENT_VERSION) {
 }
 
 // ===== SEED DATA =====
-const SEED_LEADS=[{id:"L001",name:"Caribbean Regional MSME Seed Fund",org:"World Bank / Caribbean Dev Bank",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Donor Project",deadline:"2026-08-26",budget:"USD 3.0M",contact:"procurement@worldbank.org",description:"World Bank-funded program providing seed capital and technical assistance to MSMEs across the Caribbean. Seeking implementation partners with CRM, digital tools, and growth advisory experience.",score:92,tags:["CRM Fit","Growth Fit","High Budget","Urgent"],status:"New",fitBreakdown:{industry:25,geo:18,budget:20,orgType:13,sourceQuality:10,urgency:6},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T06:12:00Z"},{id:"L002",name:"OECS Digital Transformation Project",org:"OECS Commission",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1F1}\u{1F1E8} St. Lucia",type:"Government RFP",deadline:"2026-08-26",budget:"USD 94.0M",contact:"tenders@oecs.int",description:"OECS digital transformation initiative seeking vendors and consultants for CRM implementation, data systems, and capacity building across 6 member states.",score:89,tags:["CRM Fit","High Budget","Gov","Urgent"],status:"New",fitBreakdown:{industry:24,geo:20,budget:20,orgType:10,sourceQuality:10,urgency:5},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T06:18:00Z"},{id:"L003",name:"Green Climate Fund - DOMCREP Project",org:"CCCCC / Govt. of Dominica",source:"Donor Portal",sourceType:"donor",country:"\u{1F1E9}\u{1F1F2} Dominica",type:"Donor Project",deadline:"2026-07-31",budget:"TBD (GCF-funded)",contact:"procurement@caribbeanclimate.bz",description:"Community resilience enhancement project. Seeking technical consultants for project management tools, reporting systems, and stakeholder engagement platforms.",score:78,tags:["Growth Fit","NGO","Urgent"],status:"Reviewed",fitBreakdown:{industry:18,geo:18,budget:12,orgType:13,sourceQuality:10,urgency:7},assignedAgent:"Aaliya",pushedToCRM:true,whatsappSent:true,foundAt:"2026-08-05T06:25:00Z"},{id:"L004",name:"Devex: CRM & Digital Tools Consultant - Caribbean NGO",org:"ReliefWeb / Unnamed NGO",source:"Job Board",sourceType:"jobboard",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"Nonprofit",deadline:"2026-08-15",budget:"USD 45K contract",contact:"hr@devex-post.org",description:"Caribbean-based NGO seeking a CRM consultant to implement donor management system, automate reporting, and train 20 staff. Remote-friendly with quarterly travel to Kingston.",score:85,tags:["CRM Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:25,geo:16,budget:14,orgType:15,sourceQuality:8,urgency:7},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T07:01:00Z"},{id:"L005",name:"Caribbean Resilient Renewable Energy Facility",org:"World Bank",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Donor Project",deadline:"2026-08-26",budget:"USD 90.0M",contact:"procurement@worldbank.org",description:"Infrastructure investment facility for renewable energy across Caribbean. Seeking project management, stakeholder engagement tools, and data analytics vendors.",score:74,tags:["High Budget","Gov"],status:"New",fitBreakdown:{industry:14,geo:20,budget:20,orgType:8,sourceQuality:10,urgency:2},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T07:15:00Z"},{id:"L006",name:"TechStartups TT - Founder CRM Need",org:"TechStartups TT Community",source:"Founder List",sourceType:"founder",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Startup",deadline:null,budget:"USD 5-15K/yr SaaS",contact:"founders@techstartups.tt",description:"Community of 40+ T&T tech founders seeking a CRM that handles Caribbean payment gateways, WhatsApp integration, and multi-currency. BluwavCRM is a direct fit.",score:96,tags:["CRM Fit","Growth Fit","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:20,budget:15,orgType:15,sourceQuality:8,urgency:3},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T07:30:00Z"},{id:"L007",name:"IDB Lab - Caribbean Startup Accelerator",org:"Inter-American Development Bank",source:"Donor Portal",sourceType:"donor",country:"\u{1F1EC}\u{1F1FE} Guyana",type:"Donor Project",deadline:"2026-09-01",budget:"USD 2.5M",contact:"idblab@iadb.org",description:"IDB Lab accelerator for Caribbean startups. Seeking CRM, growth tools, and digital infrastructure vendors to onboard 30 participating startups.",score:91,tags:["CRM Fit","Growth Fit","High Budget","Tech Sector"],status:"Pushed",fitBreakdown:{industry:25,geo:16,budget:18,orgType:15,sourceQuality:10,urgency:7},assignedAgent:"Marcus",pushedToCRM:true,whatsappSent:true,foundAt:"2026-08-05T07:45:00Z"},{id:"L008",name:"ReliefWeb: M&E Officer (Digital)",org:"Caribbean Disaster Emergency Management Agency",source:"Job Board",sourceType:"jobboard",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Nonprofit",deadline:"2026-08-20",budget:"TBD",contact:"hr@cdema.org",description:"CDEMA seeking M&E officer to implement digital reporting tools, dashboards, and stakeholder CRM for disaster response programs.",score:72,tags:["CRM Fit","NGO"],status:"New",fitBreakdown:{industry:20,geo:18,budget:8,orgType:13,sourceQuality:8,urgency:5},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T08:00:00Z"},{id:"L009",name:"USAID Caribbean Youth Empowerment Grant",org:"USAID / Caribbean Youth Network",source:"Donor Portal",sourceType:"donor",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"Donor Project",deadline:"2026-08-30",budget:"USD 1.2M",contact:"caribbeangrants@usaid.gov",description:"USAID grant program for youth empowerment in Caribbean. Partner organizations need CRM for participant tracking, reporting, and digital engagement.",score:80,tags:["Growth Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:20,geo:18,budget:12,orgType:15,sourceQuality:10,urgency:5},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T08:15:00Z"},{id:"L010",name:"Jamaica Business Development Corp - SME Directory",org:"JBDC",source:"Directory",sourceType:"directory",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"SME",deadline:null,budget:"USD 3-8K/yr",contact:"info@jbdc.net",description:"JBDC registers and supports 500+ Jamaican SMEs annually. Many businesses actively seeking CRM solutions. Partnership opportunity to reach their entire SME network.",score:83,tags:["CRM Fit","Growth Fit"],status:"Assigned",fitBreakdown:{industry:22,geo:20,budget:10,orgType:15,sourceQuality:7,urgency:9},assignedAgent:"Simone",pushedToCRM:true,whatsappSent:false,foundAt:"2026-08-05T08:30:00Z"},{id:"L011",name:"GIZ Digital Economy Caribbean Program",org:"GIZ / EU Delegation",source:"Donor Portal",sourceType:"donor",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Donor Project",deadline:"2026-09-15",budget:"EUR 4.8M",contact:"digital@giz.de",description:"GIZ program promoting digital economy in Caribbean. Seeking tools and platforms for SME digitization, CRM adoption, and e-commerce enablement.",score:88,tags:["CRM Fit","Growth Fit","High Budget","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:18,budget:18,orgType:12,sourceQuality:10,urgency:5},assignedAgent:"Marcus",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:00:00Z"},{id:"L012",name:"Caribbean Fintech Founders Network",org:"Fintech Caribbean",source:"Founder List",sourceType:"founder",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Startup",deadline:null,budget:"USD 10-25K/yr",contact:"network@fintechcaribbean.com",description:"Network of 120+ Caribbean fintech founders. Active WhatsApp community. Many need CRM with payment tracking, client management, and growth analytics.",score:94,tags:["CRM Fit","Growth Fit","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:20,budget:15,orgType:15,sourceQuality:9,urgency:10},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:15:00Z"},{id:"L013",name:"Guyana eProcure - Ministry of Agriculture Tech Tender",org:"Ministry of Agriculture, Guyana",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1EC}\u{1F1FE} Guyana",type:"Government RFP",deadline:"2026-08-19",budget:"USD 200K+",contact:"eprocure@gov.gy",description:"Guyana Ministry of Agriculture seeking digital management platform for farmer registry, supply chain tracking, and government stakeholder CRM.",score:76,tags:["CRM Fit","Gov","Urgent"],status:"New",fitBreakdown:{industry:22,geo:18,budget:14,orgType:10,sourceQuality:10,urgency:2},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:30:00Z"},{id:"L014",name:"Idealist: Digital Transformation Manager - Trinidad NGO",org:"Caribbean Heart Foundation",source:"Job Board",sourceType:"jobboard",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Nonprofit",deadline:"2026-08-25",budget:"Contract: USD 35K",contact:"jobs@caribbeanheartfoundation.org",description:"Caribbean Heart Foundation hiring digital transformation manager to lead CRM implementation, patient/donor database migration, and WhatsApp communications strategy.",score:87,tags:["CRM Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:25,geo:20,budget:12,orgType:15,sourceQuality:8,urgency:7},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:45:00Z"},{id:"L015",name:"Caribbean Development Bank - Business Innovation Fund",org:"Caribbean Development Bank",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Donor Project",deadline:"2026-09-30",budget:"USD 8.5M",contact:"bif@caribank.org",description:"CDB fund supporting business innovation and digital adoption across Caribbean. Grants available to SMEs implementing CRM, ERP, and growth tools.",score:82,tags:["CRM Fit","Growth Fit","High Budget"],status:"New",fitBreakdown:{industry:22,geo:20,budget:18,orgType:12,sourceQuality:8,urgency:2},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:00:00Z"},{id:"L016",name:"T&T Business Registry - Newly Incorporated SMEs Q3 2026",org:"Companies Registry TT",source:"Directory",sourceType:"directory",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"SME",deadline:null,budget:"USD 2-5K/yr",contact:"registry@companies.gov.tt",description:"120 new companies incorporated in Trinidad Q3 2026. High percentage in services, consulting, and tech sectors. Strong CRM prospects list.",score:71,tags:["CRM Fit"],status:"New",fitBreakdown:{industry:20,geo:20,budget:8,orgType:12,sourceQuality:7,urgency:4},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:15:00Z"},{id:"L017",name:"WISTLE - Women in STEM Caribbean",org:"World Bank / OECS",source:"Donor Portal",sourceType:"donor",country:"\u{1F1F1}\u{1F1E8} St. Lucia",type:"Donor Project",deadline:"2026-08-26",budget:"TBD",contact:"wistle@worldbank.org",description:"WISTLE initiative empowering women in STEM across Caribbean. Program management and participant tracking CRM needed urgently.",score:79,tags:["Growth Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:20,geo:18,budget:10,orgType:15,sourceQuality:10,urgency:6},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:30:00Z"},{id:"L018",name:"AngelList Caribbean - SaaS Startup Cohort",org:"AngelList / Caribbean Startup Network",source:"Founder List",sourceType:"founder",country:"\u{1F1EC}\u{1F1FE} Guyana",type:"Startup",deadline:null,budget:"USD 8-20K/yr",contact:"apply@angellist-caribbean.co",description:"15 SaaS and tech startups in Caribbean AngelList cohort. All need CRM and growth tools. Partnership with cohort sponsor opportunity.",score:90,tags:["CRM Fit","Growth Fit","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:16,budget:15,orgType:15,sourceQuality:9,urgency:10},assignedAgent:"Marcus",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:45:00Z"},{id:"L019",name:"Caribbean Health Information Network",org:"PAHO / WHO Caribbean",source:"Donor Portal",sourceType:"donor",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"Nonprofit",deadline:"2026-09-10",budget:"USD 1.8M",contact:"info@carhin.org",description:"PAHO-funded health information network seeking CRM for provider registry, patient referral tracking, and multi-country stakeholder management.",score:77,tags:["CRM Fit","NGO"],status:"Reviewed",fitBreakdown:{industry:22,geo:18,budget:12,orgType:15,sourceQuality:8,urgency:2},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T11:00:00Z"},{id:"L020",name:"Barbados Investment & Development Corp - Export Ready Program",org:"BIDC",source:"Directory",sourceType:"directory",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"SME",deadline:"2026-08-31",budget:"USD 12K program",contact:"exportready@bidc.com.bb",description:"BIDC Export Ready Program supporting Barbadian SMEs with CRM, digital presence, and international market access tools. 50 SME slots available.",score:86,tags:["CRM Fit","Growth Fit","Urgent"],status:"New",fitBreakdown:{industry:24,geo:20,budget:12,orgType:15,sourceQuality:8,urgency:7},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T11:15:00Z"}];
+const SEED_LEADS=[{id:"L001",name:"Caribbean Regional MSME Seed Fund",org:"World Bank / Caribbean Dev Bank",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Donor Project",deadline:"2026-08-26",budget:"USD 3.0M",contact:"procurement@worldbank.org",description:"World Bank-funded program providing seed capital and technical assistance to MSMEs across the Caribbean. Seeking implementation partners with CRM, digital tools, and growth advisory experience.",score:92,tags:["CRM Fit","Growth Fit","High Budget","Urgent"],status:"New",fitBreakdown:{industry:25,geo:18,budget:20,orgType:13,sourceQuality:10,urgency:6},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T06:12:00Z"},{id:"L002",name:"OECS Digital Transformation Project",org:"OECS Commission",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1F1}\u{1F1E8} St. Lucia",type:"Government RFP",deadline:"2026-08-26",budget:"USD 94.0M",contact:"tenders@oecs.int",description:"OECS digital transformation initiative seeking vendors and consultants for CRM implementation, data systems, and capacity building across 6 member states.",score:89,tags:["CRM Fit","High Budget","Gov","Urgent"],status:"New",fitBreakdown:{industry:24,geo:20,budget:20,orgType:10,sourceQuality:10,urgency:5},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T06:18:00Z"},{id:"L003",name:"Green Climate Fund - DOMCREP Project",org:"CCCCC / Govt. of Dominica",source:"Donor Portal",sourceType:"donor",country:"\u{1F1E9}\u{1F1F2} Dominica",type:"Donor Project",deadline:"2026-07-31",budget:"TBD (GCF-funded)",contact:"procurement@caribbeanclimate.bz",description:"Community resilience enhancement project. Seeking technical consultants for project management tools, reporting systems, and stakeholder engagement platforms.",score:78,tags:["Growth Fit","NGO","Urgent"],status:"Reviewed",fitBreakdown:{industry:18,geo:18,budget:12,orgType:13,sourceQuality:10,urgency:7},assignedAgent:"Aaliya",pushedToCRM:true,whatsappSent:true,foundAt:"2026-08-05T06:25:00Z"},{id:"L004",name:"Devex: CRM & Digital Tools Consultant - Caribbean NGO",org:"ReliefWeb / Unnamed NGO",source:"Job Board",sourceType:"jobboard",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"Nonprofit",deadline:"2026-08-15",budget:"USD 45K contract",contact:"hr@devex-post.org",description:"Caribbean-based NGO seeking a CRM consultant to implement donor management system, automate reporting, and train 20 staff. Remote-friendly with quarterly travel to Kingston.",score:85,tags:["CRM Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:25,geo:16,budget:14,orgType:15,sourceQuality:8,urgency:7},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T07:01:00Z"},{id:"L005",name:"Caribbean Resilient Renewable Energy Facility",org:"World Bank",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Donor Project",deadline:"2026-08-26",budget:"USD 90.0M",contact:"procurement@worldbank.org",description:"Infrastructure investment facility for renewable energy across Caribbean. Seeking project management, stakeholder engagement tools, and data analytics vendors.",score:74,tags:["High Budget","Gov"],status:"New",fitBreakdown:{industry:14,geo:20,budget:20,orgType:8,sourceQuality:10,urgency:2},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T07:15:00Z"},{id:"L006",name:"TechStartups TT - Founder CRM Need",org:"TechStartups TT Community",source:"Founder List",sourceType:"founder",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Startup",deadline:null,budget:"USD 5-15K/yr SaaS",contact:"founders@techstartups.tt",description:"Community of 40+ T&T tech founders seeking a CRM that handles Caribbean payment gateways, WhatsApp integration, and multi-currency. High COREX Fit Index — qualified for CRM sync.",score:96,tags:["CRM Fit","Growth Fit","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:20,budget:15,orgType:15,sourceQuality:8,urgency:3},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T07:30:00Z"},{id:"L007",name:"IDB Lab - Caribbean Startup Accelerator",org:"Inter-American Development Bank",source:"Donor Portal",sourceType:"donor",country:"\u{1F1EC}\u{1F1FE} Guyana",type:"Donor Project",deadline:"2026-09-01",budget:"USD 2.5M",contact:"idblab@iadb.org",description:"IDB Lab accelerator for Caribbean startups. Seeking CRM, growth tools, and digital infrastructure vendors to onboard 30 participating startups.",score:91,tags:["CRM Fit","Growth Fit","High Budget","Tech Sector"],status:"Pushed",fitBreakdown:{industry:25,geo:16,budget:18,orgType:15,sourceQuality:10,urgency:7},assignedAgent:"Marcus",pushedToCRM:true,whatsappSent:true,foundAt:"2026-08-05T07:45:00Z"},{id:"L008",name:"ReliefWeb: M&E Officer (Digital)",org:"Caribbean Disaster Emergency Management Agency",source:"Job Board",sourceType:"jobboard",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Nonprofit",deadline:"2026-08-20",budget:"TBD",contact:"hr@cdema.org",description:"CDEMA seeking M&E officer to implement digital reporting tools, dashboards, and stakeholder CRM for disaster response programs.",score:72,tags:["CRM Fit","NGO"],status:"New",fitBreakdown:{industry:20,geo:18,budget:8,orgType:13,sourceQuality:8,urgency:5},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T08:00:00Z"},{id:"L009",name:"USAID Caribbean Youth Empowerment Grant",org:"USAID / Caribbean Youth Network",source:"Donor Portal",sourceType:"donor",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"Donor Project",deadline:"2026-08-30",budget:"USD 1.2M",contact:"caribbeangrants@usaid.gov",description:"USAID grant program for youth empowerment in Caribbean. Partner organizations need CRM for participant tracking, reporting, and digital engagement.",score:80,tags:["Growth Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:20,geo:18,budget:12,orgType:15,sourceQuality:10,urgency:5},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T08:15:00Z"},{id:"L010",name:"Jamaica Business Development Corp - SME Directory",org:"JBDC",source:"Directory",sourceType:"directory",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"SME",deadline:null,budget:"USD 3-8K/yr",contact:"info@jbdc.net",description:"JBDC registers and supports 500+ Jamaican SMEs annually. Many businesses actively seeking CRM solutions. Partnership opportunity to reach their entire SME network.",score:83,tags:["CRM Fit","Growth Fit"],status:"Assigned",fitBreakdown:{industry:22,geo:20,budget:10,orgType:15,sourceQuality:7,urgency:9},assignedAgent:"Simone",pushedToCRM:true,whatsappSent:false,foundAt:"2026-08-05T08:30:00Z"},{id:"L011",name:"GIZ Digital Economy Caribbean Program",org:"GIZ / EU Delegation",source:"Donor Portal",sourceType:"donor",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Donor Project",deadline:"2026-09-15",budget:"EUR 4.8M",contact:"digital@giz.de",description:"GIZ program promoting digital economy in Caribbean. Seeking tools and platforms for SME digitization, CRM adoption, and e-commerce enablement.",score:88,tags:["CRM Fit","Growth Fit","High Budget","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:18,budget:18,orgType:12,sourceQuality:10,urgency:5},assignedAgent:"Marcus",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:00:00Z"},{id:"L012",name:"Caribbean Fintech Founders Network",org:"Fintech Caribbean",source:"Founder List",sourceType:"founder",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Startup",deadline:null,budget:"USD 10-25K/yr",contact:"network@fintechcaribbean.com",description:"Network of 120+ Caribbean fintech founders. Active WhatsApp community. Many need CRM with payment tracking, client management, and growth analytics.",score:94,tags:["CRM Fit","Growth Fit","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:20,budget:15,orgType:15,sourceQuality:9,urgency:10},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:15:00Z"},{id:"L013",name:"Guyana eProcure - Ministry of Agriculture Tech Tender",org:"Ministry of Agriculture, Guyana",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1EC}\u{1F1FE} Guyana",type:"Government RFP",deadline:"2026-08-19",budget:"USD 200K+",contact:"eprocure@gov.gy",description:"Guyana Ministry of Agriculture seeking digital management platform for farmer registry, supply chain tracking, and government stakeholder CRM.",score:76,tags:["CRM Fit","Gov","Urgent"],status:"New",fitBreakdown:{industry:22,geo:18,budget:14,orgType:10,sourceQuality:10,urgency:2},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:30:00Z"},{id:"L014",name:"Idealist: Digital Transformation Manager - Trinidad NGO",org:"Caribbean Heart Foundation",source:"Job Board",sourceType:"jobboard",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Nonprofit",deadline:"2026-08-25",budget:"Contract: USD 35K",contact:"jobs@caribbeanheartfoundation.org",description:"Caribbean Heart Foundation hiring digital transformation manager to lead CRM implementation, patient/donor database migration, and WhatsApp communications strategy.",score:87,tags:["CRM Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:25,geo:20,budget:12,orgType:15,sourceQuality:8,urgency:7},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:45:00Z"},{id:"L015",name:"Caribbean Development Bank - Business Innovation Fund",org:"Caribbean Development Bank",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Donor Project",deadline:"2026-09-30",budget:"USD 8.5M",contact:"bif@caribank.org",description:"CDB fund supporting business innovation and digital adoption across Caribbean. Grants available to SMEs implementing CRM, ERP, and growth tools.",score:82,tags:["CRM Fit","Growth Fit","High Budget"],status:"New",fitBreakdown:{industry:22,geo:20,budget:18,orgType:12,sourceQuality:8,urgency:2},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:00:00Z"},{id:"L016",name:"T&T Business Registry - Newly Incorporated SMEs Q3 2026",org:"Companies Registry TT",source:"Directory",sourceType:"directory",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"SME",deadline:null,budget:"USD 2-5K/yr",contact:"registry@companies.gov.tt",description:"120 new companies incorporated in Trinidad Q3 2026. High percentage in services, consulting, and tech sectors. Strong CRM prospects list.",score:71,tags:["CRM Fit"],status:"New",fitBreakdown:{industry:20,geo:20,budget:8,orgType:12,sourceQuality:7,urgency:4},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:15:00Z"},{id:"L017",name:"WISTLE - Women in STEM Caribbean",org:"World Bank / OECS",source:"Donor Portal",sourceType:"donor",country:"\u{1F1F1}\u{1F1E8} St. Lucia",type:"Donor Project",deadline:"2026-08-26",budget:"TBD",contact:"wistle@worldbank.org",description:"WISTLE initiative empowering women in STEM across Caribbean. Program management and participant tracking CRM needed urgently.",score:79,tags:["Growth Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:20,geo:18,budget:10,orgType:15,sourceQuality:10,urgency:6},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:30:00Z"},{id:"L018",name:"AngelList Caribbean - SaaS Startup Cohort",org:"AngelList / Caribbean Startup Network",source:"Founder List",sourceType:"founder",country:"\u{1F1EC}\u{1F1FE} Guyana",type:"Startup",deadline:null,budget:"USD 8-20K/yr",contact:"apply@angellist-caribbean.co",description:"15 SaaS and tech startups in Caribbean AngelList cohort. All need CRM and growth tools. Partnership with cohort sponsor opportunity.",score:90,tags:["CRM Fit","Growth Fit","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:16,budget:15,orgType:15,sourceQuality:9,urgency:10},assignedAgent:"Marcus",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:45:00Z"},{id:"L019",name:"Caribbean Health Information Network",org:"PAHO / WHO Caribbean",source:"Donor Portal",sourceType:"donor",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"Nonprofit",deadline:"2026-09-10",budget:"USD 1.8M",contact:"info@carhin.org",description:"PAHO-funded health information network seeking CRM for provider registry, patient referral tracking, and multi-country stakeholder management.",score:77,tags:["CRM Fit","NGO"],status:"Reviewed",fitBreakdown:{industry:22,geo:18,budget:12,orgType:15,sourceQuality:8,urgency:2},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T11:00:00Z"},{id:"L020",name:"Barbados Investment & Development Corp - Export Ready Program",org:"BIDC",source:"Directory",sourceType:"directory",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"SME",deadline:"2026-08-31",budget:"USD 12K program",contact:"exportready@bidc.com.bb",description:"BIDC Export Ready Program supporting Barbadian SMEs with CRM, digital presence, and international market access tools. 50 SME slots available.",score:86,tags:["CRM Fit","Growth Fit","Urgent"],status:"New",fitBreakdown:{industry:24,geo:20,budget:12,orgType:15,sourceQuality:8,urgency:7},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T11:15:00Z"}];
 
 const SOURCES_DATA=[
   {id:"s1",name:"UNGM / Tenderal",icon:"📋",desc:"UN Global Marketplace & Caribbean RFP Tenders (World Bank, CDB)",type:"rfp",active:true,freq:"6h",lastScraped:"2026-08-06T06:00:00Z",totalLeads:142,todayLeads:4,dailyCounts:[2,5,3,4,6,3,4]},
@@ -510,10 +511,10 @@ function renderStats(){
   const pushed=leads.filter(l=>l.pushedToCRM).length;
   const awaiting=leads.filter(l=>l.status==='New').length;
   const data=[
-    {icon:'target',label:'Leads Today',val:today,color:'#0ea5e9',bg:'#f0f9ff'},
-    {icon:'flame',label:'Hot Leads',val:hot,color:'#ef4444',bg:'#fef2f2'},
-    {icon:'check-circle',label:'Pushed to CRM',val:pushed,color:'#22c55e',bg:'#f0fdf4'},
-    {icon:'clock',label:'Awaiting Review',val:awaiting,color:'#f59e0b',bg:'#fffbeb'}
+    {icon:'target',label:'Opportunities Today',val:today,color:'#0ea5e9',bg:'#f0f9ff'},
+    {icon:'flame',label:'Hot Opportunities',val:hot,color:'#ef4444',bg:'#fef2f2'},
+    {icon:'check-circle',label:'COREX → CRM Sync',val:pushed,color:'#22c55e',bg:'#f0fdf4'},
+    {icon:'clock',label:'Awaiting Routing',val:awaiting,color:'#f59e0b',bg:'#fffbeb'}
   ];
   document.getElementById('stats-row').innerHTML=data.map(d=>`
     <div class="stat-card" style="display:flex;align-items:center;gap:16px;">
@@ -565,7 +566,7 @@ function renderLeadsTable(){
       <td>${statusBadge(l.status)}</td>
       <td>
         <div style="display:flex;gap:4px;">
-          <button class="push-crm-btn" data-id="${l.id}" style="background:#0ea5e9;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;" title="Push to CRM"${l.pushedToCRM?' disabled':''}>${l.pushedToCRM?'✓':'📤'}</button>
+          <button class="push-crm-btn" data-id="${l.id}" style="background:#0ea5e9;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;" title="COREX → CRM Sync"${l.pushedToCRM?' disabled':''}>${l.pushedToCRM?'✓':'📤'}</button>
           <button class="assign-btn" data-id="${l.id}" style="background:#6366f1;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;" title="Assign">👤</button>
         </div>
       </td>
@@ -632,7 +633,7 @@ function renderKanban(){
       const lid=e.dataTransfer.getData('text/plain');
       const newSt=col.dataset.status;
       const lead=leads.find(l=>l.id===lid);
-      if(lead){lead.status=newSt;if(newSt==='Pushed')lead.pushedToCRM=true;saveLeads();renderKanban();renderStats();toast(`Lead moved to ${newSt}`);}
+      if(lead){lead.status=newSt;if(newSt==='Pushed')lead.pushedToCRM=true;saveLeads();renderKanban();renderStats();toast(`Opportunity routed to ${newSt}`);}
     });
   });
 }
@@ -642,12 +643,12 @@ const FEED_MESSAGES=[
   "🔍 Scanning Tenderal.com for new RFP tenders...",
   "✅ New lead found: OECS Digital Transformation Project",
   "🤖 Lead scored 92/100: Caribbean MSME Seed Fund",
-  "📤 Pushed to CRM: IDB Lab Accelerator",
+  "📤 Synced to CRM: IDB Lab Accelerator",
   "📱 WhatsApp triggered: Caribbean Fintech Founders",
   "🔍 Scanning Devex & ReliefWeb job boards...",
   "✅ New lead found: USAID Caribbean Youth Grant",
   "🤖 Lead scored 87/100: Caribbean Heart Foundation",
-  "📤 Auto-pushed to CRM: TechStartups TT (score: 96)",
+  "📤 🔄 COREX → CRM Sync: TechStartups TT (score: 96)",
   "🔍 Scanning USAID & GIZ donor portals...",
   "✅ New lead found: GIZ Digital Economy Program",
   "👤 Auto-assigned to Andrea M. Tanguay: Guyana eProcure",
@@ -728,7 +729,7 @@ function renderSourcesView(){
       </div>
       <div style="display:flex;gap:8px;">
         <button class="btn-secondary test-conn-btn" data-sid="${s.id}" style="font-size:12px;padding:6px 14px;"><i data-lucide="plug" class="w-3 h-3"></i> Test</button>
-        <button class="btn-primary scrape-now-btn" data-sid="${s.id}" style="font-size:12px;padding:6px 14px;"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Scrape Now</button>
+        <button class="btn-primary scrape-now-btn" data-sid="${s.id}" style="font-size:12px;padding:6px 14px;"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Scan Now</button>
       </div>
     </div>`;
   }).join('');
@@ -819,7 +820,7 @@ function openLeadModal(leadId){
           <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;">Timeline</div>
           <div style="font-size:12px;color:#475569;line-height:1.8;">
             <div>📍 Found: ${fmtTime(l.foundAt)}</div>
-            ${l.pushedToCRM?'<div>📤 Pushed to CRM</div>':''}
+            ${l.pushedToCRM?'<div>📤 Synced to CRM</div>':''}
             ${l.whatsappSent?'<div>📱 WhatsApp sent</div>':''}
             ${l.assignedAgent?`<div>👤 Assigned to ${l.assignedAgent}</div>`:''}
           </div>
@@ -830,7 +831,7 @@ function openLeadModal(leadId){
         <div style="text-align:center;margin-bottom:20px;">
           <div class="donut-chart" style="margin:0 auto;background:conic-gradient(${conicParts.join(',')});"></div>
           <div style="font-size:42px;font-weight:700;color:#0f172a;margin-top:-95px;position:relative;z-index:1;font-variant-numeric:tabular-nums;">${total}</div>
-          <div style="font-size:12px;color:#64748b;margin-top:50px;">Overall Fit Score</div>
+          <div style="font-size:12px;color:#64748b;margin-top:50px;">COREX Fit Index</div>
         </div>
         <div style="margin-bottom:20px;">
           ${Object.keys(fb).map(k=>`
@@ -849,15 +850,15 @@ function openLeadModal(leadId){
             ${l.tags.includes('Growth Fit')?'<span class="badge" style="background:#dbeafe;color:#1e40af;padding:6px 14px;font-size:12px;">✅ Bluwav Growth Fit</span>':'<span class="badge" style="background:#f1f5f9;color:#94a3b8;padding:6px 14px;font-size:12px;">— Bluwav Growth</span>'}
           </div>
         </div>
-        ${l.assignedAgent?`<div style="background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:16px;"><div style="font-size:11px;color:#64748b;">Assigned Agent</div><div style="font-size:14px;font-weight:600;color:#0f172a;">${l.assignedAgent}</div></div>`:''}
+        ${l.assignedAgent?`<div style="background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:16px;"><div style="font-size:11px;color:#64748b;">Routing Layer</div><div style="font-size:14px;font-weight:600;color:#0f172a;">${l.assignedAgent}</div></div>`:''}
       </div>
     </div>
     <!-- ACTIONS -->
     <div style="display:flex;gap:10px;padding:16px 28px;border-top:1px solid #e2e8f0;flex-wrap:wrap;">
-      <button class="btn-primary modal-push-crm" data-id="${l.id}" ${l.pushedToCRM?'disabled':''}><i data-lucide="upload" class="w-4 h-4"></i> ${l.pushedToCRM?'Already Pushed':'Push to CRM'}</button>
-      <button class="btn-success modal-wa-btn" data-id="${l.id}" ${l.whatsappSent?'disabled':''}><i data-lucide="message-circle" class="w-4 h-4"></i> ${l.whatsappSent?'WhatsApp Sent':'Trigger WhatsApp'}</button>
+      <button class="btn-primary modal-push-crm" data-id="${l.id}" ${l.pushedToCRM?'disabled':''}><i data-lucide="upload" class="w-4 h-4"></i> ${l.pushedToCRM?'Synced to CRM':'COREX → CRM Sync'}</button>
+      <button class="btn-success modal-wa-btn" data-id="${l.id}" ${l.whatsappSent?'disabled':''}><i data-lucide="message-circle" class="w-4 h-4"></i> ${l.whatsappSent?'Outreach Sent':'Outreach Automation'}</button>
       <div style="position:relative;">
-        <button class="btn-secondary modal-assign-btn" data-id="${l.id}"><i data-lucide="user" class="w-4 h-4"></i> Assign Agent</button>
+        <button class="btn-secondary modal-assign-btn" data-id="${l.id}"><i data-lucide="user" class="w-4 h-4"></i> Route to Agent</button>
         <div class="assign-dropdown" style="display:none;position:absolute;bottom:44px;left:0;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.15);padding:6px;min-width:220px;z-index:100;">
           <div class="assign-option" data-agent="Andrea M. Tanguay" style="padding:8px 12px;font-size:13px;cursor:pointer;border-radius:8px;color:#334155;">Andrea M. Tanguay <span style="color:#94a3b8;font-size:11px;">All Lead Types</span></div>
         </div>
@@ -873,11 +874,11 @@ function openLeadModal(leadId){
   modal.querySelector('.modal-wa-btn').addEventListener('click',function(){triggerWhatsApp(this.dataset.id,this);});
   modal.querySelector('.modal-dismiss-btn').addEventListener('click',function(){
     const id=this.dataset.id;
-    leads=leads.filter(l=>l.id!==id);saveLeads();modal.style.display='none';renderAll();toast('🗑️ Lead dismissed');
+    leads=leads.filter(l=>l.id!==id);saveLeads();modal.style.display='none';renderAll();toast('🗑️ Opportunity dismissed');
   });
   modal.querySelector('.modal-save-btn').addEventListener('click',function(){
     const id=this.dataset.id;const lead=leads.find(l=>l.id===id);
-    if(lead){lead.notes=document.getElementById('modal-notes').value;saveLeads();toast('✏️ Notes saved');}
+    if(lead){lead.notes=document.getElementById('modal-notes').value;saveLeads();toast('✏️ Intelligence notes saved');}
   });
   const assignBtn=modal.querySelector('.modal-assign-btn');
   const dropdown=modal.querySelector('.assign-dropdown');
@@ -900,8 +901,8 @@ function pushToCRM(id,btn){
   if(btn){btn.disabled=true;btn.innerHTML='<span class="pulse-scan">⏳</span>';}
   setTimeout(()=>{
     lead.pushedToCRM=true;lead.status='Pushed';saveLeads();renderAll();
-    toast('✅ Lead pushed to BluwavCRM!');
-    addFeedEntry(`📤 Pushed to CRM: ${lead.name}`);
+    toast('✅ COREX → CRM Sync complete');
+    addFeedEntry(`📤 Synced to CRM: ${lead.name}`);
   },1500);
 }
 
@@ -913,7 +914,7 @@ function triggerWhatsApp(id,btn){
   const msg=tmpl.replace('{{lead_name}}',lead.name).replace('{{company}}',lead.org).replace('{{score}}',lead.score).replace('{{source}}',lead.source).replace('{{country}}',lead.country);
   setTimeout(()=>{
     lead.whatsappSent=true;saveLeads();renderAll();
-    toast('📱 WhatsApp message sent via Twilio');
+    toast('📤 Outreach Automation triggered via Twilio');
     addFeedEntry(`📱 WhatsApp triggered: ${lead.name}`);
   },1800);
 }
@@ -921,7 +922,7 @@ function triggerWhatsApp(id,btn){
 function assignLead(id,agentName){
   const lead=leads.find(l=>l.id===id);if(!lead)return;
   lead.assignedAgent=agentName;lead.status='Assigned';saveLeads();renderAll();
-  toast(`👤 Lead assigned to ${agentName}`);
+  toast(`👤 Opportunity routed to ${agentName}`);
   addFeedEntry(`👤 Assigned to ${agentName}: ${lead.name}`);
 }
 
@@ -974,8 +975,8 @@ async function generateDigest(){
 
   try{
     const res=await AppSDK.ai.chat({messages:[
-      {role:"system",content:"You are a lead intelligence analyst for Bluwav, a Caribbean CRM and business growth platform (BluwavCRM & Bluwav Growth). Generate a concise, structured daily digest report. Use markdown formatting with ## headers. Include: 1) Executive Summary (2-3 sentences), 2) Top 5 Leads to Prioritize (with scores and why), 3) Source Breakdown (brief table), 4) Recommended Actions (3-5 bullets), 5) Agent Assignment Summary — note that ALL leads are assigned to Andrea M. Tanguay as the sole agent, 6) Trends & Insights (1-2 observations). Be specific and actionable. Today's date is August 5, 2026."},
-      {role:"user",content:`Here are today's leads for the digest:\n\n${leadsSummary}\n\nSource breakdown: ${srcTable}\n\nTotal leads: ${leads.length}. Hot leads (score ≥75): ${leads.filter(l=>l.score>=75).length}. Pushed to CRM: ${leads.filter(l=>l.pushedToCRM).length}. Countries covered: Trinidad & Tobago, Jamaica, Barbados, Guyana, St. Lucia, Dominica.\n\nAgent Assignment: All ${leads.length} leads are assigned to Andrea M. Tanguay (sole agent handling all lead types across the Caribbean).`}
+      {role:"system",content:"You are a lead intelligence analyst for Bluwav, a Caribbean CRM and business growth platform (BluWav CRM & BluWav Growth). Generate a concise, structured daily digest report. Use markdown formatting with ## headers. Include: 1) Executive Summary (2-3 sentences), 2) Top 5 Leads to Prioritize (with scores and why), 3) Source Breakdown (brief table), 4) Recommended Actions (3-5 bullets), 5) Agent Assignment Summary — note that ALL leads are assigned to Andrea M. Tanguay as the sole agent, 6) Trends & Insights (1-2 observations). Be specific and actionable. Today's date is August 5, 2026."},
+      {role:"user",content:`Here are today's leads for the digest:\n\n${leadsSummary}\n\nSource breakdown: ${srcTable}\n\nTotal leads: ${leads.length}. Hot leads (score ≥75): ${leads.filter(l=>l.score>=75).length}. Synced to CRM: ${leads.filter(l=>l.pushedToCRM).length}. Countries covered: Trinidad & Tobago, Jamaica, Barbados, Guyana, St. Lucia, Dominica.\n\nAgent Assignment: All ${leads.length} leads are assigned to Andrea M. Tanguay (sole agent handling all lead types across the Caribbean).`}
     ]});
     // Parse markdown-like to HTML
     let html=res.content
@@ -991,14 +992,14 @@ async function generateDigest(){
     output.innerHTML=`<div class="digest-content"><p>${html}</p></div>`;
     document.getElementById('copy-digest-btn').style.display='inline-flex';
     document.getElementById('email-digest-btn').style.display='inline-flex';
-    btn.innerHTML='<i data-lucide="sparkles" class="w-4 h-4"></i> Regenerate Digest';
+    btn.innerHTML='<i data-lucide="sparkles" class="w-4 h-4"></i> Regenerate Intelligence Digest';
     btn.disabled=false;
     refreshIcons();
     // Store digest
     localStorage.setItem('bluwav_last_digest',res.content);
   }catch(e){
     output.innerHTML=`<div style="text-align:center;padding:40px;color:#ef4444;"><p style="font-size:15px;font-weight:500;">Failed to generate digest. Please try again.</p><p style="font-size:13px;color:#94a3b8;margin-top:4px;">${e.message||''}</p></div>`;
-    btn.innerHTML='<i data-lucide="sparkles" class="w-4 h-4"></i> Generate Digest';
+    btn.innerHTML='<i data-lucide="sparkles" class="w-4 h-4"></i> Generate Intelligence Digest';
     btn.disabled=false;
     refreshIcons();
   }
@@ -1036,7 +1037,7 @@ document.querySelectorAll('.sidebar-item').forEach(item=>{
   item.addEventListener('click',()=>switchView(item.dataset.view));
 });
 
-// Run Now
+// Run Intelligence Cycle
 document.getElementById('run-now-btn').addEventListener('click',runScan);
 
 // Table sort
@@ -1128,7 +1129,7 @@ document.getElementById('sources-grid').addEventListener('click',function(e){
   const scrapeBtn=e.target.closest('.scrape-now-btn');
   if(scrapeBtn){
     scrapeBtn.disabled=true;scrapeBtn.innerHTML='<span class="pulse-scan">⏳</span> Scraping...';
-    setTimeout(()=>{scrapeBtn.disabled=false;scrapeBtn.innerHTML='<i data-lucide="refresh-cw" class="w-3 h-3"></i> Scrape Now';toast('✅ Scrape complete — 2 new leads found');refreshIcons();},2500);
+    setTimeout(()=>{scrapeBtn.disabled=false;scrapeBtn.innerHTML='<i data-lucide="refresh-cw" class="w-3 h-3"></i> Scan Now';toast('✅ Intelligence scan complete — 2 new leads found');refreshIcons();},2500);
     return;
   }
 });
@@ -1162,13 +1163,13 @@ document.getElementById('wa-threshold').addEventListener('input',function(){
 // Test CRM
 document.getElementById('test-crm-btn').addEventListener('click',function(){
   this.disabled=true;this.textContent='Testing...';
-  setTimeout(()=>{this.disabled=false;this.innerHTML='<i data-lucide="plug" class="w-4 h-4"></i> Test Connection';toast('✅ CRM connection successful (simulated)');refreshIcons();},1500);
+  setTimeout(()=>{this.disabled=false;this.innerHTML='<i data-lucide="plug" class="w-4 h-4"></i> Test CRM Connection';toast('✅ COREX → CRM connection verified (simulated)');refreshIcons();},1500);
 });
 
-// Save Settings
+// Save System Controls
 document.getElementById('save-settings-btn').addEventListener('click',function(){
   saveWeights();saveAgents();
-  toast('✅ Settings saved successfully');
+  toast('✅ System controls saved');
   // Re-sort leads by new weights if needed
   renderLeadsTable();
 });
@@ -1181,7 +1182,7 @@ if(storedDigest){
   document.getElementById('digest-output').innerHTML=`<div class="digest-content"><p>${html}</p></div>`;
   document.getElementById('copy-digest-btn').style.display='inline-flex';
   document.getElementById('email-digest-btn').style.display='inline-flex';
-  document.getElementById('generate-digest-btn').innerHTML='<i data-lucide="sparkles" class="w-4 h-4"></i> Regenerate Digest';
+  document.getElementById('generate-digest-btn').innerHTML='<i data-lucide="sparkles" class="w-4 h-4"></i> Regenerate Intelligence Digest';
 }
 
 // Init icons + agents + weights
