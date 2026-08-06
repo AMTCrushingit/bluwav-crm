@@ -182,7 +182,7 @@ function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS
 function timeAgo(ts){const diff=Date.now()-new Date(ts).getTime(),m=60000,h=3600000,d=86400000;if(diff<m)return'Just now';if(diff<h)return Math.floor(diff/m)+'m ago';if(diff<d)return Math.floor(diff/h)+'h ago';if(diff<7*d)return Math.floor(diff/d)+'d ago';return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
-async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 
 // Set default datetime to now
 document.getElementById('lf_date').value = new Date().toISOString().slice(0,16);
@@ -369,6 +369,7 @@ async function logActivity(){
     function resetTimer(){
       clearTimeout(timer);
       timer = setTimeout(async()=>{
+        sessionStorage.removeItem('bw_gate_ok');
         await db.auth.signOut();
         window.location.href = 'login.html';
       }, TIMEOUT_MS);

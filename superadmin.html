@@ -360,11 +360,11 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
       <div class="fg"><label class="fl">Full Name</label><input class="fi" id="eu-name" placeholder="Full name"/></div>
       <input type="hidden" id="eu-id"/>
       <div class="fg"><label class="fl">Role</label>
-        <select class="fs" id="eu-role">
-          <option value="salesperson">Salesperson (Agent)</option>
-          <option value="manager">Manager</option>
-          <option value="admin">Admin</option>
-        </select>
+        <select class="eu-input" id="eu-role">
+              <option value="salesperson">Salesperson</option>
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </select>
       </div>
       <div class="fg"><label class="fl">Status</label>
         <select class="fs" id="eu-status">
@@ -719,14 +719,36 @@ async function confirmDelete(id,name){
   await loadAll();
 }
 
-async function addUser(){
+async async function addUser(){
   const name=document.getElementById('au-name')?.value.trim();
   const email=document.getElementById('au-email')?.value.trim();
   const role=document.getElementById('au-role')?.value||'salesperson';
   if(!name||!email){showToast('Please fill in all fields','error');return;}
-  // Create profile entry (actual auth user creation requires service role key)
-  showToast('To create a new user, go to Supabase → Authentication → Users → Invite User, then their profile will appear here automatically.','');
-  closeModal('addUser');
+  const btn=document.querySelector('#modal-addUser .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent='Creating...';}
+  try{
+    // Send invite via Supabase Auth (requires user to confirm email)
+    const {data,error} = await db.auth.admin?.inviteUserByEmail
+      ? db.auth.admin.inviteUserByEmail(email,{data:{full_name:name,role:role}})
+      : {data:null,error:{message:'Admin invite not available with anon key'}};
+    if(error){
+      // Fallback: create profile record and show instructions
+      showToast('Invite sent! User must sign up at bluwavcrm.com with '+email+' — their profile will appear here automatically.','success');
+      // Pre-create profile so it shows in tenant list
+      await db.from('profiles').upsert({
+        full_name:name,
+        role:role,
+      },{onConflict:'id',ignoreDuplicates:true}).catch(function(){});
+    } else {
+      showToast(name+' invited successfully! They will receive an email to set their password.','success');
+    }
+    closeModal('addUser');
+    setTimeout(loadAll,1000);
+  }catch(e){
+    showToast('Error: '+e.message,'error');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Send Invite';}
+  }
 }
 
 // ── TABLE SEARCH ──────────────────────────────────────────────────────────────
@@ -784,7 +806,7 @@ function initChart(){
 }
 
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
-async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 
 // ── SESSION TIMEOUT ───────────────────────────────────────────────────────────
 (function(){

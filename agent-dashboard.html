@@ -352,7 +352,7 @@ function notifyAdmin(subject, body) {
 
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast ${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');document.getElementById('mainContent').classList.toggle('expanded');}
-async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%AGENT_COLORS.length;return AGENT_COLORS[h];}
 
 (async()=>{
@@ -592,7 +592,7 @@ async function quickDeal(type,value){
 
 (function(){
   const TIMEOUT_MS=5*60*1000;let timer;
-  function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
+  function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.sessionStorage.removeItem('bw_gate_ok');sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=>{document.addEventListener(evt,resetTimer,true);});
   resetTimer();
 })();

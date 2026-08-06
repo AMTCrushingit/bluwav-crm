@@ -387,6 +387,7 @@
     function resetTimer(){
       clearTimeout(timer);
       timer = setTimeout(async()=>{
+        sessionStorage.removeItem('bw_gate_ok');
         await db.auth.signOut();
         window.location.href = 'login.html';
       }, TIMEOUT_MS);
