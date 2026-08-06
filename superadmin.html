@@ -1575,25 +1575,30 @@ function corexShowModule(name){
 }
 
 // ---- Init COREX content ----
-let _corexInitDone=false;
+let _corexModuleSet=false;
 function corexInitContent(){
+  // Always reload from localStorage so new leads/pushes are reflected
   const stored=localStorage.getItem('corex_leads');
-  if(stored){try{corexLeads=JSON.parse(stored);}catch(e){corexLeads=[...SEED_LEADS];}}
+  if(stored){try{corexLeads=JSON.parse(stored);}catch(e){corexLeads=[...SEED_LEADS];localStorage.setItem('corex_leads',JSON.stringify(corexLeads));}}
   else{corexLeads=[...SEED_LEADS];localStorage.setItem('corex_leads',JSON.stringify(corexLeads));}
+  // Always re-render stats and table so counts are live
   corexRenderStats();
   corexRenderLeads();
   corexRenderFeed();
   corexRenderSourceHealth();
-  if(!_corexInitDone){corexShowModule('command');_corexInitDone=true;}
+  // Only set default module tab on first open
+  if(!_corexModuleSet){corexShowModule('command');_corexModuleSet=true;}
 }
 
 // ---- Stats ----
 function corexRenderStats(){
+  // Always read live from corexLeads for accurate counts
+  const total=corexLeads.length;
   const hot=corexLeads.filter(l=>l.score>=75).length;
   const pushed=corexLeads.filter(l=>l.pushedToCRM).length;
   const awaiting=corexLeads.filter(l=>l.status==='New').length;
   const data=[
-    {icon:'🎯',label:'Opportunities',val:corexLeads.length,color:'#8b5cf6',bg:'rgba(139,92,246,.12)'},
+    {icon:'🎯',label:'Opportunities',val:total,color:'#8b5cf6',bg:'rgba(139,92,246,.12)'},
     {icon:'🔥',label:'Hot (≥75)',val:hot,color:'#ef4444',bg:'rgba(239,68,68,.1)'},
     {icon:'✅',label:'Synced to CRM',val:pushed,color:'#22c55e',bg:'rgba(34,197,94,.1)'},
     {icon:'⏳',label:'Awaiting Routing',val:awaiting,color:'#f59e0b',bg:'rgba(245,158,11,.1)'}
@@ -1854,7 +1859,10 @@ function corexPushCRM(id){
   if(!lead||lead.pushedToCRM)return;
   lead.pushedToCRM=true;lead.status='Pushed';
   localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
-  corexRenderLeads();corexRenderStats();
+  // Re-render all dependent views
+  corexRenderStats();
+  corexRenderLeads();
+  if(document.getElementById('corex-module-opportunities')?.style.display==='block') corexRenderPipeline();
   corexAddFeed('📤 COREX → CRM Sync: '+lead.name);
   corexToast('✅ COREX → CRM Sync complete');
 }
@@ -1862,15 +1870,47 @@ function corexPushCRM(id){
 // ---- Open lead (simple toast for now) ----
 function corexOpenLead(id){
   const l=corexLeads.find(x=>x.id===id);
-  if(l)corexToast('📋 '+l.name+' · Score: '+l.score+' · '+l.assignedAgent);
+  if(!l)return;
+  corexToast('📋 '+l.name+' | Fit Index: '+l.score+' | '+l.country+' | '+l.budget+' | Routed: '+l.assignedAgent);
 }
 
 // ---- Run cycle ----
 function corexRunCycle(){
   corexToast('⚡ COREX intelligence cycle running...');
-  const msgs=["📡 Scanning UNGM...","📡 Scanning Devex & ReliefWeb...","📡 Scanning EU-LAC & IDB...","✅ 3 new opportunities found","🎯 Scoring complete","👥 Auto-routing to agents"];
+  const btn=document.getElementById('corex-run-btn');
+  if(btn){btn.disabled=true;btn.innerHTML='⏳ Scanning...';}
+  const msgs=[
+    "📡 Scanning UNGM for new procurement tenders...",
+    "📡 Scanning Devex & ReliefWeb job boards...",
+    "📡 Scanning EU-LAC & IDB donor portals...",
+    "📡 Scanning Guyana eProcure...",
+    "✅ New opportunity: EU Caribbean Digital Innovation (Score: 88)",
+    "✅ New opportunity: UNICEF Eastern Caribbean (Score: 82)",
+    "✅ New opportunity: CDB Tech Accelerator (Score: 79)",
+    "🎯 COREX Fit Index scoring complete",
+    "👥 Auto-routing: Devon (2), Aaliya (1)"
+  ];
   msgs.forEach((m,i)=>setTimeout(()=>corexAddFeed(m),i*600));
-  setTimeout(()=>corexToast('✅ COREX intelligence cycle complete — 3 new opportunities'),msgs.length*600+200);
+  setTimeout(()=>{
+    // Add 3 new simulated leads
+    const newLeads=[
+      {id:'L_'+Date.now()+'_1',name:'EU Caribbean Digital Innovation Fund',org:'EU Delegation / Caribbean',source:'EU-LAC Portal',sourceType:'donor',country:'🇧🇧 Barbados',type:'Donor Project',deadline:'2026-09-30',budget:'EUR 6.2M',contact:'digital@eu-lac.org',description:'EU-funded digital innovation programme for Caribbean SMEs and startups.',score:88,tags:['CRM Fit','Growth Fit','High Budget'],status:'New',fitBreakdown:{industry:25,geo:18,budget:18,orgType:12,sourceQuality:10,urgency:5},assignedAgent:'Devon',pushedToCRM:false,whatsappSent:false,foundAt:new Date().toISOString()},
+      {id:'L_'+Date.now()+'_2',name:'UNICEF Eastern Caribbean — Digital Inclusion',org:'UNICEF',source:'Donor Portal',sourceType:'donor',country:'🇱🇨 St. Lucia',type:'Donor Project',deadline:'2026-09-15',budget:'USD 1.5M',contact:'easterncaribbean@unicef.org',description:'UNICEF programme for digital inclusion of youth across Eastern Caribbean islands.',score:82,tags:['Growth Fit','NGO','Urgent'],status:'New',fitBreakdown:{industry:20,geo:20,budget:12,orgType:15,sourceQuality:10,urgency:5},assignedAgent:'Aaliya',pushedToCRM:false,whatsappSent:false,foundAt:new Date().toISOString()},
+      {id:'L_'+Date.now()+'_3',name:'CDB Tech Accelerator — SME Digital Tools',org:'Caribbean Development Bank',source:'UNGM Portal',sourceType:'rfp',country:'🇧🇧 Barbados',type:'Government RFP',deadline:'2026-10-01',budget:'USD 3.8M',contact:'techaccelerator@caribank.org',description:'CDB accelerator programme seeking CRM and digital tools vendors for 25 participating SMEs.',score:79,tags:['CRM Fit','High Budget'],status:'New',fitBreakdown:{industry:22,geo:20,budget:16,orgType:10,sourceQuality:8,urgency:3},assignedAgent:'Devon',pushedToCRM:false,whatsappSent:false,foundAt:new Date().toISOString()}
+    ];
+    corexLeads.unshift(...newLeads);
+    localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
+    // Update all views
+    corexRenderStats();
+    corexRenderLeads();
+    corexRenderSourceHealth();
+    if(btn){btn.disabled=false;btn.innerHTML='&#x25B6; Run Intelligence Cycle';}
+    corexToast('✅ COREX cycle complete — 3 new opportunities discovered');
+    // Update last run time
+    const now=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true})+' EDT';
+    const lrt=document.getElementById('corex-last-run');
+    if(lrt)lrt.textContent=now;
+  },msgs.length*600+400);
 }
 
 // ---- Digest ----
@@ -1881,10 +1921,12 @@ function corexGenerateDigest(){
   if(out)out.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3);"><div style="font-size:28px;margin-bottom:10px;animation:corex-pulse 1s ease-in-out infinite;">🧠</div><div style="font-size:13px;">Analysing 20 opportunities and generating COREX intelligence digest...</div></div>';
   setTimeout(()=>{
     const top5=corexLeads.slice().sort((a,b)=>b.score-a.score).slice(0,5);
+    const hotCount=corexLeads.filter(l=>l.score>=75).length;
+    const pushedCount=corexLeads.filter(l=>l.pushedToCRM).length;
     const digestHtml=`<div style="color:var(--text2);line-height:1.7;">
       <h2 style="font-size:16px;font-weight:700;color:#c4b5fd;margin:0 0 12px;">&#x1F9E0; COREX Intelligence Digest — August 6, 2026</h2>
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Executive Summary</h3>
-      <p style="font-size:13px;color:var(--text3);">COREX identified 20 high-value opportunities across 6 Caribbean territories. 15 opportunities score ≥75 (Hot). Total addressable budget across active opportunities exceeds USD 220M. Priority focus: OECS Digital Transformation (USD 94M), Caribbean Resilient Renewable Energy (USD 90M), and Caribbean Fintech Founders Network (Score: 94).</p>
+      <p style="font-size:13px;color:var(--text3);">COREX identified "+(corexLeads.length)+" high-value opportunities across 6 Caribbean territories. "+(hotCount)+" opportunities score ≥75 (Hot). Total addressable budget across active opportunities exceeds USD 220M. Priority focus: OECS Digital Transformation (USD 94M), Caribbean Resilient Renewable Energy (USD 90M), and Caribbean Fintech Founders Network (Score: 94).</p>
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Top 5 Opportunities to Prioritise</h3>
       ${top5.map((l,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(139,92,246,.06);border-radius:8px;margin-bottom:6px;border-left:3px solid #8b5cf6;">
         <span style="font-size:14px;font-weight:800;color:#a78bfa;">#${i+1}</span>
@@ -2065,7 +2107,7 @@ function corexToast(msg){
               <span style="width:6px;height:6px;border-radius:50%;background:#a78bfa;display:inline-block;animation:corex-pulse 2s ease-in-out infinite;"></span>
               Active — Intelligence Cycle Running
             </div>
-            <button onclick="corexRunCycle()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.3);">&#x25B6; Run Intelligence Cycle</button>
+            <button id="corex-run-btn" onclick="corexRunCycle()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.3);">&#x25B6; Run Intelligence Cycle</button>
             <button onclick="cgLockCOREX()" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">&#x1F512; Lock</button>
           </div>
         </div>

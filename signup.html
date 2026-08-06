@@ -232,7 +232,7 @@ document.getElementById('signupForm').addEventListener('submit',async(e)=>{
   if(data.user && data.session){
     // No email confirmation needed — log them in directly
     showAlert(`✅ Account created! Welcome, ${firstName}. Redirecting to dashboard...`,'success');
-    setTimeout(()=>window.location.href='dashboard.html',1500);
+    setTimeout(()=>window.location.href='enhanced-crm-dashboard.html',1500);
   } else {
     // Email confirmation required
     showAlert(`✅ Account created! Check your email (${email}) for a confirmation link, then sign in.`,'success');
@@ -244,7 +244,7 @@ document.getElementById('signupForm').addEventListener('submit',async(e)=>{
 // Check if already logged in
 (async()=>{
   const{data:{session}}=await db.auth.getSession();
-  if(session)window.location.href='dashboard.html';
+  if(session)window.location.href='enhanced-crm-dashboard.html';
 })();
 </script>
 </body>
