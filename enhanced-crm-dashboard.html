@@ -592,7 +592,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
           <th onclick="sortDealsList('contact_name')" style="cursor:pointer;">Client <span class="sort-icon">&#x25B2;</span></th>
           <th onclick="sortDealsList('deal_value')" style="cursor:pointer;">Value <span class="sort-icon">&#x25B2;</span></th>
           <th onclick="sortDealsList('stage')" style="cursor:pointer;">Stage <span class="sort-icon">&#x25B2;</span></th>
-          <th onclick="sortDealsList('deal_type')" style="cursor:pointer;">Type <span class="sort-icon">&#x25B2;</span></th>
+          <th onclick="sortDealsList('close_date')" style="cursor:pointer;">Close Date <span class="sort-icon">&#x25B2;</span></th>
+          <th onclick="sortDealsList('probability')" style="cursor:pointer;">Prob% <span class="sort-icon">&#x25B2;</span></th>
           <th>Actions</th>
         </tr></thead>
         <tbody id="dealsListBody"></tbody>
@@ -1088,6 +1089,7 @@ function switchRep(userId,btn){
   viewingUserId=userId;
   document.querySelectorAll('.rep-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  _loadDataInFlight=false;
   loadData();
 }
 
@@ -1346,7 +1348,7 @@ function renderContactsTable(){
       <td style="color:${valColor};font-weight:600;">${val?fmt(val):'—'}</td>
       <td><div style="display:flex;gap:4px;">
         <button class="btn btn-ghost btn-sm" onclick="emailContact('${c.id}')" title="Email">📧</button>
-        <button class="btn btn-ghost btn-sm" onclick="whatsappContact('${c.id}')" title="WhatsApp" style="color:#25D366;">📱</button>
+        <button class="btn btn-ghost btn-sm" onclick="whatsappContact('${c.id}')" title="${(c.phone||c.whatsapp)?'WhatsApp':'No phone number'}" style="color:#25D366;opacity:${(c.phone||c.whatsapp)?'1':'0.3'};cursor:${(c.phone||c.whatsapp)?'pointer':'not-allowed'};">📱</button>
         <button class="btn btn-ghost btn-sm" onclick="editContact('${c.id}')" title="Edit">✏️</button>
         <button class="btn btn-danger btn-sm" onclick="deleteContact('${c.id}')" title="Delete">🗑</button>
       </div></td>
@@ -1387,26 +1389,38 @@ function sortByCol(th){
 }
 
 async function updateContactStatus(sel){
+  if(sel.dataset.saving==='true') return;
+  sel.dataset.saving='true';
   const id=sel.getAttribute('data-id');
   const newStatus=sel.value;
   const prevStatus=sel.getAttribute('data-prev')||sel.value;
   sel.setAttribute('data-prev',newStatus);
-  // Directly update status column in contacts table
-  const {error}=await db.from('contacts').update({status:newStatus}).eq('id',id);
-  if(error){
-    showToast('Error saving status: '+error.message,'');
-    sel.value=prevStatus;
-    sel.setAttribute('data-prev',prevStatus);
-    return;
+  sel.style.opacity='0.6';
+  try{
+    const {data,error}=await db.from('contacts').update({status:newStatus}).eq('id',id).select('status').single();
+    if(error){
+      showToast('Error saving status: '+error.message,'');
+      sel.value=prevStatus;
+      sel.setAttribute('data-prev',prevStatus);
+      return;
+    }
+    const confirmedStatus=data?.status||newStatus;
+    sel.value=confirmedStatus;
+    sel.setAttribute('data-prev',confirmedStatus);
+    const contact=allContacts.find(c=>c.id===id);
+    if(contact) contact.status=confirmedStatus;
+    const fc=filteredContacts.find(c=>c.id===id);
+    if(fc) fc.status=confirmedStatus;
+    if(confirmedStatus!==newStatus){
+      showToast('Status was updated by another team member: '+confirmedStatus,'');
+    } else {
+      showToast('Status updated: '+confirmedStatus+' ✓','success');
+    }
+    renderContactsTable();
+  } finally {
+    sel.dataset.saving='false';
+    sel.style.opacity='1';
   }
-  // Update local data arrays so UI reflects change immediately
-  const contact=allContacts.find(c=>c.id===id);
-  if(contact){contact.status=newStatus;}
-  const fc=filteredContacts.find(c=>c.id===id);
-  if(fc){fc.status=newStatus;}
-  showToast('Status updated: '+newStatus+' ✓','success');
-  // Re-render so badge/select reflects new status without full reload
-  renderContactsTable();
 }
 
 function filterContacts(){
@@ -2050,19 +2064,23 @@ function openEditDeal(dealId){
   const reasonEl = document.getElementById('ed-reason');
   if(reasonEl) reasonEl.value = d.won_lost_reason||'';
   toggleWonLostReason(d.stage||'lead');
+  _editDealUpdatedAt = d.updated_at||null;
   document.getElementById('editDealError').style.display='none';
   document.getElementById('modal-editDeal').classList.add('open');
 }
 
+let _editDealUpdatedAt = null;
 async function updateDeal(){
   const id = document.getElementById('ed-id').value;
   const name = document.getElementById('ed-name').value.trim();
   const errEl = document.getElementById('editDealError');
   if(!name){errEl.textContent='Deal name is required.';errEl.style.display='block';return;}
+  const saveBtn = document.querySelector('#modal-editDeal .btn-primary');
+  if(saveBtn&&saveBtn.disabled) return;
+  if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Saving...';}
   const val = parseFloat(document.getElementById('ed-value').value)||0;
   const stage = document.getElementById('ed-stage').value||'lead';
   const contactId = document.getElementById('ed-contact').value||null;
-  const dealType = document.getElementById('ed-type').value||'Ripple';
   const notes = document.getElementById('ed-notes').value.trim();
   const updates = {title:name, deal_name:name, value:val, deal_value:val, stage:stage};
   if(contactId) updates.contact_id = contactId;
@@ -2073,11 +2091,26 @@ async function updateDeal(){
   if(probability) updates.probability = parseInt(probability);
   const reason = document.getElementById('ed-reason')?.value||null;
   if(reason) updates.won_lost_reason = reason;
-  const {error} = await db.from('deals').update(updates).eq('id',id);
-  if(error){errEl.textContent='Error: '+error.message;errEl.style.display='block';return;}
-  showToast('Deal updated ✓','success');
-  closeModal('editDeal');
-  await loadData();
+  try{
+    let q = db.from('deals').update(updates).eq('id',id);
+    if(_editDealUpdatedAt) q = q.eq('updated_at',_editDealUpdatedAt);
+    const {data,error} = await q.select();
+    if(error){errEl.textContent='Error: '+error.message;errEl.style.display='block';return;}
+    if(!data||data.length===0){
+      errEl.textContent=_editDealUpdatedAt
+        ? '⚠️ This deal was modified by another team member. Please close and reopen to see the latest version.'
+        : '⚠️ This deal no longer exists — it may have been deleted.';
+      errEl.style.display='block';
+      await loadData();
+      return;
+    }
+    showToast('Deal updated ✓','success');
+    _editDealUpdatedAt=null;
+    closeModal('editDeal');
+    await loadData();
+  } finally {
+    if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='Update Deal';}
+  }
 }
 
 // ── TASKS ─────────────────────────────────────────────────────────────────────
@@ -2230,16 +2263,25 @@ function renderPipeline(){
     ['deals','dDeals'].forEach(prefix=>{
       const el=document.getElementById(prefix+stageId);
       if(!el) return;
-      el.innerHTML=deals.slice(0,5).map(d=>`
-        <div class="deal" style="cursor:pointer;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <div class="deal-name" onclick="showView('deals')">${d.deal_name||d.title||'Untitled'}</div>
-            <button onclick="openEditDeal('${d.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.7rem;padding:0 0 0 6px;flex-shrink:0;" title="Edit deal">✏️</button>
-          </div>
-          <div class="deal-co">${d.contact_name||'—'}</div>
-          <div class="deal-val">${fmt(d.deal_value||d.value||0)}</div>
-          <div class="deal-date">${stage==='won'?'✓ Won':'Active'}</div>
-        </div>`).join('')||`<div style="text-align:center;padding:12px;color:var(--text3);font-size:0.75rem;">No deals</div>`;
+      el.innerHTML=deals.slice(0,5).map(function(d){
+        var now=new Date();
+        var daysLeft=d.close_date?Math.ceil((new Date(d.close_date)-now)/86400000):null;
+        var urgencyHtml='';
+        if(daysLeft!==null&&daysLeft<=3&&daysLeft>=0) urgencyHtml='<span style="color:#ef4444;font-size:10px;font-weight:700;">&#x26A0; '+daysLeft+'d left</span>';
+        else if(daysLeft!==null&&daysLeft<=7&&daysLeft>=0) urgencyHtml='<span style="color:var(--gold);font-size:10px;">&#x1F4C5; '+daysLeft+'d left</span>';
+        var closeDateStr=d.close_date?new Date(d.close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+        var dealStatus=stage==='won'?'✓ Won':(closeDateStr||'Active');
+        var html='<div class="deal deal-nav" style="cursor:pointer;">';
+        html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;">';
+        html+='<div class="deal-name">'+(d.deal_name||d.title||'Untitled')+'</div>';
+        html+='<button data-deal-id="'+d.id+'" class="deal-edit-btn" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.7rem;padding:0 0 0 6px;flex-shrink:0;" title="Edit">&#x270F;&#xFE0F;</button>';
+        html+='</div>';
+        html+='<div class="deal-co">'+(d.contact_name||'—')+'</div>';
+        html+='<div class="deal-val">'+fmt(d.deal_value||d.value||0)+'</div>';
+        html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-top:3px;">';
+        html+='<div class="deal-date">'+dealStatus+'</div>'+urgencyHtml+'</div></div>';
+        return html;
+      }).join('')||'<div style="text-align:center;padding:12px;color:var(--text3);font-size:0.75rem;">No deals</div>';
     });
   });
 }
@@ -2341,7 +2383,7 @@ function whatsappContact(id){
   // Caribbean area codes: 868 (TT), 876 (JM), 246 (BB), 758 (LC),
   //   784 (VC), 473 (GD), 767 (DM), 268 (AG), 721/721 (SXM), 599 (CW)
   //   Canadian/US: 10 digits starting with area code
-  const caribbeanPrefixes = ['868','876','246','758','784','473','767','268','721','599','345','441','284','264','649'];
+  const caribbeanPrefixes = ['868','876','246','758','784','473','767','268','721','599','345','441','284','264','649','596','501','592','597','509','869','664'];
   if(waPhone.length === 10){
     const prefix3 = waPhone.substring(0,3);
     if(caribbeanPrefixes.includes(prefix3)){
@@ -2417,12 +2459,18 @@ function renderDealsList(){
     const stage = (d.stage||'lead').toLowerCase();
     const badge = stageBadge[stage]||'badge-muted';
     const stageLabel = stage.charAt(0).toUpperCase()+stage.slice(1);
+    const nowD=new Date();
+    const daysLeftD=d.close_date?Math.ceil((new Date(d.close_date)-nowD)/86400000):null;
+    const closeDateDisplay=d.close_date?new Date(d.close_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+    const closeDateColor=daysLeftD!==null&&daysLeftD<=3&&daysLeftD>=0?'#ef4444':daysLeftD!==null&&daysLeftD<=7&&daysLeftD>=0?'var(--gold)':'var(--text3)';
+    const urgencyIconD=daysLeftD!==null&&daysLeftD<=3&&daysLeftD>=0?'&#x26A0; ':daysLeftD!==null&&daysLeftD<=7&&daysLeftD>=0?'&#x1F4C5; ':'';
     return `<tr>
       <td><div style="font-weight:600;color:var(--text);font-size:0.82rem;">${d.deal_name||d.title||'Untitled'}</div></td>
       <td style="color:var(--text2);font-size:0.78rem;">${d.contact_name||'—'}</td>
       <td style="font-weight:700;color:var(--cyan);">${fmt(d.deal_value||d.value||0)}</td>
       <td><span class="badge ${badge}">${stageLabel}</span></td>
-      <td style="color:var(--text3);font-size:0.75rem;">${d.deal_type||'—'}</td>
+      <td style="color:${closeDateColor};font-size:0.75rem;font-weight:${daysLeftD!==null&&daysLeftD<=7?'700':'400'};">${urgencyIconD}${closeDateDisplay}</td>
+      <td style="color:var(--text3);font-size:0.75rem;">${d.probability?d.probability+'%':'—'}</td>
       <td><div style="display:flex;gap:4px;">
         <button class="btn btn-ghost btn-sm" onclick="openEditDeal('${d.id}')" title="Edit">&#x270F;&#xFE0F;</button>
         <button class="btn btn-danger btn-sm" onclick="deleteDeal('${d.id}')" title="Delete">&#x1F5D1;</button>
