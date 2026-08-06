@@ -212,7 +212,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
     <div class="nav-section">
       <div class="nav-label" style="color:var(--corex);letter-spacing:.12em;">&#x1F9E0; COREX</div>
       <a class="nav-item" onclick="showView('corex')" id="corex-nav-item">
-        <span class="nav-icon">&#x26A1;</span> Command Center
+        <span class="nav-icon">&#x26A1;</span> Intelligence Hub
       </a>
       <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('opportunities'),100)" style="padding-left:28px;font-size:12px;">
         <span class="nav-icon" style="font-size:11px;">&#x1F3AF;</span> Opportunity Intel
@@ -2072,7 +2072,7 @@ function corexToast(msg){
 
         <!-- COREX Sub-nav tabs -->
         <div style="display:flex;gap:6px;background:rgba(28,22,64,0.8);border:1px solid rgba(167,139,250,0.18);border-radius:12px;padding:6px;margin-bottom:20px;flex-wrap:wrap;" id="corex-tabs">
-          <button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">&#x26A1; Command Center</button>
+          <button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">&#x26A1; Intelligence Hub</button>
           <button class="corex-tab" data-module="opportunities" onclick="corexShowModule('opportunities')">&#x1F3AF; Opportunity Intel</button>
           <button class="corex-tab" data-module="scanner" onclick="corexShowModule('scanner')">&#x1F4E1; Procurement Scanner</button>
           <button class="corex-tab" data-module="digest" onclick="corexShowModule('digest')">&#x1F4CA; Intelligence Digest</button>
