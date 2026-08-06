@@ -1062,6 +1062,7 @@ async function initDashboard(){
   loadData();
   initChart();
   startPresence();
+  startRealtime();
   // Load notifications after data loads
   setTimeout(loadNotifications, 2000);
 }
@@ -3279,6 +3280,184 @@ function exportContactsCSV(){
   document.body.removeChild(a);
   showToast(allContacts.length+' contacts exported ✓','success');
 }
+
+
+// ── REAL-TIME SUBSCRIPTIONS ───────────────────────────────────────────────────
+let _realtimeChannel = null;
+
+function startRealtime(){
+  if(_realtimeChannel) return;
+
+  _realtimeChannel = db.channel('bluwav-crm-live')
+
+    .on('postgres_changes',{event:'*',schema:'public',table:'contacts'},function(payload){
+      var evt=payload.eventType, newRow=payload.new, oldRow=payload.old;
+
+      if(evt==='INSERT'){
+        if(!allContacts.find(function(c){return c.id===newRow.id;})){
+          var linkedC={
+            id:newRow.id, full_name:newRow.full_name||'Unknown',
+            email:newRow.email||'', business_name:newRow.business_name||'',
+            phone:newRow.phone||newRow.whatsapp||'', status:newRow.status||'Lead',
+            island:newRow.island||'', created_at:newRow.created_at,
+            user_id:newRow.user_id, deal_value:newRow.deal_value||0,
+            last_contacted:newRow.last_contacted||null, notes:newRow.notes||null
+          };
+          allContacts.unshift(linkedC);
+          filteredContacts=allContacts.slice(); sortContacts();
+          var mc=document.getElementById('metricContacts'); if(mc) mc.textContent=allContacts.length;
+          var nb=document.getElementById('navContactsBadge'); if(nb) nb.textContent=allContacts.length;
+          var ca=document.getElementById('countAll'); if(ca) ca.textContent=allContacts.length;
+          if(newRow.user_id!==currentUser?.id){
+            showToast('New contact added: '+(newRow.full_name||'Unknown'),'success');
+            createNotif('&#x1F464;','var(--cyan)','New contact: '+(newRow.full_name||'Unknown'),'contact_rt');
+          }
+        }
+      }
+
+      else if(evt==='UPDATE'){
+        var idx=allContacts.findIndex(function(c){return c.id===newRow.id;});
+        if(idx>-1){
+          var oldStatus=allContacts[idx].status;
+          allContacts[idx]=Object.assign({},allContacts[idx],{
+            full_name:newRow.full_name||allContacts[idx].full_name,
+            email:newRow.email||allContacts[idx].email,
+            business_name:newRow.business_name||allContacts[idx].business_name,
+            phone:newRow.phone||allContacts[idx].phone,
+            status:newRow.status||allContacts[idx].status,
+            island:newRow.island||allContacts[idx].island,
+            last_contacted:newRow.last_contacted||allContacts[idx].last_contacted,
+            notes:newRow.notes||allContacts[idx].notes
+          });
+          var fi=filteredContacts.findIndex(function(c){return c.id===newRow.id;});
+          if(fi>-1) filteredContacts[fi]=allContacts[idx];
+          renderContactsTable(); renderRecentContacts();
+          if(oldStatus!==newRow.status && newRow.user_id!==currentUser?.id){
+            showToast((newRow.full_name||'Contact')+' status: '+oldStatus+' → '+newRow.status,'');
+          }
+        }
+      }
+
+      else if(evt==='DELETE'){
+        var delId=oldRow.id;
+        var delContact=allContacts.find(function(c){return c.id===delId;});
+        var delName=delContact?delContact.full_name:'A contact';
+        allContacts=allContacts.filter(function(c){return c.id!==delId;});
+        filteredContacts=filteredContacts.filter(function(c){return c.id!==delId;});
+        renderContactsTable(); renderRecentContacts();
+        var mc2=document.getElementById('metricContacts'); if(mc2) mc2.textContent=allContacts.length;
+        if(delContact&&delContact.user_id!==currentUser?.id){
+          showToast(delName+' was removed by another team member','');
+        }
+      }
+    })
+
+    .on('postgres_changes',{event:'*',schema:'public',table:'deals'},function(payload){
+      var evt=payload.eventType, newRow=payload.new, oldRow=payload.old;
+
+      if(evt==='INSERT'){
+        if(!allDeals.find(function(d){return d.id===newRow.id;})){
+          var lc=allContacts.find(function(c){return c.id===newRow.contact_id;});
+          allDeals.unshift(Object.assign({},newRow,{
+            deal_name:newRow.deal_name||newRow.title||'Untitled Deal',
+            deal_value:newRow.deal_value||newRow.value||0,
+            deal_type:newRow.deal_type||'Ripple',
+            stage:newRow.stage||'lead',
+            contact_name:lc?lc.full_name:null,
+            close_date:newRow.close_date||null,
+            probability:newRow.probability||null,
+            won_lost_reason:newRow.won_lost_reason||null
+          }));
+          renderPipeline();
+          var openD=allDeals.filter(function(d){return !['won','lost'].includes((d.stage||'').toLowerCase());});
+          var md=document.getElementById('metricDeals'); if(md) md.textContent=openD.length;
+          var nd=document.getElementById('navDealsBadge'); if(nd) nd.textContent=allDeals.length;
+          if(newRow.agent_id!==currentUser?.id){
+            showToast('New deal: '+(newRow.deal_name||newRow.title||'Untitled'),'success');
+            createNotif('&#x1F4BC;','var(--gold)','New deal: '+(newRow.deal_name||newRow.title||'Untitled'),'deal_rt');
+          }
+        }
+      }
+
+      else if(evt==='UPDATE'){
+        var idx2=allDeals.findIndex(function(d){return d.id===newRow.id;});
+        if(idx2>-1){
+          var oldStage=allDeals[idx2].stage;
+          var lc2=allContacts.find(function(c){return c.id===newRow.contact_id;});
+          allDeals[idx2]=Object.assign({},allDeals[idx2],newRow,{
+            deal_name:newRow.deal_name||newRow.title||allDeals[idx2].deal_name,
+            deal_value:newRow.deal_value||newRow.value||allDeals[idx2].deal_value,
+            contact_name:lc2?lc2.full_name:allDeals[idx2].contact_name,
+            close_date:newRow.close_date||null,
+            probability:newRow.probability||null,
+            won_lost_reason:newRow.won_lost_reason||null
+          });
+          renderPipeline();
+          var openD2=allDeals.filter(function(d){return !['won','lost'].includes((d.stage||'').toLowerCase());});
+          var wonD=allDeals.filter(function(d){return d.stage==='won';});
+          var pipeV=openD2.reduce(function(s,d){return s+(d.deal_value||0);},0);
+          var md2=document.getElementById('metricDeals'); if(md2) md2.textContent=openD2.length;
+          var mv=document.getElementById('metricValue'); if(mv) mv.textContent=fmt(pipeV);
+          var mw=document.getElementById('metricWon'); if(mw) mw.textContent=wonD.length;
+          if(oldStage!==newRow.stage && newRow.agent_id!==currentUser?.id){
+            var dn=allDeals[idx2].deal_name||'Deal';
+            showToast(dn+': '+oldStage+' → '+newRow.stage+' (updated by team)','');
+            if(newRow.stage==='won') createNotif('&#x1F3C6;','var(--success)',dn+' marked Won by team!','deal_won_rt');
+          }
+          // Warn if edit modal is open for this deal
+          var editId=document.getElementById('ed-id')?.value;
+          if(editId===newRow.id && document.getElementById('modal-editDeal')?.classList.contains('open')){
+            var errEl=document.getElementById('editDealError');
+            if(errEl){errEl.textContent='⚠️ This deal was just updated by another team member. Your changes may conflict.';errEl.style.display='block';}
+          }
+        }
+      }
+
+      else if(evt==='DELETE'){
+        var delDId=oldRow.id;
+        var delDeal=allDeals.find(function(d){return d.id===delDId;});
+        allDeals=allDeals.filter(function(d){return d.id!==delDId;});
+        renderPipeline();
+        var editId2=document.getElementById('ed-id')?.value;
+        if(editId2===delDId && document.getElementById('modal-editDeal')?.classList.contains('open')){
+          document.getElementById('modal-editDeal').classList.remove('open');
+          showToast('⚠️ This deal was deleted by another team member.','');
+        }
+        if(delDeal&&delDeal.agent_id!==currentUser?.id){
+          showToast((delDeal.deal_name||'A deal')+' was removed by another team member','');
+        }
+      }
+    })
+
+    .on('postgres_changes',{event:'*',schema:'public',table:'tasks'},function(payload){
+      var evt=payload.eventType, newRow=payload.new, oldRow=payload.old;
+      if(evt==='INSERT'&&newRow.user_id===currentUser?.id){
+        if(document.getElementById('view-tasks')?.classList.contains('active')) loadTasks();
+      } else if(evt==='UPDATE'&&newRow.user_id===currentUser?.id){
+        var ti=allTasks.findIndex(function(t){return t.id===newRow.id;});
+        if(ti>-1){allTasks[ti]=Object.assign({},allTasks[ti],newRow);renderTasks();}
+      } else if(evt==='DELETE'){
+        allTasks=allTasks.filter(function(t){return t.id!==oldRow.id;});
+        renderTasks();
+      }
+    })
+
+    .subscribe(function(status){
+      if(status==='SUBSCRIBED'){
+        console.log('BluWav CRM: Real-time sync active ✓');
+      } else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){
+        console.warn('BluWav CRM: Real-time reconnecting...');
+        setTimeout(function(){
+          if(_realtimeChannel){db.removeChannel(_realtimeChannel);_realtimeChannel=null;startRealtime();}
+        },5000);
+      }
+    });
+}
+
+function stopRealtime(){
+  if(_realtimeChannel){db.removeChannel(_realtimeChannel);_realtimeChannel=null;}
+}
+window.addEventListener('beforeunload',stopRealtime);
 
 </script>
 
