@@ -9,15 +9,15 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#0d0a1a;--bg2:#120d24;--bg3:#1a1035;--bg4:#2d1f5e;
-  --border:rgba(167,139,250,0.1);--border2:rgba(167,139,250,0.2);
+  --bg:#13102a;--bg2:#1c1640;--bg3:#241e50;--bg4:#342a6e;
+  --border:rgba(167,139,250,0.18);--border2:rgba(167,139,250,0.32);
   --cyan:#a78bfa;--gold:#c4b5fd;--orange:#ddd6fe;--green:#22c55e;
-  --red:#ef4444;--purple:#8b5cf6;--text:#f5f3ff;--text2:#c4b5fd;--text3:#7c6fa0;
-  --sidebar:220px;
+  --red:#ef4444;--purple:#8b5cf6;--text:#f5f3ff;--text2:#d8b4fe;--text3:#a78bfa;
+  --sidebar:230px;
   --corex:#8b5cf6;--corex-light:#c4b5fd;--corex-dark:#7c3aed;
   --lavender:#ede9fe;--lavender2:#ddd6fe;--lavender3:#c4b5fd;
 }
-html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:row;overflow:hidden;}
+html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:row;overflow:hidden;font-size:15px;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
@@ -25,38 +25,38 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 /* SIDEBAR */
 .sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
 .sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);}
-.logo-text{font-size:1.3rem;font-weight:800;font-style:italic;line-height:1;}
+.logo-text{font-size:1.5rem;font-weight:800;font-style:italic;line-height:1;}
 .logo-text .blu{color:#fff;}.logo-text .wav{color:var(--cyan);}
-.logo-badge{font-size:9px;font-weight:800;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-top:3px;display:block;}
+.logo-badge{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-top:3px;display:block;}
 .sidebar-nav{flex:1;padding:10px 0;}
 .nav-section{margin-bottom:4px;}
-.nav-label{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);padding:10px 16px 4px;}
-.nav-item{display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;border-radius:8px;margin:1px 8px;font-size:13px;font-weight:500;color:var(--text3);transition:all .15s;text-decoration:none;}
+.nav-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:12px 16px 5px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;border-radius:8px;margin:2px 8px;font-size:14px;font-weight:500;color:var(--text3);transition:all .15s;text-decoration:none;}
 .nav-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
-.nav-item.active{background:rgba(139,92,246,.15);color:var(--corex-light);font-weight:700;border-left:2px solid var(--corex);}
+.nav-item.active{background:rgba(139,92,246,.2);color:#e9d5ff;font-weight:700;border-left:3px solid #a78bfa;}
 .nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
 .sidebar-bottom{padding:12px;border-top:1px solid var(--border);}
 .founder-badge{background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(212,175,55,.05));border:1px solid rgba(212,175,55,.3);border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:center;}
-.founder-badge .fb-label{font-size:9px;font-weight:800;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;}
-.founder-badge .fb-name{font-size:12px;font-weight:700;color:var(--text);margin-top:2px;}
+.founder-badge .fb-label{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;}
+.founder-badge .fb-name{font-size:14px;font-weight:700;color:var(--text);margin-top:3px;}
 .signout-btn{width:100%;padding:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
 
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
 /* TOPBAR */
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .topbar-left{display:flex;align-items:center;gap:12px;}
-.topbar-title{font-size:15px;font-weight:700;color:var(--text);}
-.topbar-sub{font-size:11px;color:var(--text3);}
+.topbar-title{font-size:17px;font-weight:700;color:var(--text);}
+.topbar-sub{font-size:13px;color:var(--text3);}
 .topbar-right{display:flex;align-items:center;gap:8px;}
 .refresh-btn{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--text3);padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;}
 .refresh-btn:hover{border-color:var(--corex);color:var(--corex-light);}
-.last-updated{font-size:11px;color:var(--text3);}
+.last-updated{font-size:13px;color:var(--text3);}
 
 /* COMMAND STRIP */
-.command-strip{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;flex-shrink:0;}
-.cmd-tile{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;position:relative;overflow:hidden;}
+.command-strip{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 28px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;flex-shrink:0;}
+.cmd-tile{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px 18px;position:relative;overflow:hidden;}
 .cmd-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
 .cmd-tile.t-cyan::before{background:var(--corex);}
 .cmd-tile.t-gold::before{background:var(--gold);}
@@ -64,22 +64,22 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .cmd-tile.t-orange::before{background:var(--orange);}
 .cmd-tile.t-purple::before{background:var(--purple);}
 .cmd-tile.t-red::before{background:var(--red);}
-.cmd-val{font-size:20px;font-weight:800;color:var(--text);line-height:1;margin-bottom:3px;}
-.cmd-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;}
-.cmd-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+.cmd-val{font-size:24px;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px;}
+.cmd-lbl{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;}
+.cmd-sub{font-size:13px;color:var(--text3);margin-top:3px;}
 
 /* CONTENT */
-.content{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+.content{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:20px;}
 .view{display:none;flex-direction:column;gap:16px;}
 .view.active{display:flex;}
 
 /* CARDS */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.card-title{font-size:13px;font-weight:700;color:var(--text);}
-.card-sub{font-size:11px;color:var(--text3);margin-top:2px;}
-.card-body{padding:16px 18px;}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.card-header{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:16px;font-weight:700;color:var(--text);}
+.card-sub{font-size:13px;color:var(--text3);margin-top:3px;}
+.card-body{padding:20px 22px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
 .chart-wrap{height:220px;position:relative;}
 
@@ -88,9 +88,9 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .tbl{width:100%;border-collapse:collapse;font-size:12px;}
 .tbl th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);border-bottom:1px solid var(--border);}
 .tbl td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text2);vertical-align:middle;}
-.tbl tr:hover td{background:rgba(255,255,255,.02);}
+.tbl tr:hover td{background:rgba(139,92,246,.06);}
 .tbl tr:last-child td{border-bottom:none;}
-.empty{text-align:center;padding:32px;color:var(--text3);font-size:12px;}
+.empty{text-align:center;padding:40px;color:var(--text3);font-size:14px;}
 
 /* BADGES */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.04em;}
@@ -112,7 +112,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .btn-danger:hover{background:rgba(239,68,68,.2);}
 .btn-success{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2);}
 .btn-success:hover{background:rgba(34,197,94,.2);}
-.btn-sm{padding:4px 10px;font-size:11px;}
+.btn-sm{padding:6px 12px;font-size:12px;}
 
 /* AVATAR */
 .av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0a0e1a;flex-shrink:0;}
@@ -134,13 +134,13 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .modal-overlay.open{display:flex;}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
 .modal-hd{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.modal-hd h3{font-size:15px;font-weight:700;}
+.modal-hd h3{font-size:17px;font-weight:700;}
 .modal-close{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;}
-.modal-body{padding:18px 22px;}
+.modal-body{padding:22px 26px;}
 .modal-footer{padding:12px 22px 18px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);}
 .fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
-.fl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);}
-.fi,.fs{background:var(--bg);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;padding:8px 12px;outline:none;width:100%;}
+.fl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);}
+.fi,.fs{background:var(--bg);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;padding:11px 14px;outline:none;width:100%;}
 .fi:focus,.fs:focus{border-color:var(--cyan);}
 
 /* TOAST */
@@ -165,8 +165,8 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 /* ===== COREX MODULE STYLES ===== */
 @keyframes corex-pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 .corex-tab {
-  padding: 7px 14px; border: none; border-radius: 8px;
-  font-size: 12px; font-weight: 600; cursor: pointer;
+  padding: 8px 16px; border: none; border-radius: 8px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
   font-family: inherit; color: var(--text3);
   background: transparent; transition: all .15s;
 }
@@ -174,11 +174,11 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .corex-tab.active { background: rgba(139,92,246,.2); color: var(--corex-light); box-shadow: 0 0 0 1px rgba(167,139,250,.3); }
 .corex-module { display: none; }
 .corex-module.active { display: block; }
-.corex-score-high { background: rgba(16,185,129,.15); color: #6ee7b7; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
-.corex-score-mid  { background: rgba(245,158,11,.15); color: #fcd34d; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
-.corex-score-low  { background: rgba(239,68,68,.15); color: #fca5a5; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
-.corex-tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; margin: 1px; }
-.corex-feed-item { padding: 9px 14px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); }
+.corex-score-high { background: rgba(16,185,129,.18); color: #6ee7b7; padding: 3px 10px; border-radius: 9999px; font-size: 13px; font-weight: 700; }
+.corex-score-mid  { background: rgba(245,158,11,.18); color: #fcd34d; padding: 3px 10px; border-radius: 9999px; font-size: 13px; font-weight: 700; }
+.corex-score-low  { background: rgba(239,68,68,.18); color: #fca5a5; padding: 3px 10px; border-radius: 9999px; font-size: 13px; font-weight: 700; }
+.corex-tag { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 12px; font-weight: 600; margin: 1px; }
+.corex-feed-item { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text2); line-height: 1.5; }
 .corex-feed-item:last-child { border-bottom: none; }
 
 </style>
@@ -365,24 +365,24 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
           <div class="card-header"><div class="card-title">&#x1F4B0; Estimated MRR</div></div>
           <div class="card-body">
             <div style="font-size:32px;font-weight:800;color:var(--green);" id="cfMRR">$0</div>
-            <div style="font-size:12px;color:var(--text3);margin-top:4px;">Monthly Recurring Revenue</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:8px;" id="cfMRRBreakdown">Based on won deals</div>
+            <div style="font-size:13px;color:var(--text3);margin-top:4px;">Monthly Recurring Revenue</div>
+            <div style="font-size:13px;color:var(--text3);margin-top:8px;" id="cfMRRBreakdown">Based on won deals</div>
           </div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">&#x1F4C5; ARR Projection</div></div>
           <div class="card-body">
             <div style="font-size:32px;font-weight:800;color:var(--cyan);" id="cfARR">$0</div>
-            <div style="font-size:12px;color:var(--text3);margin-top:4px;">Annual Run Rate (MRR &times; 12)</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:8px;" id="cfARRNote">Projection only</div>
+            <div style="font-size:13px;color:var(--text3);margin-top:4px;">Annual Run Rate (MRR &times; 12)</div>
+            <div style="font-size:13px;color:var(--text3);margin-top:8px;" id="cfARRNote">Projection only</div>
           </div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">&#x1F4B8; Commission Liability</div></div>
           <div class="card-body">
             <div style="font-size:32px;font-weight:800;color:var(--orange);" id="cfCommission">$0</div>
-            <div style="font-size:12px;color:var(--text3);margin-top:4px;">Est. owed to agents (20%)</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:8px;" id="cfCommissionNote">From won deals this month</div>
+            <div style="font-size:13px;color:var(--text3);margin-top:4px;">Est. owed to agents (20%)</div>
+            <div style="font-size:13px;color:var(--text3);margin-top:8px;" id="cfCommissionNote">From won deals this month</div>
           </div>
         </div>
       </div>
@@ -428,7 +428,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
         <div class="card-header">
           <div><div class="card-title">&#x1F3AF; Monthly Sales Target</div><div class="card-sub" id="targetMonthLabel">This month</div></div>
           <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:12px;color:var(--text3);">Target: $</span>
+            <span style="font-size:13px;color:var(--text3);">Target: $</span>
             <input type="number" id="targetInput" value="10000" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;padding:5px 8px;outline:none;" oninput="renderTargets()"/>
           </div>
         </div>
@@ -465,21 +465,21 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
           <div class="card-header"><div class="card-title">&#x23F3; Pending</div></div>
           <div class="card-body">
             <div style="font-size:28px;font-weight:800;color:var(--gold);" id="payoutPendingAmt">$0</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:4px;" id="payoutPendingCount">0 requests</div>
+            <div style="font-size:13px;color:var(--text3);margin-top:4px;" id="payoutPendingCount">0 requests</div>
           </div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">&#x2705; Approved</div></div>
           <div class="card-body">
             <div style="font-size:28px;font-weight:800;color:var(--green);" id="payoutApprovedAmt">$0</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:4px;">This month</div>
+            <div style="font-size:13px;color:var(--text3);margin-top:4px;">This month</div>
           </div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">&#x1F4B0; Est. Liability</div></div>
           <div class="card-body">
             <div style="font-size:28px;font-weight:800;color:var(--orange);" id="payoutLiability">$0</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:4px;">20% of won deals</div>
+            <div style="font-size:13px;color:var(--text3);margin-top:4px;">20% of won deals</div>
           </div>
         </div>
       </div>
@@ -774,7 +774,7 @@ function renderOverview(){
         <div class="av" style="background:${a.color};">${ini(a.name)}</div>
         <div style="flex:1;">
           <div style="font-size:13px;font-weight:600;">${a.name}</div>
-          <div style="font-size:11px;color:var(--text3);">${a.deals} deals &middot; ${a.won} won</div>
+          <div style="font-size:13px;color:var(--text3);">${a.deals} deals &middot; ${a.won} won</div>
           <div class="progress-wrap" style="margin-top:4px;">
             <div class="progress-fill" style="width:${Math.round((a.val/maxVal)*100)}%;background:${a.color};"></div>
           </div>
@@ -793,11 +793,11 @@ function renderOverview(){
         <div class="av" style="background:${getColor(c.full_name)};font-size:10px;">${ini(c.full_name)}</div>
         <div style="flex:1;">
           <div style="font-size:12px;font-weight:600;">${c.full_name||'—'}</div>
-          <div style="font-size:11px;color:var(--text3);">${c.business_name||''}</div>
+          <div style="font-size:13px;color:var(--text3);">${c.business_name||''}</div>
         </div>
         <div style="text-align:right;">
-          <div style="font-size:11px;color:var(--text3);">${timeAgo(c.created_at)}</div>
-          <div style="font-size:10px;color:var(--text3);">${agent?.full_name?.split(' ')[0]||'—'}</div>
+          <div style="font-size:13px;color:var(--text3);">${timeAgo(c.created_at)}</div>
+          <div style="font-size:14px;color:var(--text3);">${agent?.full_name?.split(' ')[0]||'—'}</div>
         </div>
       </div>`;
     }).join('')||'<div class="empty">No recent activity</div>';
@@ -944,7 +944,7 @@ function renderTargets(){
       {label:'Projected Month',val:fmt(projected),color:projected>=target?'var(--green)':'var(--orange)'},
     ].map(s=>`<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;">
       <div style="font-size:16px;font-weight:800;color:${s.color};">${s.val}</div>
-      <div style="font-size:10px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;">${s.label}</div>
+      <div style="font-size:14px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;">${s.label}</div>
     </div>`).join('');
   }
 
@@ -990,7 +990,7 @@ function renderTargets(){
         <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
           <span style="font-size:12px;font-weight:600;color:${colors[i]};">${labels[i]}</span>
           <div style="display:flex;gap:10px;align-items:center;">
-            ${conv!==null?`<span style="font-size:11px;color:var(--text3);">${conv}% from prev</span>`:''}
+            ${conv!==null?`<span style="font-size:13px;color:var(--text3);">${conv}% from prev</span>`:''}
             <span style="font-size:14px;font-weight:800;color:var(--text);">${counts[i]}</span>
           </div>
         </div>
@@ -1043,7 +1043,7 @@ function renderPayouts(){
         ${isPending?`
           <button class="btn btn-success btn-sm" onclick="updatePayoutStatus('${p.id}','approved')">&#x2713; Approve</button>
           <button class="btn btn-danger btn-sm" onclick="updatePayoutStatus('${p.id}','rejected')">&#x2715; Reject</button>
-        `:`<span style="font-size:11px;color:var(--text3);">${p.status}</span>`}
+        `:`<span style="font-size:13px;color:var(--text3);">${p.status}</span>`}
       </div></td>
     </tr>`;
   }).join('');
@@ -1070,7 +1070,7 @@ function renderUsers(){
       <span style="font-size:13px;font-weight:600;">${p.full_name||'—'}</span>
     </div></td>
     <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
-    <td style="font-size:11px;color:var(--text3);font-family:monospace;">${p.id.substring(0,16)}...</td>
+    <td style="font-size:13px;color:var(--text3);font-family:monospace;">${p.id.substring(0,16)}...</td>
     <td style="color:var(--text3);font-size:11px;">${fmtDate(p.created_at)}</td>
     <td style="color:var(--text3);font-size:11px;">${timeAgo(p.last_seen)}</td>
     <td><div style="display:flex;gap:4px;">
@@ -1110,7 +1110,7 @@ function renderAllContacts(){
     return `<tr>
       <td><div style="display:flex;align-items:center;gap:8px;">
         <div class="av" style="background:${getColor(c.full_name)};font-size:10px;">${ini(c.full_name)}</div>
-        <div><div style="font-size:13px;font-weight:600;">${c.full_name||'—'}</div><div style="font-size:11px;color:var(--text3);">${c.email||''}</div></div>
+        <div><div style="font-size:13px;font-weight:600;">${c.full_name||'—'}</div><div style="font-size:13px;color:var(--text3);">${c.email||''}</div></div>
       </div></td>
       <td style="color:var(--text2);">${c.business_name||'—'}</td>
       <td><span class="badge ${statusBadge[c.status]||'badge-muted'}">${c.status||'Lead'}</span></td>
@@ -1602,7 +1602,7 @@ function corexRenderStats(){
   if(!el)return;
   el.innerHTML=data.map(d=>`<div class="card" style="display:flex;align-items:center;gap:12px;padding:14px 16px;">
     <div style="width:40px;height:40px;border-radius:10px;background:${d.bg};display:flex;align-items:center;justify-content:center;font-size:18px;">${d.icon}</div>
-    <div><div style="font-size:22px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;">${d.val}</div><div style="font-size:11px;color:var(--text3);font-weight:500;">${d.label}</div></div>
+    <div><div style="font-size:26px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;">${d.val}</div><div style="font-size:13px;color:var(--text3);font-weight:500;">${d.label}</div></div>
   </div>`).join('');
 }
 
@@ -1628,7 +1628,7 @@ function corexStatusBadge(st){
   return `<span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;${c[st]||''}">${st}</span>`;
 }
 function corexAgentBadge(a){
-  if(!a)return'<span style="font-size:11px;color:var(--text3);">—</span>';
+  if(!a)return'<span style="font-size:13px;color:var(--text3);">—</span>';
   const c=COREX_AGENT_COLORS[a]||{bg:'rgba(255,255,255,.05)',color:'var(--text2)'};
   return `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:${c.bg};color:${c.color};">👤 ${a}</span>`;
 }
@@ -1638,12 +1638,12 @@ function corexRenderLeads(){
   if(!tbody)return;
   const f=corexGetFiltered();
   tbody.innerHTML=f.map(l=>`<tr style="cursor:pointer;border-bottom:1px solid var(--border);" onclick="corexOpenLead('${l.id}')">
-    <td style="padding:8px 10px;font-weight:600;color:var(--text);font-size:12px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${l.name}">${l.name}</td>
-    <td style="padding:8px 10px;font-size:12px;color:var(--text2);white-space:nowrap;">${l.country}</td>
-    <td style="padding:8px 10px;"><span class="${corexScoreClass(l.score)}">${l.score}</span></td>
-    <td style="padding:8px 10px;">${corexStatusBadge(l.status)}</td>
-    <td style="padding:8px 10px;">${corexAgentBadge(l.assignedAgent)}</td>
-    <td style="padding:8px 10px;">
+    <td style="padding:10px 12px;font-weight:600;color:var(--text);font-size:14px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${l.name}">${l.name}</td>
+    <td style="padding:10px 12px;font-size:13px;color:var(--text2);white-space:nowrap;">${l.country}</td>
+    <td style="padding:10px 12px;"><span class="${corexScoreClass(l.score)}">${l.score}</span></td>
+    <td style="padding:10px 12px;">${corexStatusBadge(l.status)}</td>
+    <td style="padding:10px 12px;">${corexAgentBadge(l.assignedAgent)}</td>
+    <td style="padding:10px 12px;">
       <div style="display:flex;gap:4px;">
         <button onclick="event.stopPropagation();corexPushCRM('${l.id}')" style="background:${l.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${l.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:5px;padding:3px 7px;font-size:10px;font-weight:700;cursor:pointer;" ${l.pushedToCRM?'disabled':''}>
           ${l.pushedToCRM?'✓ Synced':'📤 Sync'}
@@ -1657,16 +1657,16 @@ function corexRenderPipeline(){
   const tbody=document.getElementById('corex-pipeline-tbody');
   if(!tbody)return;
   tbody.innerHTML=corexLeads.sort((a,b)=>b.score-a.score).map(l=>`<tr style="border-bottom:1px solid var(--border);">
-    <td style="padding:8px 12px;font-weight:600;color:var(--text);font-size:12px;">${l.name}</td>
-    <td style="padding:8px 12px;font-size:12px;color:var(--text2);">${l.org}</td>
-    <td style="padding:8px 12px;font-size:11px;color:var(--text3);">${COREX_SOURCE_ICON[l.sourceType]||''} ${l.source}</td>
-    <td style="padding:8px 12px;font-size:12px;color:var(--text2);white-space:nowrap;">${l.country}</td>
-    <td style="padding:8px 12px;"><span class="${corexScoreClass(l.score)}">${l.score}</span></td>
-    <td style="padding:8px 12px;">${l.tags.map(t=>`<span class="corex-tag" style="${COREX_TAG_COLORS[t]||'background:rgba(255,255,255,.05);color:var(--text2);'}">${t}</span>`).join('')}</td>
-    <td style="padding:8px 12px;">${corexStatusBadge(l.status)}</td>
-    <td style="padding:8px 12px;">${corexAgentBadge(l.assignedAgent)}</td>
-    <td style="padding:8px 12px;font-size:12px;color:var(--text2);white-space:nowrap;">${l.deadline||'—'}</td>
-    <td style="padding:8px 12px;font-size:12px;color:var(--text2);white-space:nowrap;">${l.budget}</td>
+    <td style="padding:11px 14px;font-weight:600;color:var(--text);font-size:14px;">${l.name}</td>
+    <td style="padding:11px 14px;font-size:13px;color:var(--text2);">${l.org}</td>
+    <td style="padding:11px 14px;font-size:13px;color:var(--text3);">${COREX_SOURCE_ICON[l.sourceType]||''} ${l.source}</td>
+    <td style="padding:11px 14px;font-size:13px;color:var(--text2);white-space:nowrap;">${l.country}</td>
+    <td style="padding:11px 14px;"><span class="${corexScoreClass(l.score)}">${l.score}</span></td>
+    <td style="padding:11px 14px;">${l.tags.map(t=>`<span class="corex-tag" style="${COREX_TAG_COLORS[t]||'background:rgba(255,255,255,.05);color:var(--text2);'}">${t}</span>`).join('')}</td>
+    <td style="padding:11px 14px;">${corexStatusBadge(l.status)}</td>
+    <td style="padding:11px 14px;">${corexAgentBadge(l.assignedAgent)}</td>
+    <td style="padding:11px 14px;font-size:13px;color:var(--text2);white-space:nowrap;">${l.deadline||'—'}</td>
+    <td style="padding:11px 14px;font-size:13px;color:var(--text2);white-space:nowrap;">${l.budget}</td>
   </tr>`).join('');
 }
 
@@ -1697,14 +1697,14 @@ const COREX_FEED_MSGS=[
 function corexRenderFeed(){
   const el=document.getElementById('corex-activity-feed');
   if(!el)return;
-  el.innerHTML=COREX_FEED_MSGS.map((msg,i)=>`<div class="corex-feed-item">${msg}<div style="font-size:10px;color:var(--text3);margin-top:2px;">${i*3+1}m ago</div></div>`).join('');
+  el.innerHTML=COREX_FEED_MSGS.map((msg,i)=>`<div class="corex-feed-item">${msg}<div style="font-size:14px;color:var(--text3);margin-top:2px;">${i*3+1}m ago</div></div>`).join('');
 }
 
 function corexAddFeed(msg){
   const el=document.getElementById('corex-activity-feed');
   if(!el)return;
   const div=document.createElement('div');div.className='corex-feed-item';
-  div.innerHTML=`${msg}<div style="font-size:10px;color:var(--text3);margin-top:2px;">Just now</div>`;
+  div.innerHTML=`${msg}<div style="font-size:14px;color:var(--text3);margin-top:2px;">Just now</div>`;
   el.insertBefore(div,el.firstChild);
 }
 
@@ -1716,10 +1716,10 @@ function corexRenderSourceHealth(){
     const maxC=Math.max(...s.dailyCounts,1);
     const bars=s.dailyCounts.map(c=>`<span style="display:inline-block;width:5px;border-radius:2px;background:#8b5cf6;margin-right:2px;vertical-align:bottom;height:${Math.max(3,c/maxC*22)}px;"></span>`).join('');
     return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;">
-      <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;"><span style="font-size:14px;">${s.icon}</span><span style="font-size:11px;font-weight:600;color:var(--text);">${s.name}</span></div>
-      <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">${s.active?'🟢 Active':'🔴 Paused'}</div>
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;"><span style="font-size:14px;">${s.icon}</span><span style="font-size:13px;font-weight:600;color:var(--text);">${s.name}</span></div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:4px;">${s.active?'🟢 Active':'🔴 Paused'}</div>
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:12px;font-weight:700;color:#a78bfa;">+${s.todayLeads}</span>
+        <span style="font-size:14px;font-weight:700;color:#c4b5fd;">+${s.todayLeads}</span>
         <div style="display:flex;align-items:flex-end;height:24px;">${bars}</div>
       </div>
     </div>`;
@@ -1745,9 +1745,9 @@ function corexRenderSources(){
         </div>
       </div>
       <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div style="background:var(--bg3);border-radius:8px;padding:10px;"><div style="font-size:10px;color:var(--text3);">Leads Found</div><div style="font-size:18px;font-weight:700;color:var(--text);">${s.totalLeads} <span style="font-size:11px;color:#22c55e;">+${s.todayLeads} today</span></div></div>
-        <div style="background:var(--bg3);border-radius:8px;padding:10px;"><div style="font-size:10px;color:var(--text3);">Next Scan</div><div style="font-size:11px;font-weight:600;color:var(--text2);">${fmtT(ns.toISOString())}</div></div>
-        <div style="grid-column:1/-1;"><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;">Filter Keywords</label><input type="text" value="CRM, digital, software, nonprofit" style="width:100%;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;"><div style="font-size:14px;color:var(--text3);">Leads Found</div><div style="font-size:18px;font-weight:700;color:var(--text);">${s.totalLeads} <span style="font-size:11px;color:#22c55e;">+${s.todayLeads} today</span></div></div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;"><div style="font-size:14px;color:var(--text3);">Next Scan</div><div style="font-size:11px;font-weight:600;color:var(--text2);">${fmtT(ns.toISOString())}</div></div>
+        <div style="grid-column:1/-1;"><label style="font-size:14px;color:var(--text3);display:block;margin-bottom:4px;">Filter Keywords</label><input type="text" value="CRM, digital, software, nonprofit" style="width:100%;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
         <button onclick="corexToast('✅ Intelligence scan complete — 2 new opportunities found')" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:7px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 Scan Now</button>
         <button onclick="corexToast('✅ Connection verified')" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:7px;padding:7px 12px;font-size:11px;cursor:pointer;font-family:inherit;">🔌 Test</button>
       </div>
@@ -1766,13 +1766,13 @@ function corexRenderRouting(){
       <div class="card-body" style="display:flex;align-items:center;gap:12px;">
         <div style="width:44px;height:44px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:22px;">👤</div>
         <div style="flex:1;">
-          <div style="font-size:15px;font-weight:700;color:var(--text);">${a.name}</div>
-          <div style="font-size:12px;color:${c.color};font-weight:600;">${a.specialty}</div>
-          <div style="font-size:11px;color:var(--text3);">${a.region}</div>
+          <div style="font-size:16px;font-weight:700;color:var(--text);">${a.name}</div>
+          <div style="font-size:14px;color:${c.color};font-weight:600;">${a.specialty}</div>
+          <div style="font-size:13px;color:var(--text3);">${a.region}</div>
         </div>
         <div style="text-align:right;">
           <div style="font-size:22px;font-weight:800;color:${c.color};">${agentCounts[a.name]||0}</div>
-          <div style="font-size:10px;color:var(--text3);">leads routed</div>
+          <div style="font-size:14px;color:var(--text3);">leads routed</div>
         </div>
       </div>
     </div>`;
@@ -1781,8 +1781,8 @@ function corexRenderRouting(){
   if(rr)rr.innerHTML=COREX_ROUTING_RULES.map(r=>`
     <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border-radius:8px;border-left:3px solid ${r.color};">
       <span style="font-size:18px;">${r.icon}</span>
-      <div style="flex:1;font-size:13px;color:var(--text2);">If type = <strong style="color:var(--text);">${r.type}</strong></div>
-      <span style="font-size:12px;color:var(--text3);">→</span>
+      <div style="flex:1;font-size:14px;color:var(--text2);">If type = <strong style="color:var(--text);">${r.type}</strong></div>
+      <span style="font-size:13px;color:var(--text3);">→</span>
       <span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:${COREX_AGENT_COLORS[r.agent]?.bg||'rgba(255,255,255,.05)'};color:${COREX_AGENT_COLORS[r.agent]?.color||'var(--text2)'};"> 👤 ${r.agent}</span>
     </div>`).join('');
 }
@@ -1796,13 +1796,13 @@ function corexRenderAwards(){
     <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
       <div style="width:34px;height:34px;border-radius:8px;background:rgba(167,139,250,.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🏆</div>
       <div style="flex:1;">
-        <div style="font-size:12px;font-weight:600;color:var(--text);">${a.name}</div>
-        <div style="font-size:11px;color:var(--text3);">${a.org} · ${a.value} · Awarded ${a.awarded}</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:1px;">Winner: ${a.winner}</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);">${a.name}</div>
+        <div style="font-size:13px;color:var(--text3);">${a.org} · ${a.value} · Awarded ${a.awarded}</div>
+        <div style="font-size:14px;color:var(--text3);margin-top:2px;">Winner: ${a.winner}</div>
       </div>
       <div style="text-align:right;">
         <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;${sc[a.status]||'background:rgba(255,255,255,.05);color:var(--text2);'}">${a.status}</span>
-        <div style="font-size:10px;color:var(--text3);margin-top:3px;max-width:160px;text-align:right;">${a.notes}</div>
+        <div style="font-size:14px;color:var(--text3);margin-top:3px;max-width:160px;text-align:right;">${a.notes}</div>
       </div>
     </div>`).join('');
 }
@@ -1815,17 +1815,17 @@ function corexRenderTrends(){
       <div class="card-body">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
           <span style="font-size:22px;">${t.icon}</span>
-          <div><div style="font-size:13px;font-weight:700;color:var(--text);">${t.title}</div><div style="font-size:18px;font-weight:800;color:${t.color};">${t.trend}</div></div>
+          <div><div style="font-size:15px;font-weight:700;color:var(--text);">${t.title}</div><div style="font-size:20px;font-weight:800;color:${t.color};">${t.trend}</div></div>
         </div>
-        <p style="font-size:12px;color:var(--text3);line-height:1.5;">${t.detail}</p>
+        <p style="font-size:13px;color:var(--text3);line-height:1.5;">${t.detail}</p>
       </div>
     </div>`).join('');
   const dg=document.getElementById('corex-dti-grid');
   if(dg)dg.innerHTML=COREX_DTI.map(d=>`
     <div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center;">
-      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;">${d.country}</div>
-      <div style="font-size:24px;font-weight:800;color:#a78bfa;">${d.score}</div>
-      <div style="font-size:10px;color:var(--text3);">DTI Score</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;">${d.country}</div>
+      <div style="font-size:26px;font-weight:800;color:#c4b5fd;">${d.score}</div>
+      <div style="font-size:14px;color:var(--text3);">DTI Score</div>
       <div style="height:5px;border-radius:3px;background:var(--bg4);overflow:hidden;margin-top:6px;"><div style="height:100%;border-radius:3px;background:#8b5cf6;width:${d.score}%;"></div></div>
     </div>`).join('');
 }
@@ -1843,8 +1843,8 @@ function corexRenderSyncLog(){
     {msg:"✅ CRM connection verified — api.bluwavcrm.com",time:"6:00 AM",ok:true}
   ];
   el.innerHTML=items.map(s=>`<div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-    <span style="font-size:12px;color:${s.ok?'#6ee7b7':'#fcd34d'};">${s.msg}</span>
-    <span style="font-size:11px;color:var(--text3);white-space:nowrap;margin-left:12px;">${s.time}</span>
+    <span style="font-size:14px;color:${s.ok?'#6ee7b7':'#fcd34d'};">${s.msg}</span>
+    <span style="font-size:13px;color:var(--text3);white-space:nowrap;margin-left:12px;">${s.time}</span>
   </div>`).join('');
 }
 
@@ -1886,13 +1886,13 @@ function corexGenerateDigest(){
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Executive Summary</h3>
       <p style="font-size:13px;color:var(--text3);">COREX identified 20 high-value opportunities across 6 Caribbean territories. 15 opportunities score ≥75 (Hot). Total addressable budget across active opportunities exceeds USD 220M. Priority focus: OECS Digital Transformation (USD 94M), Caribbean Resilient Renewable Energy (USD 90M), and Caribbean Fintech Founders Network (Score: 94).</p>
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Top 5 Opportunities to Prioritise</h3>
-      ${top5.map((l,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(139,92,246,.06);border-radius:8px;margin-bottom:6px;border-left:3px solid #8b5cf6;">
+      ${top5.map((l,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(139,92,246,.06);border-radius:8px;margin-bottom:6px;border-left:3px solid #8b5cf6;">
         <span style="font-size:14px;font-weight:800;color:#a78bfa;">#${i+1}</span>
-        <div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--text);">${l.name}</div><div style="font-size:11px;color:var(--text3);">${l.org} · ${l.country} · ${l.budget}</div></div>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--text);">${l.name}</div><div style="font-size:13px;color:var(--text3);">${l.org} · ${l.country} · ${l.budget}</div></div>
         <span style="background:rgba(139,92,246,.2);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;">${l.score}</span>
       </div>`).join('')}
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Recommended Actions</h3>
-      <ul style="font-size:12px;color:var(--text3);margin-left:16px;line-height:1.8;">
+      <ul style="font-size:13px;color:var(--text3);margin-left:16px;line-height:1.8;">
         <li>Devon: Submit expression of interest for OECS Digital Transformation Project (deadline Aug 26)</li>
         <li>Aaliya: Initiate outreach to Caribbean Heart Foundation — CRM implementation contract</li>
         <li>Marcus: Follow up IDB Lab Accelerator — already pushed to CRM</li>
@@ -1900,7 +1900,7 @@ function corexGenerateDigest(){
         <li>All: Monitor BIDC Export Ready Program deadline (Aug 31)</li>
       </ul>
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Agent Assignment Summary</h3>
-      <p style="font-size:12px;color:var(--text3);">Devon: 5 leads (Gov/RFP) · Aaliya: 7 leads (NGO/Donor) · Marcus: 3 leads (UN/Tech) · Simone: 5 leads (Startup)</p>
+      <p style="font-size:13px;color:var(--text3);">Devon: 5 leads (Gov/RFP) · Aaliya: 7 leads (NGO/Donor) · Marcus: 3 leads (UN/Tech) · Simone: 5 leads (Startup)</p>
     </div>`;
     if(out)out.innerHTML=digestHtml;
     if(btn){btn.disabled=false;btn.textContent='✨ Regenerate Digest';}
@@ -1982,13 +1982,13 @@ function corexToast(msg){
         <div style="
           background:linear-gradient(145deg,#1a1035,#120d24);
           border:1px solid rgba(167,139,250,0.2);border-radius:24px;
-          padding:48px 44px;width:420px;max-width:92vw;
+          padding:52px 48px;width:440px;max-width:92vw;
           box-shadow:0 0 80px rgba(139,92,246,0.2),0 24px 64px rgba(0,0,0,0.5);
           text-align:center;
         ">
           <div style="font-size:42px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(167,139,250,0.6));">&#x1F9E0;</div>
-          <div style="font-size:22px;font-weight:700;margin-bottom:4px;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
-          <div style="font-size:11px;color:#4c3494;margin-bottom:28px;letter-spacing:.08em;text-transform:uppercase;">BluWav · Super Admin · Restricted Access</div>
+          <div style="font-size:24px;font-weight:700;margin-bottom:6px;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
+          <div style="font-size:13px;color:#9d8fd4;margin-bottom:28px;letter-spacing:.06em;text-transform:uppercase;">BluWav · Super Admin · Restricted Access</div>
 
           <!-- Step dots -->
           <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px;">
@@ -2001,7 +2001,7 @@ function corexToast(msg){
           <div id="cg-locked" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:14px;padding:24px;margin-bottom:16px;">
             <div style="font-size:32px;margin-bottom:8px;">&#x1F510;</div>
             <div style="font-size:15px;font-weight:700;color:#fca5a5;margin-bottom:6px;">Access Temporarily Locked</div>
-            <div style="font-size:12px;color:#7c6fa0;margin-bottom:10px;">3 failed attempts detected. Try again after:</div>
+            <div style="font-size:14px;color:#7c6fa0;margin-bottom:10px;">3 failed attempts detected. Try again after:</div>
             <div id="cg-lockout-timer" style="font-size:24px;font-weight:700;color:#f87171;font-variant-numeric:tabular-nums;">30:00</div>
           </div>
 
@@ -2009,28 +2009,28 @@ function corexToast(msg){
           <div id="cg-form">
             <!-- Step 1 -->
             <div id="cg-step-1">
-              <div style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;text-align:left;">Step 1 of 2 — Access Passphrase</div>
+              <div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;text-align:left;">Step 1 of 2 — Access Passphrase</div>
               <input id="cg-passphrase" type="password" placeholder="Enter your passphrase"
                 autocomplete="off" spellcheck="false"
                 style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.05em;"
                 onkeydown="if(event.key==='Enter')cgVerifyPassphrase()" />
-              <div id="cg-err-1" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:8px 12px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
-              <button onclick="cgVerifyPassphrase()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Continue &#x2192;</button>
+              <div id="cg-err-1" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:11px 14px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
+              <button onclick="cgVerifyPassphrase()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Continue &#x2192;</button>
             </div>
             <!-- Step 2 -->
             <div id="cg-step-2" style="display:none;">
-              <div style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;text-align:left;">Step 2 of 2 — Security PIN</div>
+              <div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;text-align:left;">Step 2 of 2 — Security PIN</div>
               <input id="cg-pin" type="password" placeholder="Enter your PIN"
                 autocomplete="off" inputmode="numeric" maxlength="6"
                 style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.1em;"
                 onkeydown="if(event.key==='Enter')cgVerifyPIN()" />
-              <div id="cg-err-2" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:8px 12px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
-              <button onclick="cgVerifyPIN()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Unlock COREX &#x1F513;</button>
+              <div id="cg-err-2" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:11px 14px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
+              <button onclick="cgVerifyPIN()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Unlock COREX &#x1F513;</button>
             </div>
             <div id="cg-attempts" style="display:none;font-size:11px;color:#4c3494;margin-top:12px;">&#x26A0;&#xFE0F; Failed attempts: <span id="cg-attempt-count" style="color:#ef4444;font-weight:700;">0</span> / 3</div>
           </div>
 
-          <div style="border-top:1px solid rgba(167,139,250,0.1);margin-top:20px;padding-top:14px;font-size:10px;color:#2d1f5e;letter-spacing:.04em;line-height:1.6;">
+          <div style="border-top:1px solid rgba(167,139,250,0.1);margin-top:20px;padding-top:14px;font-size:12px;color:#7c6fa0;letter-spacing:.04em;line-height:1.7;">
             &#x1F512; COREX is a restricted internal system.<br>
             Unauthorised access attempts are logged.<br>
             BluWav · Founder & Executive Director access only.
@@ -2052,12 +2052,12 @@ function corexToast(msg){
       <div id="corex-content" style="display:none;">
 
         <!-- COREX Top Bar -->
-        <div style="background:linear-gradient(135deg,#1a1035,#120d24);border:1px solid rgba(167,139,250,0.15);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="background:linear-gradient(135deg,#241e50,#1c1640);border:1px solid rgba(167,139,250,0.25);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
           <div style="display:flex;align-items:center;gap:14px;">
             <div style="font-size:28px;filter:drop-shadow(0 0 12px rgba(167,139,250,0.5));">&#x1F9E0;</div>
             <div>
-              <div style="font-size:16px;font-weight:800;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
-              <div style="font-size:11px;color:#4c3494;margin-top:1px;">Caribbean Opportunity & Revenue Intelligence Engine · Super Admin Only</div>
+              <div style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
+              <div style="font-size:13px;color:#9d8fd4;margin-top:2px;">Caribbean Opportunity & Revenue Intelligence Engine · Super Admin Only</div>
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:12px;">
@@ -2065,13 +2065,13 @@ function corexToast(msg){
               <span style="width:6px;height:6px;border-radius:50%;background:#a78bfa;display:inline-block;animation:corex-pulse 2s ease-in-out infinite;"></span>
               Active — Intelligence Cycle Running
             </div>
-            <button onclick="corexRunCycle()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.3);">&#x25B6; Run Intelligence Cycle</button>
+            <button onclick="corexRunCycle()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.3);">&#x25B6; Run Intelligence Cycle</button>
             <button onclick="cgLockCOREX()" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">&#x1F512; Lock</button>
           </div>
         </div>
 
         <!-- COREX Sub-nav tabs -->
-        <div style="display:flex;gap:4px;background:rgba(13,10,26,0.6);border:1px solid rgba(167,139,250,0.1);border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap;" id="corex-tabs">
+        <div style="display:flex;gap:6px;background:rgba(28,22,64,0.8);border:1px solid rgba(167,139,250,0.18);border-radius:12px;padding:6px;margin-bottom:20px;flex-wrap:wrap;" id="corex-tabs">
           <button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">&#x26A1; Command Center</button>
           <button class="corex-tab" data-module="opportunities" onclick="corexShowModule('opportunities')">&#x1F3AF; Opportunity Intel</button>
           <button class="corex-tab" data-module="scanner" onclick="corexShowModule('scanner')">&#x1F4E1; Procurement Scanner</button>
@@ -2084,7 +2084,7 @@ function corexToast(msg){
         </div>
 
         <!-- COREX Stats Row -->
-        <div id="corex-stats-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;"></div>
+        <div id="corex-stats-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;"></div>
 
         <!-- MODULE: COMMAND CENTER -->
         <div class="corex-module" id="corex-module-command">
@@ -2111,12 +2111,12 @@ function corexToast(msg){
               <div style="max-height:420px;overflow-y:auto;">
                 <table style="width:100%;border-collapse:collapse;">
                   <thead><tr style="background:var(--bg3);">
-                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
-                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
-                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
-                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
-                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
-                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Actions</th>
+                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
+                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
+                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
+                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
+                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
+                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Actions</th>
                   </tr></thead>
                   <tbody id="corex-leads-tbody"></tbody>
                 </table>
@@ -2145,16 +2145,16 @@ function corexToast(msg){
             <div style="overflow-x:auto;">
               <table style="width:100%;border-collapse:collapse;">
                 <thead><tr style="background:var(--bg3);">
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Organisation</th>
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Source</th>
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Tags</th>
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Deadline</th>
-                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Budget</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Organisation</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Source</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Tags</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Deadline</th>
+                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Budget</th>
                 </tr></thead>
                 <tbody id="corex-pipeline-tbody"></tbody>
               </table>
@@ -2180,8 +2180,8 @@ function corexToast(msg){
             <div class="card-body" id="corex-digest-output" style="min-height:200px;">
               <div style="text-align:center;padding:40px;color:var(--text3);">
                 <div style="font-size:32px;margin-bottom:10px;opacity:.3;">&#x1F4CA;</div>
-                <div style="font-size:14px;font-weight:500;">No digest generated yet</div>
-                <div style="font-size:12px;margin-top:4px;">Click "Generate Digest" to create today's COREX intelligence report.</div>
+                <div style="font-size:16px;font-weight:500;">No digest generated yet</div>
+                <div style="font-size:14px;margin-top:6px;">Click "Generate Digest" to create today's COREX intelligence report.</div>
               </div>
             </div>
           </div>
@@ -2193,9 +2193,9 @@ function corexToast(msg){
             <div class="card">
               <div class="card-header"><div class="card-title">&#x1F4F1; WhatsApp (Twilio)</div></div>
               <div class="card-body" style="display:grid;gap:10px;">
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Webhook URL</label><input type="url" value="https://api.twilio.com/2010-04-01/Accounts/{SID}/Messages" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Account SID</label><input type="text" placeholder="AC..." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Auth Token</label><input type="password" placeholder="Auth token..." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Webhook URL</label><input type="url" value="https://api.twilio.com/2010-04-01/Accounts/{SID}/Messages" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Account SID</label><input type="text" placeholder="AC..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Auth Token</label><input type="password" placeholder="Auth token..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
                 <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Trigger Score Threshold: <span id="corex-wa-val">80</span></label><input type="range" id="corex-wa-threshold" min="0" max="100" value="80" oninput="document.getElementById('corex-wa-val').textContent=this.value" style="width:100%;" /></div>
                 <button onclick="corexToast('✅ WhatsApp config saved')" style="background:linear-gradient(135deg,#059669,#047857);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save Config</button>
               </div>
@@ -2203,10 +2203,10 @@ function corexToast(msg){
             <div class="card">
               <div class="card-header"><div class="card-title">&#x1F4E7; Email Triggers</div></div>
               <div class="card-body" style="display:grid;gap:10px;">
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">SendGrid API Key</label><input type="password" placeholder="SG...." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">From Address</label><input type="email" value="corex@bluwav.com" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Digest Recipient</label><input type="email" placeholder="andrea@bluwav.com" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Trigger on Score ≥</label><input type="number" value="75" min="0" max="100" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">SendGrid API Key</label><input type="password" placeholder="SG...." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">From Address</label><input type="email" value="corex@bluwav.com" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Digest Recipient</label><input type="email" placeholder="andrea@bluwav.com" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Trigger on Score ≥</label><input type="number" value="75" min="0" max="100" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
                 <button onclick="corexToast('✅ Email config saved')" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save Config</button>
               </div>
             </div>
@@ -2234,8 +2234,8 @@ function corexToast(msg){
             <div class="card">
               <div class="card-header"><div class="card-title">&#x1F504; CRM Connection</div></div>
               <div class="card-body" style="display:grid;gap:10px;">
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">CRM Endpoint URL</label><input type="url" value="https://api.bluwavcrm.com/v1/leads" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">API Token</label><input type="password" placeholder="sk-bluwav-..." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">CRM Endpoint URL</label><input type="url" value="https://api.bluwavcrm.com/v1/leads" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">API Token</label><input type="password" placeholder="sk-bluwav-..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
                 <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Push Mode</label>
                   <div style="display:flex;gap:14px;margin-top:4px;">
                     <label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input type="radio" name="corex-push-mode" value="auto" checked /> Auto (≥75)</label>
@@ -2252,10 +2252,10 @@ function corexToast(msg){
             <div class="card">
               <div class="card-header"><div class="card-title">&#x1F504; COREX → CRM Sync Flow</div></div>
               <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.08);border-radius:8px;border-left:3px solid #8b5cf6;"><span style="font-size:18px;">&#x1F4E1;</span><div><div style="font-size:12px;font-weight:600;color:var(--text);">1. COREX Scans Sources</div><div style="font-size:11px;color:var(--text3);">UNGM, ReliefWeb, Devex, CCCCC, JBDC, IDB, EU-LAC</div></div></div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(16,185,129,0.08);border-radius:8px;border-left:3px solid #10b981;"><span style="font-size:18px;">&#x1F3AF;</span><div><div style="font-size:12px;font-weight:600;color:var(--text);">2. COREX Fit Index Scoring</div><div style="font-size:11px;color:var(--text3);">Industry · Geo · Budget · Org Type · Source · Urgency</div></div></div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.1);border-radius:8px;border-left:3px solid #a78bfa;"><span style="font-size:18px;">&#x1F465;</span><div><div style="font-size:12px;font-weight:600;color:var(--text);">3. Agent Routing</div><div style="font-size:11px;color:var(--text3);">Devon · Aaliya · Marcus · Simone</div></div></div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(245,158,11,0.08);border-radius:8px;border-left:3px solid #f59e0b;"><span style="font-size:18px;">&#x1F4E4;</span><div><div style="font-size:12px;font-weight:600;color:var(--text);">4. COREX → CRM Sync</div><div style="font-size:11px;color:var(--text3);">Pipeline stages · Contact records · Opportunity tracking</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.08);border-radius:8px;border-left:3px solid #8b5cf6;"><span style="font-size:18px;">&#x1F4E1;</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">1. COREX Scans Sources</div><div style="font-size:13px;color:var(--text3);">UNGM, ReliefWeb, Devex, CCCCC, JBDC, IDB, EU-LAC</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(16,185,129,0.08);border-radius:8px;border-left:3px solid #10b981;"><span style="font-size:18px;">&#x1F3AF;</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">2. COREX Fit Index Scoring</div><div style="font-size:13px;color:var(--text3);">Industry · Geo · Budget · Org Type · Source · Urgency</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.1);border-radius:8px;border-left:3px solid #a78bfa;"><span style="font-size:18px;">&#x1F465;</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">3. Agent Routing</div><div style="font-size:13px;color:var(--text3);">Devon · Aaliya · Marcus · Simone</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(245,158,11,0.08);border-radius:8px;border-left:3px solid #f59e0b;"><span style="font-size:18px;">&#x1F4E4;</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">4. COREX → CRM Sync</div><div style="font-size:13px;color:var(--text3);">Pipeline stages · Contact records · Opportunity tracking</div></div></div>
               </div>
             </div>
           </div>
@@ -2277,9 +2277,9 @@ function corexToast(msg){
         <!-- MODULE: AWARD MONITORING -->
         <div class="corex-module" id="corex-module-awards" style="display:none;">
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
-            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--text);">8</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Tenders Tracked</div></div>
-            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:#22c55e;">3</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Relationships Positioned</div></div>
-            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--corex-light);">5</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Follow-up Opportunities</div></div>
+            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--text);">8</div><div style="font-size:13px;color:var(--text3);margin-top:2px;">Tenders Tracked</div></div>
+            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:#22c55e;">3</div><div style="font-size:13px;color:var(--text3);margin-top:2px;">Relationships Positioned</div></div>
+            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--corex-light);">5</div><div style="font-size:13px;color:var(--text3);margin-top:2px;">Follow-up Opportunities</div></div>
           </div>
           <div class="card">
             <div class="card-header"><div class="card-title">&#x1F3C6; Award Queue</div></div>
