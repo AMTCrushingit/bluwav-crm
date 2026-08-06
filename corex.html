@@ -27,65 +27,65 @@
   <script src="https://unpkg.com/lucide@latest" defer></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', 'Source Sans Pro', sans-serif; background: #f0f9ff; color: #1e293b; }
+    body { font-family: 'Inter', 'Source Sans Pro', sans-serif; background: #0d0a1a; color: #f5f3ff; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
-    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 10px; cursor: pointer; color: #94a3b8; font-size: 14px; font-weight: 500; transition: all 0.2s; }
-    .sidebar-item:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .sidebar-item.active { background: rgba(14,165,233,0.15); color: #38bdf8; }
-    .stat-card { background: #fff; border-radius: 16px; padding: 20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    ::-webkit-scrollbar-thumb { background: #4c3494; border-radius: 3px; }
+    .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 10px; cursor: pointer; color: #7c6fa0; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+    .sidebar-item:hover { background: rgba(139,92,246,0.12); color: #c4b5fd; }
+    .sidebar-item.active { background: rgba(139,92,246,0.2); color: #a78bfa; border-left: 2px solid #8b5cf6; }
+    .stat-card { background: #1a1035; border-radius: 16px; padding: 20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
     .badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
-    .score-high { background: #dcfce7; color: #166534; }
-    .score-mid { background: #fef3c7; color: #92400e; }
-    .score-low { background: #fee2e2; color: #991b1b; }
+    .score-high { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .score-mid { background: rgba(245,158,11,0.15); color: #fcd34d; }
+    .score-low { background: rgba(239,68,68,0.15); color: #fca5a5; }
     .tag-chip { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; margin: 1px 2px; }
-    .feed-item { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: 13px; animation: slideIn 0.3s ease; }
+    .feed-item { padding: 10px 14px; border-bottom: 1px solid rgba(167,139,250,0.08); font-size: 13px; animation: slideIn 0.3s ease; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes pulse-scan { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
     .pulse-scan { animation: pulse-scan 1s ease-in-out infinite; }
     .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 8px; }
-    .toast { padding: 12px 20px; border-radius: 12px; background: #1e293b; color: #fff; font-size: 13px; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.15); animation: toastIn 0.3s ease, toastOut 0.3s ease 3.7s; max-width: 380px; }
+    .toast { padding: 12px 20px; border-radius: 12px; background: #2d1f5e; color: #f5f3ff; font-size: 13px; font-weight: 500; box-shadow: 0 8px 24px rgba(139,92,246,0.3); border: 1px solid rgba(167,139,250,0.2); animation: toastIn 0.3s ease, toastOut 0.3s ease 3.7s; max-width: 380px; }
     @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-    .modal-content { background: #fff; border-radius: 20px; width: 85vw; max-width: 1100px; max-height: 88vh; overflow-y: auto; box-shadow: 0 24px 48px rgba(0,0,0,0.2); }
-    .kanban-col { min-height: 400px; background: #f8fafc; border-radius: 14px; padding: 12px; flex: 1; }
-    .kanban-card { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: grab; font-size: 13px; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(13,10,26,0.85); backdrop-filter: blur(8px); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: #1a1035; border-radius: 20px; width: 85vw; max-width: 1100px; max-height: 88vh; overflow-y: auto; box-shadow: 0 24px 48px rgba(0,0,0,0.2); }
+    .kanban-col { min-height: 400px; background: #120d24; border-radius: 14px; padding: 12px; flex: 1; }
+    .kanban-card { background: #1a1035; border-radius: 12px; padding: 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: grab; font-size: 13px; }
     .kanban-card:active { cursor: grabbing; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-    .kanban-card.drag-over { border: 2px dashed #0ea5e9; }
-    .source-card { background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-    .toggle-switch { position: relative; width: 44px; height: 24px; background: #cbd5e1; border-radius: 12px; cursor: pointer; transition: background 0.2s; }
-    .toggle-switch.on { background: #0ea5e9; }
+    .kanban-card.drag-over { border: 2px dashed #8b5cf6; }
+    .source-card { background: #1a1035; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .toggle-switch { position: relative; width: 44px; height: 24px; background: #2d1f5e; border-radius: 12px; cursor: pointer; transition: background 0.2s; }
+    .toggle-switch.on { background: #7c3aed; }
     .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
     .toggle-switch.on::after { transform: translateX(20px); }
-    .settings-section { background: #fff; border-radius: 16px; padding: 28px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .settings-section { background: #1a1035; border-radius: 16px; padding: 28px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
     .donut-chart { width: 140px; height: 140px; border-radius: 50%; position: relative; }
-    .donut-chart::after { content: ''; position: absolute; top: 30px; left: 30px; width: 80px; height: 80px; background: #fff; border-radius: 50%; }
-    .progress-bar { height: 8px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+    .donut-chart::after { content: ''; position: absolute; top: 30px; left: 30px; width: 80px; height: 80px; background: #1a1035; border-radius: 50%; }
+    .progress-bar { height: 8px; border-radius: 4px; background: #2d1f5e; overflow: hidden; }
     .progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
     input[type="text"], input[type="email"], input[type="password"], input[type="url"], input[type="number"], input[type="time"], textarea, select {
-      width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; background: #f8fafc; transition: all 0.2s;
+      width: 100%; padding: 10px 14px; border: 1px solid rgba(167,139,250,0.2); border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; background: #120d24; color: #f5f3ff; transition: all 0.2s;
     }
-    input:focus, textarea:focus, select:focus { outline: none; border-color: #0ea5e9; background: #fff; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
-    .btn-primary { background: #0ea5e9; color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px; }
-    .btn-primary:hover { background: #0284c7; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #8b5cf6; background: #1a1035; box-shadow: 0 0 0 3px rgba(139,92,246,0.2); }
+    .btn-primary { background: #7c3aed; color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary:hover { background: #6d28d9; }
     .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { background: #f1f5f9; color: #334155; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px; }
-    .btn-secondary:hover { background: #e2e8f0; }
-    .btn-success { background: #22c55e; color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px; }
-    .btn-success:hover { background: #16a34a; }
+    .btn-secondary { background: #2d1f5e; color: #c4b5fd; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-secondary:hover { background: #3d2b7a; }
+    .btn-success { background: #059669; color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-success:hover { background: #047857; }
     .btn-danger { background: #ef4444; color: #fff; padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
     .btn-danger:hover { background: #dc2626; }
-    .mini-bar { display: inline-block; width: 6px; border-radius: 2px; background: #0ea5e9; margin-right: 2px; vertical-align: bottom; }
+    .mini-bar { display: inline-block; width: 6px; border-radius: 2px; background: #8b5cf6; margin-right: 2px; vertical-align: bottom; }
     table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 12px; border-bottom: 2px solid #e2e8f0; }
-    td { font-size: 13px; padding: 10px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-    tr:hover td { background: #f8fafc; }
-    .digest-content h2 { font-size: 18px; font-weight: 700; color: #0c4a6e; margin: 18px 0 8px; }
-    .digest-content h3 { font-size: 15px; font-weight: 600; color: #334155; margin: 14px 0 6px; }
-    .digest-content p { font-size: 14px; line-height: 1.65; color: #475569; margin-bottom: 8px; }
-    .digest-content ul { margin: 6px 0 12px 20px; font-size: 14px; color: #475569; }
+    th { text-align: left; font-size: 11px; font-weight: 600; color: #7c6fa0; text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 12px; border-bottom: 2px solid rgba(167,139,250,0.15); }
+    td { font-size: 13px; padding: 10px 12px; border-bottom: 1px solid rgba(167,139,250,0.08); vertical-align: middle; color: #e2d9f3; }
+    tr:hover td { background: rgba(139,92,246,0.06); }
+    .digest-content h2 { font-size: 18px; font-weight: 700; color: #c4b5fd; margin: 18px 0 8px; }
+    .digest-content h3 { font-size: 15px; font-weight: 600; color: #a78bfa; margin: 14px 0 6px; }
+    .digest-content p { font-size: 14px; line-height: 1.65; color: #c4b5fd; margin-bottom: 8px; }
+    .digest-content ul { margin: 6px 0 12px 20px; font-size: 14px; color: #c4b5fd; }
     .digest-content li { margin-bottom: 4px; line-height: 1.5; }
     .digest-content table { margin: 10px 0; }
     .digest-content table th { font-size: 12px; background: #f0f9ff; }
@@ -94,38 +94,489 @@
 </head>
 <body>
 
+<!-- ================================================================
+     COREX SECURITY GATE — Personal Access Only
+     Two-Factor: Passphrase + PIN
+     Max 3 attempts, then 30-min lockout
+     Auto-lock after 10 minutes inactivity
+     ================================================================ -->
+<style>
+  #corex-gate {
+    position: fixed; inset: 0; z-index: 99999;
+    background: radial-gradient(ellipse at 50% 30%, #1a0a3e 0%, #0d0a1a 60%, #080510 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', 'Source Sans Pro', sans-serif;
+  }
+  #corex-gate.hidden { display: none; }
+  .gate-card {
+    background: linear-gradient(145deg, #1a1035, #120d24);
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 24px;
+    padding: 48px 44px;
+    width: 420px;
+    max-width: 92vw;
+    box-shadow: 0 0 80px rgba(139,92,246,0.2), 0 24px 64px rgba(0,0,0,0.5);
+    text-align: center;
+  }
+  .gate-logo {
+    font-size: 42px; margin-bottom: 8px;
+    filter: drop-shadow(0 0 16px rgba(167,139,250,0.6));
+  }
+  .gate-title {
+    font-size: 22px; font-weight: 700; margin-bottom: 4px;
+    background: linear-gradient(135deg, #f5f3ff, #c4b5fd, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .gate-subtitle {
+    font-size: 12px; color: #4c3494; margin-bottom: 32px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .gate-step-label {
+    font-size: 11px; font-weight: 700; color: #7c6fa0;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 8px; text-align: left;
+  }
+  .gate-input {
+    width: 100%; padding: 13px 16px;
+    background: rgba(13,10,26,0.8);
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 12px; color: #f5f3ff;
+    font-size: 15px; font-family: 'Inter', sans-serif;
+    margin-bottom: 14px; transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .gate-input:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139,92,246,0.2); }
+  .gate-input.error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); animation: shake 0.4s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+  .gate-btn {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    font-family: 'Inter', sans-serif; transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+    letter-spacing: 0.03em;
+  }
+  .gate-btn:hover { background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 6px 28px rgba(139,92,246,0.5); transform: translateY(-1px); }
+  .gate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .gate-error {
+    background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 10px; padding: 10px 14px;
+    color: #fca5a5; font-size: 12px; font-weight: 500;
+    margin-bottom: 14px; display: none;
+  }
+  .gate-attempts {
+    font-size: 11px; color: #4c3494; margin-top: 16px;
+  }
+  .gate-attempts span { color: #ef4444; font-weight: 700; }
+  .gate-locked {
+    background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15);
+    border-radius: 14px; padding: 24px; display: none;
+  }
+  .gate-locked-icon { font-size: 36px; margin-bottom: 10px; }
+  .gate-locked-title { font-size: 16px; font-weight: 700; color: #fca5a5; margin-bottom: 6px; }
+  .gate-locked-msg { font-size: 13px; color: #7c6fa0; line-height: 1.5; }
+  .gate-locked-timer { font-size: 22px; font-weight: 700; color: #f87171; margin: 12px 0; font-variant-numeric: tabular-nums; }
+  .gate-step-indicator {
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 28px;
+  }
+  .gate-step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #2d1f5e; transition: all 0.3s;
+  }
+  .gate-step-dot.active { background: #8b5cf6; box-shadow: 0 0 8px rgba(139,92,246,0.6); }
+  .gate-step-dot.done { background: #a78bfa; }
+  .gate-divider { border: none; border-top: 1px solid rgba(167,139,250,0.1); margin: 20px 0; }
+  .gate-security-note {
+    font-size: 10px; color: #2d1f5e; margin-top: 20px;
+    letter-spacing: 0.04em; line-height: 1.6;
+  }
+  /* Auto-lock overlay */
+  #corex-autolock {
+    position: fixed; inset: 0; z-index: 99998;
+    background: rgba(13,10,26,0.95); backdrop-filter: blur(12px);
+    display: none; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif;
+  }
+  #corex-autolock.visible { display: flex; }
+  .autolock-card {
+    background: linear-gradient(145deg, #1a1035, #120d24);
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 20px; padding: 40px 36px;
+    width: 360px; max-width: 90vw; text-align: center;
+    box-shadow: 0 0 60px rgba(139,92,246,0.15);
+  }
+  .autolock-icon { font-size: 36px; margin-bottom: 12px; }
+  .autolock-title { font-size: 18px; font-weight: 700; color: #c4b5fd; margin-bottom: 8px; }
+  .autolock-msg { font-size: 13px; color: #7c6fa0; margin-bottom: 24px; line-height: 1.5; }
+  .autolock-btn {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #fff; border: none; border-radius: 10px;
+    padding: 12px 32px; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 16px rgba(124,58,237,0.4);
+  }
+  .autolock-btn:hover { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+</style>
+
+<!-- AUTO-LOCK OVERLAY -->
+<div id="corex-autolock">
+  <div class="autolock-card">
+    <div class="autolock-icon">🔒</div>
+    <div class="autolock-title">Session Locked</div>
+    <div class="autolock-msg">COREX has been locked due to inactivity.<br>Re-enter your credentials to continue.</div>
+    <button class="autolock-btn" onclick="corexAutoLockResume()">🔐 Unlock COREX</button>
+  </div>
+</div>
+
+<!-- SECURITY GATE -->
+<div id="corex-gate">
+  <div class="gate-card">
+    <div class="gate-logo">🧠</div>
+    <div class="gate-title">COREX Intelligence Engine</div>
+    <div class="gate-subtitle">BluWav · Super Admin · Restricted Access</div>
+
+    <!-- Step indicator -->
+    <div class="gate-step-indicator">
+      <div class="gate-step-dot active" id="dot-1"></div>
+      <div style="width:24px;height:1px;background:rgba(167,139,250,0.2);"></div>
+      <div class="gate-step-dot" id="dot-2"></div>
+    </div>
+
+    <!-- Locked state -->
+    <div class="gate-locked" id="gate-locked-panel">
+      <div class="gate-locked-icon">🔐</div>
+      <div class="gate-locked-title">Access Temporarily Locked</div>
+      <div class="gate-locked-msg">3 failed authentication attempts detected.<br>COREX access is locked for security.</div>
+      <div class="gate-locked-timer" id="lockout-timer">30:00</div>
+      <div class="gate-locked-msg">Try again after the timer expires.</div>
+    </div>
+
+    <!-- Auth form -->
+    <div id="gate-auth-form">
+      <!-- Step 1: Passphrase -->
+      <div id="gate-step-1">
+        <div class="gate-step-label">Step 1 of 2 — Access Passphrase</div>
+        <input class="gate-input" type="password" id="gate-passphrase"
+          placeholder="Enter your passphrase"
+          autocomplete="off" spellcheck="false" />
+        <div class="gate-error" id="gate-error-1"></div>
+        <button class="gate-btn" id="gate-btn-1" onclick="corexVerifyPassphrase()">Continue →</button>
+      </div>
+
+      <!-- Step 2: PIN -->
+      <div id="gate-step-2" style="display:none;">
+        <div class="gate-step-label">Step 2 of 2 — Security PIN</div>
+        <input class="gate-input" type="password" id="gate-pin"
+          placeholder="Enter your PIN"
+          autocomplete="off" inputmode="numeric" maxlength="6" />
+        <div class="gate-error" id="gate-error-2"></div>
+        <button class="gate-btn" id="gate-btn-2" onclick="corexVerifyPIN()">Unlock COREX 🔓</button>
+      </div>
+
+      <div class="gate-attempts" id="gate-attempts-display" style="display:none;">
+        ⚠️ Failed attempts: <span id="gate-attempt-count">0</span> / 3
+      </div>
+    </div>
+
+    <hr class="gate-divider" />
+    <div class="gate-security-note">
+      🔒 COREX is a restricted internal system.<br>
+      Unauthorised access attempts are logged.<br>
+      BluWav · Founder & Executive Director access only.
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// COREX SECURITY GATE
+// ================================================================
+(function() {
+  // ---- Config ----
+  const PASSPHRASE = 'AMT2026-COREX';
+  const PIN = '262068';
+  const MAX_ATTEMPTS = 3;
+  const LOCKOUT_MS = 30 * 60 * 1000;   // 30 minutes
+  const INACTIVITY_MS = 10 * 60 * 1000; // 10 minutes
+
+  // ---- State keys ----
+  const KEY_ATTEMPTS = 'corex_gate_attempts';
+  const KEY_LOCKOUT  = 'corex_gate_lockout';
+  const KEY_AUTH     = 'corex_gate_auth';
+  const KEY_AUTH_TS  = 'corex_gate_auth_ts';
+
+  let inactivityTimer = null;
+  let lockoutInterval = null;
+
+  // ---- Helpers ----
+  function getAttempts() { return parseInt(localStorage.getItem(KEY_ATTEMPTS) || '0'); }
+  function setAttempts(n) { localStorage.setItem(KEY_ATTEMPTS, String(n)); }
+  function getLockout()   { return parseInt(localStorage.getItem(KEY_LOCKOUT) || '0'); }
+  function setLockout(ts) { localStorage.setItem(KEY_LOCKOUT, String(ts)); }
+  function isAuthenticated() {
+    const auth = localStorage.getItem(KEY_AUTH);
+    const ts   = parseInt(localStorage.getItem(KEY_AUTH_TS) || '0');
+    if (auth !== 'true') return false;
+    if (Date.now() - ts > INACTIVITY_MS) { clearAuth(); return false; }
+    return true;
+  }
+  function setAuth() {
+    localStorage.setItem(KEY_AUTH, 'true');
+    localStorage.setItem(KEY_AUTH_TS, String(Date.now()));
+  }
+  function clearAuth() {
+    localStorage.removeItem(KEY_AUTH);
+    localStorage.removeItem(KEY_AUTH_TS);
+  }
+  function isLocked() {
+    const lockout = getLockout();
+    if (!lockout) return false;
+    if (Date.now() < lockout) return true;
+    // Lockout expired — reset
+    setAttempts(0);
+    setLockout(0);
+    return false;
+  }
+
+  // ---- Show gate ----
+  function showGate() {
+    document.getElementById('corex-gate').classList.remove('hidden');
+    document.getElementById('corex-autolock').classList.remove('visible');
+    if (isLocked()) {
+      showLockedPanel();
+    } else {
+      showStep1();
+    }
+  }
+
+  function hideGate() {
+    document.getElementById('corex-gate').classList.add('hidden');
+    startInactivityTimer();
+  }
+
+  // ---- Locked panel ----
+  function showLockedPanel() {
+    document.getElementById('gate-locked-panel').style.display = 'block';
+    document.getElementById('gate-auth-form').style.display = 'none';
+    startLockoutTimer();
+  }
+
+  function startLockoutTimer() {
+    if (lockoutInterval) clearInterval(lockoutInterval);
+    lockoutInterval = setInterval(function() {
+      const remaining = getLockout() - Date.now();
+      if (remaining <= 0) {
+        clearInterval(lockoutInterval);
+        setAttempts(0);
+        setLockout(0);
+        document.getElementById('gate-locked-panel').style.display = 'none';
+        document.getElementById('gate-auth-form').style.display = 'block';
+        showStep1();
+        return;
+      }
+      const mins = Math.floor(remaining / 60000);
+      const secs = Math.floor((remaining % 60000) / 1000);
+      document.getElementById('lockout-timer').textContent =
+        String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+    }, 1000);
+  }
+
+  // ---- Step 1 ----
+  function showStep1() {
+    document.getElementById('gate-step-1').style.display = 'block';
+    document.getElementById('gate-step-2').style.display = 'none';
+    document.getElementById('dot-1').className = 'gate-step-dot active';
+    document.getElementById('dot-2').className = 'gate-step-dot';
+    updateAttemptsDisplay();
+    setTimeout(function(){ document.getElementById('gate-passphrase').focus(); }, 100);
+  }
+
+  // ---- Step 2 ----
+  function showStep2() {
+    document.getElementById('gate-step-1').style.display = 'none';
+    document.getElementById('gate-step-2').style.display = 'block';
+    document.getElementById('dot-1').className = 'gate-step-dot done';
+    document.getElementById('dot-2').className = 'gate-step-dot active';
+    setTimeout(function(){ document.getElementById('gate-pin').focus(); }, 100);
+  }
+
+  // ---- Attempts display ----
+  function updateAttemptsDisplay() {
+    const n = getAttempts();
+    const el = document.getElementById('gate-attempts-display');
+    if (n > 0) {
+      el.style.display = 'block';
+      document.getElementById('gate-attempt-count').textContent = n;
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
+  // ---- Record failed attempt ----
+  function recordFailedAttempt() {
+    const n = getAttempts() + 1;
+    setAttempts(n);
+    updateAttemptsDisplay();
+    if (n >= MAX_ATTEMPTS) {
+      setLockout(Date.now() + LOCKOUT_MS);
+      showLockedPanel();
+      return true; // locked
+    }
+    return false;
+  }
+
+  // ---- Shake input ----
+  function shakeInput(id) {
+    const el = document.getElementById(id);
+    el.classList.add('error');
+    setTimeout(function(){ el.classList.remove('error'); }, 500);
+    el.value = '';
+    el.focus();
+  }
+
+  // ---- Verify passphrase ----
+  window.corexVerifyPassphrase = function() {
+    const val = document.getElementById('gate-passphrase').value.trim();
+    const errEl = document.getElementById('gate-error-1');
+    if (val === PASSPHRASE) {
+      errEl.style.display = 'none';
+      showStep2();
+    } else {
+      const locked = recordFailedAttempt();
+      if (!locked) {
+        const remaining = MAX_ATTEMPTS - getAttempts();
+        errEl.textContent = '✗ Incorrect passphrase. ' + remaining + ' attempt' + (remaining===1?'':'s') + ' remaining.';
+        errEl.style.display = 'block';
+        shakeInput('gate-passphrase');
+      }
+    }
+  };
+
+  // ---- Verify PIN ----
+  window.corexVerifyPIN = function() {
+    const val = document.getElementById('gate-pin').value.trim();
+    const errEl = document.getElementById('gate-error-2');
+    if (val === PIN) {
+      errEl.style.display = 'none';
+      setAttempts(0);
+      setAuth();
+      hideGate();
+      logAccess('SUCCESS');
+    } else {
+      const locked = recordFailedAttempt();
+      if (!locked) {
+        const remaining = MAX_ATTEMPTS - getAttempts();
+        errEl.textContent = '✗ Incorrect PIN. ' + remaining + ' attempt' + (remaining===1?'':'s') + ' remaining.';
+        errEl.style.display = 'block';
+        shakeInput('gate-pin');
+      }
+    }
+  };
+
+  // ---- Inactivity timer ----
+  function startInactivityTimer() {
+    resetInactivityTimer();
+    ['mousemove','keydown','click','scroll','touchstart'].forEach(function(evt) {
+      document.addEventListener(evt, resetInactivityTimer, { passive: true });
+    });
+  }
+
+  function resetInactivityTimer() {
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    // Update auth timestamp on activity
+    if (localStorage.getItem(KEY_AUTH) === 'true') {
+      localStorage.setItem(KEY_AUTH_TS, String(Date.now()));
+    }
+    inactivityTimer = setTimeout(triggerAutoLock, INACTIVITY_MS);
+  }
+
+  function triggerAutoLock() {
+    clearAuth();
+    document.getElementById('corex-autolock').classList.add('visible');
+    ['mousemove','keydown','click','scroll','touchstart'].forEach(function(evt) {
+      document.removeEventListener(evt, resetInactivityTimer);
+    });
+    logAccess('AUTO-LOCK');
+  }
+
+  window.corexAutoLockResume = function() {
+    document.getElementById('corex-autolock').classList.remove('visible');
+    showGate();
+  };
+
+  // ---- Access log ----
+  function logAccess(status) {
+    const log = JSON.parse(localStorage.getItem('corex_access_log') || '[]');
+    log.unshift({
+      status: status,
+      ts: new Date().toISOString(),
+      ua: navigator.userAgent.substring(0, 60)
+    });
+    // Keep last 50 entries
+    localStorage.setItem('corex_access_log', JSON.stringify(log.slice(0, 50)));
+  }
+
+  // ---- Enter key support ----
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const gate = document.getElementById('corex-gate');
+      if (gate && !gate.classList.contains('hidden')) {
+        const step2 = document.getElementById('gate-step-2');
+        if (step2 && step2.style.display !== 'none') {
+          corexVerifyPIN();
+        } else {
+          corexVerifyPassphrase();
+        }
+      }
+    }
+  });
+
+  // ---- Init ----
+  if (isAuthenticated()) {
+    hideGate();
+    logAccess('SESSION-RESUME');
+  } else {
+    clearAuth();
+    showGate();
+  }
+
+})();
+</script>
+
+
 <!-- ===== OUTER BLUWAV CRM SIDEBAR ===== -->
 <style>
   body { overflow: hidden; }
-  .crm-sidebar { width:200px; min-width:200px; background:#0a0f1e; display:flex; flex-direction:column; height:100vh; position:fixed; left:0; top:0; z-index:9000; overflow-y:auto; overflow-x:hidden; transition:width 0.25s ease; border-right:1px solid rgba(255,255,255,0.05); }
+  .crm-sidebar { width:200px; min-width:200px; background:#0d0a1a; display:flex; flex-direction:column; height:100vh; position:fixed; left:0; top:0; z-index:9000; overflow-y:auto; overflow-x:hidden; transition:width 0.25s ease; border-right:1px solid rgba(167,139,250,0.1); }
   .crm-sidebar.collapsed { width:56px; min-width:56px; }
   .crm-sidebar.collapsed .crm-nav-label, .crm-sidebar.collapsed .crm-section-label, .crm-sidebar.collapsed .crm-logo-text, .crm-sidebar.collapsed .crm-logo-sub { display:none; }
   .crm-sidebar.collapsed .crm-nav-item { justify-content:center; padding:10px 0; }
   .crm-sidebar.collapsed .crm-nav-icon { margin-right:0; }
   .crm-sidebar.collapsed .crm-logo-area { justify-content:center; }
   .crm-logo-area { display:flex; align-items:center; gap:8px; padding:18px 14px 14px; }
-  .crm-logo-text { font-size:17px; font-weight:700; background:linear-gradient(135deg,#38bdf8,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; white-space:nowrap; }
-  .crm-logo-sub { font-size:9px; color:#334155; margin-top:-2px; white-space:nowrap; letter-spacing:0.05em; text-transform:uppercase; }
-  .crm-section-label { font-size:9px; font-weight:700; color:#1e3a5f; text-transform:uppercase; letter-spacing:0.1em; padding:14px 14px 4px; white-space:nowrap; }
-  .crm-nav-item { display:flex; align-items:center; padding:8px 14px; color:#334155; font-size:12px; font-weight:500; cursor:pointer; transition:all 0.15s; text-decoration:none; border-left:3px solid transparent; white-space:nowrap; }
-  .crm-nav-item:hover { background:rgba(255,255,255,0.03); color:#64748b; }
-  .crm-nav-item.crm-active { background:rgba(14,165,233,0.08); color:#38bdf8; border-left-color:#38bdf8; }
+  .crm-logo-text { font-size:17px; font-weight:700; background:linear-gradient(135deg,#c4b5fd,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; white-space:nowrap; }
+  .crm-logo-sub { font-size:9px; color:#4c3494; margin-top:-2px; white-space:nowrap; letter-spacing:0.05em; text-transform:uppercase; }
+  .crm-section-label { font-size:9px; font-weight:700; color:#4c3494; text-transform:uppercase; letter-spacing:0.1em; padding:14px 14px 4px; white-space:nowrap; }
+  .crm-nav-item { display:flex; align-items:center; padding:8px 14px; color:#4c3494; font-size:12px; font-weight:500; cursor:pointer; transition:all 0.15s; text-decoration:none; border-left:3px solid transparent; white-space:nowrap; }
+  .crm-nav-item:hover { background:rgba(139,92,246,0.08); color:#a78bfa; }
+  .crm-nav-item.crm-active { background:rgba(139,92,246,0.15); color:#c4b5fd; border-left-color:#8b5cf6; }
   .crm-nav-icon { width:16px; height:16px; margin-right:10px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; font-size:13px; }
-  .crm-divider { border:none; border-top:1px solid rgba(255,255,255,0.04); margin:8px 14px; }
-  .crm-toggle-btn { background:none; border:none; color:#1e3a5f; cursor:pointer; padding:8px 14px; display:flex; align-items:center; gap:8px; font-size:11px; font-family:'Inter',sans-serif; transition:color 0.15s; width:100%; }
-  .crm-toggle-btn:hover { color:#475569; }
-  .crm-topbar { height:48px; background:#0a0f1e; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid rgba(255,255,255,0.05); flex-shrink:0; }
-  .crm-topbar-breadcrumb { font-size:12px; color:#1e3a5f; display:flex; align-items:center; gap:6px; }
+  .crm-divider { border:none; border-top:1px solid rgba(167,139,250,0.08); margin:8px 14px; }
+  .crm-toggle-btn { background:none; border:none; color:#4c3494; cursor:pointer; padding:8px 14px; display:flex; align-items:center; gap:8px; font-size:11px; font-family:'Inter',sans-serif; transition:color 0.15s; width:100%; }
+  .crm-toggle-btn:hover { color:#a78bfa; }
+  .crm-topbar { height:48px; background:#0d0a1a; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid rgba(167,139,250,0.1); flex-shrink:0; }
+  .crm-topbar-breadcrumb { font-size:12px; color:#4c3494; display:flex; align-items:center; gap:6px; }
   .crm-topbar-right { display:flex; align-items:center; gap:14px; }
-  .crm-avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#0ea5e9,#6366f1); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
-  .crm-user-info { font-size:12px; color:#64748b; font-weight:500; }
-  .crm-user-role { font-size:10px; color:#1e3a5f; }
-  .super-admin-badge { font-size:10px; font-weight:700; background:linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; padding:2px 10px; border-radius:9999px; white-space:nowrap; }
-  .corex-status-pill { display:inline-flex; align-items:center; gap:5px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.15); color:#22c55e; font-size:10px; font-weight:600; padding:3px 10px; border-radius:9999px; }
-  .corex-status-dot { width:6px; height:6px; border-radius:50%; background:#22c55e; animation:pulse-dot 2s ease-in-out infinite; }
+  .crm-avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#a78bfa,#7c3aed); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
+  .crm-user-info { font-size:12px; color:#a78bfa; font-weight:500; }
+  .crm-user-role { font-size:10px; color:#4c3494; }
+  .super-admin-badge { font-size:10px; font-weight:700; background:linear-gradient(135deg,#a78bfa,#7c3aed); color:#fff; padding:2px 10px; border-radius:9999px; white-space:nowrap; }
+  .corex-status-pill { display:inline-flex; align-items:center; gap:5px; background:rgba(139,92,246,0.1); border:1px solid rgba(167,139,250,0.25); color:#c4b5fd; font-size:10px; font-weight:600; padding:3px 10px; border-radius:9999px; }
+  .corex-status-dot { width:6px; height:6px; border-radius:50%; background:#a78bfa; animation:pulse-dot 2s ease-in-out infinite; }
   @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
-  .sa-banner { height:30px; background:linear-gradient(90deg,#1e1b4b,#312e81,#1e1b4b); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#a5b4fc; flex-shrink:0; gap:8px; letter-spacing:0.04em; border-bottom:1px solid rgba(99,102,241,0.15); }
-  .app-main-area { margin-left:200px; display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+  .sa-banner { height:30px; background:linear-gradient(90deg,#120d24,#2d1f5e,#120d24); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#c4b5fd; flex-shrink:0; gap:8px; letter-spacing:0.04em; border-bottom:1px solid rgba(167,139,250,0.15); }
+  .app-main-area { margin-left:200px; display:flex; flex-direction:column; height:100vh; overflow:hidden; background:#0d0a1a; }
   @media(max-width:767px){ .crm-sidebar{transform:translateX(-100%);} .crm-sidebar.mobile-open{transform:translateX(0);} .app-main-area{margin-left:0!important;} }
 </style>
 
@@ -159,14 +610,14 @@
   <hr class="crm-divider" />
   <a class="crm-nav-item crm-active" href="corex.html">
     <span class="crm-nav-icon">🧠</span>
-    <span class="crm-nav-label" style="background:linear-gradient(135deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">COREX</span>
+    <span class="crm-nav-label" style="background:linear-gradient(135deg,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">COREX</span>
   </a>
-  <div style="padding:2px 14px 10px;" class="crm-nav-label"><span style="font-size:9px;color:#1e3a5f;letter-spacing:0.06em;">INTELLIGENCE ENGINE</span></div>
+  <div style="padding:2px 14px 10px;" class="crm-nav-label"><span style="font-size:9px;color:#4c3494;letter-spacing:0.06em;">INTELLIGENCE ENGINE</span></div>
   <div style="flex:1;"></div>
   <div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,0.04);">
-    <div style="font-size:9px;color:#1e3a5f;text-transform:uppercase;letter-spacing:0.08em;">COREX Access</div>
-    <div style="font-size:12px;color:#334155;font-weight:600;margin-top:2px;">Andrea M. Tanguay</div>
-    <div style="font-size:10px;color:#1e3a5f;margin-top:1px;">Founder & Executive Director</div>
+    <div style="font-size:9px;color:#4c3494;text-transform:uppercase;letter-spacing:0.08em;">COREX Access</div>
+    <div style="font-size:12px;color:#c4b5fd;font-weight:600;margin-top:2px;">Andrea M. Tanguay</div>
+    <div style="font-size:10px;color:#4c3494;margin-top:1px;">Founder & Executive Director</div>
   </div>
 </aside>
 
@@ -174,11 +625,11 @@
   <!-- CRM TOP BAR -->
   <div class="crm-topbar">
     <div class="crm-topbar-breadcrumb">
-      <span style="color:#38bdf8;font-weight:600;">BluWav CRM</span>
-      <span style="color:#1e3a5f;">›</span>
-      <span style="color:#334155;">Super Admin</span>
-      <span style="color:#1e3a5f;">›</span>
-      <span style="background:linear-gradient(135deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">🧠 COREX Intelligence Engine</span>
+      <span style="color:#c4b5fd;font-weight:600;">BluWav CRM</span>
+      <span style="color:#4c3494;">›</span>
+      <span style="color:#c4b5fd;">Super Admin</span>
+      <span style="color:#4c3494;">›</span>
+      <span style="background:linear-gradient(135deg,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;">🧠 COREX Intelligence Engine</span>
     </div>
     <div class="crm-topbar-right">
       <div class="corex-status-pill"><span class="corex-status-dot"></span> COREX Active</div>
@@ -201,28 +652,28 @@
 <div style="display:flex; min-height:calc(100vh - 78px); overflow:hidden;">
 
   <!-- SIDEBAR -->
-  <aside id="sidebar-nav" style="width:220px; min-width:220px; background:#0d1117; padding:20px 12px; display:flex; flex-direction:column; border-right:1px solid rgba(255,255,255,0.05);">
-    <div style="padding:0 8px 20px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
-      <div style="font-size:20px; font-weight:700; background:linear-gradient(135deg,#38bdf8,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">🧠 COREX</div>
-      <div style="font-size:10px; color:#1e3a5f; margin-top:2px; line-height:1.4;">Caribbean Opportunity &<br>Revenue Intelligence Engine</div>
+  <aside id="sidebar-nav" style="width:220px; min-width:220px; background:#120d24; padding:20px 12px; display:flex; flex-direction:column; border-right:1px solid rgba(167,139,250,0.1);">
+    <div style="padding:0 8px 20px; border-bottom:1px solid rgba(167,139,250,0.12); margin-bottom:12px;">
+      <div style="font-size:20px; font-weight:700; background:linear-gradient(135deg,#c4b5fd,#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">🧠 COREX</div>
+      <div style="font-size:10px; color:#4c3494; margin-top:2px; line-height:1.4;">Caribbean Opportunity &<br>Revenue Intelligence Engine</div>
     </div>
     <nav style="flex:1; display:flex; flex-direction:column; gap:2px;">
-      <div style="font-size:9px;font-weight:700;color:#1e3a5f;text-transform:uppercase;letter-spacing:0.1em;padding:8px 8px 3px;">COMMAND</div>
+      <div style="font-size:9px;font-weight:700;color:#4c3494;text-transform:uppercase;letter-spacing:0.1em;padding:8px 8px 3px;">COMMAND</div>
       <div class="sidebar-item active" data-view="dashboard"><i data-lucide="zap" class="w-5 h-5"></i> Command Center</div>
-      <div style="font-size:9px;font-weight:700;color:#1e3a5f;text-transform:uppercase;letter-spacing:0.1em;padding:10px 8px 3px;">INTELLIGENCE</div>
+      <div style="font-size:9px;font-weight:700;color:#4c3494;text-transform:uppercase;letter-spacing:0.1em;padding:10px 8px 3px;">INTELLIGENCE</div>
       <div class="sidebar-item" data-view="pipeline"><i data-lucide="target" class="w-5 h-5"></i> Opportunity Intel</div>
       <div class="sidebar-item" data-view="sources"><i data-lucide="radar" class="w-5 h-5"></i> Procurement Scanner</div>
       <div class="sidebar-item" data-view="digest"><i data-lucide="file-text" class="w-5 h-5"></i> Daily Digest</div>
-      <div style="font-size:9px;font-weight:700;color:#1e3a5f;text-transform:uppercase;letter-spacing:0.1em;padding:10px 8px 3px;">OPERATIONS</div>
+      <div style="font-size:9px;font-weight:700;color:#4c3494;text-transform:uppercase;letter-spacing:0.1em;padding:10px 8px 3px;">OPERATIONS</div>
       <div class="sidebar-item" data-view="outreach"><i data-lucide="send" class="w-5 h-5"></i> Outreach Automation</div>
       <div class="sidebar-item" data-view="settings"><i data-lucide="refresh-cw" class="w-5 h-5"></i> CRM Sync Layer</div>
-      <div style="font-size:9px;font-weight:700;color:#1e3a5f;text-transform:uppercase;letter-spacing:0.1em;padding:10px 8px 3px;">MONITORING</div>
+      <div style="font-size:9px;font-weight:700;color:#4c3494;text-transform:uppercase;letter-spacing:0.1em;padding:10px 8px 3px;">MONITORING</div>
       <div class="sidebar-item" data-view="awards"><i data-lucide="trophy" class="w-5 h-5"></i> Award Monitoring</div>
       <div class="sidebar-item" data-view="trends"><i data-lucide="trending-up" class="w-5 h-5"></i> Market Trends</div>
     </nav>
-    <div style="padding:8px; border-top:1px solid rgba(255,255,255,0.06); margin-top:12px;">
-      <div style="font-size:10px; color:#1e3a5f;">COREX Cycle</div>
-      <div style="font-size:11px; color:#334155; font-weight:600;">Last: Aug 6, 2026 · 6:00 AM</div>
+    <div style="padding:8px; border-top:1px solid rgba(167,139,250,0.1); margin-top:12px;">
+      <div style="font-size:10px; color:#4c3494;">COREX Cycle</div>
+      <div style="font-size:11px; color:#a78bfa; font-weight:600;">Last: Aug 6, 2026 · 6:00 AM</div>
       <div style="font-size:10px; color:#22c55e; margin-top:2px;">Next: 12:00 PM EDT</div>
     </div>
   </aside>
@@ -231,10 +682,10 @@
   <div data-id="22" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
 
     <!-- TOP HEADER -->
-    <header data-id="23" id="top-header" style="background:#fff; border-bottom:1px solid #e2e8f0; padding:0 28px; height:56px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
+    <header data-id="23" id="top-header" style="background:#fff; border-bottom:1px solid rgba(167,139,250,0.12); padding:0 28px; height:56px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
       <div data-id="24" style="display:flex; align-items:center; gap:16px;">
-        <h1 style="font-size:15px; font-weight:700; color:#0f172a;">🧠 COREX Intelligence Engine</h1>
-        <span data-id="26" style="font-size:12px; color:#64748b;">Last Run: <span data-id="27" id="last-run-time">Aug 5, 2026 3:42 PM EDT</span></span>
+        <h1 style="font-size:15px; font-weight:700; color:#f5f3ff;">🧠 COREX Intelligence Engine</h1>
+        <span data-id="26" style="font-size:12px; color:#7c6fa0;">Last Run: <span data-id="27" id="last-run-time">Aug 5, 2026 3:42 PM EDT</span></span>
       </div>
       <div data-id="28" style="display:flex; align-items:center; gap:14px;">
         <span data-id="29" id="status-badge" class="badge" style="background:#dcfce7; color:#166534; font-size:12px; padding:4px 14px;"><span data-id="30" id="status-dot" style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:6px;"></span><span data-id="31" id="status-text">Active — Running</span></span>
@@ -253,11 +704,11 @@
         <!-- TWO COLUMN -->
         <div data-id="37" style="display:grid; grid-template-columns:65fr 35fr; gap:20px; margin-bottom:24px;">
           <!-- LEFT: LEADS TABLE -->
-          <div data-id="38" style="background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06); overflow:hidden;">
-            <div data-id="39" style="padding:16px 20px; border-bottom:1px solid #f1f5f9;">
+          <div data-id="38" style="background:#1a1035; border-radius:16px; box-shadow:0 4px 24px rgba(139,92,246,0.1); overflow:hidden;">
+            <div data-id="39" style="padding:16px 20px; border-bottom:1px solid rgba(167,139,250,0.1);">
               <div data-id="40" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                 <div data-id="41" style="position:relative; flex:1; min-width:180px;">
-                  <i data-id="42" data-lucide="search" class="w-4 h-4" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8;"></i>
+                  <i data-id="42" data-lucide="search" class="w-4 h-4" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#4c3494;"></i>
                   <input data-id="43" type="text" id="search-input" placeholder="Search opportunities..." style="padding-left:36px; height:38px; font-size:13px;" />
                 </div>
                 <select data-id="44" id="filter-source" style="width:140px; height:38px; font-size:13px;"><option data-id="45" value="">All Sources</option><option data-id="46" value="rfp">📋 RFP</option><option data-id="47" value="directory">🏢 Directory</option><option data-id="48" value="jobboard">💼 Job Board</option><option data-id="49" value="donor">🌱 Donor</option><option data-id="50" value="founder">📣 Founder</option></select>
@@ -281,9 +732,9 @@
           </div>
 
           <!-- RIGHT: ACTIVITY FEED -->
-          <div data-id="83" style="background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06); display:flex; flex-direction:column; max-height:600px;">
-            <div data-id="84" style="padding:14px 18px; border-bottom:1px solid #f1f5f9; font-size:14px; font-weight:600; color:#0f172a; display:flex; align-items:center; gap:8px;">
-              <i data-id="85" data-lucide="activity" class="w-4 h-4" style="color:#0ea5e9;"></i> COREX Activity Stream
+          <div data-id="83" style="background:#1a1035; border-radius:16px; box-shadow:0 4px 24px rgba(139,92,246,0.1); display:flex; flex-direction:column; max-height:600px;">
+            <div data-id="84" style="padding:14px 18px; border-bottom:1px solid rgba(167,139,250,0.1); font-size:14px; font-weight:600; color:#f5f3ff; display:flex; align-items:center; gap:8px;">
+              <i data-id="85" data-lucide="activity" class="w-4 h-4" style="color:#a78bfa;"></i> COREX Activity Stream
             </div>
             <div data-id="86" id="activity-feed" style="flex:1; overflow-y:auto; padding:4px 0;"></div>
           </div>
@@ -291,7 +742,7 @@
 
         <!-- SOURCE HEALTH ROW -->
         <div data-id="87" style="margin-bottom:16px;">
-          <h3 data-id="88" style="font-size:14px; font-weight:600; color:#334155; margin-bottom:12px;">Source Health</h3>
+          <h3 data-id="88" style="font-size:14px; font-weight:600; color:#c4b5fd; margin-bottom:12px;">Source Health</h3>
           <div data-id="89" id="source-health-row" style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;"></div>
         </div>
       </section>
@@ -299,13 +750,13 @@
       <!-- COREX MODULE: OPPORTUNITY INTELLIGENCE -->
       <section data-id="90" id="view-pipeline" style="display:none;">
         <div data-id="91" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
-          <h2 style="font-size:18px; font-weight:700; color:#0f172a;">🎯 Opportunity Intelligence</h2>
-          <div data-id="93" style="display:flex; gap:4px; background:#f1f5f9; border-radius:10px; padding:3px;">
+          <h2 style="font-size:18px; font-weight:700; color:#f5f3ff;">🎯 Opportunity Intelligence</h2>
+          <div data-id="93" style="display:flex; gap:4px; background:#2d1f5e; border-radius:10px; padding:3px;">
             <button data-id="94" id="pipeline-table-btn" class="btn-secondary" style="padding:6px 16px; font-size:13px; border-radius:8px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,0.06);"><i data-id="95" data-lucide="table-2" class="w-4 h-4"></i> Table</button>
             <button data-id="96" id="pipeline-kanban-btn" class="btn-secondary" style="padding:6px 16px; font-size:13px; border-radius:8px; background:transparent; box-shadow:none;"><i data-id="97" data-lucide="columns-3" class="w-4 h-4"></i> Kanban</button>
           </div>
         </div>
-        <div data-id="98" id="pipeline-table-view" style="background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06); overflow:hidden;">
+        <div data-id="98" id="pipeline-table-view" style="background:#1a1035; border-radius:16px; box-shadow:0 4px 24px rgba(139,92,246,0.1); overflow:hidden;">
           <div data-id="99" style="overflow-x:auto;"><table data-id="100" id="pipeline-full-table"><thead data-id="101"><tr data-id="102">
             <th data-id="103">Opportunity</th><th data-id="104">Org / Company</th><th data-id="105">Source</th><th data-id="106">Country</th><th data-id="107">COREX Fit Index</th><th data-id="108">Fit Tags</th><th data-id="109">Status</th><th data-id="110">Deadline</th><th data-id="111">Budget</th><th data-id="112">Actions</th>
           </tr></thead><tbody data-id="113" id="pipeline-tbody"></tbody></table></div>
@@ -315,7 +766,7 @@
 
       <!-- COREX MODULE: PROCUREMENT SCANNER -->
       <section data-id="115" id="view-sources" style="display:none;">
-        <h2 style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:6px;">📡 Procurement Scanner</h2><p style="font-size:13px;color:#64748b;margin-bottom:20px;">Autonomous monitoring of UNGM, ReliefWeb, Devex, CCCCC, JBDC, IDB, EU-LAC and more</p>
+        <h2 style="font-size:18px; font-weight:700; color:#f5f3ff; margin-bottom:6px;">📡 Procurement Scanner</h2><p style="font-size:13px;color:#7c6fa0;margin-bottom:20px;">Autonomous monitoring of UNGM, ReliefWeb, Devex, CCCCC, JBDC, IDB, EU-LAC and more</p>
         <div data-id="117" id="sources-grid" style="display:grid; grid-template-columns:repeat(2,1fr); gap:20px;"></div>
       </section>
 
@@ -323,8 +774,8 @@
       <section data-id="118" id="view-digest" style="display:none;">
         <div data-id="119" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
           <div data-id="120">
-            <h2 style="font-size:18px; font-weight:700; color:#0f172a;">📊 COREX Intelligence Digest</h2>
-            <p data-id="122" style="font-size:14px; color:#64748b; margin-top:4px;">August 5, 2026</p>
+            <h2 style="font-size:18px; font-weight:700; color:#f5f3ff;">📊 COREX Intelligence Digest</h2>
+            <p data-id="122" style="font-size:14px; color:#7c6fa0; margin-top:4px;">August 5, 2026</p>
           </div>
           <div data-id="123" style="display:flex; gap:10px;">
             <button data-id="124" id="generate-digest-btn" class="btn-primary"><i data-id="125" data-lucide="sparkles" class="w-4 h-4"></i> Generate Intelligence Digest</button>
@@ -332,8 +783,8 @@
             <button data-id="128" id="email-digest-btn" class="btn-secondary" style="display:none;"><i data-id="129" data-lucide="mail" class="w-4 h-4"></i> Email to Andrea</button>
           </div>
         </div>
-        <div data-id="130" id="digest-output" style="background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06); padding:32px; min-height:300px;">
-          <div data-id="131" style="text-align:center; padding:60px 20px; color:#94a3b8;">
+        <div data-id="130" id="digest-output" style="background:#1a1035; border-radius:16px; box-shadow:0 4px 24px rgba(139,92,246,0.1); padding:32px; min-height:300px;">
+          <div data-id="131" style="text-align:center; padding:60px 20px; color:#4c3494;">
             <i data-id="132" data-lucide="file-text" class="w-12 h-12" style="margin:0 auto 12px; display:block; opacity:0.4;"></i>
             <p data-id="133" style="font-size:15px; font-weight:500;">No intelligence digest generated yet</p>
             <p data-id="134" style="font-size:13px; margin-top:4px;">Click "Generate Intelligence Digest" to create an AI-powered daily intelligence report.</p>
@@ -343,15 +794,15 @@
 
       <!-- COREX MODULE: SYSTEM CONTROLS -->
       <section data-id="135" id="view-settings" style="display:none;">
-        <h2 style="font-size:18px; font-weight:700; color:#0f172a; margin-bottom:6px;">🔄 COREX → CRM Sync</h2><p style="font-size:13px;color:#64748b;margin-bottom:20px;">COREX → BluWav CRM pipeline integration</p>
+        <h2 style="font-size:18px; font-weight:700; color:#f5f3ff; margin-bottom:6px;">🔄 COREX → CRM Sync</h2><p style="font-size:13px;color:#7c6fa0;margin-bottom:20px;">COREX → BluWav CRM pipeline integration</p>
 
         <div data-id="137" class="settings-section">
-          <h3 data-id="138" style="font-size:16px; font-weight:600; color:#0f172a; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="139" data-lucide="database" class="w-5 h-5" style="color:#0ea5e9;"></i> CRM Integration</h3>
+          <h3 data-id="138" style="font-size:16px; font-weight:600; color:#f5f3ff; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="139" data-lucide="database" class="w-5 h-5" style="color:#a78bfa;"></i> CRM Integration</h3>
           <div data-id="140" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-            <div data-id="141"><label data-id="142" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">CRM Endpoint URL</label><input data-id="143" type="url" id="crm-endpoint" value="https://api.bluwavcrm.com/v1/leads" /></div>
-            <div data-id="144"><label data-id="145" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">API Token</label><input data-id="146" type="password" id="crm-token" placeholder="sk-bluwav-..." /></div>
-            <div data-id="147"><label data-id="148" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Org ID</label><input data-id="149" type="text" id="crm-org" placeholder="bluwav-org-001" /></div>
-            <div data-id="150"><label data-id="151" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Push Mode</label>
+            <div data-id="141"><label data-id="142" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">CRM Endpoint URL</label><input data-id="143" type="url" id="crm-endpoint" value="https://api.bluwavcrm.com/v1/leads" /></div>
+            <div data-id="144"><label data-id="145" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">API Token</label><input data-id="146" type="password" id="crm-token" placeholder="sk-bluwav-..." /></div>
+            <div data-id="147"><label data-id="148" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Org ID</label><input data-id="149" type="text" id="crm-org" placeholder="bluwav-org-001" /></div>
+            <div data-id="150"><label data-id="151" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Push Mode</label>
               <div data-id="152" style="display:flex; gap:16px; margin-top:8px;">
                 <label data-id="153" style="font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;"><input data-id="154" type="radio" name="push-mode" value="auto" checked /> Auto (score ≥ 75)</label>
                 <label data-id="155" style="font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;"><input data-id="156" type="radio" name="push-mode" value="manual" /> Manual</label>
@@ -363,15 +814,15 @@
         </div>
 
         <div data-id="161" class="settings-section">
-          <h3 data-id="162" style="font-size:16px; font-weight:600; color:#0f172a; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="163" data-lucide="message-circle" class="w-5 h-5" style="color:#22c55e;"></i> WhatsApp Integration</h3>
+          <h3 data-id="162" style="font-size:16px; font-weight:600; color:#f5f3ff; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="163" data-lucide="message-circle" class="w-5 h-5" style="color:#22c55e;"></i> WhatsApp Integration</h3>
           <div data-id="164" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-            <div data-id="165"><label data-id="166" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Webhook URL</label><input data-id="167" type="url" id="wa-webhook" value="https://api.twilio.com/2010-04-01/Accounts/{SID}/Messages" /></div>
-            <div data-id="168"><label data-id="169" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Account SID</label><input data-id="170" type="text" id="wa-sid" placeholder="AC..." /></div>
-            <div data-id="171"><label data-id="172" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Auth Token</label><input data-id="173" type="password" id="wa-token" placeholder="Auth token..." /></div>
-            <div data-id="174"><label data-id="175" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Trigger Threshold: <span data-id="176" id="wa-threshold-val">80</span></label><input data-id="177" type="range" id="wa-threshold" min="0" max="100" value="80" style="width:100%; margin-top:6px;" /></div>
+            <div data-id="165"><label data-id="166" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Webhook URL</label><input data-id="167" type="url" id="wa-webhook" value="https://api.twilio.com/2010-04-01/Accounts/{SID}/Messages" /></div>
+            <div data-id="168"><label data-id="169" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Account SID</label><input data-id="170" type="text" id="wa-sid" placeholder="AC..." /></div>
+            <div data-id="171"><label data-id="172" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Auth Token</label><input data-id="173" type="password" id="wa-token" placeholder="Auth token..." /></div>
+            <div data-id="174"><label data-id="175" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Trigger Threshold: <span data-id="176" id="wa-threshold-val">80</span></label><input data-id="177" type="range" id="wa-threshold" min="0" max="100" value="80" style="width:100%; margin-top:6px;" /></div>
           </div>
           <div data-id="178" style="margin-top:14px;">
-            <label data-id="179" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Message Template</label>
+            <label data-id="179" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Message Template</label>
             <textarea data-id="180" id="wa-template" rows="6" style="font-size:13px;">🌊 COREX Intelligence Alert — BluWav
 
 *{{lead_name}}* from *{{company}}*
@@ -385,13 +836,13 @@
         </div>
 
         <div data-id="181" class="settings-section">
-          <h3 data-id="182" style="font-size:16px; font-weight:600; color:#0f172a; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="183" data-lucide="users" class="w-5 h-5" style="color:#6366f1;"></i> Agent Assignment</h3>
+          <h3 data-id="182" style="font-size:16px; font-weight:600; color:#f5f3ff; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="183" data-lucide="users" class="w-5 h-5" style="color:#6366f1;"></i> Agent Assignment</h3>
           <div data-id="184" id="agents-list"></div>
           <button data-id="185" id="add-agent-btn" class="btn-secondary" style="margin-top:14px;"><i data-id="186" data-lucide="plus" class="w-4 h-4"></i> Add Agent</button>
-          <div data-id="187" style="margin-top:16px; padding-top:16px; border-top:1px solid #e2e8f0;">
-            <p data-id="188" style="font-size:12px; font-weight:600; color:#64748b; margin-bottom:8px;">Auto-Assign Rules</p>
-            <div data-id="189" style="font-size:13px; color:#475569; line-height:1.8;">
-              <div>• If type = <span style="color:#0ea5e9; font-weight:600;">Government / RFP</span> → <strong>Devon</strong></div>
+          <div data-id="187" style="margin-top:16px; padding-top:16px; border-top:1px solid rgba(167,139,250,0.12);">
+            <p data-id="188" style="font-size:12px; font-weight:600; color:#7c6fa0; margin-bottom:8px;">Auto-Assign Rules</p>
+            <div data-id="189" style="font-size:13px; color:#a78bfa; line-height:1.8;">
+              <div>• If type = <span style="color:#a78bfa; font-weight:600;">Government / RFP</span> → <strong>Devon</strong></div>
               <div>• If type = <span style="color:#22c55e; font-weight:600;">NGO / Donor Project</span> → <strong>Aaliya</strong></div>
               <div>• If type = <span style="color:#6366f1; font-weight:600;">UN / Tech / International</span> → <strong>Marcus</strong></div>
               <div>• If type = <span style="color:#f59e0b; font-weight:600;">Startup / Founder Ecosystem</span> → <strong>Simone</strong></div>
@@ -400,15 +851,15 @@
         </div>
 
         <div data-id="198" class="settings-section">
-          <h3 data-id="199" style="font-size:16px; font-weight:600; color:#0f172a; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="200" data-lucide="sliders-horizontal" class="w-5 h-5" style="color:#f59e0b;"></i> Scoring Weights</h3>
+          <h3 data-id="199" style="font-size:16px; font-weight:600; color:#f5f3ff; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="200" data-lucide="sliders-horizontal" class="w-5 h-5" style="color:#f59e0b;"></i> Scoring Weights</h3>
           <div data-id="201" id="scoring-weights" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;"></div>
         </div>
 
         <div data-id="202" class="settings-section">
-          <h3 data-id="203" style="font-size:16px; font-weight:600; color:#0f172a; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="204" data-lucide="clock" class="w-5 h-5" style="color:#0ea5e9;"></i> Digest Schedule</h3>
+          <h3 data-id="203" style="font-size:16px; font-weight:600; color:#f5f3ff; margin-bottom:16px; display:flex; align-items:center; gap:8px;"><i data-id="204" data-lucide="clock" class="w-5 h-5" style="color:#a78bfa;"></i> Digest Schedule</h3>
           <div data-id="205" style="display:grid; grid-template-columns:1fr 2fr 1fr; gap:14px; align-items:start;">
-            <div data-id="206"><label data-id="207" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Time</label><input data-id="208" type="time" id="digest-time" value="07:00" /></div>
-            <div data-id="209"><label data-id="210" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Days</label>
+            <div data-id="206"><label data-id="207" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Time</label><input data-id="208" type="time" id="digest-time" value="07:00" /></div>
+            <div data-id="209"><label data-id="210" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Days</label>
               <div data-id="211" style="display:flex; gap:6px; margin-top:4px;" id="digest-days">
                 <label data-id="212" style="font-size:12px; display:flex; align-items:center; gap:4px;"><input data-id="213" type="checkbox" checked /> Mon</label>
                 <label data-id="214" style="font-size:12px; display:flex; align-items:center; gap:4px;"><input data-id="215" type="checkbox" checked /> Tue</label>
@@ -419,7 +870,7 @@
                 <label data-id="224" style="font-size:12px; display:flex; align-items:center; gap:4px;"><input data-id="225" type="checkbox" checked /> Sun</label>
               </div>
             </div>
-            <div data-id="226"><label data-id="227" style="font-size:12px; font-weight:600; color:#64748b; display:block; margin-bottom:4px;">Send to Email</label><input data-id="228" type="email" id="digest-email" placeholder="andrea@bluwav.com" /></div>
+            <div data-id="226"><label data-id="227" style="font-size:12px; font-weight:600; color:#7c6fa0; display:block; margin-bottom:4px;">Send to Email</label><input data-id="228" type="email" id="digest-email" placeholder="andrea@bluwav.com" /></div>
           </div>
         </div>
 
@@ -427,8 +878,8 @@
       </section>
 
     </main>
-    <footer data-id="231" style="padding:8px 28px; text-align:center; border-top:1px solid #e2e8f0; background:#fff; flex-shrink:0;">
-      <p style="font-size:11px; color:#94a3b8;">COREX Intelligence Engine · BluWav Super Admin · Internal Use Only · Not for public distribution</p>
+    <footer data-id="231" style="padding:8px 28px; text-align:center; border-top:1px solid rgba(167,139,250,0.12); background:#fff; flex-shrink:0;">
+      <p style="font-size:11px; color:#7c6fa0;">COREX Intelligence Engine · BluWav Super Admin · Internal Use Only · Not for public distribution</p>
     </footer>
   </div>
 </div>
@@ -490,11 +941,11 @@ function saveWeights(){localStorage.setItem('bluwav_weights',JSON.stringify(scor
 
 // ===== HELPERS =====
 const sourceIcon={rfp:"📋",directory:"🏢",jobboard:"💼",donor:"🌱",founder:"📣"};
-const tagColors={"CRM Fit":"background:#dbeafe;color:#1e40af;","Growth Fit":"background:#d1fae5;color:#065f46;","High Budget":"background:#fef3c7;color:#92400e;","Urgent":"background:#fee2e2;color:#991b1b;","Tech Sector":"background:#ede9fe;color:#5b21b6;","NGO":"background:#fce7f3;color:#9d174d;","Gov":"background:#e0e7ff;color:#3730a3;"};
+const tagColors={"CRM Fit":"background:rgba(139,92,246,0.15);color:#c4b5fd;","Growth Fit":"background:rgba(16,185,129,0.12);color:#6ee7b7;","High Budget":"background:rgba(245,158,11,0.12);color:#fcd34d;","Urgent":"background:rgba(239,68,68,0.12);color:#fca5a5;","Tech Sector":"background:rgba(139,92,246,0.2);color:#ddd6fe;","NGO":"background:rgba(236,72,153,0.12);color:#f9a8d4;","Gov":"background:rgba(99,102,241,0.15);color:#a5b4fc;"};
 
 function scoreClass(s){return s>=75?'score-high':s>=50?'score-mid':'score-low';}
 function statusBadge(st){
-  const c={New:'background:#dbeafe;color:#1e40af;',Reviewed:'background:#fef3c7;color:#92400e;',Pushed:'background:#d1fae5;color:#065f46;',Assigned:'background:#ede9fe;color:#5b21b6;'};
+  const c={New:'background:rgba(139,92,246,0.15);color:#c4b5fd;',Reviewed:'background:rgba(245,158,11,0.12);color:#fcd34d;',Pushed:'background:rgba(16,185,129,0.12);color:#6ee7b7;',Assigned:'background:rgba(139,92,246,0.2);color:#ddd6fe;'};
   return `<span class="badge" style="${c[st]||''}">${st}</span>`;
 }
 function toast(msg){
@@ -522,8 +973,8 @@ function renderStats(){
         <i data-lucide="${d.icon}" class="w-5 h-5" style="color:${d.color};"></i>
       </div>
       <div>
-        <div style="font-size:26px;font-weight:700;color:#0f172a;font-variant-numeric:tabular-nums;">${d.val}</div>
-        <div style="font-size:12px;color:#64748b;font-weight:500;">${d.label}</div>
+        <div style="font-size:26px;font-weight:700;color:#f5f3ff;font-variant-numeric:tabular-nums;">${d.val}</div>
+        <div style="font-size:12px;color:#7c6fa0;font-weight:500;">${d.label}</div>
       </div>
     </div>`).join('');
   refreshIcons();
@@ -557,16 +1008,16 @@ function renderLeadsTable(){
   const f=getFilteredLeads();
   document.getElementById('leads-tbody').innerHTML=f.map(l=>`
     <tr style="cursor:pointer;" data-lead-id="${l.id}">
-      <td style="font-weight:600;color:#0f172a;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${l.name}">${l.name}</td>
-      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#475569;" title="${l.org}">${l.org}</td>
-      <td><span class="badge" style="background:#f1f5f9;color:#334155;">${sourceIcon[l.sourceType]||''} ${l.source}</span></td>
+      <td style="font-weight:600;color:#f5f3ff;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${l.name}">${l.name}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#a78bfa;" title="${l.org}">${l.org}</td>
+      <td><span class="badge" style="background:#2d1f5e;color:#c4b5fd;">${sourceIcon[l.sourceType]||''} ${l.source}</span></td>
       <td style="white-space:nowrap;">${l.country}</td>
       <td><span class="badge ${scoreClass(l.score)}">${l.score}</span></td>
-      <td style="max-width:160px;">${l.tags.map(t=>`<span class="tag-chip" style="${tagColors[t]||'background:#f1f5f9;color:#334155;'}">${t}</span>`).join('')}</td>
+      <td style="max-width:160px;">${l.tags.map(t=>`<span class="tag-chip" style="${tagColors[t]||'background:#2d1f5e;color:#c4b5fd;'}">${t}</span>`).join('')}</td>
       <td>${statusBadge(l.status)}</td>
       <td>
         <div style="display:flex;gap:4px;">
-          <button class="push-crm-btn" data-id="${l.id}" style="background:#0ea5e9;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;" title="COREX → CRM Sync"${l.pushedToCRM?' disabled':''}>${l.pushedToCRM?'✓':'📤'}</button>
+          <button class="push-crm-btn" data-id="${l.id}" style="background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;" title="COREX → CRM Sync"${l.pushedToCRM?' disabled':''}>${l.pushedToCRM?'✓':'📤'}</button>
           <button class="assign-btn" data-id="${l.id}" style="background:#6366f1;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;" title="Assign">👤</button>
         </div>
       </td>
@@ -579,18 +1030,18 @@ function renderPipelineTable(){
   const f=getFilteredLeads();
   document.getElementById('pipeline-tbody').innerHTML=f.map(l=>`
     <tr style="cursor:pointer;" data-lead-id="${l.id}">
-      <td style="font-weight:600;color:#0f172a;">${l.name}</td>
-      <td style="color:#475569;">${l.org}</td>
-      <td><span class="badge" style="background:#f1f5f9;color:#334155;">${sourceIcon[l.sourceType]||''} ${l.source}</span></td>
+      <td style="font-weight:600;color:#f5f3ff;">${l.name}</td>
+      <td style="color:#a78bfa;">${l.org}</td>
+      <td><span class="badge" style="background:#2d1f5e;color:#c4b5fd;">${sourceIcon[l.sourceType]||''} ${l.source}</span></td>
       <td>${l.country}</td>
       <td><span class="badge ${scoreClass(l.score)}">${l.score}</span></td>
-      <td>${l.tags.map(t=>`<span class="tag-chip" style="${tagColors[t]||'background:#f1f5f9;color:#334155;'}">${t}</span>`).join('')}</td>
+      <td>${l.tags.map(t=>`<span class="tag-chip" style="${tagColors[t]||'background:#2d1f5e;color:#c4b5fd;'}">${t}</span>`).join('')}</td>
       <td>${statusBadge(l.status)}</td>
       <td style="white-space:nowrap;">${l.deadline||'—'}</td>
       <td style="white-space:nowrap;">${l.budget}</td>
       <td>
         <div style="display:flex;gap:4px;">
-          <button class="push-crm-btn" data-id="${l.id}" style="background:#0ea5e9;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;"${l.pushedToCRM?' disabled':''}>${l.pushedToCRM?'✓':'📤'}</button>
+          <button class="push-crm-btn" data-id="${l.id}" style="background:#7c3aed;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;"${l.pushedToCRM?' disabled':''}>${l.pushedToCRM?'✓':'📤'}</button>
           <button class="assign-btn" data-id="${l.id}" style="background:#6366f1;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;">👤</button>
         </div>
       </td>
@@ -607,15 +1058,15 @@ function renderKanban(){
     const items=leads.filter(l=>l.status===st).sort((a,b)=>b.score-a.score);
     return `<div class="kanban-col" data-status="${st}">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <span style="font-size:13px;font-weight:700;color:#334155;">${st}</span>
+        <span style="font-size:13px;font-weight:700;color:#c4b5fd;">${st}</span>
         <span class="badge" style="background:${colors[st]}20;color:${colors[st]};">${items.length}</span>
       </div>
       ${items.map(l=>`<div class="kanban-card" draggable="true" data-lead-id="${l.id}">
-        <div style="font-weight:600;font-size:13px;color:#0f172a;margin-bottom:4px;">${l.name}</div>
-        <div style="font-size:11px;color:#64748b;margin-bottom:6px;">${l.org}</div>
+        <div style="font-weight:600;font-size:13px;color:#f5f3ff;margin-bottom:4px;">${l.name}</div>
+        <div style="font-size:11px;color:#7c6fa0;margin-bottom:6px;">${l.org}</div>
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <span class="badge ${scoreClass(l.score)}" style="font-size:11px;">${l.score}</span>
-          <span style="font-size:11px;color:#94a3b8;">${l.country}</span>
+          <span style="font-size:11px;color:#4c3494;">${l.country}</span>
         </div>
       </div>`).join('')}
     </div>`;
@@ -660,7 +1111,7 @@ function renderFeed(){
   const feed=document.getElementById('activity-feed');
   feed.innerHTML=FEED_MESSAGES.map((msg,i)=>{
     const mins=i*3+2;
-    return `<div class="feed-item"><span style="color:#334155;">${msg}</span><div style="font-size:11px;color:#94a3b8;margin-top:2px;">${mins}m ago</div></div>`;
+    return `<div class="feed-item"><span style="color:#c4b5fd;">${msg}</span><div style="font-size:11px;color:#4c3494;margin-top:2px;">${mins}m ago</div></div>`;
   }).join('');
 }
 
@@ -673,12 +1124,12 @@ function renderSourceHealth(){
     return `<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
         <span style="font-size:16px;">${s.icon}</span>
-        <span style="font-size:12px;font-weight:600;color:#0f172a;">${s.name}</span>
+        <span style="font-size:12px;font-weight:600;color:#f5f3ff;">${s.name}</span>
       </div>
-      <div style="font-size:11px;color:#64748b;margin-bottom:4px;">${status}</div>
-      <div style="font-size:11px;color:#94a3b8;margin-bottom:6px;">Last: ${fmtTime(s.lastScraped)}</div>
+      <div style="font-size:11px;color:#7c6fa0;margin-bottom:4px;">${status}</div>
+      <div style="font-size:11px;color:#4c3494;margin-bottom:6px;">Last: ${fmtTime(s.lastScraped)}</div>
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:13px;font-weight:700;color:#0ea5e9;">+${s.todayLeads} today</span>
+        <span style="font-size:13px;font-weight:700;color:#a78bfa;">+${s.todayLeads} today</span>
         <div style="display:flex;align-items:flex-end;height:30px;">${bars}</div>
       </div>
     </div>`;
@@ -696,35 +1147,35 @@ function renderSourcesView(){
       <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:12px;">
         <div>
           <div style="font-size:20px;margin-bottom:4px;">${s.icon}</div>
-          <h3 style="font-size:16px;font-weight:700;color:#0f172a;">${s.name}</h3>
-          <p style="font-size:12px;color:#64748b;margin-top:2px;">${s.desc}</p>
+          <h3 style="font-size:16px;font-weight:700;color:#f5f3ff;">${s.name}</h3>
+          <p style="font-size:12px;color:#7c6fa0;margin-top:2px;">${s.desc}</p>
         </div>
         <div class="toggle-switch ${isOn?'on':''}" data-source-toggle="${s.id}"></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-        <div style="background:#f8fafc;border-radius:10px;padding:10px;">
-          <div style="font-size:11px;color:#64748b;">Scrape Frequency</div>
+        <div style="background:#120d24;border-radius:10px;padding:10px;">
+          <div style="font-size:11px;color:#7c6fa0;">Scrape Frequency</div>
           <select class="source-freq" data-sid="${s.id}" style="margin-top:4px;height:32px;font-size:12px;">
             <option value="6h" ${s.freq==='6h'?'selected':''}>Every 6h</option>
             <option value="12h" ${s.freq==='12h'?'selected':''}>Every 12h</option>
             <option value="24h" ${s.freq==='24h'?'selected':''}>Every 24h</option>
           </select>
         </div>
-        <div style="background:#f8fafc;border-radius:10px;padding:10px;">
-          <div style="font-size:11px;color:#64748b;">Leads Found</div>
-          <div style="font-size:20px;font-weight:700;color:#0f172a;font-variant-numeric:tabular-nums;">${s.totalLeads} <span style="font-size:12px;font-weight:500;color:#22c55e;">+${s.todayLeads} today</span></div>
+        <div style="background:#120d24;border-radius:10px;padding:10px;">
+          <div style="font-size:11px;color:#7c6fa0;">Leads Found</div>
+          <div style="font-size:20px;font-weight:700;color:#f5f3ff;font-variant-numeric:tabular-nums;">${s.totalLeads} <span style="font-size:12px;font-weight:500;color:#22c55e;">+${s.todayLeads} today</span></div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-        <div><div style="font-size:11px;color:#64748b;margin-bottom:4px;">Last Scraped</div><div style="font-size:12px;color:#334155;font-weight:500;">${fmtTime(s.lastScraped)}</div></div>
-        <div><div style="font-size:11px;color:#64748b;margin-bottom:4px;">Next Scheduled</div><div style="font-size:12px;color:#334155;font-weight:500;">${fmtTime(ns.toISOString())}</div></div>
+        <div><div style="font-size:11px;color:#7c6fa0;margin-bottom:4px;">Last Scraped</div><div style="font-size:12px;color:#c4b5fd;font-weight:500;">${fmtTime(s.lastScraped)}</div></div>
+        <div><div style="font-size:11px;color:#7c6fa0;margin-bottom:4px;">Next Scheduled</div><div style="font-size:12px;color:#c4b5fd;font-weight:500;">${fmtTime(ns.toISOString())}</div></div>
       </div>
       <div style="margin-bottom:12px;">
-        <label style="font-size:11px;color:#64748b;display:block;margin-bottom:4px;">Filter Keywords</label>
+        <label style="font-size:11px;color:#7c6fa0;display:block;margin-bottom:4px;">Filter Keywords</label>
         <input type="text" class="source-keywords" data-sid="${s.id}" value="CRM, digital, software, nonprofit" style="font-size:12px;height:34px;" />
       </div>
       <div style="margin-bottom:14px;">
-        <label style="font-size:11px;color:#64748b;display:block;margin-bottom:4px;">Webhook / RSS URL</label>
+        <label style="font-size:11px;color:#7c6fa0;display:block;margin-bottom:4px;">Webhook / RSS URL</label>
         <input type="url" class="source-webhook" data-sid="${s.id}" placeholder="https://..." style="font-size:12px;height:34px;" />
       </div>
       <div style="display:flex;gap:8px;">
@@ -739,10 +1190,10 @@ function renderSourcesView(){
 // ===== SETTINGS: AGENTS =====
 function renderAgents(){
   document.getElementById('agents-list').innerHTML=agents.map((a,i)=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f8fafc;border-radius:10px;margin-bottom:8px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#120d24;border-radius:10px;margin-bottom:8px;">
       <div>
-        <span style="font-size:14px;font-weight:600;color:#0f172a;">${a.name}</span>
-        <span style="font-size:12px;color:#64748b;margin-left:8px;">${a.specialty}</span>
+        <span style="font-size:14px;font-weight:600;color:#f5f3ff;">${a.name}</span>
+        <span style="font-size:12px;color:#7c6fa0;margin-left:8px;">${a.specialty}</span>
         <span style="font-size:12px;margin-left:8px;">${a.region}</span>
       </div>
       <button class="remove-agent-btn" data-idx="${i}" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:18px;" title="Remove">&times;</button>
@@ -756,8 +1207,8 @@ function renderWeights(){
   document.getElementById('scoring-weights').innerHTML=Object.keys(labels).map(k=>`
     <div>
       <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-        <label style="font-size:12px;font-weight:600;color:#64748b;">${labels[k]}</label>
-        <span style="font-size:12px;font-weight:700;color:#0f172a;" id="weight-val-${k}">${scoringWeights[k]}</span>
+        <label style="font-size:12px;font-weight:600;color:#7c6fa0;">${labels[k]}</label>
+        <span style="font-size:12px;font-weight:700;color:#f5f3ff;" id="weight-val-${k}">${scoringWeights[k]}</span>
       </div>
       <input type="range" class="weight-slider" data-key="${k}" min="0" max="40" value="${scoringWeights[k]}" style="width:100%;" />
     </div>`).join('');
@@ -785,40 +1236,40 @@ function openLeadModal(leadId){
   const modal=document.getElementById('lead-modal');
   modal.style.display='flex';
   modal.innerHTML=`<div class="modal-content" style="padding:0;">
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 28px;border-bottom:1px solid #e2e8f0;">
-      <h2 style="font-size:18px;font-weight:700;color:#0f172a;">Lead Detail</h2>
-      <button id="close-modal-btn" style="background:none;border:none;cursor:pointer;font-size:24px;color:#94a3b8;line-height:1;">&times;</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 28px;border-bottom:1px solid rgba(167,139,250,0.12);">
+      <h2 style="font-size:18px;font-weight:700;color:#f5f3ff;">Lead Detail</h2>
+      <button id="close-modal-btn" style="background:none;border:none;cursor:pointer;font-size:24px;color:#4c3494;line-height:1;">&times;</button>
     </div>
     <div style="display:flex;padding:24px 28px;gap:28px;">
       <!-- LEFT -->
       <div style="flex:6;">
-        <h3 style="font-size:20px;font-weight:700;color:#0f172a;margin-bottom:4px;">${l.name}</h3>
-        <div style="font-size:14px;color:#475569;margin-bottom:4px;">${l.org}</div>
+        <h3 style="font-size:20px;font-weight:700;color:#f5f3ff;margin-bottom:4px;">${l.name}</h3>
+        <div style="font-size:14px;color:#a78bfa;margin-bottom:4px;">${l.org}</div>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
-          <span class="badge" style="background:#f1f5f9;color:#334155;">${sourceIcon[l.sourceType]||''} ${l.source}</span>
+          <span class="badge" style="background:#2d1f5e;color:#c4b5fd;">${sourceIcon[l.sourceType]||''} ${l.source}</span>
           <span style="font-size:13px;">${l.country}</span>
           ${statusBadge(l.status)}
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
-          <div style="background:#f8fafc;border-radius:10px;padding:10px;"><div style="font-size:11px;color:#64748b;">Contact</div><div style="font-size:13px;color:#0f172a;font-weight:500;word-break:break-all;">${l.contact}</div></div>
-          <div style="background:#f8fafc;border-radius:10px;padding:10px;"><div style="font-size:11px;color:#64748b;">Deadline</div><div style="font-size:13px;color:#0f172a;font-weight:500;">${l.deadline||'Open'}</div></div>
-          <div style="background:#f8fafc;border-radius:10px;padding:10px;"><div style="font-size:11px;color:#64748b;">Budget</div><div style="font-size:13px;color:#0f172a;font-weight:500;">${l.budget}</div></div>
+          <div style="background:#120d24;border-radius:10px;padding:10px;"><div style="font-size:11px;color:#7c6fa0;">Contact</div><div style="font-size:13px;color:#f5f3ff;font-weight:500;word-break:break-all;">${l.contact}</div></div>
+          <div style="background:#120d24;border-radius:10px;padding:10px;"><div style="font-size:11px;color:#7c6fa0;">Deadline</div><div style="font-size:13px;color:#f5f3ff;font-weight:500;">${l.deadline||'Open'}</div></div>
+          <div style="background:#120d24;border-radius:10px;padding:10px;"><div style="font-size:11px;color:#7c6fa0;">Budget</div><div style="font-size:13px;color:#f5f3ff;font-weight:500;">${l.budget}</div></div>
         </div>
         <div style="margin-bottom:16px;">
-          <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:4px;">Description</div>
-          <p style="font-size:14px;color:#334155;line-height:1.65;">${l.description}</p>
+          <div style="font-size:12px;font-weight:600;color:#7c6fa0;margin-bottom:4px;">Description</div>
+          <p style="font-size:14px;color:#c4b5fd;line-height:1.65;">${l.description}</p>
         </div>
         <div style="margin-bottom:16px;">
-          <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;">Tags</div>
-          <div>${l.tags.map(t=>`<span class="tag-chip" style="${tagColors[t]||'background:#f1f5f9;color:#334155;'}font-size:12px;padding:4px 10px;">${t}</span>`).join(' ')}</div>
+          <div style="font-size:12px;font-weight:600;color:#7c6fa0;margin-bottom:6px;">Tags</div>
+          <div>${l.tags.map(t=>`<span class="tag-chip" style="${tagColors[t]||'background:#2d1f5e;color:#c4b5fd;'}font-size:12px;padding:4px 10px;">${t}</span>`).join(' ')}</div>
         </div>
         <div style="margin-bottom:16px;">
-          <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:4px;">Notes</div>
+          <div style="font-size:12px;font-weight:600;color:#7c6fa0;margin-bottom:4px;">Notes</div>
           <textarea id="modal-notes" rows="3" placeholder="Add notes about this lead..." style="font-size:13px;">${l.notes||''}</textarea>
         </div>
         <div>
-          <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;">Timeline</div>
-          <div style="font-size:12px;color:#475569;line-height:1.8;">
+          <div style="font-size:12px;font-weight:600;color:#7c6fa0;margin-bottom:6px;">Timeline</div>
+          <div style="font-size:12px;color:#a78bfa;line-height:1.8;">
             <div>📍 Found: ${fmtTime(l.foundAt)}</div>
             ${l.pushedToCRM?'<div>📤 Synced to CRM</div>':''}
             ${l.whatsappSent?'<div>📱 WhatsApp sent</div>':''}
@@ -827,40 +1278,40 @@ function openLeadModal(leadId){
         </div>
       </div>
       <!-- RIGHT -->
-      <div style="flex:4;border-left:1px solid #e2e8f0;padding-left:28px;">
+      <div style="flex:4;border-left:1px solid rgba(167,139,250,0.12);padding-left:28px;">
         <div style="text-align:center;margin-bottom:20px;">
           <div class="donut-chart" style="margin:0 auto;background:conic-gradient(${conicParts.join(',')});"></div>
-          <div style="font-size:42px;font-weight:700;color:#0f172a;margin-top:-95px;position:relative;z-index:1;font-variant-numeric:tabular-nums;">${total}</div>
-          <div style="font-size:12px;color:#64748b;margin-top:50px;">COREX Fit Index</div>
+          <div style="font-size:42px;font-weight:700;color:#f5f3ff;margin-top:-95px;position:relative;z-index:1;font-variant-numeric:tabular-nums;">${total}</div>
+          <div style="font-size:12px;color:#7c6fa0;margin-top:50px;">COREX Fit Index</div>
         </div>
         <div style="margin-bottom:20px;">
           ${Object.keys(fb).map(k=>`
             <div style="margin-bottom:10px;">
               <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">
-                <span style="color:#475569;">${fbLabels[k]}</span>
-                <span style="font-weight:600;color:#0f172a;">${fb[k]}/${maxW[k]}</span>
+                <span style="color:#a78bfa;">${fbLabels[k]}</span>
+                <span style="font-weight:600;color:#f5f3ff;">${fb[k]}/${maxW[k]}</span>
               </div>
               <div class="progress-bar"><div class="progress-bar-fill" style="width:${(fb[k]/maxW[k])*100}%;background:${fbColors[k]};"></div></div>
             </div>`).join('')}
         </div>
         <div style="margin-bottom:16px;">
-          <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;">Product Fit</div>
+          <div style="font-size:12px;font-weight:600;color:#7c6fa0;margin-bottom:6px;">Product Fit</div>
           <div style="display:flex;gap:8px;">
-            ${l.tags.includes('CRM Fit')?'<span class="badge" style="background:#d1fae5;color:#065f46;padding:6px 14px;font-size:12px;">✅ BluwavCRM Fit</span>':'<span class="badge" style="background:#f1f5f9;color:#94a3b8;padding:6px 14px;font-size:12px;">— BluwavCRM</span>'}
-            ${l.tags.includes('Growth Fit')?'<span class="badge" style="background:#dbeafe;color:#1e40af;padding:6px 14px;font-size:12px;">✅ Bluwav Growth Fit</span>':'<span class="badge" style="background:#f1f5f9;color:#94a3b8;padding:6px 14px;font-size:12px;">— Bluwav Growth</span>'}
+            ${l.tags.includes('CRM Fit')?'<span class="badge" style="background:rgba(16,185,129,0.12);color:#6ee7b7;padding:6px 14px;font-size:12px;">✅ BluwavCRM Fit</span>':'<span class="badge" style="background:#2d1f5e;color:#4c3494;padding:6px 14px;font-size:12px;">— BluwavCRM</span>'}
+            ${l.tags.includes('Growth Fit')?'<span class="badge" style="background:rgba(139,92,246,0.15);color:#c4b5fd;padding:6px 14px;font-size:12px;">✅ Bluwav Growth Fit</span>':'<span class="badge" style="background:#2d1f5e;color:#4c3494;padding:6px 14px;font-size:12px;">— Bluwav Growth</span>'}
           </div>
         </div>
-        ${l.assignedAgent?`<div style="background:#f8fafc;border-radius:10px;padding:12px;margin-bottom:16px;"><div style="font-size:11px;color:#64748b;">Routing Layer</div><div style="font-size:14px;font-weight:600;color:#0f172a;">${l.assignedAgent}</div></div>`:''}
+        ${l.assignedAgent?`<div style="background:#120d24;border-radius:10px;padding:12px;margin-bottom:16px;"><div style="font-size:11px;color:#7c6fa0;">Routing Layer</div><div style="font-size:14px;font-weight:600;color:#f5f3ff;">${l.assignedAgent}</div></div>`:''}
       </div>
     </div>
     <!-- ACTIONS -->
-    <div style="display:flex;gap:10px;padding:16px 28px;border-top:1px solid #e2e8f0;flex-wrap:wrap;">
+    <div style="display:flex;gap:10px;padding:16px 28px;border-top:1px solid rgba(167,139,250,0.12);flex-wrap:wrap;">
       <button class="btn-primary modal-push-crm" data-id="${l.id}" ${l.pushedToCRM?'disabled':''}><i data-lucide="upload" class="w-4 h-4"></i> ${l.pushedToCRM?'Synced to CRM':'COREX → CRM Sync'}</button>
       <button class="btn-success modal-wa-btn" data-id="${l.id}" ${l.whatsappSent?'disabled':''}><i data-lucide="message-circle" class="w-4 h-4"></i> ${l.whatsappSent?'Outreach Sent':'Outreach Automation'}</button>
       <div style="position:relative;">
         <button class="btn-secondary modal-assign-btn" data-id="${l.id}"><i data-lucide="user" class="w-4 h-4"></i> Route to Agent</button>
         <div class="assign-dropdown" style="display:none;position:absolute;bottom:44px;left:0;background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.15);padding:6px;min-width:220px;z-index:100;">
-          <div class="assign-option" data-agent="Andrea M. Tanguay" style="padding:8px 12px;font-size:13px;cursor:pointer;border-radius:8px;color:#334155;">Andrea M. Tanguay <span style="color:#94a3b8;font-size:11px;">All Lead Types</span></div>
+          <div class="assign-option" data-agent="Andrea M. Tanguay" style="padding:8px 12px;font-size:13px;cursor:pointer;border-radius:8px;color:#c4b5fd;">Andrea M. Tanguay <span style="color:#4c3494;font-size:11px;">All Lead Types</span></div>
         </div>
       </div>
       <button class="btn-danger modal-dismiss-btn" data-id="${l.id}"><i data-lucide="trash-2" class="w-4 h-4"></i> Dismiss</button>
@@ -929,7 +1380,7 @@ function assignLead(id,agentName){
 function addFeedEntry(msg){
   const feed=document.getElementById('activity-feed');
   const div=document.createElement('div');div.className='feed-item';
-  div.innerHTML=`<span style="color:#334155;">${msg}</span><div style="font-size:11px;color:#94a3b8;margin-top:2px;">Just now</div>`;
+  div.innerHTML=`<span style="color:#c4b5fd;">${msg}</span><div style="font-size:11px;color:#4c3494;margin-top:2px;">Just now</div>`;
   feed.insertBefore(div,feed.firstChild);
 }
 
@@ -966,7 +1417,7 @@ async function generateDigest(){
   const btn=document.getElementById('generate-digest-btn');
   const output=document.getElementById('digest-output');
   btn.disabled=true;btn.innerHTML='<span class="pulse-scan">⏳</span> Generating...';
-  output.innerHTML='<div style="text-align:center;padding:60px;color:#64748b;"><div class="pulse-scan" style="font-size:32px;margin-bottom:12px;">🤖</div><p>Analyzing 20 leads and generating intelligence digest...</p></div>';
+  output.innerHTML='<div style="text-align:center;padding:60px;color:#7c6fa0;"><div class="pulse-scan" style="font-size:32px;margin-bottom:12px;">🤖</div><p>Analyzing 20 leads and generating intelligence digest...</p></div>';
 
   const topLeads=leads.slice().sort((a,b)=>b.score-a.score).slice(0,10);
   const leadsSummary=topLeads.map(l=>`- ${l.name} (${l.org}) | Score: ${l.score} | ${l.country} | Source: ${l.source} | Budget: ${l.budget} | Tags: ${l.tags.join(', ')} | Status: ${l.status}`).join('\n');
@@ -998,7 +1449,7 @@ async function generateDigest(){
     // Store digest
     localStorage.setItem('bluwav_last_digest',res.content);
   }catch(e){
-    output.innerHTML=`<div style="text-align:center;padding:40px;color:#ef4444;"><p style="font-size:15px;font-weight:500;">Failed to generate digest. Please try again.</p><p style="font-size:13px;color:#94a3b8;margin-top:4px;">${e.message||''}</p></div>`;
+    output.innerHTML=`<div style="text-align:center;padding:40px;color:#ef4444;"><p style="font-size:15px;font-weight:500;">Failed to generate digest. Please try again.</p><p style="font-size:13px;color:#4c3494;margin-top:4px;">${e.message||''}</p></div>`;
     btn.innerHTML='<i data-lucide="sparkles" class="w-4 h-4"></i> Generate Intelligence Digest';
     btn.disabled=false;
     refreshIcons();
@@ -1232,20 +1683,20 @@ const DTI_DATA=[
 ];
 
 function renderAwards(){
-  const statusColors={"Relationship Positioned":"background:#d1fae5;color:#065f46;","Monitoring":"background:#fef3c7;color:#92400e;","Follow-up Opportunity":"background:#dbeafe;color:#1e40af;"};
+  const statusColors={"Relationship Positioned":"background:rgba(16,185,129,0.12);color:#6ee7b7;","Monitoring":"background:rgba(245,158,11,0.12);color:#fcd34d;","Follow-up Opportunity":"background:rgba(139,92,246,0.15);color:#c4b5fd;"};
   const el=document.getElementById('awards-list');
   if(!el) return;
   el.innerHTML=AWARD_DATA.map(a=>`
-    <div style="padding:14px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:14px;">
-      <div style="width:36px;height:36px;border-radius:10px;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏆</div>
+    <div style="padding:14px 16px;border-bottom:1px solid rgba(167,139,250,0.1);display:flex;align-items:center;gap:14px;">
+      <div style="width:36px;height:36px;border-radius:10px;background:rgba(167,139,250,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏆</div>
       <div style="flex:1;">
-        <div style="font-size:13px;font-weight:600;color:#0f172a;">${a.name}</div>
-        <div style="font-size:11px;color:#64748b;">${a.org} · ${a.value} · Awarded ${a.awarded}</div>
-        <div style="font-size:11px;color:#94a3b8;margin-top:2px;">Winner: ${a.winner}</div>
+        <div style="font-size:13px;font-weight:600;color:#f5f3ff;">${a.name}</div>
+        <div style="font-size:11px;color:#7c6fa0;">${a.org} · ${a.value} · Awarded ${a.awarded}</div>
+        <div style="font-size:11px;color:#4c3494;margin-top:2px;">Winner: ${a.winner}</div>
       </div>
       <div style="text-align:right;">
-        <span class="badge" style="${statusColors[a.status]||'background:#f1f5f9;color:#334155;'}font-size:10px;">${a.status}</span>
-        <div style="font-size:10px;color:#94a3b8;margin-top:4px;max-width:160px;text-align:right;">${a.notes}</div>
+        <span class="badge" style="${statusColors[a.status]||'background:#2d1f5e;color:#c4b5fd;'}font-size:10px;">${a.status}</span>
+        <div style="font-size:10px;color:#4c3494;margin-top:4px;max-width:160px;text-align:right;">${a.notes}</div>
       </div>
     </div>`).join('');
 }
@@ -1253,20 +1704,20 @@ function renderAwards(){
 function renderTrends(){
   const tg=document.getElementById('trends-grid');
   if(tg) tg.innerHTML=TRENDS_DATA.map(t=>`
-    <div style="background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.06);border-left:4px solid ${t.color};">
+    <div style="background:#1a1035;border-radius:14px;padding:20px;box-shadow:0 4px 24px rgba(139,92,246,0.1);border-left:4px solid ${t.color};">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
         <span style="font-size:24px;">${t.icon}</span>
-        <div><div style="font-size:13px;font-weight:700;color:#0f172a;">${t.title}</div><div style="font-size:18px;font-weight:700;color:${t.color};">${t.trend}</div></div>
+        <div><div style="font-size:13px;font-weight:700;color:#f5f3ff;">${t.title}</div><div style="font-size:18px;font-weight:700;color:${t.color};">${t.trend}</div></div>
       </div>
-      <p style="font-size:12px;color:#64748b;line-height:1.5;">${t.detail}</p>
+      <p style="font-size:12px;color:#7c6fa0;line-height:1.5;">${t.detail}</p>
     </div>`).join('');
   const dg=document.getElementById('dti-grid');
   if(dg) dg.innerHTML=DTI_DATA.map(d=>`
-    <div style="background:#f8fafc;border-radius:12px;padding:14px;text-align:center;">
-      <div style="font-size:13px;font-weight:600;color:#0f172a;margin-bottom:6px;">${d.country}</div>
-      <div style="font-size:26px;font-weight:700;color:#0ea5e9;">${d.score}</div>
-      <div style="font-size:11px;color:#64748b;">DTI Score</div>
-      <div style="height:6px;border-radius:3px;background:#e2e8f0;overflow:hidden;margin-top:8px;"><div style="height:100%;border-radius:3px;background:#0ea5e9;width:${d.score}%;"></div></div>
+    <div style="background:#120d24;border-radius:12px;padding:14px;text-align:center;">
+      <div style="font-size:13px;font-weight:600;color:#f5f3ff;margin-bottom:6px;">${d.country}</div>
+      <div style="font-size:26px;font-weight:700;color:#a78bfa;">${d.score}</div>
+      <div style="font-size:11px;color:#7c6fa0;">DTI Score</div>
+      <div style="height:6px;border-radius:3px;background:#e2e8f0;overflow:hidden;margin-top:8px;"><div style="height:100%;border-radius:3px;background:#7c3aed;width:${d.score}%;"></div></div>
     </div>`).join('');
 }
 
