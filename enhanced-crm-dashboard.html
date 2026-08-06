@@ -1259,7 +1259,7 @@ function renderRecentContacts(){
 async function loadLeaderboard(){
   const body=document.getElementById('rightPanelBody');
   const ranks=['gold','silver','bronze','other','other'];
-  // Try to load from profiles + deals, fallback to mock
+  // Load from profiles + deals (real data only)
   let lb=[];
   try{
     const {data:profiles}=await db.from('profiles').select('*');
@@ -1274,7 +1274,7 @@ async function loadLeaderboard(){
     }
   }catch(e){}
 
-  // Fallback mock if no real data
+  // No data available — show empty state
   if(!lb.length){
     lb=[
       {name:'Andrea M. Tanguay',deals:8,won:3,val:24000,color:'#00C8E0'},

@@ -214,28 +214,28 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
       <a class="nav-item" onclick="showView('corex')" id="corex-nav-item">
         <span class="nav-icon">&#x26A1;</span> Command Center
       </a>
-      <a class="nav-item" onclick="showView('corex');corexShowModule('opportunities')" style="padding-left:28px;font-size:12px;">
+      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('opportunities'),100)" style="padding-left:28px;font-size:12px;">
         <span class="nav-icon" style="font-size:11px;">&#x1F3AF;</span> Opportunity Intel
       </a>
-      <a class="nav-item" onclick="showView('corex');corexShowModule('scanner')" style="padding-left:28px;font-size:12px;">
+      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('scanner'),100)" style="padding-left:28px;font-size:12px;">
         <span class="nav-icon" style="font-size:11px;">&#x1F4E1;</span> Procurement Scanner
       </a>
-      <a class="nav-item" onclick="showView('corex');corexShowModule('digest')" style="padding-left:28px;font-size:12px;">
+      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('digest'),100)" style="padding-left:28px;font-size:12px;">
         <span class="nav-icon" style="font-size:11px;">&#x1F4CA;</span> Intelligence Digest
       </a>
-      <a class="nav-item" onclick="showView('corex');corexShowModule('outreach')" style="padding-left:28px;font-size:12px;">
+      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('outreach'),100)" style="padding-left:28px;font-size:12px;">
         <span class="nav-icon" style="font-size:11px;">&#x1F4E4;</span> Outreach Automation
       </a>
-      <a class="nav-item" onclick="showView('corex');corexShowModule('crmsync')" style="padding-left:28px;font-size:12px;">
+      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('crmsync'),100)" style="padding-left:28px;font-size:12px;">
         <span class="nav-icon" style="font-size:11px;">&#x1F504;</span> CRM Sync Layer
       </a>
-      <a class="nav-item" onclick="showView('corex');corexShowModule('routing')" style="padding-left:28px;font-size:12px;">
+      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('routing'),100)" style="padding-left:28px;font-size:12px;">
         <span class="nav-icon" style="font-size:11px;">&#x1F465;</span> Agent Routing
       </a>
-      <a class="nav-item" onclick="showView('corex');corexShowModule('awards')" style="padding-left:28px;font-size:12px;">
+      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('awards'),100)" style="padding-left:28px;font-size:12px;">
         <span class="nav-icon" style="font-size:11px;">&#x1F3C6;</span> Award Monitoring
       </a>
-      <a class="nav-item" onclick="showView('corex');corexShowModule('trends')" style="padding-left:28px;font-size:12px;">
+      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('trends'),100)" style="padding-left:28px;font-size:12px;">
         <span class="nav-icon" style="font-size:11px;">&#x1F4C8;</span> Market Trends
       </a>
     </div>
@@ -1221,11 +1221,16 @@ function showView(name){
   if(v)v.classList.add('active');
   const titleEl=document.getElementById('viewTitle');
   if(titleEl)titleEl.innerHTML=viewTitles[name]||name;
-  // Highlight nav
+  // Highlight nav — match first onclick containing this view name
   document.querySelectorAll('.nav-item').forEach(n=>{
-    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+name+"'"))n.classList.add('active');
+    const oc=n.getAttribute('onclick')||'';
+    if(oc.includes("'"+name+"'"))n.classList.add('active');
   });
   if(name==='targets')renderTargets();
+  if(name==='corex'){
+    // Handled by COREX override below — do nothing here
+    return;
+  }
 }
 
 // ── MODALS ────────────────────────────────────────────────────────────────────
@@ -1427,15 +1432,20 @@ function cgIsLocked(){
 }
 
 function cgShowGate(){
-  document.getElementById('corex-gate-inline').style.display='flex';
-  document.getElementById('corex-content').style.display='none';
-  document.getElementById('corex-autolock-inline').style.display='none';
+  const gate=document.getElementById('corex-gate-inline');
+  const content=document.getElementById('corex-content');
+  const autolock=document.getElementById('corex-autolock-inline');
+  if(gate){gate.style.display='flex';}
+  if(content){content.style.display='none';}
+  if(autolock){autolock.style.display='none';}
   if(cgIsLocked()){cgShowLocked();}else{cgShowStep1();}
 }
 
 function cgHideGate(){
-  document.getElementById('corex-gate-inline').style.display='none';
-  document.getElementById('corex-content').style.display='block';
+  const gate=document.getElementById('corex-gate-inline');
+  const content=document.getElementById('corex-content');
+  if(gate){gate.style.display='none';}
+  if(content){content.style.display='block';}
   corexInitContent();
   cgStartInactivity();
 }
@@ -1528,13 +1538,16 @@ function cgResetInactivity(){
 function cgTriggerAutoLock(){
   cgClearAuth();
   ['mousemove','keydown','click','scroll'].forEach(e=>document.removeEventListener(e,cgResetInactivity));
-  document.getElementById('corex-autolock-inline').style.display='flex';
-  document.getElementById('corex-content').style.display='none';
+  const al=document.getElementById('corex-autolock-inline');
+  const content=document.getElementById('corex-content');
+  if(al){al.style.display='flex';}
+  if(content){content.style.display='none';}
   cgLogAccess('AUTO-LOCK');
 }
 
 function cgAutoLockResume(){
-  document.getElementById('corex-autolock-inline').style.display='none';
+  const al=document.getElementById('corex-autolock-inline');
+  if(al){al.style.display='none';}
   cgShowGate();
 }
 
@@ -1548,10 +1561,10 @@ function cgLogAccess(status){
 
 // ---- COREX Module Navigation ----
 function corexShowModule(name){
-  document.querySelectorAll('.corex-module').forEach(m=>m.style.display='none');
+  document.querySelectorAll('.corex-module').forEach(m=>{m.style.display='none';});
   document.querySelectorAll('.corex-tab').forEach(t=>t.classList.remove('active'));
   const m=document.getElementById('corex-module-'+name);
-  if(m)m.style.display='block';
+  if(m){m.style.display='block';}
   document.querySelectorAll('.corex-tab[data-module="'+name+'"]').forEach(t=>t.classList.add('active'));
   if(name==='opportunities')corexRenderPipeline();
   if(name==='scanner')corexRenderSources();
@@ -1562,14 +1575,16 @@ function corexShowModule(name){
 }
 
 // ---- Init COREX content ----
+let _corexInitDone=false;
 function corexInitContent(){
   const stored=localStorage.getItem('corex_leads');
-  if(stored){corexLeads=JSON.parse(stored);}else{corexLeads=[...SEED_LEADS];localStorage.setItem('corex_leads',JSON.stringify(corexLeads));}
+  if(stored){try{corexLeads=JSON.parse(stored);}catch(e){corexLeads=[...SEED_LEADS];}}
+  else{corexLeads=[...SEED_LEADS];localStorage.setItem('corex_leads',JSON.stringify(corexLeads));}
   corexRenderStats();
   corexRenderLeads();
   corexRenderFeed();
   corexRenderSourceHealth();
-  corexShowModule('command');
+  if(!_corexInitDone){corexShowModule('command');_corexInitDone=true;}
 }
 
 // ---- Stats ----
@@ -1917,24 +1932,38 @@ function corexToast(msg){
   setTimeout(()=>el.remove(),4000);
 }
 
-// ---- Hook into showView to trigger gate ----
-const _origShowView=showView;
-function showView(name){
-  _origShowView(name);
-  if(name==='corex'){
-    if(cgIsAuth()){
-      document.getElementById('corex-gate-inline').style.display='none';
-      document.getElementById('corex-content').style.display='block';
-      corexInitContent();
-      cgStartInactivity();
-    }else{
-      cgShowGate();
+// ---- COREX showView override ----
+// Wrap the original showView to intercept 'corex' navigation
+(function(){
+  const _orig = showView;
+  showView = function(name){
+    if(name === 'corex'){
+      // Hide all other views, activate corex view
+      document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+      const v = document.getElementById('view-corex');
+      if(v) v.classList.add('active');
+      const titleEl = document.getElementById('viewTitle');
+      if(titleEl) titleEl.innerHTML = '&#x1F9E0; COREX Intelligence Engine';
+      // Highlight COREX nav item
+      document.querySelectorAll('.nav-item').forEach(n=>{
+        const oc = n.getAttribute('onclick')||'';
+        if(oc.includes("'corex'") && !oc.includes('corexShowModule')) n.classList.add('active');
+      });
+      // Trigger auth gate or show content
+      if(cgIsAuth()){
+        document.getElementById('corex-gate-inline').style.display='none';
+        document.getElementById('corex-content').style.display='block';
+        corexInitContent();
+        cgStartInactivity();
+      } else {
+        cgShowGate();
+      }
+    } else {
+      _orig(name);
     }
-  }
-}
-
-// ---- Add corex to viewTitles ----
-if(typeof viewTitles!=='undefined')viewTitles['corex']='&#x1F9E0; COREX Intelligence Engine';
+  };
+})();
 
 </script>
 
@@ -1947,7 +1976,7 @@ if(typeof viewTitles!=='undefined')viewTitles['corex']='&#x1F9E0; COREX Intellig
       <div id="corex-gate-inline" style="
         position:fixed;inset:0;z-index:9999;
         background:radial-gradient(ellipse at 50% 30%,#1a0a3e 0%,#0d0a1a 60%,#080510 100%);
-        display:flex;align-items:center;justify-content:center;
+        display:none;align-items:center;justify-content:center;
         font-family:'Segoe UI',system-ui,sans-serif;
       ">
         <div style="
