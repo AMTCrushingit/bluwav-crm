@@ -9,11 +9,13 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
-  --cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;
-  --red:#ef4444;--purple:#a78bfa;--text:#fff;--text2:#b0bec5;--text3:#4a5568;
+  --bg:#0d0a1a;--bg2:#120d24;--bg3:#1a1035;--bg4:#2d1f5e;
+  --border:rgba(167,139,250,0.1);--border2:rgba(167,139,250,0.2);
+  --cyan:#a78bfa;--gold:#c4b5fd;--orange:#ddd6fe;--green:#22c55e;
+  --red:#ef4444;--purple:#8b5cf6;--text:#f5f3ff;--text2:#c4b5fd;--text3:#7c6fa0;
   --sidebar:220px;
+  --corex:#8b5cf6;--corex-light:#c4b5fd;--corex-dark:#7c3aed;
+  --lavender:#ede9fe;--lavender2:#ddd6fe;--lavender3:#c4b5fd;
 }
 html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:row;overflow:hidden;}
 ::-webkit-scrollbar{width:4px;height:4px;}
@@ -31,7 +33,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .nav-label{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);padding:10px 16px 4px;}
 .nav-item{display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;border-radius:8px;margin:1px 8px;font-size:13px;font-weight:500;color:var(--text3);transition:all .15s;text-decoration:none;}
 .nav-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
-.nav-item.active{background:rgba(0,194,209,.12);color:var(--cyan);font-weight:700;}
+.nav-item.active{background:rgba(139,92,246,.15);color:var(--corex-light);font-weight:700;border-left:2px solid var(--corex);}
 .nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
 .sidebar-bottom{padding:12px;border-top:1px solid var(--border);}
 .founder-badge{background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(212,175,55,.05));border:1px solid rgba(212,175,55,.3);border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:center;}
@@ -49,14 +51,14 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .topbar-sub{font-size:11px;color:var(--text3);}
 .topbar-right{display:flex;align-items:center;gap:8px;}
 .refresh-btn{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--text3);padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;}
-.refresh-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.refresh-btn:hover{border-color:var(--corex);color:var(--corex-light);}
 .last-updated{font-size:11px;color:var(--text3);}
 
 /* COMMAND STRIP */
 .command-strip{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 24px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;flex-shrink:0;}
 .cmd-tile{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;position:relative;overflow:hidden;}
 .cmd-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.cmd-tile.t-cyan::before{background:var(--cyan);}
+.cmd-tile.t-cyan::before{background:var(--corex);}
 .cmd-tile.t-gold::before{background:var(--gold);}
 .cmd-tile.t-green::before{background:var(--green);}
 .cmd-tile.t-orange::before{background:var(--orange);}
@@ -159,6 +161,26 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
   .two-col,.three-col{grid-template-columns:1fr;}
   .sidebar{display:none;}
 }
+
+/* ===== COREX MODULE STYLES ===== */
+@keyframes corex-pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+.corex-tab {
+  padding: 7px 14px; border: none; border-radius: 8px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: inherit; color: var(--text3);
+  background: transparent; transition: all .15s;
+}
+.corex-tab:hover { background: rgba(139,92,246,.1); color: var(--corex-light); }
+.corex-tab.active { background: rgba(139,92,246,.2); color: var(--corex-light); box-shadow: 0 0 0 1px rgba(167,139,250,.3); }
+.corex-module { display: none; }
+.corex-module.active { display: block; }
+.corex-score-high { background: rgba(16,185,129,.15); color: #6ee7b7; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
+.corex-score-mid  { background: rgba(245,158,11,.15); color: #fcd34d; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
+.corex-score-low  { background: rgba(239,68,68,.15); color: #fca5a5; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
+.corex-tag { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; margin: 1px; }
+.corex-feed-item { padding: 9px 14px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); }
+.corex-feed-item:last-child { border-bottom: none; }
+
 </style>
 </head>
 <body>
@@ -186,6 +208,36 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
       <a class="nav-item" onclick="showView('users')"><span class="nav-icon">&#x1F465;</span> Users & Roles</a>
       <a class="nav-item" onclick="showView('alldeals')"><span class="nav-icon">&#x1F4BC;</span> All Deals</a>
       <a class="nav-item" onclick="showView('allcontacts')"><span class="nav-icon">&#x1F464;</span> All Contacts</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label" style="color:var(--corex);letter-spacing:.12em;">&#x1F9E0; COREX</div>
+      <a class="nav-item" onclick="showView('corex')" id="corex-nav-item">
+        <span class="nav-icon">&#x26A1;</span> Command Center
+      </a>
+      <a class="nav-item" onclick="showView('corex');corexShowModule('opportunities')" style="padding-left:28px;font-size:12px;">
+        <span class="nav-icon" style="font-size:11px;">&#x1F3AF;</span> Opportunity Intel
+      </a>
+      <a class="nav-item" onclick="showView('corex');corexShowModule('scanner')" style="padding-left:28px;font-size:12px;">
+        <span class="nav-icon" style="font-size:11px;">&#x1F4E1;</span> Procurement Scanner
+      </a>
+      <a class="nav-item" onclick="showView('corex');corexShowModule('digest')" style="padding-left:28px;font-size:12px;">
+        <span class="nav-icon" style="font-size:11px;">&#x1F4CA;</span> Intelligence Digest
+      </a>
+      <a class="nav-item" onclick="showView('corex');corexShowModule('outreach')" style="padding-left:28px;font-size:12px;">
+        <span class="nav-icon" style="font-size:11px;">&#x1F4E4;</span> Outreach Automation
+      </a>
+      <a class="nav-item" onclick="showView('corex');corexShowModule('crmsync')" style="padding-left:28px;font-size:12px;">
+        <span class="nav-icon" style="font-size:11px;">&#x1F504;</span> CRM Sync Layer
+      </a>
+      <a class="nav-item" onclick="showView('corex');corexShowModule('routing')" style="padding-left:28px;font-size:12px;">
+        <span class="nav-icon" style="font-size:11px;">&#x1F465;</span> Agent Routing
+      </a>
+      <a class="nav-item" onclick="showView('corex');corexShowModule('awards')" style="padding-left:28px;font-size:12px;">
+        <span class="nav-icon" style="font-size:11px;">&#x1F3C6;</span> Award Monitoring
+      </a>
+      <a class="nav-item" onclick="showView('corex');corexShowModule('trends')" style="padding-left:28px;font-size:12px;">
+        <span class="nav-icon" style="font-size:11px;">&#x1F4C8;</span> Market Trends
+      </a>
     </div>
     <div class="nav-section">
       <div class="nav-label">System</div>
@@ -1160,6 +1212,7 @@ const viewTitles={
   users:'&#x1F465; Users & Roles',
   alldeals:'&#x1F4BC; All Deals',
   allcontacts:'&#x1F464; All Contacts',
+  corex:'&#x1F9E0; COREX Intelligence Engine',
 };
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -1285,6 +1338,937 @@ async function signOut(){
   ['mousedown','keydown','scroll','click'].forEach(e=>document.addEventListener(e,reset,true));
   reset();
 })();
+
+// ================================================================
+// COREX INTELLIGENCE ENGINE — Super Admin Module JS
+// ================================================================
+
+// ---- Data ----
+const SEED_LEADS=[{id:"L001",name:"Caribbean Regional MSME Seed Fund",org:"World Bank / Caribbean Dev Bank",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Donor Project",deadline:"2026-08-26",budget:"USD 3.0M",contact:"procurement@worldbank.org",description:"World Bank-funded program providing seed capital and technical assistance to MSMEs across the Caribbean. Seeking implementation partners with CRM, digital tools, and growth advisory experience.",score:92,tags:["CRM Fit","Growth Fit","High Budget","Urgent"],status:"New",fitBreakdown:{industry:25,geo:18,budget:20,orgType:13,sourceQuality:10,urgency:6},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T06:12:00Z"},{id:"L002",name:"OECS Digital Transformation Project",org:"OECS Commission",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1F1}\u{1F1E8} St. Lucia",type:"Government RFP",deadline:"2026-08-26",budget:"USD 94.0M",contact:"tenders@oecs.int",description:"OECS digital transformation initiative seeking vendors and consultants for CRM implementation, data systems, and capacity building across 6 member states.",score:89,tags:["CRM Fit","High Budget","Gov","Urgent"],status:"New",fitBreakdown:{industry:24,geo:20,budget:20,orgType:10,sourceQuality:10,urgency:5},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T06:18:00Z"},{id:"L003",name:"Green Climate Fund - DOMCREP Project",org:"CCCCC / Govt. of Dominica",source:"Donor Portal",sourceType:"donor",country:"\u{1F1E9}\u{1F1F2} Dominica",type:"Donor Project",deadline:"2026-07-31",budget:"TBD (GCF-funded)",contact:"procurement@caribbeanclimate.bz",description:"Community resilience enhancement project. Seeking technical consultants for project management tools, reporting systems, and stakeholder engagement platforms.",score:78,tags:["Growth Fit","NGO","Urgent"],status:"Reviewed",fitBreakdown:{industry:18,geo:18,budget:12,orgType:13,sourceQuality:10,urgency:7},assignedAgent:"Aaliya",pushedToCRM:true,whatsappSent:true,foundAt:"2026-08-05T06:25:00Z"},{id:"L004",name:"Devex: CRM & Digital Tools Consultant - Caribbean NGO",org:"ReliefWeb / Unnamed NGO",source:"Job Board",sourceType:"jobboard",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"Nonprofit",deadline:"2026-08-15",budget:"USD 45K contract",contact:"hr@devex-post.org",description:"Caribbean-based NGO seeking a CRM consultant to implement donor management system, automate reporting, and train 20 staff. Remote-friendly with quarterly travel to Kingston.",score:85,tags:["CRM Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:25,geo:16,budget:14,orgType:15,sourceQuality:8,urgency:7},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T07:01:00Z"},{id:"L005",name:"Caribbean Resilient Renewable Energy Facility",org:"World Bank",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Donor Project",deadline:"2026-08-26",budget:"USD 90.0M",contact:"procurement@worldbank.org",description:"Infrastructure investment facility for renewable energy across Caribbean. Seeking project management, stakeholder engagement tools, and data analytics vendors.",score:74,tags:["High Budget","Gov"],status:"New",fitBreakdown:{industry:14,geo:20,budget:20,orgType:8,sourceQuality:10,urgency:2},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T07:15:00Z"},{id:"L006",name:"TechStartups TT - Founder CRM Need",org:"TechStartups TT Community",source:"Founder List",sourceType:"founder",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Startup",deadline:null,budget:"USD 5-15K/yr SaaS",contact:"founders@techstartups.tt",description:"Community of 40+ T&T tech founders seeking a CRM that handles Caribbean payment gateways, WhatsApp integration, and multi-currency. High COREX Fit Index — qualified for CRM sync.",score:96,tags:["CRM Fit","Growth Fit","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:20,budget:15,orgType:15,sourceQuality:8,urgency:3},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T07:30:00Z"},{id:"L007",name:"IDB Lab - Caribbean Startup Accelerator",org:"Inter-American Development Bank",source:"Donor Portal",sourceType:"donor",country:"\u{1F1EC}\u{1F1FE} Guyana",type:"Donor Project",deadline:"2026-09-01",budget:"USD 2.5M",contact:"idblab@iadb.org",description:"IDB Lab accelerator for Caribbean startups. Seeking CRM, growth tools, and digital infrastructure vendors to onboard 30 participating startups.",score:91,tags:["CRM Fit","Growth Fit","High Budget","Tech Sector"],status:"Pushed",fitBreakdown:{industry:25,geo:16,budget:18,orgType:15,sourceQuality:10,urgency:7},assignedAgent:"Marcus",pushedToCRM:true,whatsappSent:true,foundAt:"2026-08-05T07:45:00Z"},{id:"L008",name:"ReliefWeb: M&E Officer (Digital)",org:"Caribbean Disaster Emergency Management Agency",source:"Job Board",sourceType:"jobboard",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Nonprofit",deadline:"2026-08-20",budget:"TBD",contact:"hr@cdema.org",description:"CDEMA seeking M&E officer to implement digital reporting tools, dashboards, and stakeholder CRM for disaster response programs.",score:72,tags:["CRM Fit","NGO"],status:"New",fitBreakdown:{industry:20,geo:18,budget:8,orgType:13,sourceQuality:8,urgency:5},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T08:00:00Z"},{id:"L009",name:"USAID Caribbean Youth Empowerment Grant",org:"USAID / Caribbean Youth Network",source:"Donor Portal",sourceType:"donor",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"Donor Project",deadline:"2026-08-30",budget:"USD 1.2M",contact:"caribbeangrants@usaid.gov",description:"USAID grant program for youth empowerment in Caribbean. Partner organizations need CRM for participant tracking, reporting, and digital engagement.",score:80,tags:["Growth Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:20,geo:18,budget:12,orgType:15,sourceQuality:10,urgency:5},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T08:15:00Z"},{id:"L010",name:"Jamaica Business Development Corp - SME Directory",org:"JBDC",source:"Directory",sourceType:"directory",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"SME",deadline:null,budget:"USD 3-8K/yr",contact:"info@jbdc.net",description:"JBDC registers and supports 500+ Jamaican SMEs annually. Many businesses actively seeking CRM solutions. Partnership opportunity to reach their entire SME network.",score:83,tags:["CRM Fit","Growth Fit"],status:"Assigned",fitBreakdown:{industry:22,geo:20,budget:10,orgType:15,sourceQuality:7,urgency:9},assignedAgent:"Simone",pushedToCRM:true,whatsappSent:false,foundAt:"2026-08-05T08:30:00Z"},{id:"L011",name:"GIZ Digital Economy Caribbean Program",org:"GIZ / EU Delegation",source:"Donor Portal",sourceType:"donor",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Donor Project",deadline:"2026-09-15",budget:"EUR 4.8M",contact:"digital@giz.de",description:"GIZ program promoting digital economy in Caribbean. Seeking tools and platforms for SME digitization, CRM adoption, and e-commerce enablement.",score:88,tags:["CRM Fit","Growth Fit","High Budget","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:18,budget:18,orgType:12,sourceQuality:10,urgency:5},assignedAgent:"Marcus",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:00:00Z"},{id:"L012",name:"Caribbean Fintech Founders Network",org:"Fintech Caribbean",source:"Founder List",sourceType:"founder",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Startup",deadline:null,budget:"USD 10-25K/yr",contact:"network@fintechcaribbean.com",description:"Network of 120+ Caribbean fintech founders. Active WhatsApp community. Many need CRM with payment tracking, client management, and growth analytics.",score:94,tags:["CRM Fit","Growth Fit","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:20,budget:15,orgType:15,sourceQuality:9,urgency:10},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:15:00Z"},{id:"L013",name:"Guyana eProcure - Ministry of Agriculture Tech Tender",org:"Ministry of Agriculture, Guyana",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1EC}\u{1F1FE} Guyana",type:"Government RFP",deadline:"2026-08-19",budget:"USD 200K+",contact:"eprocure@gov.gy",description:"Guyana Ministry of Agriculture seeking digital management platform for farmer registry, supply chain tracking, and government stakeholder CRM.",score:76,tags:["CRM Fit","Gov","Urgent"],status:"New",fitBreakdown:{industry:22,geo:18,budget:14,orgType:10,sourceQuality:10,urgency:2},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:30:00Z"},{id:"L014",name:"Idealist: Digital Transformation Manager - Trinidad NGO",org:"Caribbean Heart Foundation",source:"Job Board",sourceType:"jobboard",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"Nonprofit",deadline:"2026-08-25",budget:"Contract: USD 35K",contact:"jobs@caribbeanheartfoundation.org",description:"Caribbean Heart Foundation hiring digital transformation manager to lead CRM implementation, patient/donor database migration, and WhatsApp communications strategy.",score:87,tags:["CRM Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:25,geo:20,budget:12,orgType:15,sourceQuality:8,urgency:7},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T09:45:00Z"},{id:"L015",name:"Caribbean Development Bank - Business Innovation Fund",org:"Caribbean Development Bank",source:"RFP Portal",sourceType:"rfp",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"Donor Project",deadline:"2026-09-30",budget:"USD 8.5M",contact:"bif@caribank.org",description:"CDB fund supporting business innovation and digital adoption across Caribbean. Grants available to SMEs implementing CRM, ERP, and growth tools.",score:82,tags:["CRM Fit","Growth Fit","High Budget"],status:"New",fitBreakdown:{industry:22,geo:20,budget:18,orgType:12,sourceQuality:8,urgency:2},assignedAgent:"Devon",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:00:00Z"},{id:"L016",name:"T&T Business Registry - Newly Incorporated SMEs Q3 2026",org:"Companies Registry TT",source:"Directory",sourceType:"directory",country:"\u{1F1F9}\u{1F1F9} Trinidad & Tobago",type:"SME",deadline:null,budget:"USD 2-5K/yr",contact:"registry@companies.gov.tt",description:"120 new companies incorporated in Trinidad Q3 2026. High percentage in services, consulting, and tech sectors. Strong CRM prospects list.",score:71,tags:["CRM Fit"],status:"New",fitBreakdown:{industry:20,geo:20,budget:8,orgType:12,sourceQuality:7,urgency:4},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:15:00Z"},{id:"L017",name:"WISTLE - Women in STEM Caribbean",org:"World Bank / OECS",source:"Donor Portal",sourceType:"donor",country:"\u{1F1F1}\u{1F1E8} St. Lucia",type:"Donor Project",deadline:"2026-08-26",budget:"TBD",contact:"wistle@worldbank.org",description:"WISTLE initiative empowering women in STEM across Caribbean. Program management and participant tracking CRM needed urgently.",score:79,tags:["Growth Fit","NGO","Urgent"],status:"New",fitBreakdown:{industry:20,geo:18,budget:10,orgType:15,sourceQuality:10,urgency:6},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:30:00Z"},{id:"L018",name:"AngelList Caribbean - SaaS Startup Cohort",org:"AngelList / Caribbean Startup Network",source:"Founder List",sourceType:"founder",country:"\u{1F1EC}\u{1F1FE} Guyana",type:"Startup",deadline:null,budget:"USD 8-20K/yr",contact:"apply@angellist-caribbean.co",description:"15 SaaS and tech startups in Caribbean AngelList cohort. All need CRM and growth tools. Partnership with cohort sponsor opportunity.",score:90,tags:["CRM Fit","Growth Fit","Tech Sector"],status:"New",fitBreakdown:{industry:25,geo:16,budget:15,orgType:15,sourceQuality:9,urgency:10},assignedAgent:"Marcus",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T10:45:00Z"},{id:"L019",name:"Caribbean Health Information Network",org:"PAHO / WHO Caribbean",source:"Donor Portal",sourceType:"donor",country:"\u{1F1EF}\u{1F1F2} Jamaica",type:"Nonprofit",deadline:"2026-09-10",budget:"USD 1.8M",contact:"info@carhin.org",description:"PAHO-funded health information network seeking CRM for provider registry, patient referral tracking, and multi-country stakeholder management.",score:77,tags:["CRM Fit","NGO"],status:"Reviewed",fitBreakdown:{industry:22,geo:18,budget:12,orgType:15,sourceQuality:8,urgency:2},assignedAgent:"Aaliya",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T11:00:00Z"},{id:"L020",name:"Barbados Investment & Development Corp - Export Ready Program",org:"BIDC",source:"Directory",sourceType:"directory",country:"\u{1F1E7}\u{1F1E7} Barbados",type:"SME",deadline:"2026-08-31",budget:"USD 12K program",contact:"exportready@bidc.com.bb",description:"BIDC Export Ready Program supporting Barbadian SMEs with CRM, digital presence, and international market access tools. 50 SME slots available.",score:86,tags:["CRM Fit","Growth Fit","Urgent"],status:"New",fitBreakdown:{industry:24,geo:20,budget:12,orgType:15,sourceQuality:8,urgency:7},assignedAgent:"Simone",pushedToCRM:false,whatsappSent:false,foundAt:"2026-08-05T11:15:00Z"}];
+const SOURCES_DATA=[
+  {id:"s1",name:"UNGM / Tenderal",icon:"📋",desc:"UN Global Marketplace & Caribbean RFP Tenders (World Bank, CDB)",type:"rfp",active:true,freq:"6h",lastScraped:"2026-08-06T06:00:00Z",totalLeads:142,todayLeads:4,dailyCounts:[2,5,3,4,6,3,4]},
+  {id:"s2",name:"JBDC / Directories",icon:"🏢",desc:"JBDC, BIDC, T&T Business Registry, Caribbean SME listings",type:"directory",active:true,freq:"24h",lastScraped:"2026-08-06T06:00:00Z",totalLeads:89,todayLeads:3,dailyCounts:[1,3,2,1,4,2,3]},
+  {id:"s3",name:"Devex / ReliefWeb",icon:"💼",desc:"Devex, ReliefWeb, Idealist — Caribbean NGO & nonprofit postings",type:"jobboard",active:true,freq:"12h",lastScraped:"2026-08-06T06:00:00Z",totalLeads:67,todayLeads:3,dailyCounts:[2,1,4,3,2,5,3]},
+  {id:"s4",name:"Donor Portals",icon:"🌱",desc:"USAID, GIZ, Green Climate Fund, CCCCC, IADB donor platforms",type:"donor",active:true,freq:"6h",lastScraped:"2026-08-06T06:00:00Z",totalLeads:118,todayLeads:6,dailyCounts:[3,4,5,6,4,7,6]},
+  {id:"s5",name:"Founder Networks",icon:"📣",desc:"AngelList Caribbean, LinkedIn Startup Founders, TechStartups TT",type:"founder",active:true,freq:"12h",lastScraped:"2026-08-06T06:00:00Z",totalLeads:53,todayLeads:3,dailyCounts:[1,2,3,2,4,1,3]},
+  {id:"s6",name:"EU-LAC / IDB",icon:"🌍",desc:"EU-LAC Digital Programme, IDB Lab, Inter-American Development Bank",type:"donor",active:true,freq:"6h",lastScraped:"2026-08-06T06:00:00Z",totalLeads:74,todayLeads:2,dailyCounts:[2,1,3,3,1,2,2]},
+  {id:"s7",name:"Guyana eProcure",icon:"🏛️",desc:"Guyana Government Procurement Portal",type:"rfp",active:true,freq:"6h",lastScraped:"2026-08-06T06:00:00Z",totalLeads:31,todayLeads:1,dailyCounts:[1,0,1,2,0,1,1]},
+  {id:"s8",name:"OECS Procurement",icon:"🌊",desc:"OECS Commission Procurement & Digital Transformation tenders",type:"rfp",active:false,freq:"12h",lastScraped:"2026-08-05T18:00:00Z",totalLeads:28,todayLeads:0,dailyCounts:[1,1,0,2,1,0,0]}
+];
+const AGENTS_DATA=[
+  {name:"Devon",specialty:"Gov / RFP",region:"🌊 Caribbean"},
+  {name:"Aaliya",specialty:"NGO / Donor",region:"🌊 Caribbean"},
+  {name:"Marcus",specialty:"UN / Tech",region:"🌊 Caribbean & LATAM"},
+  {name:"Simone",specialty:"Startup Ecosystems",region:"🌊 Caribbean"}
+];
+const DEFAULT_WEIGHTS={industry:25,geo:20,budget:20,orgType:15,sourceQuality:10,urgency:10};
+
+const COREX_AWARD_DATA=[
+  {name:"OECS E-Government Phase 1",org:"OECS Commission",value:"USD 12M",awarded:"2026-06-15",winner:"Accenture Caribbean",status:"Relationship Positioned",notes:"Follow-up for Phase 2 CRM component"},
+  {name:"USAID Digital Literacy TT",org:"USAID / T&T Ministry",value:"USD 800K",awarded:"2026-05-20",winner:"Local NGO Consortium",status:"Monitoring",notes:"Partner org needs CRM — outreach pending"},
+  {name:"GIZ SME Digitization Pilot",org:"GIZ / EU",value:"EUR 1.2M",awarded:"2026-04-10",winner:"TechBridge Caribbean",status:"Follow-up Opportunity",notes:"Phase 2 RFP expected Q4 2026"},
+  {name:"CDB Innovation Grant Round 3",org:"Caribbean Development Bank",value:"USD 3.5M",awarded:"2026-03-28",winner:"Multiple SMEs",status:"Relationship Positioned",notes:"10 winning SMEs need CRM tools"},
+  {name:"JBDC Digital Transformation",org:"JBDC Jamaica",value:"USD 450K",awarded:"2026-02-14",winner:"IBM Jamaica",status:"Monitoring",notes:"Sub-contract CRM opportunity identified"},
+  {name:"Guyana Digital Gov Phase 1",org:"Govt. of Guyana",value:"USD 5.2M",awarded:"2026-01-30",winner:"Deloitte",status:"Follow-up Opportunity",notes:"Phase 2 includes CRM for 12 ministries"},
+  {name:"PAHO Health Info Network",org:"PAHO / WHO",value:"USD 2.1M",awarded:"2025-12-10",winner:"Health Informatics Ltd",status:"Monitoring",notes:"CRM component not yet awarded"},
+  {name:"IDB Startup Accelerator Cohort 1",org:"IDB Lab",value:"USD 1.8M",awarded:"2025-11-05",winner:"Caribbean Ventures",status:"Relationship Positioned",notes:"Cohort 2 RFP expected Aug 2026"}
+];
+
+const COREX_TRENDS_DATA=[
+  {title:"Caribbean Digital Transformation Spend",trend:"↑ 34% YoY",detail:"Regional governments increasing digital procurement budgets. OECS, Guyana, and Jamaica leading.",color:"#8b5cf6",icon:"📈"},
+  {title:"NGO CRM Adoption Rate",trend:"↑ 28% YoY",detail:"Caribbean NGOs accelerating CRM adoption driven by donor reporting requirements.",color:"#22c55e",icon:"🌱"},
+  {title:"Startup Ecosystem Growth",trend:"↑ 41% YoY",detail:"Caribbean tech startups growing rapidly. T&T, Barbados, and Jamaica leading fintech and SaaS.",color:"#a78bfa",icon:"🚀"},
+  {title:"Donor Funding to Caribbean",trend:"↑ 19% YoY",detail:"USAID, GIZ, IDB, and World Bank increasing Caribbean digital economy investments.",color:"#f59e0b",icon:"💰"}
+];
+
+const COREX_DTI=[
+  {country:"🇹🇹 Trinidad & Tobago",score:74},{country:"🇯🇲 Jamaica",score:71},
+  {country:"🇧🇧 Barbados",score:78},{country:"🇬🇾 Guyana",score:65},
+  {country:"🇱🇨 St. Lucia",score:62},{country:"🇩🇲 Dominica",score:58}
+];
+
+const COREX_ROUTING_RULES=[
+  {type:"Government / RFP",agent:"Devon",icon:"🏛️",color:"#8b5cf6"},
+  {type:"NGO / Donor Project",agent:"Aaliya",icon:"🌱",color:"#22c55e"},
+  {type:"UN / Tech / International",agent:"Marcus",icon:"🔬",color:"#a78bfa"},
+  {type:"Startup / Founder Ecosystem",agent:"Simone",icon:"🚀",color:"#f59e0b"}
+];
+
+const COREX_AGENT_COLORS={Devon:{bg:"rgba(139,92,246,.15)",color:"#c4b5fd"},Aaliya:{bg:"rgba(16,185,129,.12)",color:"#6ee7b7"},Marcus:{bg:"rgba(167,139,250,.15)",color:"#ddd6fe"},Simone:{bg:"rgba(245,158,11,.12)",color:"#fcd34d"}};
+const COREX_SOURCE_ICON={rfp:"📋",directory:"🏢",jobboard:"💼",donor:"🌱",founder:"📣"};
+const COREX_TAG_COLORS={"CRM Fit":"background:rgba(139,92,246,.15);color:#c4b5fd;","Growth Fit":"background:rgba(16,185,129,.12);color:#6ee7b7;","High Budget":"background:rgba(245,158,11,.12);color:#fcd34d;","Urgent":"background:rgba(239,68,68,.12);color:#fca5a5;","Tech Sector":"background:rgba(167,139,250,.15);color:#ddd6fe;","NGO":"background:rgba(236,72,153,.1);color:#f9a8d4;","Gov":"background:rgba(99,102,241,.15);color:#a5b4fc;"};
+
+let corexLeads=[];
+let corexInactivityTimer=null;
+const COREX_PASSPHRASE='AMT2026-COREX';
+const COREX_PIN='262068';
+const COREX_MAX_ATTEMPTS=3;
+const COREX_LOCKOUT_MS=30*60*1000;
+const COREX_INACTIVITY_MS=10*60*1000;
+
+// ---- Security Gate ----
+function cgGetAttempts(){return parseInt(localStorage.getItem('corex_sa_attempts')||'0');}
+function cgSetAttempts(n){localStorage.setItem('corex_sa_attempts',String(n));}
+function cgGetLockout(){return parseInt(localStorage.getItem('corex_sa_lockout')||'0');}
+function cgSetLockout(ts){localStorage.setItem('corex_sa_lockout',String(ts));}
+function cgIsAuth(){
+  const a=localStorage.getItem('corex_sa_auth');
+  const ts=parseInt(localStorage.getItem('corex_sa_auth_ts')||'0');
+  if(a!=='true')return false;
+  if(Date.now()-ts>COREX_INACTIVITY_MS){cgClearAuth();return false;}
+  return true;
+}
+function cgSetAuth(){localStorage.setItem('corex_sa_auth','true');localStorage.setItem('corex_sa_auth_ts',String(Date.now()));}
+function cgClearAuth(){localStorage.removeItem('corex_sa_auth');localStorage.removeItem('corex_sa_auth_ts');}
+function cgIsLocked(){
+  const l=cgGetLockout();if(!l)return false;
+  if(Date.now()<l)return true;
+  cgSetAttempts(0);cgSetLockout(0);return false;
+}
+
+function cgShowGate(){
+  document.getElementById('corex-gate-inline').style.display='flex';
+  document.getElementById('corex-content').style.display='none';
+  document.getElementById('corex-autolock-inline').style.display='none';
+  if(cgIsLocked()){cgShowLocked();}else{cgShowStep1();}
+}
+
+function cgHideGate(){
+  document.getElementById('corex-gate-inline').style.display='none';
+  document.getElementById('corex-content').style.display='block';
+  corexInitContent();
+  cgStartInactivity();
+}
+
+function cgShowLocked(){
+  document.getElementById('cg-locked').style.display='block';
+  document.getElementById('cg-form').style.display='none';
+  let li=setInterval(function(){
+    const rem=cgGetLockout()-Date.now();
+    if(rem<=0){clearInterval(li);cgSetAttempts(0);cgSetLockout(0);document.getElementById('cg-locked').style.display='none';document.getElementById('cg-form').style.display='block';cgShowStep1();return;}
+    const m=Math.floor(rem/60000),s=Math.floor((rem%60000)/1000);
+    document.getElementById('cg-lockout-timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  },1000);
+}
+
+function cgShowStep1(){
+  document.getElementById('cg-step-1').style.display='block';
+  document.getElementById('cg-step-2').style.display='none';
+  document.getElementById('cg-dot-1').style.background='#8b5cf6';
+  document.getElementById('cg-dot-2').style.background='#2d1f5e';
+  cgUpdateAttempts();
+  setTimeout(()=>document.getElementById('cg-passphrase')?.focus(),100);
+}
+
+function cgUpdateAttempts(){
+  const n=cgGetAttempts();
+  const el=document.getElementById('cg-attempts');
+  if(n>0){el.style.display='block';document.getElementById('cg-attempt-count').textContent=n;}
+  else el.style.display='none';
+}
+
+function cgRecordFail(){
+  const n=cgGetAttempts()+1;cgSetAttempts(n);cgUpdateAttempts();
+  if(n>=COREX_MAX_ATTEMPTS){cgSetLockout(Date.now()+COREX_LOCKOUT_MS);cgShowLocked();return true;}
+  return false;
+}
+
+function cgVerifyPassphrase(){
+  const val=document.getElementById('cg-passphrase').value.trim();
+  const err=document.getElementById('cg-err-1');
+  if(val===COREX_PASSPHRASE){
+    err.style.display='none';
+    document.getElementById('cg-step-1').style.display='none';
+    document.getElementById('cg-step-2').style.display='block';
+    document.getElementById('cg-dot-1').style.cssText='width:8px;height:8px;border-radius:50%;background:#a78bfa;transition:all .3s;';
+    document.getElementById('cg-dot-2').style.cssText='width:8px;height:8px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px rgba(139,92,246,0.6);transition:all .3s;';
+    setTimeout(()=>document.getElementById('cg-pin')?.focus(),100);
+  }else{
+    const locked=cgRecordFail();
+    if(!locked){
+      const rem=COREX_MAX_ATTEMPTS-cgGetAttempts();
+      err.textContent='✗ Incorrect passphrase. '+rem+' attempt'+(rem===1?'':'s')+' remaining.';
+      err.style.display='block';
+      document.getElementById('cg-passphrase').value='';
+      document.getElementById('cg-passphrase').focus();
+    }
+  }
+}
+
+function cgVerifyPIN(){
+  const val=document.getElementById('cg-pin').value.trim();
+  const err=document.getElementById('cg-err-2');
+  if(val===COREX_PIN){
+    err.style.display='none';cgSetAttempts(0);cgSetAuth();
+    cgLogAccess('SUCCESS');cgHideGate();
+  }else{
+    const locked=cgRecordFail();
+    if(!locked){
+      const rem=COREX_MAX_ATTEMPTS-cgGetAttempts();
+      err.textContent='✗ Incorrect PIN. '+rem+' attempt'+(rem===1?'':'s')+' remaining.';
+      err.style.display='block';
+      document.getElementById('cg-pin').value='';
+      document.getElementById('cg-pin').focus();
+    }
+  }
+}
+
+function cgStartInactivity(){
+  if(corexInactivityTimer)clearTimeout(corexInactivityTimer);
+  ['mousemove','keydown','click','scroll'].forEach(e=>document.addEventListener(e,cgResetInactivity,{passive:true}));
+  corexInactivityTimer=setTimeout(cgTriggerAutoLock,COREX_INACTIVITY_MS);
+}
+
+function cgResetInactivity(){
+  if(corexInactivityTimer)clearTimeout(corexInactivityTimer);
+  if(localStorage.getItem('corex_sa_auth')==='true')localStorage.setItem('corex_sa_auth_ts',String(Date.now()));
+  corexInactivityTimer=setTimeout(cgTriggerAutoLock,COREX_INACTIVITY_MS);
+}
+
+function cgTriggerAutoLock(){
+  cgClearAuth();
+  ['mousemove','keydown','click','scroll'].forEach(e=>document.removeEventListener(e,cgResetInactivity));
+  document.getElementById('corex-autolock-inline').style.display='flex';
+  document.getElementById('corex-content').style.display='none';
+  cgLogAccess('AUTO-LOCK');
+}
+
+function cgAutoLockResume(){
+  document.getElementById('corex-autolock-inline').style.display='none';
+  cgShowGate();
+}
+
+function cgLockCOREX(){cgClearAuth();cgTriggerAutoLock();}
+
+function cgLogAccess(status){
+  const log=JSON.parse(localStorage.getItem('corex_access_log')||'[]');
+  log.unshift({status,ts:new Date().toISOString(),ua:navigator.userAgent.substring(0,60)});
+  localStorage.setItem('corex_access_log',JSON.stringify(log.slice(0,50)));
+}
+
+// ---- COREX Module Navigation ----
+function corexShowModule(name){
+  document.querySelectorAll('.corex-module').forEach(m=>m.style.display='none');
+  document.querySelectorAll('.corex-tab').forEach(t=>t.classList.remove('active'));
+  const m=document.getElementById('corex-module-'+name);
+  if(m)m.style.display='block';
+  document.querySelectorAll('.corex-tab[data-module="'+name+'"]').forEach(t=>t.classList.add('active'));
+  if(name==='opportunities')corexRenderPipeline();
+  if(name==='scanner')corexRenderSources();
+  if(name==='routing')corexRenderRouting();
+  if(name==='awards')corexRenderAwards();
+  if(name==='trends')corexRenderTrends();
+  if(name==='crmsync')corexRenderSyncLog();
+}
+
+// ---- Init COREX content ----
+function corexInitContent(){
+  const stored=localStorage.getItem('corex_leads');
+  if(stored){corexLeads=JSON.parse(stored);}else{corexLeads=[...SEED_LEADS];localStorage.setItem('corex_leads',JSON.stringify(corexLeads));}
+  corexRenderStats();
+  corexRenderLeads();
+  corexRenderFeed();
+  corexRenderSourceHealth();
+  corexShowModule('command');
+}
+
+// ---- Stats ----
+function corexRenderStats(){
+  const hot=corexLeads.filter(l=>l.score>=75).length;
+  const pushed=corexLeads.filter(l=>l.pushedToCRM).length;
+  const awaiting=corexLeads.filter(l=>l.status==='New').length;
+  const data=[
+    {icon:'🎯',label:'Opportunities',val:corexLeads.length,color:'#8b5cf6',bg:'rgba(139,92,246,.12)'},
+    {icon:'🔥',label:'Hot (≥75)',val:hot,color:'#ef4444',bg:'rgba(239,68,68,.1)'},
+    {icon:'✅',label:'Synced to CRM',val:pushed,color:'#22c55e',bg:'rgba(34,197,94,.1)'},
+    {icon:'⏳',label:'Awaiting Routing',val:awaiting,color:'#f59e0b',bg:'rgba(245,158,11,.1)'}
+  ];
+  const el=document.getElementById('corex-stats-row');
+  if(!el)return;
+  el.innerHTML=data.map(d=>`<div class="card" style="display:flex;align-items:center;gap:12px;padding:14px 16px;">
+    <div style="width:40px;height:40px;border-radius:10px;background:${d.bg};display:flex;align-items:center;justify-content:center;font-size:18px;">${d.icon}</div>
+    <div><div style="font-size:22px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;">${d.val}</div><div style="font-size:11px;color:var(--text3);font-weight:500;">${d.label}</div></div>
+  </div>`).join('');
+}
+
+// ---- Leads table ----
+function corexGetFiltered(){
+  let f=[...corexLeads];
+  const search=(document.getElementById('corex-search')?.value||'').toLowerCase();
+  const src=document.getElementById('corex-filter-source')?.value||'';
+  const sc=document.getElementById('corex-filter-score')?.value||'';
+  const st=document.getElementById('corex-filter-status')?.value||'';
+  if(search)f=f.filter(l=>(l.name+l.org+l.country).toLowerCase().includes(search));
+  if(src)f=f.filter(l=>l.sourceType===src);
+  if(sc==='75')f=f.filter(l=>l.score>=75);
+  else if(sc==='50')f=f.filter(l=>l.score>=50&&l.score<75);
+  else if(sc==='0')f=f.filter(l=>l.score<50);
+  if(st)f=f.filter(l=>l.status===st);
+  return f.sort((a,b)=>b.score-a.score);
+}
+
+function corexScoreClass(s){return s>=75?'corex-score-high':s>=50?'corex-score-mid':'corex-score-low';}
+function corexStatusBadge(st){
+  const c={New:'background:rgba(139,92,246,.15);color:#c4b5fd;',Reviewed:'background:rgba(245,158,11,.12);color:#fcd34d;',Pushed:'background:rgba(16,185,129,.12);color:#6ee7b7;',Assigned:'background:rgba(167,139,250,.15);color:#ddd6fe;'};
+  return `<span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;${c[st]||''}">${st}</span>`;
+}
+function corexAgentBadge(a){
+  if(!a)return'<span style="font-size:11px;color:var(--text3);">—</span>';
+  const c=COREX_AGENT_COLORS[a]||{bg:'rgba(255,255,255,.05)',color:'var(--text2)'};
+  return `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:${c.bg};color:${c.color};">👤 ${a}</span>`;
+}
+
+function corexRenderLeads(){
+  const tbody=document.getElementById('corex-leads-tbody');
+  if(!tbody)return;
+  const f=corexGetFiltered();
+  tbody.innerHTML=f.map(l=>`<tr style="cursor:pointer;border-bottom:1px solid var(--border);" onclick="corexOpenLead('${l.id}')">
+    <td style="padding:8px 10px;font-weight:600;color:var(--text);font-size:12px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${l.name}">${l.name}</td>
+    <td style="padding:8px 10px;font-size:12px;color:var(--text2);white-space:nowrap;">${l.country}</td>
+    <td style="padding:8px 10px;"><span class="${corexScoreClass(l.score)}">${l.score}</span></td>
+    <td style="padding:8px 10px;">${corexStatusBadge(l.status)}</td>
+    <td style="padding:8px 10px;">${corexAgentBadge(l.assignedAgent)}</td>
+    <td style="padding:8px 10px;">
+      <div style="display:flex;gap:4px;">
+        <button onclick="event.stopPropagation();corexPushCRM('${l.id}')" style="background:${l.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${l.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:5px;padding:3px 7px;font-size:10px;font-weight:700;cursor:pointer;" ${l.pushedToCRM?'disabled':''}>
+          ${l.pushedToCRM?'✓ Synced':'📤 Sync'}
+        </button>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+function corexRenderPipeline(){
+  const tbody=document.getElementById('corex-pipeline-tbody');
+  if(!tbody)return;
+  tbody.innerHTML=corexLeads.sort((a,b)=>b.score-a.score).map(l=>`<tr style="border-bottom:1px solid var(--border);">
+    <td style="padding:8px 12px;font-weight:600;color:var(--text);font-size:12px;">${l.name}</td>
+    <td style="padding:8px 12px;font-size:12px;color:var(--text2);">${l.org}</td>
+    <td style="padding:8px 12px;font-size:11px;color:var(--text3);">${COREX_SOURCE_ICON[l.sourceType]||''} ${l.source}</td>
+    <td style="padding:8px 12px;font-size:12px;color:var(--text2);white-space:nowrap;">${l.country}</td>
+    <td style="padding:8px 12px;"><span class="${corexScoreClass(l.score)}">${l.score}</span></td>
+    <td style="padding:8px 12px;">${l.tags.map(t=>`<span class="corex-tag" style="${COREX_TAG_COLORS[t]||'background:rgba(255,255,255,.05);color:var(--text2);'}">${t}</span>`).join('')}</td>
+    <td style="padding:8px 12px;">${corexStatusBadge(l.status)}</td>
+    <td style="padding:8px 12px;">${corexAgentBadge(l.assignedAgent)}</td>
+    <td style="padding:8px 12px;font-size:12px;color:var(--text2);white-space:nowrap;">${l.deadline||'—'}</td>
+    <td style="padding:8px 12px;font-size:12px;color:var(--text2);white-space:nowrap;">${l.budget}</td>
+  </tr>`).join('');
+}
+
+// ---- Activity Feed ----
+const COREX_FEED_MSGS=[
+  "📡 Scanning UNGM for new procurement tenders...",
+  "✅ New opportunity: OECS Digital Transformation Project (Score: 89)",
+  "🎯 COREX Fit Index 92/100: Caribbean MSME Seed Fund",
+  "👥 Auto-routed to Devon: OECS Digital Transformation (Gov/RFP)",
+  "📤 COREX → CRM Sync: IDB Lab Caribbean Accelerator",
+  "📱 Outreach Automation triggered: Caribbean Fintech Founders",
+  "📡 Scanning Devex & ReliefWeb job boards...",
+  "✅ New opportunity: USAID Caribbean Youth Grant (Score: 80)",
+  "👥 Auto-routed to Aaliya: Green Climate Fund DOMCREP (NGO/Donor)",
+  "🎯 COREX Fit Index 87/100: Caribbean Heart Foundation",
+  "📤 COREX → CRM Sync: TechStartups TT (Score: 96)",
+  "📡 Scanning EU-LAC & IDB donor portals...",
+  "✅ New opportunity: GIZ Digital Economy Program (Score: 88)",
+  "👥 Auto-routed to Marcus: IDB Lab Accelerator (UN/Tech)",
+  "📱 Outreach Automation: Green Climate Fund DOMCREP",
+  "📡 Scanning AngelList Caribbean founders...",
+  "✅ New opportunity: Caribbean Fintech Network — 120+ founders (Score: 94)",
+  "👥 Auto-routed to Simone: TechStartups TT (Startup Ecosystem)",
+  "🏆 Award monitoring: OECS E-Government Phase 2 expected Q4 2026",
+  "📊 Intelligence Digest generated — 20 opportunities ranked"
+];
+
+function corexRenderFeed(){
+  const el=document.getElementById('corex-activity-feed');
+  if(!el)return;
+  el.innerHTML=COREX_FEED_MSGS.map((msg,i)=>`<div class="corex-feed-item">${msg}<div style="font-size:10px;color:var(--text3);margin-top:2px;">${i*3+1}m ago</div></div>`).join('');
+}
+
+function corexAddFeed(msg){
+  const el=document.getElementById('corex-activity-feed');
+  if(!el)return;
+  const div=document.createElement('div');div.className='corex-feed-item';
+  div.innerHTML=`${msg}<div style="font-size:10px;color:var(--text3);margin-top:2px;">Just now</div>`;
+  el.insertBefore(div,el.firstChild);
+}
+
+// ---- Source Health ----
+function corexRenderSourceHealth(){
+  const el=document.getElementById('corex-source-health');
+  if(!el)return;
+  el.innerHTML=SOURCES_DATA.map(s=>{
+    const maxC=Math.max(...s.dailyCounts,1);
+    const bars=s.dailyCounts.map(c=>`<span style="display:inline-block;width:5px;border-radius:2px;background:#8b5cf6;margin-right:2px;vertical-align:bottom;height:${Math.max(3,c/maxC*22)}px;"></span>`).join('');
+    return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;">
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;"><span style="font-size:14px;">${s.icon}</span><span style="font-size:11px;font-weight:600;color:var(--text);">${s.name}</span></div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:3px;">${s.active?'🟢 Active':'🔴 Paused'}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12px;font-weight:700;color:#a78bfa;">+${s.todayLeads}</span>
+        <div style="display:flex;align-items:flex-end;height:24px;">${bars}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- Sources view ----
+function corexRenderSources(){
+  const el=document.getElementById('corex-sources-grid');
+  if(!el)return;
+  el.innerHTML=SOURCES_DATA.map(s=>{
+    const nextH=parseInt(s.freq)||6;
+    const ns=new Date(new Date(s.lastScraped).getTime()+nextH*3600000);
+    const fmtT=iso=>{if(!iso)return'—';const d=new Date(iso);return d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});};
+    return `<div class="card">
+      <div class="card-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:22px;">${s.icon}</span>
+          <div><div class="card-title">${s.name}</div><div class="card-sub">${s.desc}</div></div>
+        </div>
+        <div style="position:relative;width:44px;height:24px;background:${s.active?'#7c3aed':'#2d1f5e'};border-radius:12px;cursor:pointer;transition:background .2s;" onclick="corexToast('Source toggle saved')">
+          <div style="position:absolute;top:2px;left:${s.active?'22':'2'}px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left .2s;"></div>
+        </div>
+      </div>
+      <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;"><div style="font-size:10px;color:var(--text3);">Leads Found</div><div style="font-size:18px;font-weight:700;color:var(--text);">${s.totalLeads} <span style="font-size:11px;color:#22c55e;">+${s.todayLeads} today</span></div></div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px;"><div style="font-size:10px;color:var(--text3);">Next Scan</div><div style="font-size:11px;font-weight:600;color:var(--text2);">${fmtT(ns.toISOString())}</div></div>
+        <div style="grid-column:1/-1;"><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;">Filter Keywords</label><input type="text" value="CRM, digital, software, nonprofit" style="width:100%;padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+        <button onclick="corexToast('✅ Intelligence scan complete — 2 new opportunities found')" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:7px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 Scan Now</button>
+        <button onclick="corexToast('✅ Connection verified')" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:7px;padding:7px 12px;font-size:11px;cursor:pointer;font-family:inherit;">🔌 Test</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- Agent Routing ----
+function corexRenderRouting(){
+  const agentCounts={};
+  corexLeads.forEach(l=>{if(l.assignedAgent)agentCounts[l.assignedAgent]=(agentCounts[l.assignedAgent]||0)+1;});
+  const ac=document.getElementById('corex-agent-cards');
+  if(ac)ac.innerHTML=AGENTS_DATA.map(a=>{
+    const c=COREX_AGENT_COLORS[a.name]||{bg:'rgba(255,255,255,.05)',color:'var(--text2)'};
+    return `<div class="card" style="border-left:3px solid ${c.color};">
+      <div class="card-body" style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:22px;">👤</div>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:700;color:var(--text);">${a.name}</div>
+          <div style="font-size:12px;color:${c.color};font-weight:600;">${a.specialty}</div>
+          <div style="font-size:11px;color:var(--text3);">${a.region}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:22px;font-weight:800;color:${c.color};">${agentCounts[a.name]||0}</div>
+          <div style="font-size:10px;color:var(--text3);">leads routed</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  const rr=document.getElementById('corex-routing-rules');
+  if(rr)rr.innerHTML=COREX_ROUTING_RULES.map(r=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border-radius:8px;border-left:3px solid ${r.color};">
+      <span style="font-size:18px;">${r.icon}</span>
+      <div style="flex:1;font-size:13px;color:var(--text2);">If type = <strong style="color:var(--text);">${r.type}</strong></div>
+      <span style="font-size:12px;color:var(--text3);">→</span>
+      <span style="display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;background:${COREX_AGENT_COLORS[r.agent]?.bg||'rgba(255,255,255,.05)'};color:${COREX_AGENT_COLORS[r.agent]?.color||'var(--text2)'};"> 👤 ${r.agent}</span>
+    </div>`).join('');
+}
+
+// ---- Awards ----
+function corexRenderAwards(){
+  const el=document.getElementById('corex-awards-list');
+  if(!el)return;
+  const sc={"Relationship Positioned":"background:rgba(16,185,129,.12);color:#6ee7b7;","Monitoring":"background:rgba(245,158,11,.12);color:#fcd34d;","Follow-up Opportunity":"background:rgba(139,92,246,.15);color:#c4b5fd;"};
+  el.innerHTML=COREX_AWARD_DATA.map(a=>`
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+      <div style="width:34px;height:34px;border-radius:8px;background:rgba(167,139,250,.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🏆</div>
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);">${a.name}</div>
+        <div style="font-size:11px;color:var(--text3);">${a.org} · ${a.value} · Awarded ${a.awarded}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:1px;">Winner: ${a.winner}</div>
+      </div>
+      <div style="text-align:right;">
+        <span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;${sc[a.status]||'background:rgba(255,255,255,.05);color:var(--text2);'}">${a.status}</span>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px;max-width:160px;text-align:right;">${a.notes}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ---- Trends ----
+function corexRenderTrends(){
+  const tg=document.getElementById('corex-trends-grid');
+  if(tg)tg.innerHTML=COREX_TRENDS_DATA.map(t=>`
+    <div class="card" style="border-left:3px solid ${t.color};">
+      <div class="card-body">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <span style="font-size:22px;">${t.icon}</span>
+          <div><div style="font-size:13px;font-weight:700;color:var(--text);">${t.title}</div><div style="font-size:18px;font-weight:800;color:${t.color};">${t.trend}</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--text3);line-height:1.5;">${t.detail}</p>
+      </div>
+    </div>`).join('');
+  const dg=document.getElementById('corex-dti-grid');
+  if(dg)dg.innerHTML=COREX_DTI.map(d=>`
+    <div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center;">
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;">${d.country}</div>
+      <div style="font-size:24px;font-weight:800;color:#a78bfa;">${d.score}</div>
+      <div style="font-size:10px;color:var(--text3);">DTI Score</div>
+      <div style="height:5px;border-radius:3px;background:var(--bg4);overflow:hidden;margin-top:6px;"><div style="height:100%;border-radius:3px;background:#8b5cf6;width:${d.score}%;"></div></div>
+    </div>`).join('');
+}
+
+// ---- Sync Log ----
+function corexRenderSyncLog(){
+  const el=document.getElementById('corex-sync-log');
+  if(!el)return;
+  const items=[
+    {msg:"📤 COREX → CRM Sync: IDB Lab Caribbean Accelerator",time:"6:14 AM",ok:true},
+    {msg:"📤 COREX → CRM Sync: Green Climate Fund DOMCREP",time:"6:12 AM",ok:true},
+    {msg:"📤 COREX → CRM Sync: JBDC SME Directory Partnership",time:"6:10 AM",ok:true},
+    {msg:"⚠️ Duplicate detected: OECS Digital Transformation (skipped)",time:"6:08 AM",ok:false},
+    {msg:"📤 COREX → CRM Sync: Caribbean Fintech Founders Network",time:"5:58 AM",ok:true},
+    {msg:"✅ CRM connection verified — api.bluwavcrm.com",time:"6:00 AM",ok:true}
+  ];
+  el.innerHTML=items.map(s=>`<div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-size:12px;color:${s.ok?'#6ee7b7':'#fcd34d'};">${s.msg}</span>
+    <span style="font-size:11px;color:var(--text3);white-space:nowrap;margin-left:12px;">${s.time}</span>
+  </div>`).join('');
+}
+
+// ---- Push to CRM ----
+function corexPushCRM(id){
+  const lead=corexLeads.find(l=>l.id===id);
+  if(!lead||lead.pushedToCRM)return;
+  lead.pushedToCRM=true;lead.status='Pushed';
+  localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
+  corexRenderLeads();corexRenderStats();
+  corexAddFeed('📤 COREX → CRM Sync: '+lead.name);
+  corexToast('✅ COREX → CRM Sync complete');
+}
+
+// ---- Open lead (simple toast for now) ----
+function corexOpenLead(id){
+  const l=corexLeads.find(x=>x.id===id);
+  if(l)corexToast('📋 '+l.name+' · Score: '+l.score+' · '+l.assignedAgent);
+}
+
+// ---- Run cycle ----
+function corexRunCycle(){
+  corexToast('⚡ COREX intelligence cycle running...');
+  const msgs=["📡 Scanning UNGM...","📡 Scanning Devex & ReliefWeb...","📡 Scanning EU-LAC & IDB...","✅ 3 new opportunities found","🎯 Scoring complete","👥 Auto-routing to agents"];
+  msgs.forEach((m,i)=>setTimeout(()=>corexAddFeed(m),i*600));
+  setTimeout(()=>corexToast('✅ COREX intelligence cycle complete — 3 new opportunities'),msgs.length*600+200);
+}
+
+// ---- Digest ----
+function corexGenerateDigest(){
+  const btn=document.getElementById('corex-gen-digest-btn');
+  const out=document.getElementById('corex-digest-output');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Generating...';}
+  if(out)out.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3);"><div style="font-size:28px;margin-bottom:10px;animation:corex-pulse 1s ease-in-out infinite;">🧠</div><div style="font-size:13px;">Analysing 20 opportunities and generating COREX intelligence digest...</div></div>';
+  setTimeout(()=>{
+    const top5=corexLeads.slice().sort((a,b)=>b.score-a.score).slice(0,5);
+    const digestHtml=`<div style="color:var(--text2);line-height:1.7;">
+      <h2 style="font-size:16px;font-weight:700;color:#c4b5fd;margin:0 0 12px;">&#x1F9E0; COREX Intelligence Digest — August 6, 2026</h2>
+      <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Executive Summary</h3>
+      <p style="font-size:13px;color:var(--text3);">COREX identified 20 high-value opportunities across 6 Caribbean territories. 15 opportunities score ≥75 (Hot). Total addressable budget across active opportunities exceeds USD 220M. Priority focus: OECS Digital Transformation (USD 94M), Caribbean Resilient Renewable Energy (USD 90M), and Caribbean Fintech Founders Network (Score: 94).</p>
+      <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Top 5 Opportunities to Prioritise</h3>
+      ${top5.map((l,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(139,92,246,.06);border-radius:8px;margin-bottom:6px;border-left:3px solid #8b5cf6;">
+        <span style="font-size:14px;font-weight:800;color:#a78bfa;">#${i+1}</span>
+        <div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--text);">${l.name}</div><div style="font-size:11px;color:var(--text3);">${l.org} · ${l.country} · ${l.budget}</div></div>
+        <span style="background:rgba(139,92,246,.2);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;">${l.score}</span>
+      </div>`).join('')}
+      <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Recommended Actions</h3>
+      <ul style="font-size:12px;color:var(--text3);margin-left:16px;line-height:1.8;">
+        <li>Devon: Submit expression of interest for OECS Digital Transformation Project (deadline Aug 26)</li>
+        <li>Aaliya: Initiate outreach to Caribbean Heart Foundation — CRM implementation contract</li>
+        <li>Marcus: Follow up IDB Lab Accelerator — already pushed to CRM</li>
+        <li>Simone: Engage Caribbean Fintech Founders Network — 120+ founders, highest urgency score</li>
+        <li>All: Monitor BIDC Export Ready Program deadline (Aug 31)</li>
+      </ul>
+      <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Agent Assignment Summary</h3>
+      <p style="font-size:12px;color:var(--text3);">Devon: 5 leads (Gov/RFP) · Aaliya: 7 leads (NGO/Donor) · Marcus: 3 leads (UN/Tech) · Simone: 5 leads (Startup)</p>
+    </div>`;
+    if(out)out.innerHTML=digestHtml;
+    if(btn){btn.disabled=false;btn.textContent='✨ Regenerate Digest';}
+    const copyBtn=document.getElementById('corex-copy-digest-btn');
+    if(copyBtn)copyBtn.style.display='inline-block';
+    corexToast('✅ COREX Intelligence Digest generated');
+  },2500);
+}
+
+function corexCopyDigest(){
+  const out=document.getElementById('corex-digest-output');
+  if(out){
+    try{
+      const el=document.createElement('textarea');el.value=out.innerText;
+      el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);
+      el.focus();el.select();document.execCommand('copy');document.body.removeChild(el);
+      corexToast('📋 Digest copied to clipboard');
+    }catch(e){corexToast('⚠️ Could not copy — please select manually');}
+  }
+}
+
+// ---- Toast ----
+function corexToast(msg){
+  // Use existing showToast if available, else create one
+  if(typeof showToast==='function'){showToast(msg,'success');return;}
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;bottom:24px;right:24px;z-index:99999;background:#2d1f5e;color:#f5f3ff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(139,92,246,0.3);border:1px solid rgba(167,139,250,0.2);font-family:inherit;max-width:380px;';
+  el.textContent=msg;document.body.appendChild(el);
+  setTimeout(()=>el.remove(),4000);
+}
+
+// ---- Hook into showView to trigger gate ----
+const _origShowView=showView;
+function showView(name){
+  _origShowView(name);
+  if(name==='corex'){
+    if(cgIsAuth()){
+      document.getElementById('corex-gate-inline').style.display='none';
+      document.getElementById('corex-content').style.display='block';
+      corexInitContent();
+      cgStartInactivity();
+    }else{
+      cgShowGate();
+    }
+  }
+}
+
+// ---- Add corex to viewTitles ----
+if(typeof viewTitles!=='undefined')viewTitles['corex']='&#x1F9E0; COREX Intelligence Engine';
+
 </script>
+
+    <!-- ================================================================
+         COREX INTELLIGENCE ENGINE — Super Admin Module
+         ================================================================ -->
+    <div class="view" id="view-corex">
+
+      <!-- COREX Security Gate (inline, protects this module only) -->
+      <div id="corex-gate-inline" style="
+        position:fixed;inset:0;z-index:9999;
+        background:radial-gradient(ellipse at 50% 30%,#1a0a3e 0%,#0d0a1a 60%,#080510 100%);
+        display:flex;align-items:center;justify-content:center;
+        font-family:'Segoe UI',system-ui,sans-serif;
+      ">
+        <div style="
+          background:linear-gradient(145deg,#1a1035,#120d24);
+          border:1px solid rgba(167,139,250,0.2);border-radius:24px;
+          padding:48px 44px;width:420px;max-width:92vw;
+          box-shadow:0 0 80px rgba(139,92,246,0.2),0 24px 64px rgba(0,0,0,0.5);
+          text-align:center;
+        ">
+          <div style="font-size:42px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(167,139,250,0.6));">&#x1F9E0;</div>
+          <div style="font-size:22px;font-weight:700;margin-bottom:4px;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
+          <div style="font-size:11px;color:#4c3494;margin-bottom:28px;letter-spacing:.08em;text-transform:uppercase;">BluWav · Super Admin · Restricted Access</div>
+
+          <!-- Step dots -->
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px;">
+            <div id="cg-dot-1" style="width:8px;height:8px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px rgba(139,92,246,0.6);transition:all .3s;"></div>
+            <div style="width:24px;height:1px;background:rgba(167,139,250,0.2);"></div>
+            <div id="cg-dot-2" style="width:8px;height:8px;border-radius:50%;background:#2d1f5e;transition:all .3s;"></div>
+          </div>
+
+          <!-- Locked panel -->
+          <div id="cg-locked" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:14px;padding:24px;margin-bottom:16px;">
+            <div style="font-size:32px;margin-bottom:8px;">&#x1F510;</div>
+            <div style="font-size:15px;font-weight:700;color:#fca5a5;margin-bottom:6px;">Access Temporarily Locked</div>
+            <div style="font-size:12px;color:#7c6fa0;margin-bottom:10px;">3 failed attempts detected. Try again after:</div>
+            <div id="cg-lockout-timer" style="font-size:24px;font-weight:700;color:#f87171;font-variant-numeric:tabular-nums;">30:00</div>
+          </div>
+
+          <!-- Auth form -->
+          <div id="cg-form">
+            <!-- Step 1 -->
+            <div id="cg-step-1">
+              <div style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;text-align:left;">Step 1 of 2 — Access Passphrase</div>
+              <input id="cg-passphrase" type="password" placeholder="Enter your passphrase"
+                autocomplete="off" spellcheck="false"
+                style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.05em;"
+                onkeydown="if(event.key==='Enter')cgVerifyPassphrase()" />
+              <div id="cg-err-1" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:8px 12px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
+              <button onclick="cgVerifyPassphrase()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Continue &#x2192;</button>
+            </div>
+            <!-- Step 2 -->
+            <div id="cg-step-2" style="display:none;">
+              <div style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;text-align:left;">Step 2 of 2 — Security PIN</div>
+              <input id="cg-pin" type="password" placeholder="Enter your PIN"
+                autocomplete="off" inputmode="numeric" maxlength="6"
+                style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.1em;"
+                onkeydown="if(event.key==='Enter')cgVerifyPIN()" />
+              <div id="cg-err-2" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:8px 12px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
+              <button onclick="cgVerifyPIN()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Unlock COREX &#x1F513;</button>
+            </div>
+            <div id="cg-attempts" style="display:none;font-size:11px;color:#4c3494;margin-top:12px;">&#x26A0;&#xFE0F; Failed attempts: <span id="cg-attempt-count" style="color:#ef4444;font-weight:700;">0</span> / 3</div>
+          </div>
+
+          <div style="border-top:1px solid rgba(167,139,250,0.1);margin-top:20px;padding-top:14px;font-size:10px;color:#2d1f5e;letter-spacing:.04em;line-height:1.6;">
+            &#x1F512; COREX is a restricted internal system.<br>
+            Unauthorised access attempts are logged.<br>
+            BluWav · Founder & Executive Director access only.
+          </div>
+        </div>
+      </div>
+
+      <!-- Auto-lock overlay -->
+      <div id="corex-autolock-inline" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(13,10,26,0.95);backdrop-filter:blur(12px);align-items:center;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif;">
+        <div style="background:linear-gradient(145deg,#1a1035,#120d24);border:1px solid rgba(167,139,250,0.2);border-radius:20px;padding:40px 36px;width:360px;max-width:90vw;text-align:center;box-shadow:0 0 60px rgba(139,92,246,0.15);">
+          <div style="font-size:36px;margin-bottom:12px;">&#x1F512;</div>
+          <div style="font-size:18px;font-weight:700;color:#c4b5fd;margin-bottom:8px;">Session Locked</div>
+          <div style="font-size:13px;color:#7c6fa0;margin-bottom:24px;line-height:1.5;">COREX locked due to inactivity.<br>Re-enter credentials to continue.</div>
+          <button onclick="cgAutoLockResume()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.4);">&#x1F510; Unlock COREX</button>
+        </div>
+      </div>
+
+      <!-- COREX CONTENT (shown after auth) -->
+      <div id="corex-content" style="display:none;">
+
+        <!-- COREX Top Bar -->
+        <div style="background:linear-gradient(135deg,#1a1035,#120d24);border:1px solid rgba(167,139,250,0.15);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="font-size:28px;filter:drop-shadow(0 0 12px rgba(167,139,250,0.5));">&#x1F9E0;</div>
+            <div>
+              <div style="font-size:16px;font-weight:800;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
+              <div style="font-size:11px;color:#4c3494;margin-top:1px;">Caribbean Opportunity & Revenue Intelligence Engine · Super Admin Only</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(139,92,246,0.1);border:1px solid rgba(167,139,250,0.25);color:#c4b5fd;font-size:10px;font-weight:600;padding:4px 12px;border-radius:9999px;">
+              <span style="width:6px;height:6px;border-radius:50%;background:#a78bfa;display:inline-block;animation:corex-pulse 2s ease-in-out infinite;"></span>
+              Active — Intelligence Cycle Running
+            </div>
+            <button onclick="corexRunCycle()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.3);">&#x25B6; Run Intelligence Cycle</button>
+            <button onclick="cgLockCOREX()" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">&#x1F512; Lock</button>
+          </div>
+        </div>
+
+        <!-- COREX Sub-nav tabs -->
+        <div style="display:flex;gap:4px;background:rgba(13,10,26,0.6);border:1px solid rgba(167,139,250,0.1);border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap;" id="corex-tabs">
+          <button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">&#x26A1; Command Center</button>
+          <button class="corex-tab" data-module="opportunities" onclick="corexShowModule('opportunities')">&#x1F3AF; Opportunity Intel</button>
+          <button class="corex-tab" data-module="scanner" onclick="corexShowModule('scanner')">&#x1F4E1; Procurement Scanner</button>
+          <button class="corex-tab" data-module="digest" onclick="corexShowModule('digest')">&#x1F4CA; Intelligence Digest</button>
+          <button class="corex-tab" data-module="outreach" onclick="corexShowModule('outreach')">&#x1F4E4; Outreach Automation</button>
+          <button class="corex-tab" data-module="crmsync" onclick="corexShowModule('crmsync')">&#x1F504; CRM Sync Layer</button>
+          <button class="corex-tab" data-module="routing" onclick="corexShowModule('routing')">&#x1F465; Agent Routing</button>
+          <button class="corex-tab" data-module="awards" onclick="corexShowModule('awards')">&#x1F3C6; Award Monitoring</button>
+          <button class="corex-tab" data-module="trends" onclick="corexShowModule('trends')">&#x1F4C8; Market Trends</button>
+        </div>
+
+        <!-- COREX Stats Row -->
+        <div id="corex-stats-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;"></div>
+
+        <!-- MODULE: COMMAND CENTER -->
+        <div class="corex-module" id="corex-module-command">
+          <div style="display:grid;grid-template-columns:65fr 35fr;gap:14px;margin-bottom:14px;">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">&#x1F3AF; Active Opportunities</div>
+                  <div class="card-sub">Ranked by COREX Fit Index</div>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <input type="text" id="corex-search" placeholder="Search opportunities..." onInput="corexRenderLeads()" style="padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;width:160px;" />
+                  <select id="corex-filter-source" onchange="corexRenderLeads()" style="padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+                    <option value="">All Sources</option><option value="rfp">&#x1F4CB; RFP</option><option value="directory">&#x1F3E2; Directory</option><option value="jobboard">&#x1F4BC; Job Board</option><option value="donor">&#x1F331; Donor</option><option value="founder">&#x1F4E3; Founder</option>
+                  </select>
+                  <select id="corex-filter-score" onchange="corexRenderLeads()" style="padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+                    <option value="">All Scores</option><option value="75">&#x2265;75 Hot</option><option value="50">50-74</option><option value="0">&lt;50</option>
+                  </select>
+                  <select id="corex-filter-status" onchange="corexRenderLeads()" style="padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+                    <option value="">All Status</option><option value="New">New</option><option value="Reviewed">Reviewed</option><option value="Pushed">Pushed</option><option value="Assigned">Assigned</option>
+                  </select>
+                </div>
+              </div>
+              <div style="max-height:420px;overflow-y:auto;">
+                <table style="width:100%;border-collapse:collapse;">
+                  <thead><tr style="background:var(--bg3);">
+                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
+                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
+                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
+                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
+                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
+                    <th style="padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Actions</th>
+                  </tr></thead>
+                  <tbody id="corex-leads-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">&#x26A1; COREX Activity Stream</div></div>
+              <div id="corex-activity-feed" style="max-height:460px;overflow-y:auto;"></div>
+            </div>
+          </div>
+          <!-- Source Health -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">&#x1F4E1; Procurement Scanner — Source Health</div></div>
+            <div class="card-body">
+              <div id="corex-source-health" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULE: OPPORTUNITY INTELLIGENCE -->
+        <div class="corex-module" id="corex-module-opportunities" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">&#x1F3AF; Opportunity Intelligence</div><div class="card-sub">Full pipeline — ranked by COREX Fit Index</div></div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table style="width:100%;border-collapse:collapse;">
+                <thead><tr style="background:var(--bg3);">
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Organisation</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Source</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Tags</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Deadline</th>
+                  <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Budget</th>
+                </tr></thead>
+                <tbody id="corex-pipeline-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULE: PROCUREMENT SCANNER -->
+        <div class="corex-module" id="corex-module-scanner" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="corex-sources-grid"></div>
+        </div>
+
+        <!-- MODULE: INTELLIGENCE DIGEST -->
+        <div class="corex-module" id="corex-module-digest" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">&#x1F4CA; COREX Intelligence Digest</div><div class="card-sub" id="corex-digest-date">August 6, 2026</div></div>
+              <div style="display:flex;gap:8px;">
+                <button id="corex-gen-digest-btn" onclick="corexGenerateDigest()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">&#x2728; Generate Digest</button>
+                <button id="corex-copy-digest-btn" onclick="corexCopyDigest()" style="display:none;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;">&#x1F4CB; Copy</button>
+              </div>
+            </div>
+            <div class="card-body" id="corex-digest-output" style="min-height:200px;">
+              <div style="text-align:center;padding:40px;color:var(--text3);">
+                <div style="font-size:32px;margin-bottom:10px;opacity:.3;">&#x1F4CA;</div>
+                <div style="font-size:14px;font-weight:500;">No digest generated yet</div>
+                <div style="font-size:12px;margin-top:4px;">Click "Generate Digest" to create today's COREX intelligence report.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULE: OUTREACH AUTOMATION -->
+        <div class="corex-module" id="corex-module-outreach" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div class="card">
+              <div class="card-header"><div class="card-title">&#x1F4F1; WhatsApp (Twilio)</div></div>
+              <div class="card-body" style="display:grid;gap:10px;">
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Webhook URL</label><input type="url" value="https://api.twilio.com/2010-04-01/Accounts/{SID}/Messages" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Account SID</label><input type="text" placeholder="AC..." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Auth Token</label><input type="password" placeholder="Auth token..." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Trigger Score Threshold: <span id="corex-wa-val">80</span></label><input type="range" id="corex-wa-threshold" min="0" max="100" value="80" oninput="document.getElementById('corex-wa-val').textContent=this.value" style="width:100%;" /></div>
+                <button onclick="corexToast('✅ WhatsApp config saved')" style="background:linear-gradient(135deg,#059669,#047857);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save Config</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">&#x1F4E7; Email Triggers</div></div>
+              <div class="card-body" style="display:grid;gap:10px;">
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">SendGrid API Key</label><input type="password" placeholder="SG...." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">From Address</label><input type="email" value="corex@bluwav.com" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Digest Recipient</label><input type="email" placeholder="andrea@bluwav.com" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Trigger on Score ≥</label><input type="number" value="75" min="0" max="100" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <button onclick="corexToast('✅ Email config saved')" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save Config</button>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <div class="card-header"><div class="card-title">&#x1F4F1; WhatsApp Message Template</div></div>
+            <div class="card-body">
+              <textarea rows="7" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;resize:vertical;">&#x1F9E0; COREX Intelligence Alert — BluWav
+
+*{{lead_name}}* from *{{company}}*
+&#x1F4CD; {{country}} | &#x1F3AF; COREX Fit Index: {{score}}/100
+&#x1F4CB; Source: {{source}} | &#x1F4B0; Budget: {{budget}}
+
+&#x1F4A1; High COREX Fit Index — qualified for CRM sync and outreach.
+&#x1F3F7;&#xFE0F; Tags: {{tags}}
+
+&#x1F449; Review in COREX &#x2192; BluWav Super Admin</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULE: CRM SYNC LAYER -->
+        <div class="corex-module" id="corex-module-crmsync" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+            <div class="card">
+              <div class="card-header"><div class="card-title">&#x1F504; CRM Connection</div></div>
+              <div class="card-body" style="display:grid;gap:10px;">
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">CRM Endpoint URL</label><input type="url" value="https://api.bluwavcrm.com/v1/leads" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">API Token</label><input type="password" placeholder="sk-bluwav-..." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
+                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Push Mode</label>
+                  <div style="display:flex;gap:14px;margin-top:4px;">
+                    <label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input type="radio" name="corex-push-mode" value="auto" checked /> Auto (≥75)</label>
+                    <label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input type="radio" name="corex-push-mode" value="manual" /> Manual</label>
+                    <label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input type="radio" name="corex-push-mode" value="disabled" /> Disabled</label>
+                  </div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <button onclick="corexToast('✅ COREX → CRM connection verified')" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;">&#x1F50C; Test Connection</button>
+                  <button onclick="corexToast('✅ CRM sync settings saved')" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save</button>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">&#x1F504; COREX → CRM Sync Flow</div></div>
+              <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.08);border-radius:8px;border-left:3px solid #8b5cf6;"><span style="font-size:18px;">&#x1F4E1;</span><div><div style="font-size:12px;font-weight:600;color:var(--text);">1. COREX Scans Sources</div><div style="font-size:11px;color:var(--text3);">UNGM, ReliefWeb, Devex, CCCCC, JBDC, IDB, EU-LAC</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(16,185,129,0.08);border-radius:8px;border-left:3px solid #10b981;"><span style="font-size:18px;">&#x1F3AF;</span><div><div style="font-size:12px;font-weight:600;color:var(--text);">2. COREX Fit Index Scoring</div><div style="font-size:11px;color:var(--text3);">Industry · Geo · Budget · Org Type · Source · Urgency</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.1);border-radius:8px;border-left:3px solid #a78bfa;"><span style="font-size:18px;">&#x1F465;</span><div><div style="font-size:12px;font-weight:600;color:var(--text);">3. Agent Routing</div><div style="font-size:11px;color:var(--text3);">Devon · Aaliya · Marcus · Simone</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(245,158,11,0.08);border-radius:8px;border-left:3px solid #f59e0b;"><span style="font-size:18px;">&#x1F4E4;</span><div><div style="font-size:12px;font-weight:600;color:var(--text);">4. COREX → CRM Sync</div><div style="font-size:11px;color:var(--text3);">Pipeline stages · Contact records · Opportunity tracking</div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">&#x1F4CB; Recent Sync Actions</div></div>
+            <div id="corex-sync-log"></div>
+          </div>
+        </div>
+
+        <!-- MODULE: AGENT ROUTING -->
+        <div class="corex-module" id="corex-module-routing" style="display:none;">
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;" id="corex-agent-cards"></div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">&#x2699;&#xFE0F; Routing Rules</div></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:8px;" id="corex-routing-rules"></div>
+          </div>
+        </div>
+
+        <!-- MODULE: AWARD MONITORING -->
+        <div class="corex-module" id="corex-module-awards" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--text);">8</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Tenders Tracked</div></div>
+            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:#22c55e;">3</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Relationships Positioned</div></div>
+            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--corex-light);">5</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Follow-up Opportunities</div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">&#x1F3C6; Award Queue</div></div>
+            <div id="corex-awards-list"></div>
+          </div>
+        </div>
+
+        <!-- MODULE: MARKET TRENDS -->
+        <div class="corex-module" id="corex-module-trends" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;" id="corex-trends-grid"></div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">&#x1F30A; Caribbean Digital Transformation Index</div></div>
+            <div class="card-body"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="corex-dti-grid"></div></div>
+          </div>
+        </div>
+
+      </div><!-- end corex-content -->
+    </div><!-- end view-corex -->
+
 </body>
 </html>
