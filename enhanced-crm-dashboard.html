@@ -1836,7 +1836,11 @@ function showView(name){
     const ssf=document.getElementById('contactStatusFilter');if(ssf)ssf.value='';
   }
   if(name==='tasks') loadTasks();
-  if(name==='calendar') loadTasks().then(()=>renderCalendar());
+  if(name==='calendar'){
+    calYear = new Date().getFullYear();
+    calMonth = new Date().getMonth();
+    loadTasks().then(()=>renderCalendar());
+  }
   if(name==='deals' && dealsViewMode==='list') setTimeout(renderDealsList,100);
   if(name==='email') loadEmailLog();
   if(name==='reports') setTimeout(loadReports,100);
@@ -2167,29 +2171,37 @@ async function deleteTask(id){
 // Override addTask modal save to actually persist
 async function saveTask(){
   const titleEl = document.querySelector('#modal-addTask .fi[placeholder="Task description"]');
-  const dateEl = document.querySelector('#modal-addTask input[type="date"]');
-  const priEl = document.querySelector('#modal-addTask .fs');
-  const title = titleEl ? titleEl.value.trim() : '';
-  if(!title){showToast('Please enter a task title','');return;}
+  const dateEl  = document.querySelector('#modal-addTask input[type="date"]');
+  const priEl   = document.querySelector('#modal-addTask .fs');
+  const title   = titleEl ? titleEl.value.trim() : '';
+  if(!title){ showToast('Please enter a task title',''); return; }
+
   const taskObj = {
-    title: title,
-    due_date: dateEl&&dateEl.value ? dateEl.value : null,
-    priority: priEl ? priEl.value : 'Medium',
+    title:     title,
+    due_date:  dateEl && dateEl.value ? dateEl.value : null,
+    priority:  priEl ? priEl.value : 'Medium',
     completed: false,
-    user_id: currentUser?.id
+    user_id:   currentUser?.id || null
   };
-  const {error} = await db.from('tasks').insert(taskObj).catch(e=>({error:e}));
-  if(error){
-    // tasks table may not exist yet — store locally
+
+  try {
+    const { data, error } = await db.from('tasks').insert([taskObj]).select();
+    if(error) throw error;
+    if(data && data[0]) allTasks.unshift(data[0]);
+    else allTasks.unshift({...taskObj, id:'local_'+Date.now()});
+  } catch(e) {
+    console.warn('Task insert error:', e.message);
     allTasks.unshift({...taskObj, id:'local_'+Date.now()});
-    renderTasks();
-  } else {
-    await loadTasks();
   }
-  showToast('Task added ✓','success');
+
+  showToast('✅ Task added','success');
   closeModal('addTask');
-  if(titleEl) titleEl.value='';
-  if(dateEl) dateEl.value='';
+  if(titleEl) titleEl.value = '';
+  if(dateEl)  dateEl.value  = '';
+
+  // Refresh both tasks list and calendar
+  renderTasks();
+  renderCalendar();
 }
 
 // ── CALENDAR ──────────────────────────────────────────────────────────────────
@@ -2236,12 +2248,14 @@ function calToday(){ calYear=new Date().getFullYear(); calMonth=new Date().getMo
 
 
 // ── OVERRIDE addTask modal button to use saveTask() ───────────────────────────
-document.addEventListener('DOMContentLoaded',()=>{
+// Override addTask save button — run immediately and on DOMContentLoaded
+function bindAddTaskBtn(){
   const addTaskBtn = document.querySelector('#modal-addTask .btn-primary');
-  if(addTaskBtn){
-    addTaskBtn.onclick = saveTask;
-  }
-});
+  if(addTaskBtn){ addTaskBtn.onclick = saveTask; }
+}
+document.addEventListener('DOMContentLoaded', bindAddTaskBtn);
+// Also bind immediately in case DOM is already ready
+if(document.readyState !== 'loading') bindAddTaskBtn();
 
 // ── ADD EDIT BUTTON TO DEAL CARDS in renderPipeline ──────────────────────────
 // Patch renderPipeline to include edit buttons on deal cards
