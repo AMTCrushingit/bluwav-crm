@@ -629,7 +629,7 @@ function showToast(msg,type=''){
 }
 function isOnline(p){
   if(!p.last_seen)return false;
-  return (Date.now()-new Date(p.last_seen).getTime())<5*60*1000;
+  return (Date.now()-new Date(p.last_seen).getTime())<30*60*1000;
 }
 function trialDaysLeft(p){
   const start=new Date(p.trial_started_at||p.created_at||Date.now());
@@ -1316,7 +1316,7 @@ function filterTable(tbodyId,q,cols){
 
 // ── AUTO REFRESH ──────────────────────────────────────────────────────────────
 function startAutoRefresh(){
-  setInterval(loadAll,5*60*1000); // every 5 minutes
+  setInterval(loadAll,30*60*1000); // every 5 minutes
 }
 
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────

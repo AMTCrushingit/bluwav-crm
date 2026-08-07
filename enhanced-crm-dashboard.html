@@ -1902,8 +1902,8 @@ function startPresence() {
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
 async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 
-// ── SESSION TIMEOUT (5 min) ───────────────────────────────────────────────────
-// Shows a lock screen overlay after 5 min inactivity.
+// ── SESSION TIMEOUT (30 min) ───────────────────────────────────────────────────
+// Shows a lock screen overlay after 30 min inactivity.
 // User re-enters password to unlock — status/data preserved in DB.
 (function(){
   let timer;
@@ -1926,7 +1926,7 @@ async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.s
       <div style="background:#0F1628;border:1px solid var(--navy-border);border-radius:20px;padding:36px 40px;width:100%;max-width:360px;text-align:center;">
         <div style="font-size:2.5rem;margin-bottom:12px;">🔒</div>
         <h2 style="font-family:var(--font-display);font-size:1.3rem;color:#fff;margin-bottom:6px;">Session Locked</h2>
-        <p style="font-size:0.82rem;color:var(--text3);margin-bottom:24px;">5 minutes of inactivity. Enter your password to continue.</p>
+        <p style="font-size:0.82rem;color:var(--text3);margin-bottom:24px;">30 minutes of inactivity. Enter your password to continue.</p>
         <input id="lockEmail" type="email" placeholder="Email" style="width:100%;background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:10px;color:#fff;font-size:0.85rem;padding:10px 14px;outline:none;margin-bottom:10px;font-family:inherit;" readonly/>
         <input id="lockPassword" type="password" placeholder="Password" style="width:100%;background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:10px;color:#fff;font-size:0.85rem;padding:10px 14px;outline:none;margin-bottom:16px;font-family:inherit;"/>
         <div id="lockError" style="color:#ef4444;font-size:0.78rem;margin-bottom:10px;display:none;"></div>
@@ -1968,7 +1968,7 @@ async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.s
 
   function reset(){
     clearTimeout(timer);
-    timer = setTimeout(showLockScreen, 5*60*1000);
+    timer = setTimeout(showLockScreen, 30*60*1000);
   }
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(e=>document.addEventListener(e,reset,true));
   reset();

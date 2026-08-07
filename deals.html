@@ -647,7 +647,7 @@ document.getElementById('agentFilter').addEventListener('change',applyFilters);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePanel();closeModal();}});
 
 (function(){
-  const TIMEOUT_MS=5*60*1000;let timer;
+  const TIMEOUT_MS=30*60*1000;let timer;
   function resetTimer(){clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.sessionStorage.removeItem('bw_gate_ok');sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';},TIMEOUT_MS);}
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=>{document.addEventListener(evt,resetTimer,true);});
   resetTimer();
