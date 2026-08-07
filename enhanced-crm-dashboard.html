@@ -40,7 +40,10 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 .logo-wm .blu{color:#fff;}.logo-wm .wav{color:var(--cyan);}
 .logo-sub{font-size:0.45rem;font-weight:700;letter-spacing:0.28em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:4px;}
 .logo-sub::before,.logo-sub::after{content:'';display:block;width:12px;height:1px;background:var(--gold);opacity:.5;}
-.collapse-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0;}
+.collapse-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0;transition:var(--transition);}
+.collapse-btn:hover{color:var(--cyan);}
+/* Hide collapse btn on tablet/mobile — hamburger handles it there */
+@media(max-width:1024px){.collapse-btn{display:none!important;}}
 .collapse-btn:hover{color:var(--text);}
 .sidebar-nav{flex:1;padding:12px 0;}
 .ns{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);padding:10px 14px 4px;}
@@ -332,7 +335,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
 <span class="logo-sub">CRM</span>
 </a>
-<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
+<button class="collapse-btn" onclick="toggleSidebar()" title="Collapse sidebar">←</button>
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
@@ -1772,7 +1775,7 @@ async function saveContact(){
     return;
   }
   showToast('Contact saved ✓','success');
-  // Admin notification removed per user request
+  createNotif('&#x1F464;','var(--cyan)','New contact added successfully','contact_new');
   closeModal('addContact');
   // Clear form
   ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes'].forEach(id=>{
@@ -1853,8 +1856,13 @@ function showView(name){
 function toggleSidebar(){
   // Desktop only — on tablet/mobile use drawer instead
   if(window.innerWidth<=1024){ toggleMobileSidebar(); return; }
-  document.getElementById('sidebar').classList.toggle('collapsed');
-  document.getElementById('mainContent').classList.toggle('expanded');
+  const sb = document.getElementById('sidebar');
+  const mc = document.getElementById('mainContent');
+  const btn = sb.querySelector('.collapse-btn');
+  const isCollapsed = sb.classList.toggle('collapsed');
+  if(mc) mc.classList.toggle('expanded', isCollapsed);
+  // Flip button icon: ← when expanded, → when collapsed
+  if(btn) btn.textContent = isCollapsed ? '→' : '←';
 }
 
 function toggleNotif(){
@@ -2226,9 +2234,12 @@ function renderCalendar(){
       const td = new Date(t.due_date);
       return td.getFullYear()===calYear && td.getMonth()===calMonth && td.getDate()===d;
     });
+    const _evDateStr = calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const _hasEv = window.calEvents && window.calEvents.some(ev=>ev.date===_evDateStr);
+    const _evDot = _hasEv ? '<span style="display:block;width:5px;height:5px;border-radius:50%;background:var(--cyan);margin:1px auto;"></span>' : '';
     const dateNum = isToday
       ? '<div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--cyan);color:var(--navy-deep);font-size:0.75rem;font-weight:800;margin-bottom:4px;">'+d+'</div>'
-      : '<div style="font-size:0.75rem;font-weight:500;color:var(--text3);margin-bottom:4px;">'+d+'</div>';
+      : '<div style="font-size:0.75rem;font-weight:500;color:var(--text3);margin-bottom:4px;">'+d+'</div>' + _evDot;
     const taskHtml = dayTasks.map(t=>'<div style="font-size:0.62rem;background:var(--cyan-glow);border:1px solid rgba(0,200,224,0.2);border-radius:4px;padding:2px 5px;margin-bottom:2px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+t.title+'</div>').join('');
     const cellBg = isToday ? 'rgba(0,200,224,0.06)' : 'var(--navy-deep)';
     html += '<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:'+cellBg+';cursor:pointer;" onclick="openCalEvent('+calYear+','+calMonth+','+d+')">'+dateNum+taskHtml+'</div>';
@@ -2248,36 +2259,44 @@ function openCalEvent(y, m, d) {
   if(dateEl) dateEl.value = y+'-'+mm+'-'+dd;
 }
 
+// In-memory calendar events (persisted via tasks table)
+if(!window.calEvents) window.calEvents = [];
+
 async function saveEvent() {
   const title = document.getElementById('ev-title')?.value.trim();
   const date  = document.getElementById('ev-date')?.value;
   const time  = document.getElementById('ev-time')?.value || '09:00';
   const type  = document.getElementById('ev-type')?.value || 'meeting';
-  const notes = document.getElementById('ev-notes')?.value.trim() || null;
+  const notes = document.getElementById('ev-notes')?.value.trim() || '';
   if(!title){ showToast('Please enter an event title',''); return; }
   if(!date){  showToast('Please select a date',''); return; }
-  const payload = {
-    title, date, time, type, notes,
-    user_id: currentUser?.id,
-    created_at: new Date().toISOString()
+
+  // Save as a task (reliable — tasks table confirmed to exist)
+  const taskTitle = '📅 ' + title + (time ? ' @ ' + time : '') + (notes ? ' — ' + notes : '');
+  const taskObj = {
+    title: taskTitle,
+    due_date: date,
+    priority: 'Medium',
+    completed: false,
+    user_id: currentUser?.id
   };
-  const { error } = await db.from('calendar_events').insert(payload);
+  const { data, error } = await db.from('tasks').insert(taskObj).select().catch(e=>({error:e}));
   if(error){
-    // Fallback: store as a task so data is never lost
-    const { error: e2 } = await db.from('tasks').insert({
-      title: '📅 '+title,
-      due_date: date,
-      priority: 'Medium',
-      completed: false,
-      user_id: currentUser?.id
-    });
-    if(e2){ showToast('Error saving event: '+e2.message,''); return; }
+    showToast('Error saving event: ' + error.message, '');
+    return;
   }
-  showToast('Event added \u2713','success');
+
+  // Also keep in calEvents array so renderCalendar can dot the day
+  const savedId = (data && data[0]) ? data[0].id : 'local_' + Date.now();
+  window.calEvents.push({ id: savedId, title, date, time, type, notes });
+
+  showToast('Event added ✓', 'success');
   closeModal('addEvent');
   ['ev-title','ev-notes'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value='';
+    const el = document.getElementById(id); if(el) el.value = '';
   });
+  const timeEl = document.getElementById('ev-time');
+  if(timeEl) timeEl.value = '09:00';
   await loadTasks();
   renderCalendar();
 }
@@ -2938,11 +2957,7 @@ function createNotif(icon, color, title, type){
 }
 
 // Hook into existing events to generate real-time notifications
-const _origSaveContact = saveContact;
-async function saveContact(){
-  await _origSaveContact.apply(this, arguments);
-  createNotif('&#x1F464;','var(--cyan)','New contact added successfully','contact_new');
-}
+// contact notification fired inside saveContact() directly
 
 // saveDeal notification — triggered after successful save
 function onDealSaved(){
