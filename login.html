@@ -111,7 +111,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 <!-- LEFT PANEL -->
 <div class="left">
 <div class="logo">
-<img src="logo.png" alt="BluWav CRM" style="height:36px;width:auto;object-fit:contain;display:block;" />
+<img alt="BluWav CRM" src="logo.png?expires=1788674413&amp;signature=b834bb44db3eb981dba1ce163c7c28430e0d83257f6088c71fb2ac54ff15922c&amp;kid=prod-250922" style="height:36px;width:auto;object-fit:contain;display:block;"/>
 <div class="logo-badge">CRM</div>
 </div>
 <div class="left-body">
@@ -172,7 +172,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 <img alt="Microsoft" src="https://www.microsoft.com/favicon.ico"/> Continue with Microsoft
     </button>
 <div class="bottom-links">
-      <a href="#">Terms</a>  ·  <a href="#">Privacy</a>
+<a href="#">Terms</a>  ·  <a href="#">Privacy</a>
 </div>
 </div>
 </div>
@@ -278,36 +278,27 @@ window.addEventListener('load',()=>{
   },50);
 });
 </script>
-
 <!-- ── ACCESS GATE ── -->
 <div id="accessGate" style="position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0A0E1A 0%,#0F1628 60%,#161E35 100%);display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">
-  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,200,224,0.15);border-radius:20px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,0.4);">
-    <!-- Logo -->
-    <div style="font-size:32px;font-weight:900;color:#fff;margin-bottom:4px;letter-spacing:-1px;">Blu<span style="color:#00C8E0;">Wav</span></div>
-    <div style="font-size:9px;font-weight:700;color:#00C8E0;letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;">CRM Platform</div>
-    <!-- Lock icon -->
-    <div style="font-size:40px;margin-bottom:16px;">🔒</div>
-    <h2 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">Client Access Only</h2>
-    <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:28px;">This platform is available to BluWav Growth clients.<br/>Enter your access code to continue.</p>
-    <!-- Access code input -->
-    <div style="margin-bottom:16px;">
-      <input id="gateInput" type="password" placeholder="" autocomplete="new-password" autofocus value=""
-        style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(0,200,224,0.2);border-radius:10px;font-size:15px;color:#fff;font-family:inherit;outline:none;text-align:center;letter-spacing:4px;box-sizing:border-box;transition:border-color 0.2s;"
-        onkeydown="if(event.key==='Enter')checkGate()"
-        onfocus="this.style.borderColor='rgba(0,200,224,0.5)'"
-        onblur="this.style.borderColor='rgba(0,200,224,0.2)'"/>
-    </div>
-    <div id="gateError" style="display:none;font-size:12px;color:#FF6B2B;margin-bottom:12px;font-weight:700;">&#9888; Incorrect access code. Please try again.</div>
-    <button onclick="checkGate()"
-      style="width:100%;background:linear-gradient(135deg,#00C8E0,#007a85);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,200,224,0.3);"
-      onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 28px rgba(0,200,224,0.5)'"
-      onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(0,200,224,0.3)'">
-      Continue &#8594;
-    </button>
-    <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:20px;">Don't have an access code? Contact <a href="mailto:hello@bluwavgrowth.com" style="color:#00C8E0;text-decoration:underline;font-weight:600;">hello@bluwavgrowth.com</a></p>
-  </div>
+<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,200,224,0.15);border-radius:20px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,0.4);">
+<!-- Logo -->
+<div style="font-size:32px;font-weight:900;color:#fff;margin-bottom:4px;letter-spacing:-1px;">Blu<span style="color:#00C8E0;">Wav</span></div>
+<div style="font-size:9px;font-weight:700;color:#00C8E0;letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;">CRM Platform</div>
+<!-- Lock icon -->
+<div style="font-size:40px;margin-bottom:16px;">🔒</div>
+<h2 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">Client Access Only</h2>
+<p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:28px;">This platform is available to BluWav Growth clients.<br/>Enter your access code to continue.</p>
+<!-- Access code input -->
+<div style="margin-bottom:16px;">
+<input autocomplete="new-password" autofocus="" id="gateInput" onblur="this.style.borderColor='rgba(0,200,224,0.2)'" onfocus="this.style.borderColor='rgba(0,200,224,0.5)'" onkeydown="if(event.key==='Enter')checkGate()" placeholder="" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(0,200,224,0.2);border-radius:10px;font-size:15px;color:#fff;font-family:inherit;outline:none;text-align:center;letter-spacing:4px;box-sizing:border-box;transition:border-color 0.2s;" type="password" value=""/>
 </div>
-
+<div id="gateError" style="display:none;font-size:12px;color:#FF6B2B;margin-bottom:12px;font-weight:700;">⚠ Incorrect access code. Please try again.</div>
+<button onclick="checkGate()" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(0,200,224,0.3)'" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 28px rgba(0,200,224,0.5)'" style="width:100%;background:linear-gradient(135deg,#00C8E0,#007a85);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,200,224,0.3);">
+      Continue →
+    </button>
+<p style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:20px;">Don't have an access code? Contact <a href="mailto:hello@bluwavgrowth.com" style="color:#00C8E0;text-decoration:underline;font-weight:600;">hello@bluwavgrowth.com</a></p>
+</div>
+</div>
 <script>
 // ── ACCESS GATE LOGIC ──────────────────────────────────────────────────────
 (function(){
@@ -328,7 +319,7 @@ function checkGate(){
   var code=document.getElementById('gateInput').value.trim().toUpperCase();
   var errEl=document.getElementById('gateError');
   // Access codes — add more as needed, case-insensitive
-  var validCodes=['BW2026','BLUWAV','BWCRM26'];
+  var validCodes=['BW2026','BLUWAV','BWCRM26','AMT2026','BLUCRM','ANDREA'];
   if(validCodes.indexOf(code)!==-1){
     sessionStorage.setItem('bw_gate_ok','1');
     var gate=document.getElementById('accessGate');
@@ -347,6 +338,5 @@ function checkGate(){
   }
 }
 </script>
-
 </body>
 </html>
