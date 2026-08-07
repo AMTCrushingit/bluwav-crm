@@ -27,6 +27,10 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--navy-deep);}
 ::-webkit-scrollbar-thumb{background:var(--navy-border);border-radius:3px;}
+/* ── Date picker visibility on dark backgrounds ── */
+input[type="date"]{color-scheme:dark;cursor:pointer;}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.8) brightness(1.5);cursor:pointer;opacity:0.8;}
+input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 
 /* ══ SIDEBAR ══ */
 .sidebar{width:var(--sidebar);background:rgba(10,14,26,0.98);border-right:1px solid var(--navy-border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;transition:width 0.3s;}
@@ -353,7 +357,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" href="agent-onboarding.html"><span class="ni-icon">🚀</span><span class="nav-text">Onboarding</span></a>
 <div class="ns">Insights</div>
 <a class="ni" id="nav-reports" onclick="showView('reports')"><span class="ni-icon">📈</span><span class="nav-text">Reports</span></a>
-<a class="ni" id="nav-settings" onclick="showView('settings')"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" id="nav-settings" onclick="showView('settings');populateSettings();"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
 <a class="ni" href="billing.html"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <!-- Manager/Admin only -->
 <div class="ns" id="adminNav" style="display:none;">Admin</div>
@@ -366,7 +370,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="tw-sub">days remaining · No card needed</div>
 <div class="tw-bar"><div class="tw-fill"></div></div>
 </div>
-<div class="user-card" onclick="showView('settings')">
+<div class="user-card" onclick="showView('settings');populateSettings();">
 <div class="avatar" id="sidebarAvatar">—</div>
 <div class="user-info">
 <div class="user-name" id="sidebarName">Loading...</div>
@@ -394,10 +398,10 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ Add Contact</button>
 <button class="ib" onclick="loadData();showToast('Refreshed ✓','success')" title="Refresh data">↻</button>
 <button class="ib" onclick="toggleNotif()" title="Notifications">🔔<span class="ndot"></span></button>
-<button class="ib" onclick="showView('settings')" title="Settings">⚙️</button>
+<button class="ib" onclick="showView('settings');populateSettings();" title="Settings">⚙️</button>
 
 <div class="tb-div"></div>
-<div class="user-chip" onclick="showView('settings')">
+<div class="user-chip" onclick="showView('settings');populateSettings();">
 <div class="avatar" id="topAvatar" style="width:26px;height:26px;font-size:0.65rem;">—</div>
 <div>
 <div class="un" id="topName">Loading...</div>
@@ -841,13 +845,13 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal">
 <div class="modal-hd"><h3>📧 Send Email</h3><button class="modal-close" onclick="closeModal('sendEmail')">✕</button></div>
 <div class="modal-body">
-<div class="fg"><label class="fl">To</label><input class="fi" placeholder="recipient@email.com"/></div>
-<div class="fg"><label class="fl">Subject</label><input class="fi" placeholder="Email subject"/></div>
-<div class="fg"><label class="fl">Message</label><textarea class="fta" placeholder="Your message..." style="min-height:120px;"></textarea></div>
+<div class="fg"><label class="fl">To</label><input class="fi" id="em-to" placeholder="recipient@email.com" type="email"/></div>
+<div class="fg"><label class="fl">Subject</label><input class="fi" id="em-subject" placeholder="Email subject"/></div>
+<div class="fg"><label class="fl">Message</label><textarea class="fta" id="em-message" placeholder="Your message..." style="min-height:120px;"></textarea></div>
 </div>
 <div class="modal-footer">
 <button class="btn btn-ghost" onclick="closeModal('sendEmail')">Cancel</button>
-<button class="btn btn-primary" onclick="sendEmailFromModal()">Send Email</button>
+<button class="btn btn-primary" id="em-send-btn" onclick="sendEmailFromModal()">Send Email</button>
 </div>
 </div>
 </div>
@@ -855,7 +859,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal">
 <div class="modal-hd"><h3>✅ Add Task</h3><button class="modal-close" onclick="closeModal('addTask')">✕</button></div>
 <div class="modal-body">
-<div class="fg"><label class="fl">Task Title <span class="req">*</span></label><input class="fi" placeholder="Task description"/></div>
+<div class="fg"><label class="fl">Task Title <span class="req">*</span></label><input class="fi" id="task-title" placeholder="Task description"/></div>
 <div class="fg-row">
 <div class="fg"><label class="fl">Due Date</label><input class="fi" id="task-due-date" type="date" style="cursor:pointer;"/></div>
 <div class="fg"><label class="fl">Priority</label><select class="fs"><option>High</option><option>Medium</option><option>Low</option></select></div>
@@ -2182,21 +2186,20 @@ async function deleteTask(id){
 
 // Override addTask modal save to actually persist
 async function saveTask(){
-  const titleEl = document.querySelector('#modal-addTask .fi[placeholder="Task description"]');
-  const dateEl = document.querySelector('#modal-addTask input[type="date"]');
-  const priEl = document.querySelector('#modal-addTask .fs');
-  const title = titleEl ? titleEl.value.trim() : '';
-  if(!title){showToast('Please enter a task title','');return;}
+  const titleEl = document.getElementById('task-title');
+  const dateEl  = document.getElementById('task-due-date');
+  const priEl   = document.querySelector('#modal-addTask .fs');
+  const title   = titleEl ? titleEl.value.trim() : '';
+  if(!title){ showToast('Please enter a task title',''); return; }
   const taskObj = {
-    title: title,
-    due_date: dateEl&&dateEl.value ? dateEl.value : null,
+    title:    title,
+    due_date: dateEl && dateEl.value ? dateEl.value : null,
     priority: priEl ? priEl.value : 'Medium',
     completed: false,
-    user_id: currentUser?.id
+    user_id:  currentUser?.id
   };
-  const {error} = await db.from('tasks').insert(taskObj).catch(e=>({error:e}));
+  const { error } = await db.from('tasks').insert(taskObj).catch(e=>({error:e}));
   if(error){
-    // tasks table may not exist yet — store locally
     allTasks.unshift({...taskObj, id:'local_'+Date.now()});
     renderTasks();
   } else {
@@ -2204,8 +2207,8 @@ async function saveTask(){
   }
   showToast('Task added ✓','success');
   closeModal('addTask');
-  if(titleEl) titleEl.value='';
-  if(dateEl) dateEl.value='';
+  if(titleEl) titleEl.value = '';
+  if(dateEl)  dateEl.value  = '';
 }
 
 // ── CALENDAR ──────────────────────────────────────────────────────────────────
@@ -2366,47 +2369,36 @@ function renderPipeline(){
 
 
 // ── SEND EMAIL FROM MODAL ─────────────────────────────────────────────────────
-async function sendEmailFromModal(){
-  const sendBtn = document.querySelector('#modal-sendEmail .btn-primary');
-  if(sendBtn){ sendBtn.disabled=true; sendBtn.textContent='Sending…'; }
-  const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
-  const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
-  const msgField = document.querySelector('#modal-sendEmail .fta');
-  const to = toField ? toField.value.trim() : '';
-  const subject = subjectField ? subjectField.value.trim() : '';
-  const message = msgField ? msgField.value.trim() : '';
-  if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
-  // Send via formspree
-  var fd = new FormData();
-  fd.append('email', to);
-  fd.append('_replyto', currentUser?.email||'');
-  fd.append('_subject', subject);
-  fd.append('message', message);
-  fd.append('_template', 'table');
-  try{
-    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
-    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
-    if(res.ok){
-      showToast('✅ Email sent to '+to,'success');
-      closeModal('sendEmail');
-      if(toField) toField.value='';
-      if(subjectField) subjectField.value='';
-      if(msgField) msgField.value='';
-      if(typeof matchedContact!=='undefined'&&matchedContact) updateLastContacted(matchedContact.id);
-    } else {
-      // Fallback: open mailto so email is never lost
-      const mailtoUrl='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
-      window.open(mailtoUrl,'_blank');
-      showToast('Opening your email client to send...','success');
-      closeModal('sendEmail');
-    }
-  }catch(e){
-    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
-    // Fallback to mailto
-    const mailtoUrl='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
-    window.open(mailtoUrl,'_blank');
-    showToast('Opening your email client...','success');
-    closeModal('sendEmail');
+function sendEmailFromModal(){
+  const sendBtn  = document.getElementById('em-send-btn');
+  const toEl     = document.getElementById('em-to');
+  const subjectEl= document.getElementById('em-subject');
+  const msgEl    = document.getElementById('em-message');
+  const to       = toEl     ? toEl.value.trim()      : '';
+  const subject  = subjectEl? subjectEl.value.trim() : '';
+  const message  = msgEl    ? msgEl.value.trim()     : '';
+
+  if(!to)     { showToast('Please enter a recipient email','');  return; }
+  if(!subject){ showToast('Please enter a subject','');          return; }
+  if(!message){ showToast('Please enter a message','');          return; }
+
+  // Open in the user's default email client — reliable, no server required
+  const mailtoUrl = 'mailto:' + encodeURIComponent(to)
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body='    + encodeURIComponent(message);
+
+  window.open(mailtoUrl, '_blank');
+  showToast('✅ Email client opened for ' + to, 'success');
+  closeModal('sendEmail');
+
+  // Clear fields
+  if(toEl)      toEl.value      = '';
+  if(subjectEl) subjectEl.value = '';
+  if(msgEl)     msgEl.value     = '';
+
+  // Update last contacted if we know which contact this is for
+  if(typeof matchedContact !== 'undefined' && matchedContact){
+    updateLastContacted(matchedContact.id);
   }
 }
 
@@ -2648,78 +2640,7 @@ function renderEmailLog(){
 function filterEmailLog(){ renderEmailLog(); }
 
 // Override sendEmailFromModal to also save to email_log table
-const _origSendEmail = sendEmailFromModal;
-async function sendEmailFromModal(){
-  const sendBtn = document.querySelector('#modal-sendEmail .btn-primary');
-  if(sendBtn){ sendBtn.disabled=true; sendBtn.textContent='Sending…'; }
-  const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
-  const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
-  const msgField = document.querySelector('#modal-sendEmail .fta');
-  const to = toField ? toField.value.trim() : '';
-  const subject = subjectField ? subjectField.value.trim() : '';
-  const message = msgField ? msgField.value.trim() : '';
-  if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
-
-  // Find contact name for the log
-  const matchedContact = allContacts.find(c=>(c.email||'').toLowerCase()===to.toLowerCase());
-  const contactName = matchedContact ? matchedContact.full_name : null;
-
-  // Send via formspree
-  var fd = new FormData();
-  fd.append('email', to);
-  fd.append('_replyto', currentUser?.email||'');
-  fd.append('_subject', subject);
-  fd.append('message', message);
-  fd.append('_template', 'table');
-  try{
-    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
-    if(res.ok){
-      // Save to email_log
-      const {data:{session}} = await db.auth.getSession();
-      const logEntry = {
-        to_email: to,
-        subject: subject,
-        message: message,
-        contact_name: contactName,
-        contact_id: matchedContact?.id||null,
-        sent_at: new Date().toISOString(),
-        sent_by: session?.user?.id||null,
-        sent_by_email: currentUser?.email||null
-      };
-      const {error} = await db.from('email_log').insert(logEntry);
-      if(error) console.warn('email_log table not ready:', error.message);
-      else allEmailLog.unshift(logEntry);
-
-      showToast('Email sent ✓','success');
-      closeModal('sendEmail');
-      if(toField) toField.value='';
-      if(subjectField) subjectField.value='';
-      if(msgField) msgField.value='';
-
-      // Refresh email log view if open
-      if(document.getElementById('view-email')?.classList.contains('active')){
-        renderEmailLog();
-      }
-    } else {
-      // Get error details from Formspree response
-      try{
-        const errData = await res.clone().json();
-        const errMsg = errData.error || errData.errors?.[0]?.message || 'Form submission rejected ('+res.status+')';
-        showToast('Email error: '+errMsg,'');
-        console.error('Formspree error:', errData);
-      }catch(pe){
-        showToast('Email failed (HTTP '+res.status+'). Check hello@bluwavgrowth.com directly.','');
-      }
-    }
-  }catch(e){
-    if(e.name==='TypeError'&&e.message.includes('fetch')){
-      showToast('Network error — check your internet connection and try again.','');
-    } else {
-      showToast('Email error: '+e.message,'');
-    }
-    console.error('sendEmail error:', e);
-  }
-}
+async 
 
 // Load email log when switching to email view
 
@@ -3598,6 +3519,19 @@ async function saveProfileSettings(){
   } finally {
     if(btn){ btn.disabled=false; btn.textContent='Save Changes'; }
   }
+}
+
+function populateSettings(){
+  const nameEl=document.getElementById(\'settingsName\');
+  const emailEl=document.getElementById(\'settingsEmail\');
+  const roleEl=document.getElementById(\'settingsRole\');
+  if(!currentUser) return;
+  if(emailEl) emailEl.value=currentUser.email||\'\';
+  db.from(\'profiles\').select(\'full_name,role\').eq(\'id\',currentUser.id).single().then(({data})=>{
+    if(nameEl&&data?.full_name) nameEl.value=data.full_name;
+    if(roleEl&&data?.role) roleEl.value=data.role;
+  }).catch(()=>{ const sn=document.getElementById(\'sidebarName\'); if(nameEl&&sn) nameEl.value=sn.textContent||\'\';
+  });
 }
 
 </script>
