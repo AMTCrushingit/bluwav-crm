@@ -158,7 +158,7 @@
 <nav class="sidebar-nav">
 <div class="nav-section">
 <div class="nav-label">Main</div>
-<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span class="nav-text"> Dashboard</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">🏠</span><span class="nav-text"> Dashboard</span></a>
 <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
 <a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
 <a class="nav-item" href="activities.html"><span class="nav-icon">📋</span><span class="nav-text"> Activities</span></a>
@@ -188,7 +188,7 @@
 </aside>
 <div class="main" id="mainContent">
 <header class="topbar">
-<div class="topbar-left"><h1>💰 Commission Calculator</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Commission Calculator</div></div>
+<div class="topbar-left"><h1>💰 Commission Calculator</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Commission Calculator</div></div>
 <div class="topbar-right">
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
@@ -692,7 +692,7 @@ function loadScenario(type){
   showToast('✅ Scenario loaded — click Calculate','success');
 }
 
-async async function submitPayout(){
+async function submitPayout(){
   const name=document.getElementById('pay_name').value.trim();
   const email=document.getElementById('pay_email').value.trim();
   const amount=document.getElementById('pay_amount').value;

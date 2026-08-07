@@ -156,7 +156,7 @@
 <nav class="sidebar-nav">
 <div class="nav-section">
 <div class="nav-label">Main</div>
-<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span class="nav-text"> Dashboard</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">🏠</span><span class="nav-text"> Dashboard</span></a>
 <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
 <a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
 <a class="nav-item" href="activities.html"><span class="nav-icon">📋</span><span class="nav-text"> Activities</span></a>
@@ -185,7 +185,7 @@
 </aside>
 <div class="main" id="mainContent">
 <header class="topbar">
-<div class="topbar-left"><h1 id="pageTitle">Agent Onboarding</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Onboarding</div></div>
+<div class="topbar-left"><h1 id="pageTitle">Agent Onboarding</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Onboarding</div></div>
 <div class="topbar-right">
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
@@ -550,7 +550,7 @@ async function loadAgentsTable(){
         </div></td>
         <td>${a.role||'salesperson'}</td>
         <td><span class="status-badge status-active">● Active</span></td>
-        <td><button style="padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;cursor:pointer;" onclick="showToast('Agent management coming soon','success')">Manage</button></td>
+        <td><button style="padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;cursor:pointer;" onclick="window.location.href='superadmin.html'">Manage</button></td>
       </tr>`).join('')}
     </tbody>
   </table>`;

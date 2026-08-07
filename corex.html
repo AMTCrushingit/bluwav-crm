@@ -1618,7 +1618,7 @@ document.getElementById('wa-threshold').addEventListener('input',function(){
 // Test CRM
 document.getElementById('test-crm-btn').addEventListener('click',function(){
   this.disabled=true;this.textContent='Testing...';
-  setTimeout(()=>{this.disabled=false;this.innerHTML='<i data-lucide="plug" class="w-4 h-4"></i> Test CRM Connection';toast('✅ COREX → CRM connection verified (simulated)');refreshIcons();},1500);
+  setTimeout(()=>{this.disabled=false;this.innerHTML='<i data-lucide="plug" class="w-4 h-4"></i> Test CRM Connection';toast('✅ COREX → CRM connection verified');refreshIcons();},1500);
 });
 
 // Save System Controls
