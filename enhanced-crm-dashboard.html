@@ -768,7 +768,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal-body">
 <div class="fg-row"><div class="fg"><label class="fl">First Name <span class="req">*</span></label><input class="fi" id="mc-first" placeholder="First name"/></div><div class="fg"><label class="fl">Last Name <span class="req">*</span></label><input class="fi" id="mc-last" placeholder="Last name"/></div></div>
 <div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="mc-email" placeholder="email@company.com" type="email"/></div>
-<div class="fg"><label class="fl">Phone / WhatsApp</label><div style="display:flex;gap:6px;align-items:center;"><select id="mc-phone-code" class="fs" style="min-width:150px;"><option value="+1">🇺🇸 US/CA +1</option><option value="+1268">🇦🇬 Antigua +1268</option><option value="+1246">🇧🇧 Barbados +1246</option><option value="+501">🇧🇿 Belize +501</option><option value="+1284">🇻🇬 BVI +1284</option><option value="+53">🇨🇺 Cuba +53</option><option value="+1767">🇩🇲 Dominica +1767</option><option value="+1809">🇩🇴 Dominican Rep +1809</option><option value="+473">🇬🇩 Grenada +473</option><option value="+592">🇬🇾 Guyana +592</option><option value="+509">🇭🇹 Haiti +509</option><option value="+1876">🇯🇲 Jamaica +1876</option><option value="+1664">🇲🇸 Montserrat +1664</option><option value="+1869">🇰🇳 St Kitts +1869</option><option value="+1758">🇱🇨 St Lucia +1758</option><option value="+1784">🇻🇨 St Vincent +1784</option><option value="+1868">🇹🇹 Trinidad +1868</option><option value="+1649">🇹🇨 Turks &amp; Caicos +1649</option><option value="+44">🇬🇧 UK +44</option><option value="+52">🇲🇽 Mexico +52</option><option value="+55">🇧🇷 Brazil +55</option><option value="+57">🇨🇴 Colombia +57</option></select><input class="fi" id="mc-phone" placeholder="xxx xxx xxxx" type="tel" style="flex:1;"/></div></div>
+<div class="fg"><label class="fl">Phone / WhatsApp</label><div style="display:flex;gap:6px;align-items:center;"><select id="mc-phone-code" class="fs" style="width:110px;flex-shrink:0;font-size:12px;padding:8px 4px;"><option value="+1">🇺🇸 US/CA +1</option><option value="+1268">🇦🇬 Antigua +1268</option><option value="+1246">🇧🇧 Barbados +1246</option><option value="+501">🇧🇿 Belize +501</option><option value="+1284">🇻🇬 BVI +1284</option><option value="+53">🇨🇺 Cuba +53</option><option value="+1767">🇩🇲 Dominica +1767</option><option value="+1809">🇩🇴 Dominican Rep +1809</option><option value="+473">🇬🇩 Grenada +473</option><option value="+592">🇬🇾 Guyana +592</option><option value="+509">🇭🇹 Haiti +509</option><option value="+1876">🇯🇲 Jamaica +1876</option><option value="+1664">🇲🇸 Montserrat +1664</option><option value="+1869">🇰🇳 St Kitts +1869</option><option value="+1758">🇱🇨 St Lucia +1758</option><option value="+1784">🇻🇨 St Vincent +1784</option><option value="+1868">🇹🇹 Trinidad +1868</option><option value="+1649">🇹🇨 Turks &amp; Caicos +1649</option><option value="+44">🇬🇧 UK +44</option><option value="+52">🇲🇽 Mexico +52</option><option value="+55">🇧🇷 Brazil +55</option><option value="+57">🇨🇴 Colombia +57</option></select><input class="fi" id="mc-phone" placeholder="xxx xxx xxxx" type="tel" style="flex:1;"/></div></div>
 <div class="fg"><label class="fl">Business Name</label><input class="fi" id="mc-biz" placeholder="Company name"/></div>
 <div class="fg-row">
 <div class="fg"><label class="fl">Status</label><select class="fs" id="mc-status"><option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal">Proposal</option><option value="Won">Won</option></select></div>
@@ -890,7 +890,7 @@ const db = createClient(
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let currentUser = null, userRole = 'salesperson', allTeam = [];
 let viewingUserId = null, allContacts = [], allDeals = [];
-let filteredContacts = [], currentPage = 1, pageSize = 6;
+let filteredContacts = [], currentPage = 1, pageSize = 15;
 let currentSortCol = 'name', currentSortDir = 'asc';
 let revenueChart = null, reportsChart = null;
 
@@ -1817,6 +1817,7 @@ async function saveDeal(){
     return;
   }
   showToast('Deal saved ✓','success');
+  if(typeof onDealSaved==='function') onDealSaved();
   notifyAdmin('💼 New Deal Added — BluWav CRM (14-Day Trial)',
     'Deal: '+name+'\nValue: $'+val+'\nStage: '+stage+'\nType: '+dealType+'\nAgent: '+currentUser?.email+'\nTime: '+new Date().toLocaleString());
   closeModal('addDeal');
@@ -2264,11 +2265,10 @@ async function saveEvent() {
   if(error){
     // Fallback: store as a task so data is never lost
     const { error: e2 } = await db.from('tasks').insert({
-      title: '\u{1F4C5} '+title,
+      title: '📅 '+title,
       due_date: date,
       priority: 'Medium',
-      status: 'pending',
-      notes: type+(notes?': '+notes:''),
+      completed: false,
       user_id: currentUser?.id
     });
     if(e2){ showToast('Error saving event: '+e2.message,''); return; }
@@ -2287,6 +2287,14 @@ async function saveEvent() {
 
 // ── OVERRIDE addTask modal button to use saveTask() ───────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
+  // Wire deal-edit-btn clicks anywhere in the document (kanban + list views)
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('.deal-edit-btn');
+    if(!btn) return;
+    const dealId = btn.dataset.dealId;
+    if(dealId && typeof openEditDeal === 'function') openEditDeal(dealId);
+  });
+
   const addTaskBtn = document.querySelector('#modal-addTask .btn-primary');
   if(addTaskBtn){
     addTaskBtn.onclick = saveTask;
@@ -2340,6 +2348,8 @@ function renderPipeline(){
 
 // ── SEND EMAIL FROM MODAL ─────────────────────────────────────────────────────
 async function sendEmailFromModal(){
+  const sendBtn = document.querySelector('#modal-sendEmail .btn-primary');
+  if(sendBtn){ sendBtn.disabled=true; sendBtn.textContent='Sending…'; }
   const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
   const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
   const msgField = document.querySelector('#modal-sendEmail .fta');
@@ -2621,6 +2631,8 @@ function filterEmailLog(){ renderEmailLog(); }
 // Override sendEmailFromModal to also save to email_log table
 const _origSendEmail = sendEmailFromModal;
 async function sendEmailFromModal(){
+  const sendBtn = document.querySelector('#modal-sendEmail .btn-primary');
+  if(sendBtn){ sendBtn.disabled=true; sendBtn.textContent='Sending…'; }
   const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
   const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
   const msgField = document.querySelector('#modal-sendEmail .fta');
@@ -2932,9 +2944,8 @@ async function saveContact(){
   createNotif('&#x1F464;','var(--cyan)','New contact added successfully','contact_new');
 }
 
-const _origSaveDeal = saveDeal;
-async function saveDeal(){
-  await _origSaveDeal.apply(this, arguments);
+// saveDeal notification — triggered after successful save
+function onDealSaved(){
   createNotif('&#x1F4BC;','var(--gold)','New deal created','deal_new');
 }
 
