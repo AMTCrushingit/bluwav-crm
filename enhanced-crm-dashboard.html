@@ -329,7 +329,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-logo">
 <a class="logo" href="#">
-<span class="logo-wm"><img src="logo.png" alt="BluWav CRM" style="height:36px;width:auto;object-fit:contain;display:block;" /></span>
+<span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
 <span class="logo-sub">CRM</span>
 </a>
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
@@ -935,7 +935,7 @@ function showToast(msg,type=''){
 })();
 
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
-const AUTH_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+const AUTH_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 // Activity tracker — resets on any user interaction
 function touchActivity() {
@@ -1836,11 +1836,7 @@ function showView(name){
     const ssf=document.getElementById('contactStatusFilter');if(ssf)ssf.value='';
   }
   if(name==='tasks') loadTasks();
-  if(name==='calendar'){
-    calYear = new Date().getFullYear();
-    calMonth = new Date().getMonth();
-    loadTasks().then(()=>renderCalendar());
-  }
+  if(name==='calendar') loadTasks().then(()=>renderCalendar());
   if(name==='deals' && dealsViewMode==='list') setTimeout(renderDealsList,100);
   if(name==='email') loadEmailLog();
   if(name==='reports') setTimeout(loadReports,100);
@@ -1902,7 +1898,7 @@ function startPresence() {
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
 async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
 
-// ── SESSION TIMEOUT (30 min) ───────────────────────────────────────────────────
+// ── SESSION TIMEOUT (10 min) ───────────────────────────────────────────────────
 // Shows a lock screen overlay after 30 min inactivity.
 // User re-enters password to unlock — status/data preserved in DB.
 (function(){
@@ -1926,7 +1922,7 @@ async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.s
       <div style="background:#0F1628;border:1px solid var(--navy-border);border-radius:20px;padding:36px 40px;width:100%;max-width:360px;text-align:center;">
         <div style="font-size:2.5rem;margin-bottom:12px;">🔒</div>
         <h2 style="font-family:var(--font-display);font-size:1.3rem;color:#fff;margin-bottom:6px;">Session Locked</h2>
-        <p style="font-size:0.82rem;color:var(--text3);margin-bottom:24px;">30 minutes of inactivity. Enter your password to continue.</p>
+        <p style="font-size:0.82rem;color:var(--text3);margin-bottom:24px;">10 minutes of inactivity. Enter your password to continue.</p>
         <input id="lockEmail" type="email" placeholder="Email" style="width:100%;background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:10px;color:#fff;font-size:0.85rem;padding:10px 14px;outline:none;margin-bottom:10px;font-family:inherit;" readonly/>
         <input id="lockPassword" type="password" placeholder="Password" style="width:100%;background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:10px;color:#fff;font-size:0.85rem;padding:10px 14px;outline:none;margin-bottom:16px;font-family:inherit;"/>
         <div id="lockError" style="color:#ef4444;font-size:0.78rem;margin-bottom:10px;display:none;"></div>
@@ -1968,7 +1964,7 @@ async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.s
 
   function reset(){
     clearTimeout(timer);
-    timer = setTimeout(showLockScreen, 30*60*1000);
+    timer = setTimeout(showLockScreen, 10*60*1000);
   }
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(e=>document.addEventListener(e,reset,true));
   reset();
@@ -2171,37 +2167,29 @@ async function deleteTask(id){
 // Override addTask modal save to actually persist
 async function saveTask(){
   const titleEl = document.querySelector('#modal-addTask .fi[placeholder="Task description"]');
-  const dateEl  = document.querySelector('#modal-addTask input[type="date"]');
-  const priEl   = document.querySelector('#modal-addTask .fs');
-  const title   = titleEl ? titleEl.value.trim() : '';
-  if(!title){ showToast('Please enter a task title',''); return; }
-
+  const dateEl = document.querySelector('#modal-addTask input[type="date"]');
+  const priEl = document.querySelector('#modal-addTask .fs');
+  const title = titleEl ? titleEl.value.trim() : '';
+  if(!title){showToast('Please enter a task title','');return;}
   const taskObj = {
-    title:     title,
-    due_date:  dateEl && dateEl.value ? dateEl.value : null,
-    priority:  priEl ? priEl.value : 'Medium',
+    title: title,
+    due_date: dateEl&&dateEl.value ? dateEl.value : null,
+    priority: priEl ? priEl.value : 'Medium',
     completed: false,
-    user_id:   currentUser?.id || null
+    user_id: currentUser?.id
   };
-
-  try {
-    const { data, error } = await db.from('tasks').insert([taskObj]).select();
-    if(error) throw error;
-    if(data && data[0]) allTasks.unshift(data[0]);
-    else allTasks.unshift({...taskObj, id:'local_'+Date.now()});
-  } catch(e) {
-    console.warn('Task insert error:', e.message);
+  const {error} = await db.from('tasks').insert(taskObj).catch(e=>({error:e}));
+  if(error){
+    // tasks table may not exist yet — store locally
     allTasks.unshift({...taskObj, id:'local_'+Date.now()});
+    renderTasks();
+  } else {
+    await loadTasks();
   }
-
-  showToast('✅ Task added','success');
+  showToast('Task added ✓','success');
   closeModal('addTask');
-  if(titleEl) titleEl.value = '';
-  if(dateEl)  dateEl.value  = '';
-
-  // Refresh both tasks list and calendar
-  renderTasks();
-  renderCalendar();
+  if(titleEl) titleEl.value='';
+  if(dateEl) dateEl.value='';
 }
 
 // ── CALENDAR ──────────────────────────────────────────────────────────────────
@@ -2235,10 +2223,7 @@ function renderCalendar(){
       : '<div style="font-size:0.75rem;font-weight:500;color:var(--text3);margin-bottom:4px;">'+d+'</div>';
     const taskHtml = dayTasks.map(t=>'<div style="font-size:0.62rem;background:var(--cyan-glow);border:1px solid rgba(0,200,224,0.2);border-radius:4px;padding:2px 5px;margin-bottom:2px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+t.title+'</div>').join('');
     const cellBg = isToday ? 'rgba(0,200,224,0.06)' : 'var(--navy-deep)';
-    const _mm=(calMonth+1)<10?'0'+(calMonth+1):(calMonth+1);
-    const _dd=d<10?'0'+d:d;
-    const _ds=calYear+'-'+_mm+'-'+_dd;
-    html += '<div style=\"min-height:80px;border:1px solid var(--navy-border);padding:6px;background:'+cellBg+';cursor:pointer;\" onclick=\"openAddEvent(\\''+_ds+'\\')\">'+dateNum+taskHtml+'</div>';
+    html += '<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:'+cellBg+';cursor:pointer;" onclick="openModal(&quot;addTask&quot;)">'+dateNum+taskHtml+'</div>';
   }
   daysEl.innerHTML = html;
 }
@@ -2251,14 +2236,12 @@ function calToday(){ calYear=new Date().getFullYear(); calMonth=new Date().getMo
 
 
 // ── OVERRIDE addTask modal button to use saveTask() ───────────────────────────
-// Override addTask save button — run immediately and on DOMContentLoaded
-function bindAddTaskBtn(){
+document.addEventListener('DOMContentLoaded',()=>{
   const addTaskBtn = document.querySelector('#modal-addTask .btn-primary');
-  if(addTaskBtn){ addTaskBtn.onclick = saveTask; }
-}
-document.addEventListener('DOMContentLoaded', bindAddTaskBtn);
-// Also bind immediately in case DOM is already ready
-if(document.readyState !== 'loading') bindAddTaskBtn();
+  if(addTaskBtn){
+    addTaskBtn.onclick = saveTask;
+  }
+});
 
 // ── ADD EDIT BUTTON TO DEAL CARDS in renderPipeline ──────────────────────────
 // Patch renderPipeline to include edit buttons on deal cards
@@ -2314,59 +2297,40 @@ async function sendEmailFromModal(){
   const subject = subjectField ? subjectField.value.trim() : '';
   const message = msgField ? msgField.value.trim() : '';
   if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
-
-  // Show sending state
-  const sendBtn = document.querySelector('#modal-sendEmail .btn-primary');
-  if(sendBtn){sendBtn.disabled=true;sendBtn.textContent='Sending...';}
-
-  // Try Formspree first
+  // Send via formspree
   var fd = new FormData();
   fd.append('email', to);
-  fd.append('_replyto', currentUser?.email||'hello@bluwavcrm.com');
-  fd.append('_subject', '[BluWav CRM] '+subject);
+  fd.append('_replyto', currentUser?.email||'');
+  fd.append('_subject', subject);
   fd.append('message', message);
   fd.append('_template', 'table');
-  fd.append('_cc', currentUser?.email||'');
-
-  let sent = false;
   try{
-    const res = await fetch('https://formspree.io/f/xpwzgvkd',{
-      method:'POST',body:fd,headers:{'Accept':'application/json'}
-    });
-    if(res.ok){ sent=true; }
-    else {
-      const errData = await res.json().catch(()=>({}));
-      console.warn('Formspree failed:',errData);
+    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+    if(res.ok){
+      showToast('Email sent ✓','success');
+      closeModal('sendEmail');
+      if(toField) toField.value='';
+      if(subjectField) subjectField.value='';
+      if(msgField) msgField.value='';
+      if(matchedContact) updateLastContacted(matchedContact.id);
+    } else {
+      // Get error details from Formspree response
+      try{
+        const errData = await res.clone().json();
+        const errMsg = errData.error || errData.errors?.[0]?.message || 'Form submission rejected ('+res.status+')';
+        showToast('Email error: '+errMsg,'');
+        console.error('Formspree error:', errData);
+      }catch(pe){
+        showToast('Email failed (HTTP '+res.status+'). Check hello@bluwavgrowth.com directly.','');
+      }
     }
   }catch(e){
-    console.warn('Formspree fetch error:',e.message);
-  }
-
-  if(sent){
-    showToast('✅ Email sent to '+to,'success');
-    closeModal('sendEmail');
-    if(toField) toField.value='';
-    if(subjectField) subjectField.value='';
-    if(msgField) msgField.value='';
-    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
-    if(typeof matchedContact!=='undefined'&&matchedContact) updateLastContacted(matchedContact.id);
-    // Log to activity
-    try{
-      await db.from('activities').insert([{
-        user_id: currentUser?.id,
-        type: 'email',
-        title: 'Email sent',
-        body: 'To: '+to+' | Subject: '+subject,
-        created_at: new Date().toISOString()
-      }]);
-    }catch(e2){console.log('Activity log:',e2.message);}
-  } else {
-    // Fallback: open mailto so email is never lost
-    const mailtoUrl = 'mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
-    window.open(mailtoUrl,'_blank');
-    showToast('Opening your email client to send...','success');
-    closeModal('sendEmail');
-    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
+    if(e.name==='TypeError'&&e.message.includes('fetch')){
+      showToast('Network error — check your internet connection and try again.','');
+    } else {
+      showToast('Email error: '+e.message,'');
+    }
+    console.error('sendEmail error:', e);
   }
 }
 
@@ -3523,18 +3487,16 @@ window.addEventListener('beforeunload',stopRealtime);
 
 
 // ── FIX 2: Calendar event modal ───────────────────────────────────────────────
-function openAddEvent(dateStr){
+function openAddEvent(){
   var titleEl = document.getElementById('addTaskModalTitle');
   if(titleEl) titleEl.textContent = '📅 Add Event';
   var dateEl = document.getElementById('task-due-date');
-  if(dateEl){
-    if(dateStr){ dateEl.value = dateStr; }
-    else if(!dateEl.value){ dateEl.value = new Date().toISOString().split('T')[0]; }
+  if(dateEl && !dateEl.value){
+    var today = new Date().toISOString().split('T')[0];
+    dateEl.value = today;
   }
   openModal('addTask');
 }
-
-function saveEvent(){ saveTask(); }
 
 function resetTaskModal(){
   var titleEl = document.getElementById('addTaskModalTitle');
@@ -3785,8 +3747,6 @@ async function saveProfileSettings(){
 </div>
 </div>
 </div>
-
-
 
 </body>
 </html>

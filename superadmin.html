@@ -187,7 +187,7 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="sidebar-logo" style="padding:16px 14px;"><img src="logo.png" alt="BluWav CRM" style="height:34px;width:auto;object-fit:contain;display:block;" /></div>
+  <div class="sidebar-logo" style="padding:16px 14px;"><span style="font-size:1.3rem;font-weight:800;letter-spacing:-0.5px;line-height:1;"><span style="color:#fff;">Blu</span><span style="color:#00C8E0;">Wav</span></span></div>
   <nav class="sidebar-nav">
     <div class="nav-section">
       <div class="nav-label">Overview</div>
@@ -629,7 +629,7 @@ function showToast(msg,type=''){
 }
 function isOnline(p){
   if(!p.last_seen)return false;
-  return (Date.now()-new Date(p.last_seen).getTime())<30*60*1000;
+  return (Date.now()-new Date(p.last_seen).getTime())<10*60*1000;
 }
 function trialDaysLeft(p){
   const start=new Date(p.trial_started_at||p.created_at||Date.now());
@@ -1316,7 +1316,7 @@ function filterTable(tbodyId,q,cols){
 
 // ── AUTO REFRESH ──────────────────────────────────────────────────────────────
 function startAutoRefresh(){
-  setInterval(loadAll,30*60*1000); // every 5 minutes
+  setInterval(loadAll,10*60*1000); // every 5 minutes
 }
 
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
@@ -1335,7 +1335,7 @@ async function signOut(){
       sessionStorage.removeItem('bw_gate_ok');
       await db.auth.signOut();
       window.location.href='login.html';
-    },30*60*1000); // 30 min for founder
+    },10*60*1000); // 30 min for founder
   }
   ['mousedown','keydown','scroll','click'].forEach(e=>document.addEventListener(e,reset,true));
   reset();
@@ -1405,7 +1405,7 @@ let corexInactivityTimer=null;
 const COREX_PASSPHRASE='AMT2026-COREX';
 const COREX_PIN='262068';
 const COREX_MAX_ATTEMPTS=3;
-const COREX_LOCKOUT_MS=30*60*1000;
+const COREX_LOCKOUT_MS=10*60*1000;
 const COREX_INACTIVITY_MS=10*60*1000;
 
 // ---- Security Gate ----

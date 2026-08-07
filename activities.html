@@ -62,7 +62,7 @@
 <body>
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-logo">
-<img src="logo.png" alt="BluWav CRM" style="height:36px;width:auto;object-fit:contain;display:block;" />
+<span style="font-size:1.3rem;font-weight:800;letter-spacing:-0.5px;line-height:1;"><span style="color:#fff;">Blu</span><span style="color:#00C8E0;">Wav</span></span>
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
@@ -363,7 +363,7 @@ async function logActivity(){
 
   // ── SESSION TIMEOUT (5 min inactivity) ──
   (function(){
-    const TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+    const TIMEOUT_MS = 10 * 60 * 1000; // 30 minutes
     let timer;
 
     function resetTimer(){
