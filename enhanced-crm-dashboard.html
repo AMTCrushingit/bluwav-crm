@@ -2306,31 +2306,28 @@ async function sendEmailFromModal(){
   fd.append('_template', 'table');
   try{
     const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
     if(res.ok){
-      showToast('Email sent ✓','success');
+      showToast('✅ Email sent to '+to,'success');
       closeModal('sendEmail');
       if(toField) toField.value='';
       if(subjectField) subjectField.value='';
       if(msgField) msgField.value='';
-      if(matchedContact) updateLastContacted(matchedContact.id);
+      if(typeof matchedContact!=='undefined'&&matchedContact) updateLastContacted(matchedContact.id);
     } else {
-      // Get error details from Formspree response
-      try{
-        const errData = await res.clone().json();
-        const errMsg = errData.error || errData.errors?.[0]?.message || 'Form submission rejected ('+res.status+')';
-        showToast('Email error: '+errMsg,'');
-        console.error('Formspree error:', errData);
-      }catch(pe){
-        showToast('Email failed (HTTP '+res.status+'). Check hello@bluwavgrowth.com directly.','');
-      }
+      // Fallback: open mailto so email is never lost
+      const mailtoUrl='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
+      window.open(mailtoUrl,'_blank');
+      showToast('Opening your email client to send...','success');
+      closeModal('sendEmail');
     }
   }catch(e){
-    if(e.name==='TypeError'&&e.message.includes('fetch')){
-      showToast('Network error — check your internet connection and try again.','');
-    } else {
-      showToast('Email error: '+e.message,'');
-    }
-    console.error('sendEmail error:', e);
+    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
+    // Fallback to mailto
+    const mailtoUrl='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
+    window.open(mailtoUrl,'_blank');
+    showToast('Opening your email client...','success');
+    closeModal('sendEmail');
   }
 }
 
@@ -3487,15 +3484,13 @@ window.addEventListener('beforeunload',stopRealtime);
 
 
 // ── FIX 2: Calendar event modal ───────────────────────────────────────────────
-function openAddEvent(){
-  var titleEl = document.getElementById('addTaskModalTitle');
-  if(titleEl) titleEl.textContent = '📅 Add Event';
-  var dateEl = document.getElementById('task-due-date');
-  if(dateEl && !dateEl.value){
-    var today = new Date().toISOString().split('T')[0];
-    dateEl.value = today;
+function openAddEvent(dateStr){
+  // Open dedicated event modal
+  var dateEl = document.getElementById('ev-date');
+  if(dateEl){
+    dateEl.value = dateStr || new Date().toISOString().split('T')[0];
   }
-  openModal('addTask');
+  openModal('addEvent');
 }
 
 function resetTaskModal(){
@@ -3746,6 +3741,52 @@ async function saveProfileSettings(){
   <button class="btn btn-primary" id="csvImportBtn" onclick="importCSVContacts()" style="display:none;">&#x1F4E5; Import Contacts</button>
 </div>
 </div>
+</div>
+
+
+<!-- ADD EVENT MODAL -->
+<div class="modal-overlay" id="modal-addEvent">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-hd">
+      <h3>📅 New Event</h3>
+      <button class="modal-close" onclick="closeModal('addEvent')">✕</button>
+    </div>
+    <div class="modal-body" style="display:grid;gap:14px;">
+      <div>
+        <label class="fl">Event Title *</label>
+        <input class="fi" id="ev-title" placeholder="e.g. Client Meeting" style="margin-top:6px;" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label class="fl">Date *</label>
+          <input class="fi" id="ev-date" type="date" style="margin-top:6px;" />
+        </div>
+        <div>
+          <label class="fl">Time</label>
+          <input class="fi" id="ev-time" type="time" value="09:00" style="margin-top:6px;" />
+        </div>
+      </div>
+      <div>
+        <label class="fl">Type</label>
+        <select class="fs" id="ev-type" style="margin-top:6px;">
+          <option value="meeting">📅 Meeting</option>
+          <option value="call">📞 Call</option>
+          <option value="followup">🔄 Follow-up</option>
+          <option value="demo">🖥️ Demo</option>
+          <option value="deadline">⏰ Deadline</option>
+          <option value="other">📌 Other</option>
+        </select>
+      </div>
+      <div>
+        <label class="fl">Notes</label>
+        <textarea class="fi" id="ev-notes" rows="3" placeholder="Optional notes..." style="margin-top:6px;resize:vertical;"></textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="closeModal('addEvent')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEvent()">Add Event</button>
+    </div>
+  </div>
 </div>
 
 </body>

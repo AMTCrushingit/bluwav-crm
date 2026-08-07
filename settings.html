@@ -6,7 +6,25 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BluWav CRM — Settings</title>
 <link href="bluwav.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+function handlePhotoUpload(input){
+  if(!input.files||!input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const av = document.getElementById('profileAvatar');
+    if(av){
+      av.style.backgroundImage = 'url('+e.target.result+')';
+      av.style.backgroundSize = 'cover';
+      av.style.backgroundPosition = 'center';
+      av.textContent = '';
+    }
+    showToast('Photo updated — click Save Changes to apply','success');
+  };
+  reader.readAsDataURL(file);
+}
+
+</script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     :root{--bg:#0a0e1a;--bg2:#0f1623;--bg3:#1a2235;--bg4:#222d42;--border:rgba(255,255,255,0.06);--cyan:#00C2D1;--gold:#D4AF37;--orange:#ff8c42;--green:#22c55e;--red:#ef4444;--purple:#a78bfa;--text:#ffffff;--text2:#b0bec5;--text3:#4a5568;--sidebar:220px;}
@@ -237,7 +255,8 @@
 <div class="card-header"><div class="card-title">Personal Information</div><div class="card-sub">Update your name, email and profile photo</div></div>
 <div class="card-body">
 <div class="avatar-upload">
-<div class="avatar-large" id="profileAvatar">AM</div>
+<input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="handlePhotoUpload(this)" />
+<div class="avatar-large" id="profileAvatar" onclick="document.getElementById('photoUpload').click()" style="cursor:pointer;" title="Click to upload photo">AM</div>
 <div class="avatar-actions">
 <button class="btn-upload">📷 Upload Photo</button>
 <div class="avatar-hint">JPG, PNG up to 2MB</div>

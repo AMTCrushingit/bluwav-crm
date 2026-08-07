@@ -5,7 +5,24 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BluWav CRM — Billing &amp; Plan</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+// Update banner when plan is activated
+function updatePlanBanner(planName){
+  const trialPill = document.querySelector('.trial-pill');
+  if(trialPill){
+    trialPill.innerHTML = '<div class="tp-label">✅ '+planName+' Active</div><div class="tp-sub">Your plan is now active</div>';
+    trialPill.style.background = 'rgba(34,197,94,0.1)';
+    trialPill.style.borderColor = 'rgba(34,197,94,0.3)';
+  }
+  const trialHeading = document.getElementById('trialHeading');
+  if(trialHeading) trialHeading.textContent = '✅ '+planName+' — Active';
+  // Hide free trial buttons
+  document.querySelectorAll('.plan-btn').forEach(btn=>{
+    if(btn.textContent.includes('Free Trial')) btn.style.display='none';
+  });
+}
+
+</script>
 <script src="https://js.stripe.com/v3/"></script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
