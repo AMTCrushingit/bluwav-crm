@@ -935,7 +935,7 @@ function showToast(msg,type=''){
 })();
 
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
-const AUTH_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+const AUTH_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
 // Activity tracker — resets on any user interaction
 function touchActivity() {
@@ -2235,7 +2235,10 @@ function renderCalendar(){
       : '<div style="font-size:0.75rem;font-weight:500;color:var(--text3);margin-bottom:4px;">'+d+'</div>';
     const taskHtml = dayTasks.map(t=>'<div style="font-size:0.62rem;background:var(--cyan-glow);border:1px solid rgba(0,200,224,0.2);border-radius:4px;padding:2px 5px;margin-bottom:2px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+t.title+'</div>').join('');
     const cellBg = isToday ? 'rgba(0,200,224,0.06)' : 'var(--navy-deep)';
-    html += '<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:'+cellBg+';cursor:pointer;" onclick="openModal(&quot;addTask&quot;)">'+dateNum+taskHtml+'</div>';
+    const _mm=(calMonth+1)<10?'0'+(calMonth+1):(calMonth+1);
+    const _dd=d<10?'0'+d:d;
+    const _ds=calYear+'-'+_mm+'-'+_dd;
+    html += '<div style=\"min-height:80px;border:1px solid var(--navy-border);padding:6px;background:'+cellBg+';cursor:pointer;\" onclick=\"openAddEvent(\\''+_ds+'\\')\">'+dateNum+taskHtml+'</div>';
   }
   daysEl.innerHTML = html;
 }
@@ -3520,16 +3523,18 @@ window.addEventListener('beforeunload',stopRealtime);
 
 
 // ── FIX 2: Calendar event modal ───────────────────────────────────────────────
-function openAddEvent(){
+function openAddEvent(dateStr){
   var titleEl = document.getElementById('addTaskModalTitle');
   if(titleEl) titleEl.textContent = '📅 Add Event';
   var dateEl = document.getElementById('task-due-date');
-  if(dateEl && !dateEl.value){
-    var today = new Date().toISOString().split('T')[0];
-    dateEl.value = today;
+  if(dateEl){
+    if(dateStr){ dateEl.value = dateStr; }
+    else if(!dateEl.value){ dateEl.value = new Date().toISOString().split('T')[0]; }
   }
   openModal('addTask');
 }
+
+function saveEvent(){ saveTask(); }
 
 function resetTaskModal(){
   var titleEl = document.getElementById('addTaskModalTitle');
@@ -3780,6 +3785,8 @@ async function saveProfileSettings(){
 </div>
 </div>
 </div>
+
+
 
 </body>
 </html>
