@@ -9,59 +9,40 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1a;min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;}
-
-/* ── LAYOUT ── */
 .container{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;width:100%;}
 
-/* ── LEFT PANEL ── */
+/* LEFT PANEL */
 .left{background:linear-gradient(135deg,#0a0e1a 0%,#0F1628 60%,#0A0E1A 100%);padding:56px 48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;}
 .left::before{content:'';position:absolute;top:-120px;left:-120px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,200,224,0.07) 0%,transparent 70%);pointer-events:none;}
-.left::after{content:'';position:absolute;bottom:-80px;right:-80px;width:350px;height:350px;background:radial-gradient(circle,rgba(0,200,224,0.04) 0%,transparent 70%);pointer-events:none;}
-
-/* Logo */
 .logo{display:flex;align-items:center;gap:10px;z-index:1;}
-.logo-text{font-size:28px;font-weight:800;letter-spacing:-0.5px;}
-.logo-text .blu{color:#fff;}
-.logo-text .wav{color:#00C8E0;}
 .logo-badge{background:rgba(0,200,224,0.12);border:1px solid rgba(0,200,224,0.25);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:#00C8E0;letter-spacing:1px;text-transform:uppercase;}
-
-/* Left content */
 .left-body{z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;padding:48px 0;}
 .left-body h1{font-size:clamp(28px,3vw,40px);font-weight:800;line-height:1.15;letter-spacing:-0.5px;margin-bottom:16px;color:#fff;}
 .left-body h1 span{color:#00C8E0;}
 .left-body p{font-size:16px;color:rgba(255,255,255,0.55);line-height:1.7;max-width:380px;margin-bottom:40px;}
-
-/* Feature list */
 .features{display:flex;flex-direction:column;gap:16px;}
 .feature-item{display:flex;align-items:center;gap:14px;font-size:14px;color:rgba(255,255,255,0.75);font-weight:500;}
 .feature-icon{width:36px;height:36px;border-radius:10px;background:rgba(0,200,224,0.1);border:1px solid rgba(0,200,224,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-
-/* Bottom tagline */
 .left-footer{z-index:1;border-top:1px solid rgba(255,255,255,0.06);padding-top:24px;}
 .left-footer p{font-size:13px;color:rgba(255,255,255,0.3);line-height:1.6;}
 .left-footer strong{color:rgba(255,255,255,0.5);}
 
-/* ── RIGHT PANEL ── */
+/* RIGHT PANEL */
 .right{background:#0F1628;display:flex;align-items:center;justify-content:center;padding:48px 40px;}
 .right-inner{width:100%;max-width:380px;}
-
 .right-inner h2{font-size:26px;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-0.3px;}
 .subtitle{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:32px;}
 
 /* Form */
 .form-group{margin-bottom:18px;}
-.form-group label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:7px;letter-spacing:0.2px;}
+.form-group label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:7px;}
 .form-group input{width:100%;background:#0F1628;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:13px 16px;font-size:15px;color:#fff;font-family:inherit;outline:none;transition:border 0.2s,box-shadow 0.2s;}
 .form-group input:focus{border-color:#00C8E0;box-shadow:0 0 0 3px rgba(0,200,224,0.1);}
 .form-group input::placeholder{color:rgba(255,255,255,0.2);}
-
-/* Password wrapper */
 .password-wrapper{position:relative;}
 .password-wrapper input{padding-right:48px;}
 .toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;transition:color 0.2s;}
 .toggle-pw:hover{color:rgba(255,255,255,0.7);}
-
-/* Form row */
 .form-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
 .remember{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.4);cursor:pointer;}
 .remember input{accent-color:#00C8E0;cursor:pointer;}
@@ -70,21 +51,14 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 
 /* Buttons */
 .btn-primary{width:100%;background:#00C8E0;color:#0a0e1a;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;font-family:inherit;}
-.btn-primary:hover{background:#00C8E0;transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,200,224,0.3);}
-.btn-primary:active{transform:translateY(0);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,200,224,0.3);}
 .btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-
-/* Divider */
 .divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06);}
 .divider span{color:rgba(255,255,255,0.25);font-size:12px;white-space:nowrap;}
-
-/* Social buttons */
 .btn-social{width:100%;background:#0F1628;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px;color:rgba(255,255,255,0.6);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;transition:all 0.2s;font-family:inherit;}
 .btn-social:hover{background:#1E2A45;border-color:rgba(255,255,255,0.14);color:#fff;}
 .btn-social img{width:18px;height:18px;}
-
-/* Bottom links */
 .bottom-links{text-align:center;margin-top:24px;font-size:13px;color:rgba(255,255,255,0.3);}
 .bottom-links a{color:#00C8E0;text-decoration:none;font-weight:500;}
 .bottom-links a:hover{text-decoration:underline;}
@@ -93,12 +67,23 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 .alert{padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none;}
 .alert.error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;display:block;}
 .alert.success{background:rgba(0,200,224,0.1);border:1px solid rgba(0,200,224,0.3);color:#00C8E0;display:block;}
-
-/* Spinner */
 .spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(10,14,26,0.3);border-top-color:#0a0e1a;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* Responsive */
+/* ACCESS GATE */
+#accessGate{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0A0E1A 0%,#0F1628 60%,#161E35 100%);display:flex;align-items:center;justify-content:center;}
+.gate-card{background:rgba(255,255,255,0.04);border:1px solid rgba(0,200,224,0.15);border-radius:20px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,0.4);}
+.gate-logo-text{font-size:32px;font-weight:900;color:#fff;margin-bottom:4px;letter-spacing:-1px;}
+.gate-logo-text span{color:#00C8E0;}
+.gate-logo-sub{font-size:9px;font-weight:700;color:#00C8E0;letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;}
+.gate-input{width:100%;padding:14px 16px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(0,200,224,0.2);border-radius:10px;font-size:15px;color:#fff;font-family:inherit;outline:none;text-align:center;letter-spacing:4px;box-sizing:border-box;transition:border-color 0.2s;}
+.gate-input:focus{border-color:rgba(0,200,224,0.5);}
+.gate-btn{width:100%;background:linear-gradient(135deg,#00C8E0,#007a85);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,200,224,0.3);margin-top:16px;}
+.gate-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(0,200,224,0.5);}
+.gate-error{display:none;font-size:12px;color:#FF6B2B;margin-top:10px;font-weight:700;}
+.gate-contact{font-size:13px;color:rgba(255,255,255,0.6);margin-top:20px;}
+.gate-contact a{color:#00C8E0;text-decoration:underline;font-weight:600;}
+
 @media(max-width:768px){
   .container{grid-template-columns:1fr;}
   .left{display:none;}
@@ -107,40 +92,45 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 </style>
 </head>
 <body>
+<!-- ── ACCESS GATE ─────────────────────────────────────────── -->
+<div id="accessGate">
+<div class="gate-card">
+<div class="gate-logo-text">Blu<span>Wav</span></div>
+<div class="gate-logo-sub">CRM Platform</div>
+<div style="font-size:40px;margin-bottom:16px;">🔒</div>
+<h2 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">Client Access Only</h2>
+<p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:24px;">
+      This platform is available to BluWav Growth clients.<br/>Enter your access code to continue.
+    </p>
+<input autocomplete="new-password" class="gate-input" id="gateInput" onkeydown="if(event.key==='Enter')checkGate()" placeholder="" type="password"/>
+<div class="gate-error" id="gateError">⚠ Incorrect access code. Please try again.</div>
+<button class="gate-btn" onclick="checkGate()">Continue →</button>
+<p class="gate-contact">Don't have an access code? Contact
+      <a href="mailto:hello@bluwavgrowth.com">hello@bluwavgrowth.com</a>
+</p>
+</div>
+</div>
+<!-- ── MAIN LOGIN ──────────────────────────────────────────── -->
 <div class="container">
-<!-- LEFT PANEL -->
 <div class="left">
 <div class="logo">
-<img alt="BluWav CRM" src="logo.png?expires=1788674413&amp;signature=b834bb44db3eb981dba1ce163c7c28430e0d83257f6088c71fb2ac54ff15922c&amp;kid=prod-250922" style="height:36px;width:auto;object-fit:contain;display:block;"/>
+<img alt="BluWav CRM" src="logo.png?expires=1788675005&amp;signature=0519f1d98c84adcff8d8730073a68079f8b1ab2bf8e42d7033007e6fedd1a8ca&amp;kid=prod-250922" style="height:36px;width:auto;object-fit:contain;display:block;"/>
 <div class="logo-badge">CRM</div>
 </div>
 <div class="left-body">
 <h1>Your growth engine.<br/><span>Ready when you are.</span></h1>
 <p>Track leads, close deals, and automate follow-ups — built for modern businesses anywhere in the world.</p>
 <div class="features">
-<div class="feature-item">
-<div class="feature-icon">👥</div>
-        Contacts, deals &amp; pipeline in one view
-      </div>
-<div class="feature-item">
-<div class="feature-icon">📊</div>
-        Real-time revenue &amp; performance tracking
-      </div>
-<div class="feature-item">
-<div class="feature-icon">⚡</div>
-        Automated follow-ups that close deals for you
-      </div>
-<div class="feature-item">
-<div class="feature-icon">🔒</div>
-        You own your data — always
-      </div>
+<div class="feature-item"><div class="feature-icon">👥</div>Contacts, deals &amp; pipeline in one view</div>
+<div class="feature-item"><div class="feature-icon">📊</div>Real-time revenue &amp; performance tracking</div>
+<div class="feature-item"><div class="feature-icon">⚡</div>Automated follow-ups that close deals for you</div>
+<div class="feature-item"><div class="feature-icon">🔒</div>You own your data — always</div>
 </div>
 </div>
 <div class="left-footer">
 <p><strong>BluWav CRM</strong> — Simple, powerful customer management.<br/>Built for growth. Ready for the world.</p>
 </div>
 </div>
-<!-- RIGHT PANEL -->
 <div class="right">
 <div class="right-inner">
 <h2>Welcome back</h2>
@@ -167,23 +157,26 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 <div class="divider"><span>or continue with</span></div>
 <button class="btn-social" id="googleBtn">
 <img alt="Google" src="https://www.google.com/favicon.ico"/> Continue with Google
-    </button>
+      </button>
 <button class="btn-social" id="microsoftBtn">
 <img alt="Microsoft" src="https://www.microsoft.com/favicon.ico"/> Continue with Microsoft
-    </button>
+      </button>
 <div class="bottom-links">
-<a href="#">Terms</a>  ·  <a href="#">Privacy</a>
+        Don't have an account? <a href="signup.html">Sign up</a>
+         ·  <a href="#">Terms</a>  ·  <a href="#">Privacy</a>
 </div>
 </div>
 </div>
 </div>
 <script>
-const{createClient}=supabase;
-const db=createClient(
+// ── Supabase ────────────────────────────────────────────────────
+const { createClient } = supabase;
+const db = createClient(
   'https://izyuupdmlzcphvdpigrs.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog'
 );
 
+// ── Elements ────────────────────────────────────────────────────
 const loginForm  = document.getElementById('loginForm');
 const emailInput = document.getElementById('email');
 const pwInput    = document.getElementById('password');
@@ -194,147 +187,114 @@ const msBtn      = document.getElementById('microsoftBtn');
 const alertBox   = document.getElementById('alert');
 const forgotLink = document.getElementById('forgotLink');
 
-// Toggle password visibility
-togglePw.addEventListener('click',()=>{
-  const isText=pwInput.type==='text';
-  pwInput.type=isText?'password':'text';
-  togglePw.textContent=isText?'👁':'🙈';
-});
-
-// Alert helpers
-function showAlert(msg,type='error'){alertBox.textContent=msg;alertBox.className=`alert ${type}`;}
-function clearAlert(){alertBox.className='alert';alertBox.textContent='';}
-
-// Loading state
-function setLoading(loading){
-  signInBtn.disabled=loading;
-  signInBtn.innerHTML=loading?'<span class="spinner"></span>Signing in...':'Sign In →';
+// ── Helpers ─────────────────────────────────────────────────────
+function showAlert(msg, type='error') {
+  alertBox.textContent = msg;
+  alertBox.className = 'alert ' + type;
+}
+function clearAlert() {
+  alertBox.className = 'alert';
+  alertBox.textContent = '';
+}
+function setLoading(on) {
+  signInBtn.disabled = on;
+  signInBtn.innerHTML = on ? '<span class="spinner"></span>Signing in...' : 'Sign In →';
 }
 
-// Sign in
-loginForm.addEventListener('submit',async(e)=>{
+// ── Toggle password ─────────────────────────────────────────────
+togglePw.addEventListener('click', () => {
+  const isText = pwInput.type === 'text';
+  pwInput.type = isText ? 'password' : 'text';
+  togglePw.textContent = isText ? '👁' : '🙈';
+});
+
+// ── Sign in ─────────────────────────────────────────────────────
+loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   clearAlert();
   setLoading(true);
-  const{data,error}=await db.auth.signInWithPassword({
-    email:emailInput.value.trim(),
-    password:pwInput.value
+  const { data, error } = await db.auth.signInWithPassword({
+    email: emailInput.value.trim(),
+    password: pwInput.value
   });
-  if(error){
-    showAlert(error.message||'Sign in failed. Please check your credentials.');
+  if (error) {
+    showAlert(error.message || 'Sign in failed. Please check your credentials.');
     setLoading(false);
     return;
   }
-  showAlert('Signed in successfully! Redirecting...','success');
-  sessionStorage.setItem('bw_last_active',Date.now().toString());
-  setTimeout(()=>{window.location.href='enhanced-crm-dashboard.html';},800);
+  showAlert('Signed in successfully! Redirecting...', 'success');
+  setTimeout(() => { window.location.href = 'enhanced-crm-dashboard.html'; }, 800);
 });
 
-// Forgot password
-forgotLink.addEventListener('click',async(e)=>{
+// ── Forgot password ─────────────────────────────────────────────
+// IMPORTANT: redirectTo must point to reset-password.html
+forgotLink.addEventListener('click', async (e) => {
   e.preventDefault();
-  const email=emailInput.value.trim();
-  if(!email){showAlert('Enter your email address above first.');return;}
-  const{error}=await db.auth.resetPasswordForEmail(email,{
-    redirectTo:window.location.origin+'/enhanced-crm-dashboard.html'
+  const email = emailInput.value.trim();
+  if (!email) { showAlert('Enter your email address above first.'); return; }
+  clearAlert();
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://www.bluwavcrm.com/reset-password.html'
   });
-  if(error){showAlert(error.message);}
-  else{showAlert('Password reset email sent — check your inbox.','success');}
+  if (error) { showAlert(error.message); }
+  else { showAlert('Password reset email sent — check your inbox.', 'success'); }
 });
 
-// Google OAuth
-googleBtn.addEventListener('click',async()=>{
-  const{error}=await db.auth.signInWithOAuth({
-    provider:'google',
-    options:{redirectTo:window.location.origin+'/enhanced-crm-dashboard.html'}
+// ── Google OAuth ────────────────────────────────────────────────
+googleBtn.addEventListener('click', async () => {
+  const { error } = await db.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: 'https://www.bluwavcrm.com/enhanced-crm-dashboard.html' }
   });
-  if(error)showAlert(error.message);
+  if (error) showAlert(error.message);
 });
 
-// Microsoft OAuth
-msBtn.addEventListener('click',async()=>{
-  const{error}=await db.auth.signInWithOAuth({
-    provider:'azure',
-    options:{redirectTo:window.location.origin+'/enhanced-crm-dashboard.html'}
+// ── Microsoft OAuth ─────────────────────────────────────────────
+msBtn.addEventListener('click', async () => {
+  const { error } = await db.auth.signInWithOAuth({
+    provider: 'azure',
+    options: { redirectTo: 'https://www.bluwavcrm.com/enhanced-crm-dashboard.html' }
   });
-  if(error)showAlert(error.message);
+  if (error) showAlert(error.message);
 });
 
-// Always sign out on load — force fresh auth
-(async()=>{
-  await db.auth.signOut();
-  sessionStorage.removeItem('bw_last_active');
+// ── Check if already logged in → skip to dashboard ─────────────
+// NOTE: Do NOT sign out here — that breaks sessions from other pages
+(async () => {
+  const { data: { session } } = await db.auth.getSession();
+  if (session) {
+    window.location.href = 'enhanced-crm-dashboard.html';
+  }
 })();
 
-// Prevent browser autofill
-window.addEventListener('load',()=>{
-  setTimeout(()=>{
-    [emailInput,pwInput].forEach(el=>{
-      if(el){el.value='';el.setAttribute('readonly',true);}
-    });
-    setTimeout(()=>{
-      [emailInput,pwInput].forEach(el=>{if(el)el.removeAttribute('readonly');});
-    },200);
-  },50);
-});
-</script>
-<!-- ── ACCESS GATE ── -->
-<div id="accessGate" style="position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0A0E1A 0%,#0F1628 60%,#161E35 100%);display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">
-<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,200,224,0.15);border-radius:20px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,0.4);">
-<!-- Logo -->
-<div style="font-size:32px;font-weight:900;color:#fff;margin-bottom:4px;letter-spacing:-1px;">Blu<span style="color:#00C8E0;">Wav</span></div>
-<div style="font-size:9px;font-weight:700;color:#00C8E0;letter-spacing:4px;text-transform:uppercase;margin-bottom:32px;">CRM Platform</div>
-<!-- Lock icon -->
-<div style="font-size:40px;margin-bottom:16px;">🔒</div>
-<h2 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">Client Access Only</h2>
-<p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:28px;">This platform is available to BluWav Growth clients.<br/>Enter your access code to continue.</p>
-<!-- Access code input -->
-<div style="margin-bottom:16px;">
-<input autocomplete="new-password" autofocus="" id="gateInput" onblur="this.style.borderColor='rgba(0,200,224,0.2)'" onfocus="this.style.borderColor='rgba(0,200,224,0.5)'" onkeydown="if(event.key==='Enter')checkGate()" placeholder="" style="width:100%;padding:14px 16px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(0,200,224,0.2);border-radius:10px;font-size:15px;color:#fff;font-family:inherit;outline:none;text-align:center;letter-spacing:4px;box-sizing:border-box;transition:border-color 0.2s;" type="password" value=""/>
-</div>
-<div id="gateError" style="display:none;font-size:12px;color:#FF6B2B;margin-bottom:12px;font-weight:700;">⚠ Incorrect access code. Please try again.</div>
-<button onclick="checkGate()" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(0,200,224,0.3)'" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 28px rgba(0,200,224,0.5)'" style="width:100%;background:linear-gradient(135deg,#00C8E0,#007a85);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,200,224,0.3);">
-      Continue →
-    </button>
-<p style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:20px;">Don't have an access code? Contact <a href="mailto:hello@bluwavgrowth.com" style="color:#00C8E0;text-decoration:underline;font-weight:600;">hello@bluwavgrowth.com</a></p>
-</div>
-</div>
-<script>
-// ── ACCESS GATE LOGIC ──────────────────────────────────────────────────────
-(function(){
-  // Always clear gate flag on login page — gate must be passed every time
+// ── ACCESS GATE ─────────────────────────────────────────────────
+(function () {
+  // Clear gate on every load — must pass gate each time
   sessionStorage.removeItem('bw_gate_ok');
-  // Show gate, hide main content
-  document.body.style.overflow='hidden';
-  // Focus input after short delay
-  setTimeout(function(){
-    var inp=document.getElementById('gateInput');
-    inp.value='';
-    inp.setAttribute('value','');
-    if(inp)inp.focus();
-  },300);
+  document.body.style.overflow = 'hidden';
+  setTimeout(function () {
+    var inp = document.getElementById('gateInput');
+    if (inp) { inp.value = ''; inp.focus(); }
+  }, 300);
 })();
 
-function checkGate(){
-  var code=document.getElementById('gateInput').value.trim().toUpperCase();
-  var errEl=document.getElementById('gateError');
-  // Access codes — add more as needed, case-insensitive
-  var validCodes=['BW2026','BLUWAV','BWCRM26','AMT2026','BLUCRM','ANDREA'];
-  if(validCodes.indexOf(code)!==-1){
-    sessionStorage.setItem('bw_gate_ok','1');
-    var gate=document.getElementById('accessGate');
-    gate.style.transition='opacity 0.4s ease';
-    gate.style.opacity='0';
-    setTimeout(function(){gate.style.display='none';},400);
-    document.body.style.overflow='';
+function checkGate() {
+  var code = document.getElementById('gateInput').value.trim().toUpperCase();
+  var errEl = document.getElementById('gateError');
+  var validCodes = ['BW2026', 'BLUWAV', 'BWCRM26', 'AMT2026', 'BLUCRM', 'ANDREA'];
+  if (validCodes.indexOf(code) !== -1) {
+    sessionStorage.setItem('bw_gate_ok', '1');
+    var gate = document.getElementById('accessGate');
+    gate.style.transition = 'opacity 0.4s ease';
+    gate.style.opacity = '0';
+    setTimeout(function () { gate.style.display = 'none'; }, 400);
+    document.body.style.overflow = '';
   } else {
-    errEl.style.display='block';
-    var inp=document.getElementById('gateInput');
-    inp.value='';
-    inp.setAttribute('value','');
-    inp.style.borderColor='rgba(255,107,43,0.5)';
-    setTimeout(function(){inp.style.borderColor='rgba(0,200,224,0.2)';},1500);
+    errEl.style.display = 'block';
+    var inp = document.getElementById('gateInput');
+    inp.value = '';
     inp.focus();
+    setTimeout(function () { errEl.style.display = 'none'; }, 3000);
   }
 }
 </script>
