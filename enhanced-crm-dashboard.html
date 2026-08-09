@@ -942,7 +942,7 @@ function showToast(msg,type=''){
 })();
 
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
-const AUTH_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 
 // Activity tracker — resets on any user interaction
 function touchActivity() {
@@ -1105,6 +1105,18 @@ let _loadDataInFlight = false;
 async function loadData(){
   if(_loadDataInFlight) return; // prevent concurrent calls
   _loadDataInFlight = true;
+  // Safety timeout — clear loading state after 10s if still stuck
+  const loadTimeout = setTimeout(()=>{
+    if(_loadDataInFlight){
+      _loadDataInFlight = false;
+      ['metricContacts','metricDeals','metricValue','metricWon'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el&&el.textContent==='Loading...')el.textContent='0';
+      });
+      const gr=document.getElementById('dashGreeting');
+      if(gr&&gr.textContent==='Loading...')gr.textContent='Welcome back';
+    }
+  }, 10000);
   try {
   // Load contacts — matches dashboard.html exactly (contacts table, RLS-filtered)
   let contacts=[], cCount=0;
@@ -1191,8 +1203,16 @@ async function loadData(){
   if(userRole==='manager'||userRole==='admin'){
     loadLeaderboard();
   }
-  } catch(e){ console.error('loadData error:',e); }
-  finally { _loadDataInFlight = false; }
+  } catch(e){
+    console.error('loadData error:',e);
+    // Clear all loading states so UI doesn't stay frozen
+    ['metricContacts','metricDeals','metricValue','metricWon'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el&&el.textContent==='Loading...')el.textContent='—';
+    });
+    showToast('Data load error: '+e.message,'');
+  }
+  finally { _loadDataInFlight = false; clearTimeout(loadTimeout); }
 }
 
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
