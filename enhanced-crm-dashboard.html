@@ -1792,14 +1792,14 @@ async function saveContact(){
     const el=document.getElementById(id);if(el)el.value='';
   });
   await loadData();
-  // Update contact count immediately
+  // loadData() already updates metricContacts — but force update here too
   const newCount = allContacts.length;
   const mc=document.getElementById('metricContacts');if(mc)mc.textContent=newCount;
   const nb=document.getElementById('navContactsBadge');if(nb)nb.textContent=newCount;
   const ca=document.getElementById('countAll');if(ca)ca.textContent=newCount;
-  const ct=document.getElementById('contactTrend');if(ct)ct.textContent='↑ '+newCount+' total';
+  const ct=document.getElementById('contactTrend');if(ct&&newCount>0)ct.textContent='↑ '+newCount+' total';
   // Refresh contacts view if open
-  if(typeof filteredContacts!=='undefined'){filteredContacts=allContacts.slice();sortContacts();}
+  if(typeof filteredContacts!=='undefined'){filteredContacts=allContacts.slice();if(typeof sortContacts==='function')sortContacts();}
 }
 
 async function saveDeal(){
@@ -3954,8 +3954,8 @@ async function saveProfileSettings(){
     if (!btn) return;
     var txt = btn.textContent.trim();
 
-    /* Save Contact */
-    if (/save contact/i.test(txt)) {
+    /* Save Contact - disabled, using real saveContact() */
+    if (false && /save contact/i.test(txt)) {
       e.stopImmediatePropagation();
       var modal = btn.closest('.modal, [id*="modal"], [id*="contact"]') ||
                   qs('#addContactModal') || qs('[id*="contactModal"]');
@@ -4001,7 +4001,7 @@ async function saveProfileSettings(){
     if (!btn) return;
     var txt = btn.textContent.trim();
 
-    if (/^save deal$/i.test(txt) || /^add deal$/i.test(txt)) {
+    if (false && (/^save deal$/i.test(txt) || /^add deal$/i.test(txt))) {
       e.stopImmediatePropagation();
       var modal = btn.closest('.modal, [id*="modal"], [id*="deal"]') ||
                   qs('#addDealModal') || qs('[id*="dealModal"]');
@@ -4047,7 +4047,7 @@ async function saveProfileSettings(){
     if (!btn) return;
     var txt = btn.textContent.trim();
 
-    if (/^(save task|add task|create task)$/i.test(txt)) {
+    if (false && /^(save task|add task|create task)$/i.test(txt)) {
       e.stopImmediatePropagation();
       var modal = btn.closest('.modal, [id*="modal"], [id*="task"]') || btn.parentElement.parentElement;
 
@@ -4503,28 +4503,28 @@ async function saveProfileSettings(){
         o.value = '6'; o.textContent = '6';
         perPageSel.insertBefore(o, perPageSel.firstChild);
       }
-      perPageSel.value = '6';
+      perPageSel.value = '15';
       perPageSel.dispatchEvent(new Event('change', {bubbles:true}));
     }
 
     /* Also try to find the internal pagination state variable and override it */
     /* Patch any global variable named contactsPerPage / pageSize */
-    if (typeof window.contactsPerPage !== 'undefined') window.contactsPerPage = 6;
-    if (typeof window.pageSize !== 'undefined')        window.pageSize = 6;
-    if (typeof window.itemsPerPage !== 'undefined')    window.itemsPerPage = 6;
-    if (typeof window.perPage !== 'undefined')         window.perPage = 6;
+    if (typeof window.contactsPerPage !== 'undefined') window.contactsPerPage = 15;
+    if (typeof window.pageSize !== 'undefined')        window.pageSize = 15;
+    if (typeof window.itemsPerPage !== 'undefined')    window.itemsPerPage = 15;
+    if (typeof window.perPage !== 'undefined')         window.perPage = 15;
 
     /* Re-render contacts list with 6 per page */
     var contactRows = qsa('#contactsTable tr, #contactsList [class*="contact-row"], [class*="contact-item"]');
     if (contactRows.length) {
       contactRows.forEach(function(row, i){
-        row.style.display = i < 6 ? '' : 'none';
+        row.style.display = i < 15 ? '' : 'none';
       });
 
       /* Wire pagination buttons */
       var currentPage = 0;
       var totalRows   = contactRows.length;
-      var perPage6    = 6;
+      var perPage6    = 15;
 
       function showPage(page) {
         currentPage = page;
