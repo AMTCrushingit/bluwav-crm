@@ -991,18 +991,21 @@ function touchActivity() {
 
 async function initDashboard(){
 
-  // Get or create profile
+  // Get or create profile — with timeout so it never hangs
   let profile = null;
   try{
-    const {data:p,error:pe} = await db.from('profiles').select('*').eq('id',currentUser.id).single();
-    if(!pe) profile = p;
-  }catch(e){}
+    const profilePromise = db.from('profiles').select('*').eq('id',currentUser.id).single();
+    const timeoutPromise = new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),5000));
+    const {data:p,error:pe} = await Promise.race([profilePromise, timeoutPromise]).catch(()=>({data:null,error:'timeout'}));
+    if(!pe && p) profile = p;
+  }catch(e){ console.warn('Profile fetch:', e.message); }
 
   if(!profile){
     const meta = currentUser.user_metadata||{};
     const autoName = meta.full_name||currentUser.email?.split('@')[0]||'User';
     const autoRole = meta.role||'salesperson';
-    await db.from('profiles').upsert({id:currentUser.id,full_name:autoName,role:autoRole});
+    // Non-blocking upsert — don't await, just fire and forget
+    db.from('profiles').upsert({id:currentUser.id,full_name:autoName,role:autoRole}).then(()=>{}).catch(()=>{});
     profile = {full_name:autoName,role:autoRole};
   }
 
