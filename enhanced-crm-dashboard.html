@@ -954,18 +954,10 @@ function touchActivity() {
 
 // Main auth init — runs immediately
 (async function() {
-  // 1. Check gate was passed (prevents bypass via direct URL)
-  if (!sessionStorage.getItem('bw_gate_ok')) {
-    window.location.href = 'login.html';
-    return;
-  }
-
-  // 2. Check if we have a Supabase session
+  // Check Supabase session — this is the real auth guard
   const { data: { session } } = await db.auth.getSession();
 
   if (!session) {
-    // No session — go to login
-    sessionStorage.removeItem('bw_gate_ok');
     window.location.href = 'login.html';
     return;
   }
