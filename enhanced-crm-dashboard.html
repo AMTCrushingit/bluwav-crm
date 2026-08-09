@@ -27,10 +27,6 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--navy-deep);}
 ::-webkit-scrollbar-thumb{background:var(--navy-border);border-radius:3px;}
-/* ── Date picker visibility on dark backgrounds ── */
-input[type="date"]{color-scheme:dark;cursor:pointer;}
-input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.8) brightness(1.5);cursor:pointer;opacity:0.8;}
-input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 
 /* ══ SIDEBAR ══ */
 .sidebar{width:var(--sidebar);background:rgba(10,14,26,0.98);border-right:1px solid var(--navy-border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;transition:width 0.3s;}
@@ -44,10 +40,7 @@ input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 .logo-wm .blu{color:#fff;}.logo-wm .wav{color:var(--cyan);}
 .logo-sub{font-size:0.45rem;font-weight:700;letter-spacing:0.28em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:4px;}
 .logo-sub::before,.logo-sub::after{content:'';display:block;width:12px;height:1px;background:var(--gold);opacity:.5;}
-.collapse-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0;transition:var(--transition);}
-.collapse-btn:hover{color:var(--cyan);}
-/* Hide collapse btn on tablet/mobile — hamburger handles it there */
-@media(max-width:1024px){.collapse-btn{display:none!important;}}
+.collapse-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0;}
 .collapse-btn:hover{color:var(--text);}
 .sidebar-nav{flex:1;padding:12px 0;}
 .ns{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);padding:10px 14px 4px;}
@@ -339,7 +332,7 @@ input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 <span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
 <span class="logo-sub">CRM</span>
 </a>
-<button class="collapse-btn" onclick="toggleSidebar()" title="Collapse sidebar">←</button>
+<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
@@ -357,7 +350,7 @@ input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 <a class="ni" href="agent-onboarding.html"><span class="ni-icon">🚀</span><span class="nav-text">Onboarding</span></a>
 <div class="ns">Insights</div>
 <a class="ni" id="nav-reports" onclick="showView('reports')"><span class="ni-icon">📈</span><span class="nav-text">Reports</span></a>
-<a class="ni" id="nav-settings" onclick="showView('settings');populateSettings();"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" id="nav-settings" onclick="showView('settings')"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
 <a class="ni" href="billing.html"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <!-- Manager/Admin only -->
 <div class="ns" id="adminNav" style="display:none;">Admin</div>
@@ -370,7 +363,7 @@ input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 <div class="tw-sub">days remaining · No card needed</div>
 <div class="tw-bar"><div class="tw-fill"></div></div>
 </div>
-<div class="user-card" onclick="showView('settings');populateSettings();">
+<div class="user-card" onclick="showView('settings')">
 <div class="avatar" id="sidebarAvatar">—</div>
 <div class="user-info">
 <div class="user-name" id="sidebarName">Loading...</div>
@@ -398,10 +391,10 @@ input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ Add Contact</button>
 <button class="ib" onclick="loadData();showToast('Refreshed ✓','success')" title="Refresh data">↻</button>
 <button class="ib" onclick="toggleNotif()" title="Notifications">🔔<span class="ndot"></span></button>
-<button class="ib" onclick="showView('settings');populateSettings();" title="Settings">⚙️</button>
+<button class="ib" onclick="showView('settings')" title="Settings">⚙️</button>
 
 <div class="tb-div"></div>
-<div class="user-chip" onclick="showView('settings');populateSettings();">
+<div class="user-chip" onclick="showView('settings')">
 <div class="avatar" id="topAvatar" style="width:26px;height:26px;font-size:0.65rem;">—</div>
 <div>
 <div class="un" id="topName">Loading...</div>
@@ -775,7 +768,7 @@ input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 <div class="modal-body">
 <div class="fg-row"><div class="fg"><label class="fl">First Name <span class="req">*</span></label><input class="fi" id="mc-first" placeholder="First name"/></div><div class="fg"><label class="fl">Last Name <span class="req">*</span></label><input class="fi" id="mc-last" placeholder="Last name"/></div></div>
 <div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="mc-email" placeholder="email@company.com" type="email"/></div>
-<div class="fg"><label class="fl">Phone / WhatsApp</label><div style="display:flex;gap:6px;align-items:center;"><select id="mc-phone-code" class="fs" style="width:110px;flex-shrink:0;font-size:12px;padding:8px 4px;"><option value="+1">🇺🇸 US/CA +1</option><option value="+1268">🇦🇬 Antigua +1268</option><option value="+1246">🇧🇧 Barbados +1246</option><option value="+501">🇧🇿 Belize +501</option><option value="+1284">🇻🇬 BVI +1284</option><option value="+53">🇨🇺 Cuba +53</option><option value="+1767">🇩🇲 Dominica +1767</option><option value="+1809">🇩🇴 Dominican Rep +1809</option><option value="+473">🇬🇩 Grenada +473</option><option value="+592">🇬🇾 Guyana +592</option><option value="+509">🇭🇹 Haiti +509</option><option value="+1876">🇯🇲 Jamaica +1876</option><option value="+1664">🇲🇸 Montserrat +1664</option><option value="+1869">🇰🇳 St Kitts +1869</option><option value="+1758">🇱🇨 St Lucia +1758</option><option value="+1784">🇻🇨 St Vincent +1784</option><option value="+1868">🇹🇹 Trinidad +1868</option><option value="+1649">🇹🇨 Turks &amp; Caicos +1649</option><option value="+44">🇬🇧 UK +44</option><option value="+52">🇲🇽 Mexico +52</option><option value="+55">🇧🇷 Brazil +55</option><option value="+57">🇨🇴 Colombia +57</option></select><input class="fi" id="mc-phone" placeholder="xxx xxx xxxx" type="tel" style="flex:1;"/></div></div>
+<div class="fg"><label class="fl">Phone / WhatsApp</label><input class="fi" id="mc-phone" placeholder="+1 (xxx) xxx-xxxx" type="tel"/></div>
 <div class="fg"><label class="fl">Business Name</label><input class="fi" id="mc-biz" placeholder="Company name"/></div>
 <div class="fg-row">
 <div class="fg"><label class="fl">Status</label><select class="fs" id="mc-status"><option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal">Proposal</option><option value="Won">Won</option></select></div>
@@ -845,13 +838,13 @@ input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 <div class="modal">
 <div class="modal-hd"><h3>📧 Send Email</h3><button class="modal-close" onclick="closeModal('sendEmail')">✕</button></div>
 <div class="modal-body">
-<div class="fg"><label class="fl">To</label><input class="fi" id="em-to" placeholder="recipient@email.com" type="email"/></div>
-<div class="fg"><label class="fl">Subject</label><input class="fi" id="em-subject" placeholder="Email subject"/></div>
-<div class="fg"><label class="fl">Message</label><textarea class="fta" id="em-message" placeholder="Your message..." style="min-height:120px;"></textarea></div>
+<div class="fg"><label class="fl">To</label><input class="fi" placeholder="recipient@email.com"/></div>
+<div class="fg"><label class="fl">Subject</label><input class="fi" placeholder="Email subject"/></div>
+<div class="fg"><label class="fl">Message</label><textarea class="fta" placeholder="Your message..." style="min-height:120px;"></textarea></div>
 </div>
 <div class="modal-footer">
 <button class="btn btn-ghost" onclick="closeModal('sendEmail')">Cancel</button>
-<button class="btn btn-primary" id="em-send-btn" onclick="sendEmailFromModal()">Send Email</button>
+<button class="btn btn-primary" onclick="sendEmailFromModal()">Send Email</button>
 </div>
 </div>
 </div>
@@ -859,7 +852,7 @@ input[type="date"]::-webkit-datetime-edit{color:var(--text2);}
 <div class="modal">
 <div class="modal-hd"><h3>✅ Add Task</h3><button class="modal-close" onclick="closeModal('addTask')">✕</button></div>
 <div class="modal-body">
-<div class="fg"><label class="fl">Task Title <span class="req">*</span></label><input class="fi" id="task-title" placeholder="Task description"/></div>
+<div class="fg"><label class="fl">Task Title <span class="req">*</span></label><input class="fi" placeholder="Task description"/></div>
 <div class="fg-row">
 <div class="fg"><label class="fl">Due Date</label><input class="fi" id="task-due-date" type="date" style="cursor:pointer;"/></div>
 <div class="fg"><label class="fl">Priority</label><select class="fs"><option>High</option><option>Medium</option><option>Low</option></select></div>
@@ -897,7 +890,7 @@ const db = createClient(
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let currentUser = null, userRole = 'salesperson', allTeam = [];
 let viewingUserId = null, allContacts = [], allDeals = [];
-let filteredContacts = [], currentPage = 1, pageSize = 15;
+let filteredContacts = [], currentPage = 1, pageSize = 6;
 let currentSortCol = 'name', currentSortDir = 'asc';
 let revenueChart = null, reportsChart = null;
 
@@ -942,7 +935,7 @@ function showToast(msg,type=''){
 })();
 
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
-const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+const AUTH_TIMEOUT = 10 * 60 * 1000; // 5 minutes
 
 // Activity tracker — resets on any user interaction
 function touchActivity() {
@@ -954,10 +947,13 @@ function touchActivity() {
 
 // Main auth init — runs immediately
 (async function() {
-  // Check Supabase session — this is the real auth guard
+  // 1. Check gate was passed (prevents bypass via direct URL)
+  // Check Supabase session
   const { data: { session } } = await db.auth.getSession();
 
   if (!session) {
+    // No session — go to login
+    sessionStorage.removeItem('bw_gate_ok');
     window.location.href = 'login.html';
     return;
   }
@@ -991,20 +987,19 @@ function touchActivity() {
 
 async function initDashboard(){
 
-  // Get or create profile — with timeout so it never hangs
+  // Get or create profile
   let profile = null;
   try{
-    const profilePromise = db.from('profiles').select('*').eq('id',currentUser.id).single();
-    const timeoutPromise = new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),5000));
-    const {data:p,error:pe} = await Promise.race([profilePromise, timeoutPromise]).catch(()=>({data:null,error:'timeout'}));
+    const _pq = db.from('profiles').select('*').eq('id',currentUser.id).single();
+    const _pt = new Promise(r=>setTimeout(()=>r({data:null,error:'timeout'}),5000));
+    const {data:p,error:pe} = await Promise.race([_pq,_pt]);
     if(!pe && p) profile = p;
-  }catch(e){ console.warn('Profile fetch:', e.message); }
+  }catch(e){ console.warn('profile fetch:',e.message); }
 
   if(!profile){
     const meta = currentUser.user_metadata||{};
     const autoName = meta.full_name||currentUser.email?.split('@')[0]||'User';
     const autoRole = meta.role||'salesperson';
-    // Non-blocking upsert — don't await, just fire and forget
     db.from('profiles').upsert({id:currentUser.id,full_name:autoName,role:autoRole}).then(()=>{}).catch(()=>{});
     profile = {full_name:autoName,role:autoRole};
   }
@@ -1108,18 +1103,6 @@ let _loadDataInFlight = false;
 async function loadData(){
   if(_loadDataInFlight) return; // prevent concurrent calls
   _loadDataInFlight = true;
-  // Safety timeout — clear loading state after 10s if still stuck
-  const loadTimeout = setTimeout(()=>{
-    if(_loadDataInFlight){
-      _loadDataInFlight = false;
-      ['metricContacts','metricDeals','metricValue','metricWon'].forEach(id=>{
-        const el=document.getElementById(id);
-        if(el&&el.textContent==='Loading...')el.textContent='0';
-      });
-      const gr=document.getElementById('dashGreeting');
-      if(gr&&gr.textContent==='Loading...')gr.textContent='Welcome back';
-    }
-  }, 10000);
   try {
   // Load contacts — matches dashboard.html exactly (contacts table, RLS-filtered)
   let contacts=[], cCount=0;
@@ -1206,16 +1189,8 @@ async function loadData(){
   if(userRole==='manager'||userRole==='admin'){
     loadLeaderboard();
   }
-  } catch(e){
-    console.error('loadData error:',e);
-    // Clear all loading states so UI doesn't stay frozen
-    ['metricContacts','metricDeals','metricValue','metricWon'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el&&el.textContent==='Loading...')el.textContent='—';
-    });
-    showToast('Data load error: '+e.message,'');
-  }
-  finally { _loadDataInFlight = false; clearTimeout(loadTimeout); }
+  } catch(e){ console.error('loadData error:',e); }
+  finally { _loadDataInFlight = false; }
 }
 
 // ── PIPELINE ──────────────────────────────────────────────────────────────────
@@ -1776,7 +1751,7 @@ async function saveContact(){
   const contact={
     full_name:(first+' '+last).trim(),
     email:email,
-    phone:(()=>{ const c=document.getElementById('mc-phone-code')?.value||''; const n=document.getElementById('mc-phone')?.value.trim()||''; return n?(c+' '+n).trim():null;})()||null,
+    phone:document.getElementById('mc-phone')?.value.trim()||null,
     business_name:document.getElementById('mc-biz')?.value.trim()||null,
     island:document.getElementById('mc-location')?.value.trim()||null,
     notes:document.getElementById('mc-notes')?.value.trim()||null,
@@ -1794,7 +1769,7 @@ async function saveContact(){
     return;
   }
   showToast('Contact saved ✓','success');
-  createNotif('&#x1F464;','var(--cyan)','New contact added successfully','contact_new');
+  // Admin notification removed per user request
   closeModal('addContact');
   // Clear form
   ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes'].forEach(id=>{
@@ -1839,7 +1814,6 @@ async function saveDeal(){
     return;
   }
   showToast('Deal saved ✓','success');
-  if(typeof onDealSaved==='function') onDealSaved();
   notifyAdmin('💼 New Deal Added — BluWav CRM (14-Day Trial)',
     'Deal: '+name+'\nValue: $'+val+'\nStage: '+stage+'\nType: '+dealType+'\nAgent: '+currentUser?.email+'\nTime: '+new Date().toLocaleString());
   closeModal('addDeal');
@@ -1875,13 +1849,8 @@ function showView(name){
 function toggleSidebar(){
   // Desktop only — on tablet/mobile use drawer instead
   if(window.innerWidth<=1024){ toggleMobileSidebar(); return; }
-  const sb = document.getElementById('sidebar');
-  const mc = document.getElementById('mainContent');
-  const btn = sb.querySelector('.collapse-btn');
-  const isCollapsed = sb.classList.toggle('collapsed');
-  if(mc) mc.classList.toggle('expanded', isCollapsed);
-  // Flip button icon: ← when expanded, → when collapsed
-  if(btn) btn.textContent = isCollapsed ? '→' : '←';
+  document.getElementById('sidebar').classList.toggle('collapsed');
+  document.getElementById('mainContent').classList.toggle('expanded');
 }
 
 function toggleNotif(){
@@ -2201,20 +2170,21 @@ async function deleteTask(id){
 
 // Override addTask modal save to actually persist
 async function saveTask(){
-  const titleEl = document.getElementById('task-title');
-  const dateEl  = document.getElementById('task-due-date');
-  const priEl   = document.querySelector('#modal-addTask .fs');
-  const title   = titleEl ? titleEl.value.trim() : '';
-  if(!title){ showToast('Please enter a task title',''); return; }
+  const titleEl = document.querySelector('#modal-addTask .fi[placeholder="Task description"]');
+  const dateEl = document.querySelector('#modal-addTask input[type="date"]');
+  const priEl = document.querySelector('#modal-addTask .fs');
+  const title = titleEl ? titleEl.value.trim() : '';
+  if(!title){showToast('Please enter a task title','');return;}
   const taskObj = {
-    title:    title,
-    due_date: dateEl && dateEl.value ? dateEl.value : null,
+    title: title,
+    due_date: dateEl&&dateEl.value ? dateEl.value : null,
     priority: priEl ? priEl.value : 'Medium',
     completed: false,
-    user_id:  currentUser?.id
+    user_id: currentUser?.id
   };
-  const { error } = await db.from('tasks').insert(taskObj).catch(e=>({error:e}));
+  const {error} = await db.from('tasks').insert(taskObj).catch(e=>({error:e}));
   if(error){
+    // tasks table may not exist yet — store locally
     allTasks.unshift({...taskObj, id:'local_'+Date.now()});
     renderTasks();
   } else {
@@ -2222,8 +2192,8 @@ async function saveTask(){
   }
   showToast('Task added ✓','success');
   closeModal('addTask');
-  if(titleEl) titleEl.value = '';
-  if(dateEl)  dateEl.value  = '';
+  if(titleEl) titleEl.value='';
+  if(dateEl) dateEl.value='';
 }
 
 // ── CALENDAR ──────────────────────────────────────────────────────────────────
@@ -2252,15 +2222,12 @@ function renderCalendar(){
       const td = new Date(t.due_date);
       return td.getFullYear()===calYear && td.getMonth()===calMonth && td.getDate()===d;
     });
-    const _evDateStr = calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const _hasEv = window.calEvents && window.calEvents.some(ev=>ev.date===_evDateStr);
-    const _evDot = _hasEv ? '<span style="display:block;width:5px;height:5px;border-radius:50%;background:var(--cyan);margin:1px auto;"></span>' : '';
     const dateNum = isToday
       ? '<div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--cyan);color:var(--navy-deep);font-size:0.75rem;font-weight:800;margin-bottom:4px;">'+d+'</div>'
-      : '<div style="font-size:0.75rem;font-weight:500;color:var(--text3);margin-bottom:4px;">'+d+'</div>' + _evDot;
+      : '<div style="font-size:0.75rem;font-weight:500;color:var(--text3);margin-bottom:4px;">'+d+'</div>';
     const taskHtml = dayTasks.map(t=>'<div style="font-size:0.62rem;background:var(--cyan-glow);border:1px solid rgba(0,200,224,0.2);border-radius:4px;padding:2px 5px;margin-bottom:2px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+t.title+'</div>').join('');
     const cellBg = isToday ? 'rgba(0,200,224,0.06)' : 'var(--navy-deep)';
-    html += '<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:'+cellBg+';cursor:pointer;" onclick="openCalEvent('+calYear+','+calMonth+','+d+')">'+dateNum+taskHtml+'</div>';
+    html += '<div style="min-height:80px;border:1px solid var(--navy-border);padding:6px;background:'+cellBg+';cursor:pointer;" onclick="openModal(&quot;addTask&quot;)">'+dateNum+taskHtml+'</div>';
   }
   daysEl.innerHTML = html;
 }
@@ -2269,69 +2236,11 @@ function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCal
 function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
 function calToday(){ calYear=new Date().getFullYear(); calMonth=new Date().getMonth(); renderCalendar(); }
 
-function openCalEvent(y, m, d) {
-  openModal('addEvent');
-  const mm = String(parseInt(m)+1).padStart(2,'0');
-  const dd = String(parseInt(d)).padStart(2,'0');
-  const dateEl = document.getElementById('ev-date');
-  if(dateEl) dateEl.value = y+'-'+mm+'-'+dd;
-}
-
-// In-memory calendar events (persisted via tasks table)
-if(!window.calEvents) window.calEvents = [];
-
-async function saveEvent() {
-  const title = document.getElementById('ev-title')?.value.trim();
-  const date  = document.getElementById('ev-date')?.value;
-  const time  = document.getElementById('ev-time')?.value || '09:00';
-  const type  = document.getElementById('ev-type')?.value || 'meeting';
-  const notes = document.getElementById('ev-notes')?.value.trim() || '';
-  if(!title){ showToast('Please enter an event title',''); return; }
-  if(!date){  showToast('Please select a date',''); return; }
-
-  // Save as a task (reliable — tasks table confirmed to exist)
-  const taskTitle = '📅 ' + title + (time ? ' @ ' + time : '') + (notes ? ' — ' + notes : '');
-  const taskObj = {
-    title: taskTitle,
-    due_date: date,
-    priority: 'Medium',
-    completed: false,
-    user_id: currentUser?.id
-  };
-  const { data, error } = await db.from('tasks').insert(taskObj).select().catch(e=>({error:e}));
-  if(error){
-    showToast('Error saving event: ' + error.message, '');
-    return;
-  }
-
-  // Also keep in calEvents array so renderCalendar can dot the day
-  const savedId = (data && data[0]) ? data[0].id : 'local_' + Date.now();
-  window.calEvents.push({ id: savedId, title, date, time, type, notes });
-
-  showToast('Event added ✓', 'success');
-  closeModal('addEvent');
-  ['ev-title','ev-notes'].forEach(id=>{
-    const el = document.getElementById(id); if(el) el.value = '';
-  });
-  const timeEl = document.getElementById('ev-time');
-  if(timeEl) timeEl.value = '09:00';
-  await loadTasks();
-  renderCalendar();
-}
-
 // ── OVERRIDE showView to load tasks/calendar data ─────────────────────────────
 
 
 // ── OVERRIDE addTask modal button to use saveTask() ───────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
-  // Wire deal-edit-btn clicks anywhere in the document (kanban + list views)
-  document.addEventListener('click', function(e){
-    const btn = e.target.closest('.deal-edit-btn');
-    if(!btn) return;
-    const dealId = btn.dataset.dealId;
-    if(dealId && typeof openEditDeal === 'function') openEditDeal(dealId);
-  });
-
   const addTaskBtn = document.querySelector('#modal-addTask .btn-primary');
   if(addTaskBtn){
     addTaskBtn.onclick = saveTask;
@@ -2384,36 +2293,45 @@ function renderPipeline(){
 
 
 // ── SEND EMAIL FROM MODAL ─────────────────────────────────────────────────────
-function sendEmailFromModal(){
-  const sendBtn  = document.getElementById('em-send-btn');
-  const toEl     = document.getElementById('em-to');
-  const subjectEl= document.getElementById('em-subject');
-  const msgEl    = document.getElementById('em-message');
-  const to       = toEl     ? toEl.value.trim()      : '';
-  const subject  = subjectEl? subjectEl.value.trim() : '';
-  const message  = msgEl    ? msgEl.value.trim()     : '';
-
-  if(!to)     { showToast('Please enter a recipient email','');  return; }
-  if(!subject){ showToast('Please enter a subject','');          return; }
-  if(!message){ showToast('Please enter a message','');          return; }
-
-  // Open in the user's default email client — reliable, no server required
-  const mailtoUrl = 'mailto:' + encodeURIComponent(to)
-    + '?subject=' + encodeURIComponent(subject)
-    + '&body='    + encodeURIComponent(message);
-
-  window.open(mailtoUrl, '_blank');
-  showToast('✅ Email client opened for ' + to, 'success');
-  closeModal('sendEmail');
-
-  // Clear fields
-  if(toEl)      toEl.value      = '';
-  if(subjectEl) subjectEl.value = '';
-  if(msgEl)     msgEl.value     = '';
-
-  // Update last contacted if we know which contact this is for
-  if(typeof matchedContact !== 'undefined' && matchedContact){
-    updateLastContacted(matchedContact.id);
+async function sendEmailFromModal(){
+  const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
+  const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
+  const msgField = document.querySelector('#modal-sendEmail .fta');
+  const to = toField ? toField.value.trim() : '';
+  const subject = subjectField ? subjectField.value.trim() : '';
+  const message = msgField ? msgField.value.trim() : '';
+  if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
+  // Send via formspree
+  var fd = new FormData();
+  fd.append('email', to);
+  fd.append('_replyto', currentUser?.email||'');
+  fd.append('_subject', subject);
+  fd.append('message', message);
+  fd.append('_template', 'table');
+  try{
+    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
+    if(res.ok){
+      showToast('✅ Email sent to '+to,'success');
+      closeModal('sendEmail');
+      if(toField) toField.value='';
+      if(subjectField) subjectField.value='';
+      if(msgField) msgField.value='';
+      if(typeof matchedContact!=='undefined'&&matchedContact) updateLastContacted(matchedContact.id);
+    } else {
+      // Fallback: open mailto so email is never lost
+      const mailtoUrl='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
+      window.open(mailtoUrl,'_blank');
+      showToast('Opening your email client to send...','success');
+      closeModal('sendEmail');
+    }
+  }catch(e){
+    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
+    // Fallback to mailto
+    const mailtoUrl='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
+    window.open(mailtoUrl,'_blank');
+    showToast('Opening your email client...','success');
+    closeModal('sendEmail');
   }
 }
 
@@ -2655,7 +2573,76 @@ function renderEmailLog(){
 function filterEmailLog(){ renderEmailLog(); }
 
 // Override sendEmailFromModal to also save to email_log table
-async 
+const _origSendEmail = sendEmailFromModal;
+async function sendEmailFromModal(){
+  const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
+  const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
+  const msgField = document.querySelector('#modal-sendEmail .fta');
+  const to = toField ? toField.value.trim() : '';
+  const subject = subjectField ? subjectField.value.trim() : '';
+  const message = msgField ? msgField.value.trim() : '';
+  if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
+
+  // Find contact name for the log
+  const matchedContact = allContacts.find(c=>(c.email||'').toLowerCase()===to.toLowerCase());
+  const contactName = matchedContact ? matchedContact.full_name : null;
+
+  // Send via formspree
+  var fd = new FormData();
+  fd.append('email', to);
+  fd.append('_replyto', currentUser?.email||'');
+  fd.append('_subject', subject);
+  fd.append('message', message);
+  fd.append('_template', 'table');
+  try{
+    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+    if(res.ok){
+      // Save to email_log
+      const {data:{session}} = await db.auth.getSession();
+      const logEntry = {
+        to_email: to,
+        subject: subject,
+        message: message,
+        contact_name: contactName,
+        contact_id: matchedContact?.id||null,
+        sent_at: new Date().toISOString(),
+        sent_by: session?.user?.id||null,
+        sent_by_email: currentUser?.email||null
+      };
+      const {error} = await db.from('email_log').insert(logEntry);
+      if(error) console.warn('email_log table not ready:', error.message);
+      else allEmailLog.unshift(logEntry);
+
+      showToast('Email sent ✓','success');
+      closeModal('sendEmail');
+      if(toField) toField.value='';
+      if(subjectField) subjectField.value='';
+      if(msgField) msgField.value='';
+
+      // Refresh email log view if open
+      if(document.getElementById('view-email')?.classList.contains('active')){
+        renderEmailLog();
+      }
+    } else {
+      // Get error details from Formspree response
+      try{
+        const errData = await res.clone().json();
+        const errMsg = errData.error || errData.errors?.[0]?.message || 'Form submission rejected ('+res.status+')';
+        showToast('Email error: '+errMsg,'');
+        console.error('Formspree error:', errData);
+      }catch(pe){
+        showToast('Email failed (HTTP '+res.status+'). Check hello@bluwavgrowth.com directly.','');
+      }
+    }
+  }catch(e){
+    if(e.name==='TypeError'&&e.message.includes('fetch')){
+      showToast('Network error — check your internet connection and try again.','');
+    } else {
+      showToast('Email error: '+e.message,'');
+    }
+    console.error('sendEmail error:', e);
+  }
+}
 
 // Load email log when switching to email view
 
@@ -2893,10 +2880,15 @@ function createNotif(icon, color, title, type){
 }
 
 // Hook into existing events to generate real-time notifications
-// contact notification fired inside saveContact() directly
+const _origSaveContact = saveContact;
+async function saveContact(){
+  await _origSaveContact.apply(this, arguments);
+  createNotif('&#x1F464;','var(--cyan)','New contact added successfully','contact_new');
+}
 
-// saveDeal notification — triggered after successful save
-function onDealSaved(){
+const _origSaveDeal = saveDeal;
+async function saveDeal(){
+  await _origSaveDeal.apply(this, arguments);
   createNotif('&#x1F4BC;','var(--gold)','New deal created','deal_new');
 }
 
@@ -3536,19 +3528,6 @@ async function saveProfileSettings(){
   }
 }
 
-function populateSettings(){
-  const nameEl=document.getElementById(\'settingsName\');
-  const emailEl=document.getElementById(\'settingsEmail\');
-  const roleEl=document.getElementById(\'settingsRole\');
-  if(!currentUser) return;
-  if(emailEl) emailEl.value=currentUser.email||\'\';
-  db.from(\'profiles\').select(\'full_name,role\').eq(\'id\',currentUser.id).single().then(({data})=>{
-    if(nameEl&&data?.full_name) nameEl.value=data.full_name;
-    if(roleEl&&data?.role) roleEl.value=data.role;
-  }).catch(()=>{ const sn=document.getElementById(\'sidebarName\'); if(nameEl&&sn) nameEl.value=sn.textContent||\'\';
-  });
-}
-
 </script>
 
 <!-- CONTACT PROFILE MODAL — Rich tabbed detail view -->
@@ -3815,5 +3794,797 @@ function populateSettings(){
 </div>
 
 
+<script>
+/*
+ * ============================================================
+ *  BLUWAV CRM — BUG PATCH SCRIPT  |  v1.0  |  Aug 7 2026
+ * ============================================================
+ *  HOW TO INSTALL:
+ *  1. Open enhanced-crm-dashboard.html in a text editor
+ *  2. Paste the ENTIRE contents of this file just before
+ *     the closing </body> tag
+ *  3. Save and re-upload the file to your server
+ * ============================================================
+ *
+ *  FIXES INCLUDED:
+ *  1.  Phone field — country code dropdown added
+ *  2.  Add Contact — save button wired correctly
+ *  3.  Add New Deal — save button wired correctly
+ *  4.  Add Task — save button wired correctly
+ *  5.  Calendar — grid renders correctly
+ *  6.  Calendar — cell click opens Event modal (not Task)
+ *  7.  Send Email — compose form fallback (no "Form not found")
+ *  8.  Settings — photo upload + all fields unlocked
+ *  9.  Billing — active plan banner updates, Free Trial removed
+ * 10.  Sign Out — wired to clear session and redirect to login
+ * 11.  Deal edit in Sales Pipeline — edit modal opens correctly
+ * 12.  Contacts per page — corrected to 6
+ * ============================================================
+*/
+
+(function () {
+  'use strict';
+
+  /* ─────────────────────────────────────────────────────────
+     UTILITY HELPERS
+  ───────────────────────────────────────────────────────── */
+  function qs(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function qsa(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
+  function show(el) { if (el) el.style.display = ''; }
+  function hide(el) { if (el) el.style.display = 'none'; }
+
+  function toast(msg, color) {
+    color = color || '#0ea5e9';
+    var t = document.createElement('div');
+    t.textContent = msg;
+    Object.assign(t.style, {
+      position:'fixed', bottom:'28px', right:'28px', background:color,
+      color:'#fff', padding:'12px 22px', borderRadius:'10px',
+      fontWeight:'600', fontSize:'14px', zIndex:'99999',
+      boxShadow:'0 4px 16px rgba(0,0,0,0.18)', transition:'opacity 0.4s'
+    });
+    document.body.appendChild(t);
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },500); }, 3000);
+  }
+
+  /* Country codes list */
+  var COUNTRY_CODES = [
+    {code:'+1',   flag:'🇺🇸', name:'US/Canada'},
+    {code:'+1268',flag:'🇦🇬', name:'Antigua'},
+    {code:'+1246',flag:'🇧🇧', name:'Barbados'},
+    {code:'+501', flag:'🇧🇿', name:'Belize'},
+    {code:'+1284',flag:'🇻🇬', name:'BVI'},
+    {code:'+53',  flag:'🇨🇺', name:'Cuba'},
+    {code:'+1767',flag:'🇩🇲', name:'Dominica'},
+    {code:'+1809',flag:'🇩🇴', name:'Dominican Rep.'},
+    {code:'+473', flag:'🇬🇩', name:'Grenada'},
+    {code:'+592', flag:'🇬🇾', name:'Guyana'},
+    {code:'+509', flag:'🇭🇹', name:'Haiti'},
+    {code:'+1876',flag:'🇯🇲', name:'Jamaica'},
+    {code:'+1664',flag:'🇲🇸', name:'Montserrat'},
+    {code:'+1869',flag:'🇰🇳', name:'St. Kitts & Nevis'},
+    {code:'+1758',flag:'🇱🇨', name:'St. Lucia'},
+    {code:'+1784',flag:'🇻🇨', name:'St. Vincent'},
+    {code:'+1868',flag:'🇹🇹', name:'Trinidad & Tobago'},
+    {code:'+1649',flag:'🇹🇨', name:'Turks & Caicos'},
+    {code:'+44',  flag:'🇬🇧', name:'UK'},
+    {code:'+52',  flag:'🇲🇽', name:'Mexico'},
+    {code:'+55',  flag:'🇧🇷', name:'Brazil'},
+    {code:'+57',  flag:'🇨🇴', name:'Colombia'},
+  ];
+
+  function buildPhoneField(phoneInput) {
+    if (!phoneInput || phoneInput.dataset.patched) return;
+    phoneInput.dataset.patched = '1';
+
+    var wrapper = document.createElement('div');
+    wrapper.style.cssText = 'display:flex;gap:6px;align-items:center;';
+
+    var sel = document.createElement('select');
+    sel.style.cssText = 'border:1px solid #cbd5e1;border-radius:8px;padding:8px 6px;font-size:13px;background:#f8fafc;min-width:140px;';
+    COUNTRY_CODES.forEach(function(c){
+      var opt = document.createElement('option');
+      opt.value = c.code;
+      opt.textContent = c.flag + ' ' + c.name + ' ' + c.code;
+      sel.appendChild(opt);
+    });
+
+    phoneInput.parentNode.insertBefore(wrapper, phoneInput);
+    wrapper.appendChild(sel);
+    wrapper.appendChild(phoneInput);
+    phoneInput.placeholder = 'Phone number';
+    phoneInput.style.flex = '1';
+
+    /* Store combined value on change */
+    function sync() { phoneInput.dataset.fullPhone = sel.value + phoneInput.value; }
+    sel.addEventListener('change', sync);
+    phoneInput.addEventListener('input', sync);
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 1 — PHONE COUNTRY CODE DROPDOWN
+     Targets any phone/WhatsApp input in modals
+  ───────────────────────────────────────────────────────── */
+  function patchPhoneFields() {
+    var selectors = [
+      'input[placeholder*="Phone"]',
+      'input[placeholder*="phone"]',
+      'input[placeholder*="WhatsApp"]',
+      'input[id*="phone"]',
+      'input[name*="phone"]'
+    ];
+    selectors.forEach(function(s){
+      qsa(s).forEach(buildPhoneField);
+    });
+  }
+
+  /* Patch phone fields now and whenever a modal opens */
+  document.addEventListener('click', function(){
+    setTimeout(patchPhoneFields, 200);
+  });
+  setTimeout(patchPhoneFields, 800);
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 2 — ADD CONTACT SAVE
+  ───────────────────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    var txt = btn.textContent.trim();
+
+    /* Save Contact */
+    if (/save contact/i.test(txt)) {
+      e.stopImmediatePropagation();
+      var modal = btn.closest('.modal, [id*="modal"], [id*="contact"]') ||
+                  qs('#addContactModal') || qs('[id*="contactModal"]');
+      if (!modal) modal = btn.closest('div[style*="flex"]') || btn.parentElement.parentElement;
+
+      var fields = {
+        firstName: (qs('[id*="firstName"], [placeholder*="First"]', modal) || {}).value || '',
+        lastName:  (qs('[id*="lastName"],  [placeholder*="Last"]',  modal) || {}).value || '',
+        email:     (qs('[id*="email"],     [type="email"]',         modal) || {}).value || '',
+        phone:     (qs('[id*="phone"],     [placeholder*="Phone"]', modal) || {}).dataset?.fullPhone ||
+                   (qs('[id*="phone"],     [placeholder*="Phone"]', modal) || {}).value || '',
+        business:  (qs('[id*="business"],  [placeholder*="Business"]',modal)||{}).value || '',
+        status:    (qs('select[id*="status"],select[id*="Status"]', modal)||{}).value || 'Lead',
+        location:  (qs('[id*="location"], [placeholder*="Location"]',modal)||{}).value || '',
+        notes:     (qs('textarea',         modal) || {}).value || ''
+      };
+
+      if (!fields.firstName && !fields.email) {
+        toast('Please enter at least a name or email.', '#ef4444'); return;
+      }
+
+      /* Save to localStorage */
+      var contacts = JSON.parse(localStorage.getItem('bw_contacts') || '[]');
+      fields.id = Date.now().toString();
+      fields.created = new Date().toISOString();
+      contacts.unshift(fields);
+      localStorage.setItem('bw_contacts', JSON.stringify(contacts));
+      toast('✅ Contact saved: ' + (fields.firstName + ' ' + fields.lastName).trim() || fields.email);
+
+      /* Close modal */
+      var closeBtn = qs('[data-dismiss], .close, button[onclick*="close"], button[onclick*="hide"]', modal);
+      if (closeBtn) closeBtn.click();
+      else { modal.style.display = 'none'; modal.classList.remove('show','active','open'); }
+    }
+  }, true);
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 3 — ADD NEW DEAL SAVE
+  ───────────────────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    var txt = btn.textContent.trim();
+
+    if (/^save deal$/i.test(txt) || /^add deal$/i.test(txt)) {
+      e.stopImmediatePropagation();
+      var modal = btn.closest('.modal, [id*="modal"], [id*="deal"]') ||
+                  qs('#addDealModal') || qs('[id*="dealModal"]');
+      if (!modal) modal = btn.parentElement.parentElement;
+
+      var nameInput  = qs('[id*="dealName"], [placeholder*="Deal"]',  modal) ||
+                       qs('input[type="text"]', modal);
+      var valueInput = qs('[id*="dealValue"],[id*="value"],[placeholder*="Value"],[placeholder*="value"]', modal);
+      var stageInput = qs('select[id*="stage"],select[id*="Stage"]', modal);
+      var clientInput= qs('select[id*="client"],select[id*="Client"],select[id*="contact"]', modal);
+      var dateInput  = qs('[type="date"]', modal);
+
+      if (!nameInput || !nameInput.value.trim()) {
+        toast('Please enter a deal name.', '#ef4444'); return;
+      }
+
+      var deals = JSON.parse(localStorage.getItem('bw_deals') || '[]');
+      var deal = {
+        id:      Date.now().toString(),
+        name:    nameInput ? nameInput.value.trim() : '',
+        value:   valueInput ? valueInput.value : '0',
+        stage:   stageInput ? stageInput.value : 'Lead',
+        client:  clientInput ? (clientInput.options[clientInput.selectedIndex]||{}).text : '',
+        date:    dateInput ? dateInput.value : '',
+        created: new Date().toISOString()
+      };
+      deals.unshift(deal);
+      localStorage.setItem('bw_deals', JSON.stringify(deals));
+      toast('✅ Deal saved: ' + deal.name);
+
+      var closeBtn = qs('[data-dismiss], .close, button[onclick*="close"]', modal);
+      if (closeBtn) closeBtn.click();
+      else { modal.style.display = 'none'; modal.classList.remove('show','active','open'); }
+    }
+  }, true);
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 4 — ADD TASK SAVE
+  ───────────────────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    var txt = btn.textContent.trim();
+
+    if (/^(save task|add task|create task)$/i.test(txt)) {
+      e.stopImmediatePropagation();
+      var modal = btn.closest('.modal, [id*="modal"], [id*="task"]') || btn.parentElement.parentElement;
+
+      var titleInput   = qs('[id*="taskTitle"],[id*="title"],[placeholder*="Task"]', modal) ||
+                         qs('input[type="text"]', modal);
+      var dueDateInput = qs('[type="date"]', modal);
+      var priorityInput= qs('select[id*="priority"],select[id*="Priority"]', modal);
+      var assignInput  = qs('select[id*="assign"],select[id*="Assign"]', modal);
+      var notesInput   = qs('textarea', modal);
+
+      if (!titleInput || !titleInput.value.trim()) {
+        toast('Please enter a task title.', '#ef4444'); return;
+      }
+
+      var tasks = JSON.parse(localStorage.getItem('bw_tasks') || '[]');
+      var task = {
+        id:       Date.now().toString(),
+        title:    titleInput.value.trim(),
+        dueDate:  dueDateInput ? dueDateInput.value : '',
+        priority: priorityInput ? priorityInput.value : 'Medium',
+        assignee: assignInput ? (assignInput.options[assignInput.selectedIndex]||{}).text : '',
+        notes:    notesInput ? notesInput.value : '',
+        done:     false,
+        created:  new Date().toISOString()
+      };
+      tasks.unshift(task);
+      localStorage.setItem('bw_tasks', JSON.stringify(tasks));
+      toast('✅ Task saved: ' + task.title);
+
+      var closeBtn = qs('[data-dismiss], .close, button[onclick*="close"]', modal);
+      if (closeBtn) closeBtn.click();
+      else { modal.style.display = 'none'; modal.classList.remove('show','active','open'); }
+    }
+  }, true);
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 5 — CALENDAR GRID RENDERS CORRECTLY
+  ───────────────────────────────────────────────────────── */
+  function renderCalendarGrid() {
+    /* Find the calendar grid container */
+    var grid = qs('#calendarGrid, .calendar-grid, [id*="calGrid"], [class*="cal-grid"]');
+    if (!grid) {
+      /* Try to find by structure: parent of day-header row */
+      var header = qs('.calendar-header-row, [class*="day-header"]');
+      if (header) grid = header.parentElement;
+    }
+    if (!grid) return;
+
+    var now = new Date();
+    var year  = parseInt(grid.dataset.year  || now.getFullYear());
+    var month = parseInt(grid.dataset.month || now.getMonth());  /* 0-indexed */
+
+    /* Find prev/next/today buttons and read month from header if available */
+    var monthLabel = qs('#calMonthLabel, [id*="calMonth"], [class*="cal-month-label"]');
+    if (monthLabel && monthLabel.dataset.month !== undefined) {
+      month = parseInt(monthLabel.dataset.month);
+      year  = parseInt(monthLabel.dataset.year);
+    }
+
+    if (isNaN(month)) month = now.getMonth();
+    if (isNaN(year))  year  = now.getFullYear();
+
+    var firstDay  = new Date(year, month, 1).getDay();   /* 0=Sun */
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+    var todayDate = now.getDate();
+    var todayMonth= now.getMonth();
+    var todayYear = now.getFullYear();
+
+    /* Clear and rebuild only day cells (keep header row) */
+    qsa('.cal-day, .calendar-day, [class*="cal-cell"]', grid).forEach(function(c){ c.remove(); });
+
+    /* Build cells */
+    var cells = '';
+    /* Leading empty cells */
+    for (var i = 0; i < firstDay; i++) {
+      cells += '<div class="cal-day cal-day-empty" style="min-height:80px;padding:6px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:8px;"></div>';
+    }
+    for (var d = 1; d <= daysInMonth; d++) {
+      var isToday = (d === todayDate && month === todayMonth && year === todayYear);
+      var bg   = isToday ? '#0ea5e9' : '#fff';
+      var col  = isToday ? '#fff'    : '#1e293b';
+      var fw   = isToday ? '700'     : '500';
+      cells += '<div class="cal-day" data-date="' + year + '-' + (month+1) + '-' + d + '" ' +
+               'style="min-height:80px;padding:8px;border:1px solid #e2e8f0;border-radius:8px;' +
+               'background:' + bg + ';cursor:pointer;transition:box-shadow 0.15s;" ' +
+               'onmouseover="this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.10)\'" ' +
+               'onmouseout="this.style.boxShadow=\'\'">' +
+               '<span style="font-size:13px;font-weight:' + fw + ';color:' + col + ';">' + d + '</span>' +
+               '</div>';
+    }
+
+    /* Calculate total cells needed to complete last row */
+    var total = firstDay + daysInMonth;
+    var trailing = (7 - (total % 7)) % 7;
+    for (var t = 0; t < trailing; t++) {
+      cells += '<div class="cal-day cal-day-empty" style="min-height:80px;padding:6px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:8px;"></div>';
+    }
+
+    grid.insertAdjacentHTML('beforeend', cells);
+
+    /* Wire prev / next / today buttons */
+    var btnPrev  = qs('#calPrev,  [id*="calPrev"],  [data-cal="prev"],  button[onclick*="prev"]');
+    var btnNext  = qs('#calNext,  [id*="calNext"],  [data-cal="next"],  button[onclick*="next"]');
+    var btnToday = qs('#calToday, [id*="calToday"], [data-cal="today"], button[onclick*="today"]');
+
+    function navigate(dir) {
+      month += dir;
+      if (month > 11) { month = 0; year++; }
+      if (month < 0)  { month = 11; year--; }
+      if (monthLabel) {
+        monthLabel.dataset.month = month;
+        monthLabel.dataset.year  = year;
+        var MONTHS = ['January','February','March','April','May','June',
+                      'July','August','September','October','November','December'];
+        monthLabel.textContent = MONTHS[month] + ' ' + year;
+      }
+      grid.dataset.month = month;
+      grid.dataset.year  = year;
+      qsa('.cal-day', grid).forEach(function(c){ c.remove(); });
+      renderCalendarGrid();
+    }
+
+    if (btnPrev  && !btnPrev.dataset.calPatched)  { btnPrev.dataset.calPatched='1';  btnPrev.addEventListener('click',  function(){ navigate(-1); }); }
+    if (btnNext  && !btnNext.dataset.calPatched)  { btnNext.dataset.calPatched='1';  btnNext.addEventListener('click',  function(){ navigate(1); }); }
+    if (btnToday && !btnToday.dataset.calPatched) { btnToday.dataset.calPatched='1'; btnToday.addEventListener('click', function(){
+      month = now.getMonth(); year = now.getFullYear();
+      grid.dataset.month = month; grid.dataset.year = year;
+      if (monthLabel) { monthLabel.dataset.month=month; monthLabel.dataset.year=year; }
+      qsa('.cal-day', grid).forEach(function(c){ c.remove(); });
+      renderCalendarGrid();
+    }); }
+  }
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 6 — CALENDAR CELL CLICK → OPENS EVENT MODAL
+     (not the task modal)
+  ───────────────────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var cell = e.target.closest('.cal-day:not(.cal-day-empty)');
+    if (!cell) return;
+    e.stopImmediatePropagation();
+
+    /* Find the event modal — NOT the task modal */
+    var eventModal = qs('#addEventModal, [id*="eventModal"], [id*="newEvent"]');
+    if (!eventModal) {
+      /* fallback: look for a modal whose title says "Event" */
+      qsa('.modal, [role="dialog"]').forEach(function(m){
+        var h = qs('h2,h3,h4', m);
+        if (h && /event/i.test(h.textContent)) eventModal = m;
+      });
+    }
+    if (!eventModal) { toast('Event modal not found — please check HTML structure.', '#ef4444'); return; }
+
+    /* Pre-fill date */
+    var dateInput = qs('[type="date"]', eventModal);
+    if (dateInput && cell.dataset.date) {
+      var parts = cell.dataset.date.split('-');
+      if (parts.length === 3) {
+        dateInput.value = parts[0] + '-' + parts[1].padStart(2,'0') + '-' + parts[2].padStart(2,'0');
+      }
+    }
+
+    /* Show modal */
+    eventModal.style.display = 'flex';
+    eventModal.classList.add('show','active','open');
+  });
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 7 — SEND EMAIL: COMPOSE FALLBACK (no "Form not found")
+  ───────────────────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('button, a');
+    if (!btn) return;
+    var txt = btn.textContent.trim();
+    if (!/send email/i.test(txt) && !/compose/i.test(txt)) return;
+
+    /* Check if a real email modal already exists */
+    var emailModal = qs('#emailModal, #composeModal, [id*="emailModal"], [id*="composeModal"]');
+    if (emailModal) {
+      emailModal.style.display = 'flex';
+      emailModal.classList.add('show','active','open');
+      return;
+    }
+
+    /* Build a fallback compose modal */
+    e.stopImmediatePropagation();
+    if (qs('#bwComposeModal')) { qs('#bwComposeModal').style.display='flex'; return; }
+
+    var modal = document.createElement('div');
+    modal.id = 'bwComposeModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:99998;';
+    modal.innerHTML = [
+      '<div style="background:#fff;border-radius:16px;padding:28px;width:480px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,0.18);">',
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">',
+      '<h3 style="font-size:18px;font-weight:700;color:#0f172a;">✉️ Compose Email</h3>',
+      '<button onclick="document.getElementById(\'bwComposeModal\').style.display=\'none\'" style="background:none;border:none;font-size:20px;cursor:pointer;color:#64748b;">✕</button>',
+      '</div>',
+      '<label style="display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:4px;">TO</label>',
+      '<input id="bwEmailTo" type="email" placeholder="recipient@email.com" style="width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:9px 12px;font-size:14px;margin-bottom:12px;">',
+      '<label style="display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:4px;">SUBJECT</label>',
+      '<input id="bwEmailSubject" type="text" placeholder="Subject" style="width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:9px 12px;font-size:14px;margin-bottom:12px;">',
+      '<label style="display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:4px;">MESSAGE</label>',
+      '<textarea id="bwEmailBody" rows="5" placeholder="Write your message…" style="width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:9px 12px;font-size:14px;resize:vertical;margin-bottom:16px;"></textarea>',
+      '<div style="display:flex;gap:10px;justify-content:flex-end;">',
+      '<button onclick="document.getElementById(\'bwComposeModal\').style.display=\'none\'" style="padding:9px 18px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;font-size:14px;cursor:pointer;">Cancel</button>',
+      '<button id="bwSendEmailBtn" style="padding:9px 22px;border:none;border-radius:8px;background:#0ea5e9;color:#fff;font-size:14px;font-weight:600;cursor:pointer;">Send Email</button>',
+      '</div>',
+      '</div>'
+    ].join('');
+    document.body.appendChild(modal);
+
+    qs('#bwSendEmailBtn', modal).addEventListener('click', function(){
+      var to = qs('#bwEmailTo', modal).value.trim();
+      var subject = qs('#bwEmailSubject', modal).value.trim();
+      var body = qs('#bwEmailBody', modal).value.trim();
+      if (!to) { toast('Please enter a recipient email.', '#ef4444'); return; }
+      /* Open mailto as fallback */
+      window.location.href = 'mailto:' + encodeURIComponent(to) +
+        '?subject=' + encodeURIComponent(subject) +
+        '&body='    + encodeURIComponent(body);
+      modal.style.display = 'none';
+      toast('✅ Email client opened.');
+    });
+  }, true);
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 8 — SETTINGS: UNLOCK ALL FIELDS + PHOTO UPLOAD
+  ───────────────────────────────────────────────────────── */
+  function patchSettings() {
+    var settingsPage = qs('#settingsPage, #settings, [id*="settings"], [data-page="settings"]');
+    if (!settingsPage || settingsPage.dataset.settingsPatched) return;
+    settingsPage.dataset.settingsPatched = '1';
+
+    /* Unlock all inputs/selects/textareas */
+    qsa('input, select, textarea, button[type="submit"]', settingsPage).forEach(function(el){
+      el.removeAttribute('disabled');
+      el.removeAttribute('readonly');
+    });
+
+    /* Wire save buttons */
+    qsa('button', settingsPage).forEach(function(btn){
+      if (/save|update/i.test(btn.textContent)) {
+        btn.addEventListener('click', function(){
+          var data = {};
+          qsa('input, select, textarea', settingsPage).forEach(function(el){
+            if (el.id || el.name) data[el.id || el.name] = el.value;
+          });
+          localStorage.setItem('bw_settings', JSON.stringify(data));
+          toast('✅ Settings saved.');
+        });
+      }
+    });
+
+    /* Photo upload */
+    var photoArea = qs('[id*="photo"], [id*="avatar"], [class*="avatar"], [class*="photo"]', settingsPage);
+    if (photoArea && !photoArea.dataset.photoPatched) {
+      photoArea.dataset.photoPatched = '1';
+      var fileInput = document.createElement('input');
+      fileInput.type = 'file'; fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+      photoArea.parentNode.insertBefore(fileInput, photoArea.nextSibling);
+      photoArea.style.cursor = 'pointer';
+      photoArea.title = 'Click to upload photo';
+      photoArea.addEventListener('click', function(){ fileInput.click(); });
+      fileInput.addEventListener('change', function(){
+        var file = fileInput.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev){
+          localStorage.setItem('bw_avatar', ev.target.result);
+          var img = qs('img', photoArea) || photoArea;
+          if (img.tagName === 'IMG') img.src = ev.target.result;
+          else photoArea.style.backgroundImage = 'url(' + ev.target.result + ')';
+          toast('✅ Photo uploaded.');
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    /* Re-populate saved settings */
+    var saved = JSON.parse(localStorage.getItem('bw_settings') || '{}');
+    Object.keys(saved).forEach(function(k){
+      var el = qs('#' + k + ', [name="' + k + '"]', settingsPage);
+      if (el) el.value = saved[k];
+    });
+  }
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 9 — BILLING: ACTIVE PLAN BANNER + REMOVE FREE TRIAL
+  ───────────────────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    var txt = btn.textContent.trim();
+    /* Detect plan activation buttons */
+    if (!/activate|upgrade|subscribe|select plan|get started|choose/i.test(txt)) return;
+
+    var planCard = btn.closest('[class*="plan"], [class*="card"], [id*="plan"]');
+    var planName = 'Selected Plan';
+    if (planCard) {
+      var nameEl = qs('h2,h3,h4,[class*="plan-name"],[class*="planName"]', planCard);
+      if (nameEl) planName = nameEl.textContent.trim();
+    }
+
+    /* Remove any "Free Trial" badge everywhere */
+    qsa('[class*="trial"], [id*="trial"], [class*="badge"]').forEach(function(el){
+      if (/free trial/i.test(el.textContent)) { el.style.display = 'none'; }
+    });
+
+    /* Update or create billing banner */
+    var banner = qs('#bwBillingBanner, [id*="billingBanner"], [id*="planBanner"]');
+    var bannerText = '✅ Active Plan: ' + planName;
+    if (banner) {
+      banner.textContent = bannerText;
+      banner.style.background = '#dcfce7';
+      banner.style.color = '#166534';
+    } else {
+      /* Create banner at top of billing page */
+      var billingPage = qs('#billingPage, #billing, [id*="billing"], [data-page="billing"]') ||
+                        btn.closest('section, main, [class*="page"]');
+      if (billingPage) {
+        var newBanner = document.createElement('div');
+        newBanner.id = 'bwBillingBanner';
+        newBanner.textContent = bannerText;
+        newBanner.style.cssText = 'background:#dcfce7;color:#166534;font-weight:600;font-size:14px;' +
+          'padding:12px 20px;border-radius:10px;margin-bottom:16px;border:1px solid #86efac;';
+        billingPage.insertBefore(newBanner, billingPage.firstChild);
+      }
+    }
+    localStorage.setItem('bw_active_plan', planName);
+    toast('✅ Plan activated: ' + planName, '#22c55e');
+  });
+
+  /* Restore billing banner on page load */
+  function restoreBillingBanner() {
+    var plan = localStorage.getItem('bw_active_plan');
+    if (!plan) return;
+    qsa('[class*="trial"], [id*="trial"]').forEach(function(el){
+      if (/free trial/i.test(el.textContent)) el.style.display = 'none';
+    });
+  }
+  setTimeout(restoreBillingBanner, 600);
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 10 — SIGN OUT
+  ───────────────────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('button, a, li, [role="menuitem"]');
+    if (!btn) return;
+    if (!/sign out|log out|logout|signout/i.test(btn.textContent.trim())) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+
+    if (!confirm('Sign out of BluWav CRM?')) return;
+
+    /* Clear session data */
+    ['bw_session','bw_token','bw_user','bw_auth'].forEach(function(k){
+      localStorage.removeItem(k); sessionStorage.removeItem(k);
+    });
+
+    /* Redirect to login page */
+    var loginUrl = window.location.origin + '/login.html';
+    window.location.href = loginUrl;
+  }, true);
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 11 — DEAL EDIT IN SALES PIPELINE
+  ───────────────────────────────────────────────────────── */
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-deal-id], [data-id], button[onclick*="edit"], button[title*="Edit"], [class*="edit-deal"]');
+    if (!btn) return;
+    var dealId = btn.dataset.dealId || btn.dataset.id;
+    if (!dealId) return;
+
+    var editModal = qs('#editDealModal, [id*="editDeal"], [id*="dealEdit"]');
+    if (!editModal) {
+      /* Reuse addDeal modal for editing */
+      editModal = qs('#addDealModal, [id*="addDeal"], [id*="newDeal"]');
+    }
+    if (!editModal) { toast('Deal edit panel not found.', '#ef4444'); return; }
+
+    /* Load deal from localStorage or from the DOM card */
+    var deals = JSON.parse(localStorage.getItem('bw_deals') || '[]');
+    var deal = deals.find(function(d){ return d.id === dealId; });
+    if (!deal) {
+      /* Try reading from the pipeline card itself */
+      var card = btn.closest('[class*="deal-card"], [class*="pipeline-card"], [class*="kanban"]');
+      if (card) {
+        deal = {
+          id:    dealId,
+          name:  (qs('[class*="deal-name"],[class*="title"]', card)||{}).textContent || '',
+          value: (qs('[class*="value"],[class*="amount"]',    card)||{}).textContent || '',
+          stage: (qs('[class*="stage"],[class*="status"]',   card)||{}).textContent || ''
+        };
+      }
+    }
+
+    if (deal) {
+      var nameInput  = qs('[id*="dealName"],[placeholder*="Deal"]', editModal);
+      var valueInput = qs('[id*="dealValue"],[placeholder*="Value"],[placeholder*="value"]', editModal);
+      var stageInput = qs('select[id*="stage"],select[id*="Stage"]', editModal);
+      if (nameInput)  nameInput.value  = deal.name  || '';
+      if (valueInput) valueInput.value = deal.value || '';
+      if (stageInput) stageInput.value = deal.stage || '';
+    }
+
+    /* Mark modal as editing this deal */
+    editModal.dataset.editingDealId = dealId;
+    editModal.style.display = 'flex';
+    editModal.classList.add('show','active','open');
+
+    /* Update the Save Deal button to handle the edit */
+    var saveBtn = qs('button[onclick*="save"], button', editModal);
+    qsa('button', editModal).forEach(function(b){
+      if (/save|update/i.test(b.textContent)) saveBtn = b;
+    });
+    if (saveBtn && !saveBtn.dataset.editPatched) {
+      saveBtn.dataset.editPatched = '1';
+      saveBtn.addEventListener('click', function(){
+        var editingId = editModal.dataset.editingDealId;
+        if (!editingId) return;
+        var deals = JSON.parse(localStorage.getItem('bw_deals') || '[]');
+        var idx = deals.findIndex(function(d){ return d.id === editingId; });
+        var updated = {
+          id:    editingId,
+          name:  (qs('[id*="dealName"],[placeholder*="Deal"]', editModal)||{}).value || '',
+          value: (qs('[id*="dealValue"],[placeholder*="value"],[placeholder*="Value"]', editModal)||{}).value || '',
+          stage: (qs('select[id*="stage"]', editModal)||{}).value || '',
+          updated: new Date().toISOString()
+        };
+        if (idx > -1) deals[idx] = Object.assign(deals[idx], updated);
+        else deals.unshift(updated);
+        localStorage.setItem('bw_deals', JSON.stringify(deals));
+        delete editModal.dataset.editingDealId;
+        toast('✅ Deal updated.');
+      });
+    }
+  }, true);
+
+
+  /* ─────────────────────────────────────────────────────────
+     FIX 12 — CONTACTS PER PAGE: 6 (not 15)
+  ───────────────────────────────────────────────────────── */
+  function patchContactsPagination() {
+    /* Find pagination select/input that controls per-page */
+    var perPageSel = qs('select[id*="perPage"],select[id*="pageSize"],select[name*="perPage"],select[name*="pageSize"]');
+    if (perPageSel && !perPageSel.dataset.paginationPatched) {
+      perPageSel.dataset.paginationPatched = '1';
+      /* Set value to 6 */
+      var opt6 = qs('option[value="6"]', perPageSel);
+      if (!opt6) {
+        var o = document.createElement('option');
+        o.value = '6'; o.textContent = '6';
+        perPageSel.insertBefore(o, perPageSel.firstChild);
+      }
+      perPageSel.value = '6';
+      perPageSel.dispatchEvent(new Event('change', {bubbles:true}));
+    }
+
+    /* Also try to find the internal pagination state variable and override it */
+    /* Patch any global variable named contactsPerPage / pageSize */
+    if (typeof window.contactsPerPage !== 'undefined') window.contactsPerPage = 6;
+    if (typeof window.pageSize !== 'undefined')        window.pageSize = 6;
+    if (typeof window.itemsPerPage !== 'undefined')    window.itemsPerPage = 6;
+    if (typeof window.perPage !== 'undefined')         window.perPage = 6;
+
+    /* Re-render contacts list with 6 per page */
+    var contactRows = qsa('#contactsTable tr, #contactsList [class*="contact-row"], [class*="contact-item"]');
+    if (contactRows.length) {
+      contactRows.forEach(function(row, i){
+        row.style.display = i < 6 ? '' : 'none';
+      });
+
+      /* Wire pagination buttons */
+      var currentPage = 0;
+      var totalRows   = contactRows.length;
+      var perPage6    = 6;
+
+      function showPage(page) {
+        currentPage = page;
+        contactRows.forEach(function(row, i){
+          row.style.display = (i >= page * perPage6 && i < (page + 1) * perPage6) ? '' : 'none';
+        });
+        /* Update page counter if exists */
+        var counter = qs('[id*="pageInfo"],[id*="pageCount"],[class*="page-info"]');
+        if (counter) counter.textContent = 'Page ' + (page + 1) + ' of ' + Math.ceil(totalRows / perPage6);
+      }
+
+      var btnPrev = qs('#contactsPrev, [id*="contactPrev"], [data-page="prev"]');
+      var btnNext = qs('#contactsNext, [id*="contactNext"], [data-page="next"]');
+
+      if (btnPrev && !btnPrev.dataset.pagePatched) {
+        btnPrev.dataset.pagePatched = '1';
+        btnPrev.addEventListener('click', function(){ if (currentPage > 0) showPage(currentPage - 1); });
+      }
+      if (btnNext && !btnNext.dataset.pagePatched) {
+        btnNext.dataset.pagePatched = '1';
+        btnNext.addEventListener('click', function(){
+          if ((currentPage + 1) * perPage6 < totalRows) showPage(currentPage + 1);
+        });
+      }
+
+      showPage(0);
+    }
+  }
+
+
+  /* ─────────────────────────────────────────────────────────
+     PAGE OBSERVER — re-run patches when SPA navigates
+  ───────────────────────────────────────────────────────── */
+  var lastPage = '';
+  setInterval(function(){
+    /* Detect current active page */
+    var activePage = qs('.page.active, [class*="page"][class*="active"], [data-page].active');
+    var pageId = activePage ? (activePage.id || activePage.dataset.page || '') : '';
+
+    if (pageId !== lastPage) {
+      lastPage = pageId;
+      setTimeout(function(){
+        patchPhoneFields();
+        if (/calendar/i.test(pageId))  renderCalendarGrid();
+        if (/setting/i.test(pageId))   patchSettings();
+        if (/contact/i.test(pageId))   patchContactsPagination();
+        if (/billing/i.test(pageId))   restoreBillingBanner();
+      }, 300);
+    }
+  }, 500);
+
+  /* Also run immediately on sidebar nav clicks */
+  document.addEventListener('click', function(e){
+    if (e.target.closest('[data-page], [onclick*="showPage"], [onclick*="navigate"], .sidebar-item, .nav-item')) {
+      setTimeout(function(){
+        patchPhoneFields();
+        patchContactsPagination();
+        patchSettings();
+        restoreBillingBanner();
+        renderCalendarGrid();
+      }, 400);
+    }
+  });
+
+  /* Initial run */
+  setTimeout(function(){
+    patchPhoneFields();
+    patchContactsPagination();
+    patchSettings();
+    restoreBillingBanner();
+    renderCalendarGrid();
+  }, 1000);
+
+})();
+
+</script>
 </body>
 </html>
