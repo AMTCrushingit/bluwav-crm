@@ -417,7 +417,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <!-- Stats -->
 <div class="stats-grid">
-<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Contacts</span><span>👥</span></div><div class="stat-val" id="metricContacts">—</div><div class="stat-chg up" id="contactTrend">↑ loading</div></div>
+<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Contacts</span><span>👥</span></div><div class="stat-val" id="metricContacts">—</div><div class="stat-chg up" id="contactTrend"></div></div>
 <div class="stat g"><div class="stat-hd"><span class="stat-lbl">Open Deals</span><span>💼</span></div><div class="stat-val" id="metricDeals">—</div><div class="stat-chg up">↑ active</div></div>
 <div class="stat o"><div class="stat-hd"><span class="stat-lbl">Pipeline Value</span><span>💰</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">↑ pipeline</div></div>
 <div class="stat s"><div class="stat-hd"><span class="stat-lbl">Deals Won</span><span>🏆</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">This month</div></div>
@@ -448,7 +448,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel" id="rightPanel">
 <div class="panel-hd"><div class="panel-title" id="rightPanelTitle">⚡ Activity</div><button class="btn btn-ghost btn-sm">All →</button></div>
 <div class="panel-body" id="rightPanelBody" style="padding:0 20px;">
-<div style="text-align:center;padding:32px;color:var(--text3);">Loading...</div>
+<div style="text-align:center;padding:32px;color:var(--text3);">No recent activity</div>
 </div>
 </div>
 </div>
@@ -466,7 +466,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div style="overflow-x:auto;">
 <table class="tbl">
 <thead><tr><th>Name</th><th>Company</th><th>Status</th><th>Date</th></tr></thead>
-<tbody id="recentContactsBody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Loading...</td></tr></tbody>
+<tbody id="recentContactsBody"></tbody>
 </table>
 </div>
 </div>
@@ -530,7 +530,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </table>
 </div>
 <div style="padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--navy-border);">
-<span id="contactCount" style="font-size:0.73rem;color:var(--text3);">Loading...</span>
+<span id="contactCount" style="font-size:0.73rem;color:var(--text3);"></span>
 <div style="display:flex;gap:6px;">
 <button class="btn btn-ghost btn-sm" onclick="prevPage()">← Prev</button>
 <span id="pageIndicator" style="font-size:0.75rem;color:var(--text3);padding:6px 10px;"></span>
@@ -600,7 +600,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
       </table>
     </div>
     <div style="padding:12px 20px;border-top:1px solid var(--navy-border);">
-      <span id="dealsListCount" style="font-size:0.73rem;color:var(--text3);">Loading...</span>
+      <span id="dealsListCount" style="font-size:0.73rem;color:var(--text3);"></span>
     </div>
   </div>
 </div>
@@ -714,7 +714,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel-hd"><div class="panel-title">⚙️ Account Settings</div></div>
 <div class="panel-body">
 <div style="display:flex;flex-direction:column;gap:16px;">
-<div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
+<div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" autocomplete="off" placeholder="Your name"/></div>
 <div class="fg"><label class="fl">Email</label><input class="fi" id="settingsEmail" placeholder="your@email.com" readonly="" style="opacity:0.6;cursor:not-allowed;" type="email"/></div>
 <div class="fg"><label class="fl">Role</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
 <button class="btn btn-primary btn-sm" onclick="saveProfileSettings()" style="align-self:flex-start;" id="settingsSaveBtn">Save Changes</button>
@@ -1731,15 +1731,32 @@ function openModal(id){
     // Clear error
     var errEl=document.getElementById('dealError');
     if(errEl){errEl.style.display='none';errEl.textContent='';}
-    // Populate contact dropdown
+    // Populate contact dropdown — always populate, fetch if needed
     const sel=document.getElementById('md-contact');
-    if(sel&&allContacts.length){
-      sel.innerHTML='<option value="">No contact linked</option>'+
-        allContacts.map(c=>`<option value="${c.id}">${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
+    if(sel){
+      if(allContacts.length){
+        sel.innerHTML='<option value="">— Select client —</option>'+
+          allContacts.map(ct=>`<option value="${ct.id}">${ct.full_name||'Unknown'}${ct.business_name?' — '+ct.business_name:''}</option>`).join('');
+      } else {
+        // Fetch contacts if not loaded yet
+        db.from('contacts').select('id,full_name,business_name').order('full_name').then(({data})=>{
+          if(data&&data.length){
+            sel.innerHTML='<option value="">— Select client —</option>'+
+              data.map(ct=>`<option value="${ct.id}">${ct.full_name||'Unknown'}${ct.business_name?' — '+ct.business_name:''}</option>`).join('');
+          } else {
+            sel.innerHTML='<option value="">No contacts yet — add one first</option>';
+          }
+        });
+      }
     }
   }
 }
-function closeModal(id){document.getElementById('modal-'+id)?.classList.remove('open');}
+function closeModal(id){
+  const m=document.getElementById('modal-'+id);
+  if(m){m.classList.remove('open');}
+  // Prevent any navigation
+  return false;
+}
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
 
 async function saveContact(){
@@ -1769,16 +1786,20 @@ async function saveContact(){
     return;
   }
   showToast('Contact saved ✓','success');
-  // Admin notification removed per user request
   closeModal('addContact');
   // Clear form
   ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
   await loadData();
-  // If contacts view is open, refresh it
-  filteredContacts=allContacts.slice();
-  sortContacts();
+  // Update contact count immediately
+  const newCount = allContacts.length;
+  const mc=document.getElementById('metricContacts');if(mc)mc.textContent=newCount;
+  const nb=document.getElementById('navContactsBadge');if(nb)nb.textContent=newCount;
+  const ca=document.getElementById('countAll');if(ca)ca.textContent=newCount;
+  const ct=document.getElementById('contactTrend');if(ct)ct.textContent='↑ '+newCount+' total';
+  // Refresh contacts view if open
+  if(typeof filteredContacts!=='undefined'){filteredContacts=allContacts.slice();sortContacts();}
 }
 
 async function saveDeal(){
@@ -2059,7 +2080,7 @@ function openEditDeal(dealId){
   const sel = document.getElementById('ed-contact');
   if(sel){
     sel.innerHTML = '<option value="">-- Select existing client --</option>' +
-      allContacts.map(c=>`<option value="${c.id}" ${c.id===d.contact_id?'selected':''}>${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
+      allContacts.map(ct=>`<option value="${ct.id}" ${ct.id===d.contact_id?'selected':''}>${ct.full_name||'Unknown'}${ct.business_name?' — '+ct.business_name:''}</option>`).join('');
   }
   // Pre-fill new fields
   const closeDateEl = document.getElementById('ed-close-date');
@@ -4385,16 +4406,10 @@ async function saveProfileSettings(){
     if (!/sign out|log out|logout|signout/i.test(btn.textContent.trim())) return;
     e.preventDefault(); e.stopImmediatePropagation();
 
-    if (!confirm('Sign out of BluWav CRM?')) return;
-
-    /* Clear session data */
-    ['bw_session','bw_token','bw_user','bw_auth'].forEach(function(k){
-      localStorage.removeItem(k); sessionStorage.removeItem(k);
-    });
-
-    /* Redirect to login page */
-    var loginUrl = window.location.origin + '/login.html';
-    window.location.href = loginUrl;
+    /* Use the built-in signOut function */
+    if(typeof signOut === 'function'){ signOut(); return; }
+    sessionStorage.removeItem('bw_gate_ok');
+    window.location.href = window.location.origin + '/login.html';
   }, true);
 
 

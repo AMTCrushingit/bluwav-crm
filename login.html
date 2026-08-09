@@ -105,8 +105,8 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 <input autocomplete="new-password" class="gate-input" id="gateInput" onkeydown="if(event.key==='Enter')checkGate()" placeholder="" type="password"/>
 <div class="gate-error" id="gateError">⚠ Incorrect access code. Please try again.</div>
 <button class="gate-btn" onclick="checkGate()">Continue →</button>
-<p class="gate-contact">Don't have an access code? Contact
-      <a href="mailto:hello@bluwavgrowth.com">hello@bluwavgrowth.com</a>
+<p class="gate-contact" style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:20px;">Don't have an access code? Contact
+      <a href="mailto:hello@bluwavgrowth.com" style="color:#00C8E0;text-decoration:underline;font-weight:700;pointer-events:all;position:relative;z-index:99999;">hello@bluwavgrowth.com</a>
 </p>
 </div>
 </div>
@@ -272,11 +272,23 @@ msBtn.addEventListener('click', async () => {
   }, 300);
 })();
 
+// Gate attempt tracking
+var _gateAttempts = 0;
+var _gateLocked = false;
+var _gateLockTimer = null;
+
 function checkGate() {
+  if (_gateLocked) return;
+
   var code = document.getElementById('gateInput').value.trim().toUpperCase();
   var errEl = document.getElementById('gateError');
+  var inp = document.getElementById('gateInput');
+  var btn = document.querySelector('.gate-btn');
   var validCodes = ['BW2026', 'BLUWAV', 'BWCRM26', 'AMT2026', 'BLUCRM', 'ANDREA'];
+
   if (validCodes.indexOf(code) !== -1) {
+    // Correct code — reset attempts and proceed
+    _gateAttempts = 0;
     sessionStorage.setItem('bw_gate_ok', '1');
     var gate = document.getElementById('accessGate');
     gate.style.transition = 'opacity 0.4s ease';
@@ -284,11 +296,48 @@ function checkGate() {
     setTimeout(function () { gate.style.display = 'none'; }, 400);
     document.body.style.overflow = '';
   } else {
-    errEl.style.display = 'block';
-    var inp = document.getElementById('gateInput');
+    // Wrong code
+    _gateAttempts++;
     inp.value = '';
-    inp.focus();
-    setTimeout(function () { errEl.style.display = 'none'; }, 3000);
+
+    if (_gateAttempts >= 3) {
+      // Lock out for 5 minutes
+      _gateLocked = true;
+      inp.disabled = true;
+      if (btn) btn.disabled = true;
+      var remaining = 300; // 5 minutes in seconds
+      errEl.style.display = 'block';
+      errEl.style.color = '#ef4444';
+
+      function updateLockMsg() {
+        var mins = Math.floor(remaining / 60);
+        var secs = remaining % 60;
+        errEl.textContent = '🔒 Too many attempts. Try again in ' + mins + ':' + (secs < 10 ? '0' : '') + secs;
+        remaining--;
+        if (remaining < 0) {
+          _gateLocked = false;
+          _gateAttempts = 0;
+          inp.disabled = false;
+          if (btn) btn.disabled = false;
+          inp.focus();
+          errEl.style.display = 'none';
+          errEl.textContent = '⚠ Incorrect access code. Please try again.';
+          clearInterval(_gateLockTimer);
+        }
+      }
+      updateLockMsg();
+      _gateLockTimer = setInterval(updateLockMsg, 1000);
+    } else {
+      var left = 3 - _gateAttempts;
+      errEl.textContent = '⚠ Incorrect code. ' + left + ' attempt' + (left === 1 ? '' : 's') + ' remaining.';
+      errEl.style.display = 'block';
+      inp.style.borderColor = 'rgba(239,68,68,0.5)';
+      setTimeout(function () {
+        inp.style.borderColor = 'rgba(0,200,224,0.2)';
+        if (_gateAttempts < 3) errEl.style.display = 'none';
+      }, 2000);
+      inp.focus();
+    }
   }
 }
 </script>
