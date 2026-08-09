@@ -685,7 +685,7 @@
     <header data-id="23" id="top-header" style="background:#fff; border-bottom:1px solid rgba(167,139,250,0.12); padding:0 28px; height:56px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;">
       <div data-id="24" style="display:flex; align-items:center; gap:16px;">
         <h1 style="font-size:15px; font-weight:700; color:#f5f3ff;">🧠 COREX Intelligence Engine</h1>
-        <span data-id="26" style="font-size:12px; color:#7c6fa0;">Last Run: <span data-id="27" id="last-run-time">Aug 5, 2026 3:42 PM EDT</span></span>
+        <span data-id="26" style="font-size:12px; color:#7c6fa0;">Last Run: <span data-id="27" id="last-run-time"></span></span>
       </div>
       <div data-id="28" style="display:flex; align-items:center; gap:14px;">
         <span data-id="29" id="status-badge" class="badge" style="background:#dcfce7; color:#166534; font-size:12px; padding:4px 14px;"><span data-id="30" id="status-dot" style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:6px;"></span><span data-id="31" id="status-text">Active — Running</span></span>
@@ -775,7 +775,7 @@
         <div data-id="119" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
           <div data-id="120">
             <h2 style="font-size:18px; font-weight:700; color:#f5f3ff;">📊 COREX Intelligence Digest</h2>
-            <p data-id="122" style="font-size:14px; color:#7c6fa0; margin-top:4px;">August 5, 2026</p>
+            <p data-id="122" style="font-size:14px; color:#7c6fa0; margin-top:4px;"></p>
           </div>
           <div data-id="123" style="display:flex; gap:10px;">
             <button data-id="124" id="generate-digest-btn" class="btn-primary"><i data-id="125" data-lucide="sparkles" class="w-4 h-4"></i> Generate Intelligence Digest</button>
@@ -1426,7 +1426,7 @@ async function generateDigest(){
 
   try{
     const res=await AppSDK.ai.chat({messages:[
-      {role:"system",content:"You are a lead intelligence analyst for Bluwav, a Caribbean CRM and business growth platform (BluWav CRM & BluWav Growth). Generate a concise, structured daily digest report. Use markdown formatting with ## headers. Include: 1) Executive Summary (2-3 sentences), 2) Top 5 Leads to Prioritize (with scores and why), 3) Source Breakdown (brief table), 4) Recommended Actions (3-5 bullets), 5) Agent Assignment Summary — note that ALL leads are assigned to Andrea M. Tanguay as the sole agent, 6) Trends & Insights (1-2 observations). Be specific and actionable. Today's date is August 5, 2026."},
+      {role:"system",content:"You are a lead intelligence analyst for Bluwav, a Caribbean CRM and business growth platform (BluWav CRM & BluWav Growth). Generate a concise, structured daily digest report. Use markdown formatting with ## headers. Include: 1) Executive Summary (2-3 sentences), 2) Top 5 Leads to Prioritize (with scores and why), 3) Source Breakdown (brief table), 4) Recommended Actions (3-5 bullets), 5) Agent Assignment Summary — note that ALL leads are assigned to Andrea M. Tanguay as the sole agent, 6) Trends & Insights (1-2 observations). Be specific and actionable. Today's date is ."},
       {role:"user",content:`Here are today's leads for the digest:\n\n${leadsSummary}\n\nSource breakdown: ${srcTable}\n\nTotal leads: ${leads.length}. Hot leads (score ≥75): ${leads.filter(l=>l.score>=75).length}. Synced to CRM: ${leads.filter(l=>l.pushedToCRM).length}. Countries covered: Trinidad & Tobago, Jamaica, Barbados, Guyana, St. Lucia, Dominica.\n\nAgent Assignment: All ${leads.length} leads are assigned to Andrea M. Tanguay (sole agent handling all lead types across the Caribbean).`}
     ]});
     // Parse markdown-like to HTML
@@ -1754,6 +1754,19 @@ if(waT) waT.addEventListener('input',function(){
   const el=document.getElementById('wa-threshold-val');
   if(el) el.textContent=this.value;
 });
+</script>
+
+<script>
+(function(){
+  var lrt = document.getElementById('last-run-time');
+  if(lrt && !lrt.textContent.trim()){
+    lrt.textContent = new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true})+' EDT';
+  }
+  var dd = document.getElementById('digest-date');
+  if(dd && !dd.textContent.trim()){
+    dd.textContent = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  }
+})();
 </script>
 </body>
 </html>
