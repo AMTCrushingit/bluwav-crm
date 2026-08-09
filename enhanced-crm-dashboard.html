@@ -1004,14 +1004,14 @@ async function initDashboard(){
     profile = {full_name:autoName,role:autoRole};
   }
 
-  // Role logic: Leah Ryan = admin, Andrea M. Tanguay = manager
-  const email = currentUser.email||'';
-  if(email.toLowerCase().includes('leah')||profile.role==='admin'){
-    userRole='admin';
-  } else if(email.toLowerCase().includes('andrea')||profile.role==='manager'||profile.role==='owner'){
-    userRole='manager';
+  // Role from database only — never from email string
+  const dbRole = (profile.role||'salesperson').toLowerCase();
+  if(dbRole === 'admin' || dbRole === 'owner'){
+    userRole = 'admin';
+  } else if(dbRole === 'manager'){
+    userRole = 'manager';
   } else {
-    userRole = profile.role||'salesperson';
+    userRole = 'salesperson';
   }
 
   viewingUserId = (userRole==='manager'||userRole==='admin') ? null : currentUser.id;
@@ -1197,10 +1197,11 @@ async function loadData(){
 function renderPipeline(){
   // stageMap: key=DB value (lowercase), id=Title Case matching HTML element IDs
   var stageMap = [
-    {key:'lead',      id:'Lead'},
-    {key:'qualified', id:'Qualified'},
-    {key:'proposal',  id:'Proposal'},
-    {key:'won',       id:'Won'}
+    {key:'lead',         id:'Lead'},
+    {key:'qualified',    id:'Qualified'},
+    {key:'proposal',     id:'Proposal'},
+    {key:'negotiation',  id:'Negotiation'},
+    {key:'won',          id:'Won'}
   ];
   stageMap.forEach(function(s){
     var stage = s.key;
@@ -1779,6 +1780,17 @@ async function saveContact(){
   const urlParams = new URLSearchParams(window.location.search);
   const source = urlParams.get('utm_source')||urlParams.get('src')||'crm_manual';
   const leadCode = source.toUpperCase().replace(/[^A-Z0-9]/g,'_')+'_'+Date.now().toString(36).toUpperCase();
+  // Check for duplicate email before inserting
+  if(contact.email){
+    const {data:existing} = await db.from('contacts')
+      .select('id,full_name')
+      .eq('email', contact.email)
+      .limit(1);
+    if(existing && existing.length > 0){
+      showToast('⚠️ A contact with this email already exists: '+existing[0].full_name,'');
+      return;
+    }
+  }
   const {error} = await db.from('contacts').insert(contact);
   if(error){
     console.error('Save contact error:',error);
@@ -2273,10 +2285,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 const _origRenderPipeline = renderPipeline;
 function renderPipeline(){
   var stageMap = [
-    {key:'lead',      id:'Lead'},
-    {key:'qualified', id:'Qualified'},
-    {key:'proposal',  id:'Proposal'},
-    {key:'won',       id:'Won'}
+    {key:'lead',         id:'Lead'},
+    {key:'qualified',    id:'Qualified'},
+    {key:'proposal',     id:'Proposal'},
+    {key:'negotiation',  id:'Negotiation'},
+    {key:'won',          id:'Won'}
   ];
   stageMap.forEach(function(s){
     var stage = s.key;

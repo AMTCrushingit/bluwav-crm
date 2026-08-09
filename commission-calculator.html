@@ -693,6 +693,19 @@ function loadScenario(type){
 }
 
 async function submitPayout(){
+  // Check for pending payout request to prevent duplicates
+  if(currentUser){
+    const {data:pending} = await db.from('payout_requests')
+      .select('id,status,submitted_at')
+      .eq('agent_id', currentUser.id)
+      .eq('status', 'pending')
+      .limit(1);
+    if(pending && pending.length > 0){
+      const submittedDate = new Date(pending[0].submitted_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+      showToast('⚠️ You have a pending payout request from '+submittedDate+'. Please wait for it to be processed.','');
+      return;
+    }
+  }
   const name=document.getElementById('pay_name').value.trim();
   const email=document.getElementById('pay_email').value.trim();
   const amount=document.getElementById('pay_amount').value;

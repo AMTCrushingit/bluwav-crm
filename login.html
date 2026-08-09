@@ -272,23 +272,52 @@ msBtn.addEventListener('click', async () => {
   }, 300);
 })();
 
-// Gate attempt tracking
-var _gateAttempts = 0;
-var _gateLocked = false;
+// Gate attempt tracking — persisted in sessionStorage so refresh doesn't reset
 var _gateLockTimer = null;
 
-function checkGate() {
-  if (_gateLocked) return;
+function _getGateState() {
+  try {
+    var s = JSON.parse(sessionStorage.getItem('bw_gate_state') || '{}');
+    return { attempts: s.attempts || 0, lockedUntil: s.lockedUntil || 0 };
+  } catch(e) { return { attempts: 0, lockedUntil: 0 }; }
+}
+function _setGateState(attempts, lockedUntil) {
+  sessionStorage.setItem('bw_gate_state', JSON.stringify({ attempts: attempts, lockedUntil: lockedUntil || 0 }));
+}
 
-  var code = document.getElementById('gateInput').value.trim().toUpperCase();
+function checkGate() {
+  var state = _getGateState();
+  var now = Date.now();
   var errEl = document.getElementById('gateError');
   var inp = document.getElementById('gateInput');
   var btn = document.querySelector('.gate-btn');
+
+  // Check if still locked
+  if (state.lockedUntil > now) {
+    var remaining = Math.ceil((state.lockedUntil - now) / 1000);
+    var mins = Math.floor(remaining / 60);
+    var secs = remaining % 60;
+    errEl.textContent = '🔒 Too many attempts. Try again in ' + mins + ':' + (secs < 10 ? '0' : '') + secs;
+    errEl.style.display = 'block';
+    inp.disabled = true;
+    if (btn) btn.disabled = true;
+    return;
+  }
+
+  // Lockout expired — reset
+  if (state.lockedUntil > 0 && state.lockedUntil <= now) {
+    _setGateState(0, 0);
+    state = { attempts: 0, lockedUntil: 0 };
+    inp.disabled = false;
+    if (btn) btn.disabled = false;
+  }
+
+  var code = inp.value.trim().toUpperCase();
   var validCodes = ['BW2026', 'BLUWAV', 'BWCRM26', 'AMT2026', 'BLUCRM', 'ANDREA'];
 
   if (validCodes.indexOf(code) !== -1) {
-    // Correct code — reset attempts and proceed
-    _gateAttempts = 0;
+    // Correct — clear state and proceed
+    _setGateState(0, 0);
     sessionStorage.setItem('bw_gate_ok', '1');
     var gate = document.getElementById('accessGate');
     gate.style.transition = 'opacity 0.4s ease';
@@ -297,49 +326,88 @@ function checkGate() {
     document.body.style.overflow = '';
   } else {
     // Wrong code
-    _gateAttempts++;
     inp.value = '';
+    var newAttempts = state.attempts + 1;
 
-    if (_gateAttempts >= 3) {
-      // Lock out for 5 minutes
-      _gateLocked = true;
+    if (newAttempts >= 3) {
+      // Lock for 5 minutes
+      var lockUntil = now + (5 * 60 * 1000);
+      _setGateState(newAttempts, lockUntil);
       inp.disabled = true;
       if (btn) btn.disabled = true;
-      var remaining = 300; // 5 minutes in seconds
-      errEl.style.display = 'block';
       errEl.style.color = '#ef4444';
+      errEl.style.display = 'block';
 
-      function updateLockMsg() {
-        var mins = Math.floor(remaining / 60);
-        var secs = remaining % 60;
-        errEl.textContent = '🔒 Too many attempts. Try again in ' + mins + ':' + (secs < 10 ? '0' : '') + secs;
-        remaining--;
-        if (remaining < 0) {
-          _gateLocked = false;
-          _gateAttempts = 0;
+      // Start countdown display
+      if (_gateLockTimer) clearInterval(_gateLockTimer);
+      _gateLockTimer = setInterval(function() {
+        var rem = Math.ceil((lockUntil - Date.now()) / 1000);
+        if (rem <= 0) {
+          clearInterval(_gateLockTimer);
+          _setGateState(0, 0);
           inp.disabled = false;
           if (btn) btn.disabled = false;
-          inp.focus();
           errEl.style.display = 'none';
-          errEl.textContent = '⚠ Incorrect access code. Please try again.';
-          clearInterval(_gateLockTimer);
+          inp.focus();
+          return;
         }
-      }
-      updateLockMsg();
-      _gateLockTimer = setInterval(updateLockMsg, 1000);
+        var m = Math.floor(rem / 60), s = rem % 60;
+        errEl.textContent = '🔒 Too many attempts. Try again in ' + m + ':' + (s < 10 ? '0' : '') + s;
+      }, 1000);
+      errEl.textContent = '🔒 Too many attempts. Locked for 5 minutes.';
     } else {
-      var left = 3 - _gateAttempts;
+      _setGateState(newAttempts, 0);
+      var left = 3 - newAttempts;
       errEl.textContent = '⚠ Incorrect code. ' + left + ' attempt' + (left === 1 ? '' : 's') + ' remaining.';
       errEl.style.display = 'block';
       inp.style.borderColor = 'rgba(239,68,68,0.5)';
       setTimeout(function () {
         inp.style.borderColor = 'rgba(0,200,224,0.2)';
-        if (_gateAttempts < 3) errEl.style.display = 'none';
-      }, 2000);
+        var st = _getGateState();
+        if (!st.lockedUntil) errEl.style.display = 'none';
+      }, 2500);
       inp.focus();
     }
   }
 }
+
+// On page load — check if still locked from previous session
+(function() {
+  var state = _getGateState();
+  var now = Date.now();
+  if (state.lockedUntil > now) {
+    var inp = document.getElementById('gateInput');
+    var btn = document.querySelector('.gate-btn');
+    var errEl = document.getElementById('gateError');
+    if (inp) inp.disabled = true;
+    if (btn) btn.disabled = true;
+    if (errEl) {
+      var rem = Math.ceil((state.lockedUntil - now) / 1000);
+      var m = Math.floor(rem / 60), s = rem % 60;
+      errEl.textContent = '🔒 Too many attempts. Try again in ' + m + ':' + (s < 10 ? '0' : '') + s;
+      errEl.style.display = 'block';
+    }
+    // Start countdown
+    _gateLockTimer = setInterval(function() {
+      var st = _getGateState();
+      var rem = Math.ceil((st.lockedUntil - Date.now()) / 1000);
+      if (rem <= 0) {
+        clearInterval(_gateLockTimer);
+        _setGateState(0, 0);
+        var i = document.getElementById('gateInput');
+        var b = document.querySelector('.gate-btn');
+        var e = document.getElementById('gateError');
+        if (i) { i.disabled = false; i.focus(); }
+        if (b) b.disabled = false;
+        if (e) e.style.display = 'none';
+        return;
+      }
+      var mm = Math.floor(rem / 60), ss = rem % 60;
+      var e2 = document.getElementById('gateError');
+      if (e2) e2.textContent = '🔒 Too many attempts. Try again in ' + mm + ':' + (ss < 10 ? '0' : '') + ss;
+    }, 1000);
+  }
+})();
 </script>
 </body>
 </html><!-- deploy Fri Aug  7 06:27:13 UTC 2026 -->
