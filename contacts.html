@@ -242,6 +242,11 @@
 </div>
 <div class="toast" id="toast"></div>
 <script>
+
+function sanitise(str){
+  if(!str)return'';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+}
 const{createClient}=supabase;
 const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','sb_publishable_HKbVqivuMuTNUQz_txrOgw_L7NowsHF');
 let currentUser=null,userRole='salesperson',allContacts=[],filtered=[],selected=new Set(),currentPage=1,currentContact=null,statusFilter='all',sortField='created_at',sortDir='desc',currentTab='overview',contactActivities=[],logType='note',allProfiles=[];
@@ -370,7 +375,7 @@ function renderTable(){
       <td>${c.email?`<a href="mailto:${c.email}" onclick="event.stopPropagation()" style="color:var(--cyan);text-decoration:none;">${c.email}</a>`:'—'}</td>
       <td>${c.phone||'—'}</td>
       <td>${waNum?`<a href="https://wa.me/${waNum}" onclick="event.stopPropagation()" target="_blank" style="color:var(--green);text-decoration:none;">💬 ${c.whatsapp}</a>`:'—'}</td>
-      <td>${c.business_name||'—'}</td>
+      <td>${sanitise(c.business_name||'—')}</td>
       <td>${c.location||c.island||'—'}</td>
       ${ownerCell}
       <td style="color:var(--text3);">${fmtDate(c.created_at)}</td>
@@ -496,7 +501,7 @@ function renderPanelTab(){
         <div class="detail-row"><div class="detail-icon">📧</div><div><div class="detail-label">Email</div><div class="detail-value">${c.email?`<a href="mailto:${c.email}">${c.email}</a>`:'—'}</div></div></div>
         <div class="detail-row"><div class="detail-icon">📞</div><div><div class="detail-label">Phone</div><div class="detail-value">${c.phone||'—'}</div></div></div>
         <div class="detail-row"><div class="detail-icon">💬</div><div><div class="detail-label">WhatsApp</div><div class="detail-value">${c.whatsapp||'—'}</div></div></div>
-        <div class="detail-row"><div class="detail-icon">🏢</div><div><div class="detail-label">Business</div><div class="detail-value">${c.business_name||'—'}</div></div></div>
+        <div class="detail-row"><div class="detail-icon">🏢</div><div><div class="detail-label">Business</div><div class="detail-value">${sanitise(c.business_name||'—')}</div></div></div>
         <div class="detail-row"><div class="detail-icon">🌴</div><div><div class="detail-label">Location</div><div class="detail-value">${c.location||c.island||'—'}</div></div></div>
         <div class="detail-row"><div class="detail-icon">📅</div><div><div class="detail-label">Added</div><div class="detail-value">${fmtDate(c.created_at)}</div></div></div>
       </div>

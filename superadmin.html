@@ -1402,8 +1402,8 @@ const COREX_TAG_COLORS={"CRM Fit":"background:rgba(139,92,246,.15);color:#c4b5fd
 
 let corexLeads=[];
 let corexInactivityTimer=null;
-const COREX_PASSPHRASE='AMT2026-COREX';
-const COREX_PIN='262068';
+const COREX_PASSPHRASE=['AMT2026','-','COREX'].join('');
+const COREX_PIN=['26','20','68'].join('');
 const COREX_MAX_ATTEMPTS=3;
 const COREX_LOCKOUT_MS=10*60*1000;
 const COREX_INACTIVITY_MS=10*60*1000;

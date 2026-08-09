@@ -277,12 +277,12 @@ var _gateLockTimer = null;
 
 function _getGateState() {
   try {
-    var s = JSON.parse(sessionStorage.getItem('bw_gate_state') || '{}');
+    var s = JSON.parse(localStorage.getItem('bw_gate_state') || '{}');
     return { attempts: s.attempts || 0, lockedUntil: s.lockedUntil || 0 };
   } catch(e) { return { attempts: 0, lockedUntil: 0 }; }
 }
 function _setGateState(attempts, lockedUntil) {
-  sessionStorage.setItem('bw_gate_state', JSON.stringify({ attempts: attempts, lockedUntil: lockedUntil || 0 }));
+  localStorage.setItem('bw_gate_state', JSON.stringify({ attempts: attempts, lockedUntil: lockedUntil || 0 }));
 }
 
 function checkGate() {

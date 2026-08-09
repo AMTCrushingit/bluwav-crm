@@ -312,6 +312,11 @@
 </div>
 <div class="toast" id="toast"></div>
 <script>
+
+function sanitise(str){
+  if(!str)return'';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+}
 const{createClient}=supabase;
 const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','sb_publishable_HKbVqivuMuTNUQz_txrOgw_L7NowsHF');
 

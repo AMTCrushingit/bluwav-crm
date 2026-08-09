@@ -895,6 +895,13 @@ let currentSortCol = 'name', currentSortDir = 'asc';
 let revenueChart = null, reportsChart = null;
 
 const COLORS = ['#00C8E0','#C9A84C','#22C55E','#FF6B2B','#a78bfa','#2980B9','#E74C3C','#27AE60'];
+
+// ── XSS SANITISATION ───────────────────────────────────────────
+function sanitise(str){
+  if(!str)return'';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+}
+// ───────────────────────────────────────────────────────────────
 function ini(n){return(n||'?').split(' ').map(x=>x[0]||'').join('').toUpperCase().slice(0,2);}
 function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
 function fmt(v){return '$'+(v||0).toLocaleString();}
@@ -1113,9 +1120,9 @@ async function loadData(){
   const {data:cd, count:cc} = await cq;
   contacts = (cd||[]).map(c=>({
     id:c.id,
-    full_name:c.full_name||'Unknown',
+    full_name:sanitise(c.full_name||'Unknown'),
     email:c.email||'',
-    business_name:c.business_name||'',
+    business_name:sanitise(c.business_name||''),
     phone:c.phone||c.whatsapp||'',
     status:c.status||'Lead',
     island:c.island||'',
@@ -1145,7 +1152,7 @@ async function loadData(){
   const {data:dealsData} = await dq;
   deals = (dealsData||[]).map(d=>({
     ...d,
-    deal_name:d.deal_name||d.title||'Untitled Deal',
+    deal_name:sanitise(d.deal_name||d.title||'Untitled Deal'),
     deal_value:d.deal_value||d.value||0,
     deal_type:d.deal_type||'Ripple',
     stage:d.stage||'lead',
@@ -1497,7 +1504,7 @@ function globalSearchFn(q){
   const fc=allContacts.filter(c=>
     (c.full_name||'').toLowerCase().includes(ql)||
     (c.email||'').toLowerCase().includes(ql)||
-    (c.business_name||'').toLowerCase().includes(ql)||
+    (sanitise(c.business_name||'')).toLowerCase().includes(ql)||
     (c.phone||'').toLowerCase().includes(ql)
   );
   const fd=allDeals.filter(d=>(d.deal_name||d.title||'').toLowerCase().includes(ql));
@@ -2018,7 +2025,7 @@ function editContact(id){
   document.getElementById('ec-last').value = nameParts.slice(1).join(' ')||'';
   document.getElementById('ec-email').value = c.email||'';
   document.getElementById('ec-phone').value = c.phone||c.whatsapp||'';
-  document.getElementById('ec-biz').value = c.business_name||'';
+  document.getElementById('ec-biz').value = sanitise(c.business_name||'');
   document.getElementById('ec-location').value = c.island||'';
   document.getElementById('ec-notes').value = c.notes||'';
   const statusEl = document.getElementById('ec-status');
@@ -3323,7 +3330,7 @@ function exportContactsCSV(){
       c.full_name||'',
       c.email||'',
       c.phone||'',
-      c.business_name||'',
+      sanitise(c.business_name||''),
       c.status||'Lead',
       c.island||'',
       c.last_contacted ? new Date(c.last_contacted).toLocaleDateString() : '',
