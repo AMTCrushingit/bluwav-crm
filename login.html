@@ -258,14 +258,8 @@ msBtn.addEventListener('click', async () => {
   if (error) showAlert(error.message);
 });
 
-// ── Check if already logged in → skip to dashboard ─────────────
-// NOTE: Do NOT sign out here — that breaks sessions from other pages
-(async () => {
-  const { data: { session } } = await db.auth.getSession();
-  if (session) {
-    window.location.href = 'enhanced-crm-dashboard.html';
-  }
-})();
+// Gate always shows on login page — no auto-redirect
+// User must always enter access code first
 
 // ── ACCESS GATE ─────────────────────────────────────────────────
 (function () {
