@@ -362,7 +362,7 @@ async function processPayment(planName, amount){
 <div class="info-card-title">Current Plan</div>
 <div class="info-row"><span class="info-label">Plan</span><span class="info-value" style="color:var(--gold);">BluWav CRM Premium (Trial)</span></div>
 <div class="info-row"><span class="info-label">Trial Ends</span><span class="info-value" id="trialEndDate">—</span></div>
-<div class="info-row"><span class="info-label">Post-Trial Price</span><span class="info-value">$179/mo <span style="color:var(--green);font-size:11px;">&#x2705; $299 setup fee waived</span></span></div>
+<div class="info-row"><span class="info-label">Post-Trial Price</span><span class="info-value">$179/mo <span style="color:var(--green);font-size:11px;">&#x2705; $299 Onboarding & Setup</span></span></div>
 <div class="info-row"><span class="info-label">Setup Fee</span><span class="info-value" style="color:var(--green);">✅ Waived — upgrading from trial</span></div>
 <div class="info-row"><span class="info-label">Billing Cycle</span><span class="info-value">Monthly · 1st of month</span></div>
 <div class="info-row"><span class="info-label">Admin</span><span class="info-value" id="adminName">—</span></div>
@@ -460,7 +460,7 @@ async function processPayment(planName, amount){
 <div class="plan-name">CRM Starter</div>
 <div class="plan-tagline">Entry-level CRM for solo operators just getting started.</div>
 <div class="plan-price-block">
-<div class="plan-setup">$99 onboarding fee</div>
+<div class="plan-setup">$99 Onboarding & Setup</div>
 <div class="plan-price-main" style="color:var(--cyan);">$59 <span>/month</span></div>
 <div class="plan-price-annual">Cancel anytime &middot; No lock-in</div>
 </div>
@@ -483,7 +483,7 @@ async function processPayment(planName, amount){
 <div class="plan-name">CRM Lite</div>
 <div class="plan-tagline">For small teams who need flexibility, pipeline tracking, and automation.</div>
 <div class="plan-price-block">
-<div class="plan-setup">$199 onboarding fee</div>
+<div class="plan-setup">$199 Onboarding & Setup</div>
 <div class="plan-price-main" style="color:var(--cyan);">$<span id="litePrice">99</span> <span>/month</span></div>
 <div class="plan-price-annual" id="liteAnnual">or <strong>$990/year</strong> &mdash; 2 months free</div>
 </div>
@@ -506,7 +506,7 @@ async function processPayment(planName, amount){
 <div class="plan-name">CRM Premium</div>
 <div class="plan-tagline">Complete CRM &mdash; the full BluWav experience for growing teams.</div>
 <div class="plan-price-block">
-<div class="plan-setup">$299 onboarding fee</div>
+<div class="plan-setup">$299 Onboarding & Setup</div>
 <div class="plan-price-main" style="color:var(--orange);">$<span id="premiumPrice">179</span> <span>/month</span></div>
 <div class="plan-price-annual" id="premiumAnnual">or <strong>$1,990/year</strong> &mdash; 2 months free</div>
 <div class="nonprofit-badge">&#127807; Nonprofit rate: $99/mo &middot; $199 onboarding</div>
@@ -524,7 +524,7 @@ async function processPayment(planName, amount){
 </div>
 <button class="plan-btn active-plan">&#10003; Your Current Plan (Trial)</button>
 <button class="plan-btn orange" onclick="openPaymentModal('premium','monthly')">🧪 Test Activation &rarr;</button>
-<div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center;">&#127807; Nonprofit? <a href="mailto:hello@bluwavgrowth.com" style="color:var(--cyan);">Contact us for special pricing</a></div>
+<button class="plan-btn ghost" onclick="openPaymentModal('nonprofit','monthly')" style="font-size:11px;padding:8px;margin-top:4px;">&#127807; Nonprofit Rate: $99/mo + $199 Onboarding & Setup</button>
 </div>
 </div>
 
@@ -537,7 +537,7 @@ async function processPayment(planName, amount){
 <div class="plan-name">CRM Enterprise</div>
 <div class="plan-tagline">For larger teams needing custom workflows, API access, and dedicated support.</div>
 <div class="plan-price-block">
-<div class="plan-setup">$399 white-glove onboarding</div>
+<div class="plan-setup">$399 Onboarding & Setup</div>
 <div class="plan-price-main" style="color:var(--cyan);">$499 <span>/month</span></div>
 <div class="plan-price-annual">Full team setup, data migration &amp; training included</div>
 </div>
@@ -560,7 +560,7 @@ async function processPayment(planName, amount){
 <div class="plan-name">White-Label CRM</div>
 <div class="plan-tagline">Resell BluWav CRM under your own brand. Unlimited clients. Annual contract.</div>
 <div class="plan-price-block">
-<div class="plan-setup">$499 onboarding fee &middot; Annual contract</div>
+<div class="plan-setup">$499 Onboarding & Setup &middot; Annual contract</div>
 <div class="plan-price-main" style="color:var(--purple);">$697 <span>/month</span></div>
 <div class="plan-price-annual">20 clients &times; $697/mo = <strong>$13,940 MRR</strong> for your agency</div>
 </div>
@@ -640,7 +640,7 @@ async function processPayment(planName, amount){
 <div class="plan-summary">
 <div class="plan-summary-name" id="modalPlanName">CRM Premium</div>
 <div class="plan-summary-price" id="modalPlanPrice">$179/month</div>
-<div class="plan-summary-sub" id="modalPlanSub">+ $299 setup fee  · Billed monthly</div>
+<div class="plan-summary-sub" id="modalPlanSub">+ $299 Onboarding & Setup · Billed monthly</div>
   </div>
   <div style="background:rgba(99,102,241,0.12);border:2px solid rgba(99,102,241,0.4);border-radius:12px;padding:14px 16px;margin:12px 0;text-align:center;">
     <div style="font-size:13px;font-weight:800;color:#a5b4fc;margin-bottom:4px;">🧪 BETA TEST MODE</div>
@@ -824,12 +824,12 @@ function toggleBilling(cb){
 // Stripe SDK replaced with HTML card inputs
 
 const PLAN_DETAILS={
-  starter:{name:'CRM Starter',price:'$59/month',sub:'✅ $99 onboarding one-time setup fee · Cancel anytime'},
-  lite:{name:'CRM Lite',price:'$99/month',sub:'✅ $199 onboarding one-time setup fee · or $990/year · Cancel anytime'},
-  premium:{name:'CRM Premium',price:'$179/month',sub:'✅ $299 onboarding one-time setup fee · or $1,990/year · Cancel anytime'},
-  nonprofit:{name:'CRM Premium — Nonprofit Rate',price:'$99/month',sub:'+ $199 onboarding · Verified nonprofits only'},
-  enterprise:{name:'CRM Enterprise',price:'$499/month',sub:'+ $399 white-glove onboarding · Full team setup included'},
-  agency:{name:'White-Label CRM',price:'$697/month',sub:'+ $499 onboarding · Annual contract · Unlimited clients'},
+  starter:{name:'CRM Starter',price:'$59/month',sub:'✅ $99 Onboarding & Setup · Cancel anytime'},
+  lite:{name:'CRM Lite',price:'$99/month',sub:'✅ $199 Onboarding & Setup · or $990/year · Cancel anytime'},
+  premium:{name:'CRM Premium',price:'$179/month',sub:'✅ $299 Onboarding & Setup · or $1,990/year · Cancel anytime'},
+  nonprofit:{name:'CRM Premium — Nonprofit Rate',price:'$99/month',sub:'+ $199 Onboarding & Setup · Verified nonprofits only'},
+  enterprise:{name:'CRM Enterprise',price:'$499/month',sub:'+ $399 Onboarding & Setup · Full team setup included'},
+  agency:{name:'White-Label CRM',price:'$697/month',sub:'+ $499 Onboarding & Setup · Annual contract · Unlimited clients'},
 };
 
 function openPaymentModal(plan, billing){
