@@ -24,6 +24,14 @@ function handlePhotoUpload(input){
   reader.readAsDataURL(file);
 }
 
+
+function openDeleteMemberBtn(btn){ var id=btn.getAttribute("data-id"); openDeleteModal(id); }
+function openEditMemberBtn(btn){
+  var id = btn.getAttribute('data-id');
+  var name = btn.getAttribute('data-name');
+  openEditModal(id, name);
+}
+
 </script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -560,8 +568,8 @@ function handlePhotoUpload(input){
         actionCell = '<span style="font-size:11px;color:var(--text3);">—</span>';
       } else {
         actionCell = '<div class="member-actions">' +
-          '<button class="btn-edit-member" onclick="openEditModal('' + p.id + '','' + (p.full_name||'').replace(/'/g,"\'") + '','' + role + '')">✏️ Edit</button>' +
-          '<button class="btn-delete-member" onclick="openDeleteModal('' + p.id + '','' + (p.full_name||'').replace(/'/g,"\'") + '')">🗑️</button>' +
+          '<button class="btn-edit-member" data-id="' + p.id + '" data-name="' + (p.full_name||'').replace(/"/g,'&quot;') + '" onclick="openEditMemberBtn(this)">' +
+          '<button class="btn-delete-member" data-id="' + p.id + '" onclick="openDeleteMemberBtn(this)">Delete</button>' +
           '</div>';
       }
       return '<tr>' +

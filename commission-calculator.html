@@ -762,13 +762,7 @@ async function submitPayout(){
       var fd=new FormData();
       fd.append('email','hello@bluwavgrowth.com');
       fd.append('_subject','Payout Request - BluWav CRM');
-      fd.append('message','Agent: '+name+'
-Email: '+email+'
-Amount: $'+parseFloat(amount).toFixed(2)+'
-Period: '+period+'
-Bank: '+bank+'
-Summary:
-'+summary);
+      fd.append('message','Agent: '+name+'\nEmail: '+email+'\nAmount: $'+parseFloat(amount).toFixed(2)+'\nPeriod: '+period+'\nBank: '+bank+'\nSummary:\n'+summary);
       fd.append('_template','table');
       const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
       if(!res.ok){
