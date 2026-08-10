@@ -248,7 +248,7 @@ function sanitise(str){
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
 }
 const{createClient}=supabase;
-const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','sb_publishable_HKbVqivuMuTNUQz_txrOgw_L7NowsHF');
+const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
 let currentUser=null,userRole='salesperson',allContacts=[],filtered=[],selected=new Set(),currentPage=1,currentContact=null,statusFilter='all',sortField='created_at',sortDir='desc',currentTab='overview',contactActivities=[],logType='note',allProfiles=[];
 const PER_PAGE=15;
 const COLORS=['#00C2D1','#D4AF37','#22c55e','#ff8c42','#a78bfa','#f472b6','#60a5fa'];
