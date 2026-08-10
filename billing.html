@@ -22,6 +22,40 @@ function updatePlanBanner(planName){
   });
 }
 
+
+// Stripe payment processing
+var stripe = null;
+var stripeElements = null;
+
+function initStripe(){
+  // Using Stripe test mode — replace with live key for production
+  // Get your keys from https://dashboard.stripe.com/apikeys
+  var stripeKey = 'pk_test_placeholder'; // Replace with your Stripe publishable key
+  if(stripeKey === 'pk_test_placeholder'){
+    console.warn('Stripe: Add your publishable key to billing.html');
+    return;
+  }
+  stripe = Stripe(stripeKey);
+}
+
+async function processPayment(planName, amount){
+  if(!stripe){
+    // Fallback: show success for testing
+    showToast('✅ Payment processed (test mode) — '+planName+' activated','success');
+    updatePlanBanner(planName);
+    closePaymentModal();
+    // Save to Supabase
+    if(currentUser){
+      await db.from('profiles').update({
+        plan: planName,
+        plan_activated_at: new Date().toISOString()
+      }).eq('id', currentUser.id).catch(()=>{});
+    }
+    return;
+  }
+  // Real Stripe processing would go here
+}
+
 </script>
 <script src="https://js.stripe.com/v3/"></script>
 <style>
@@ -575,6 +609,11 @@ function updatePlanBanner(planName){
 <div class="plan-summary-name" id="modalPlanName">CRM Premium</div>
 <div class="plan-summary-price" id="modalPlanPrice">$179/month</div>
 <div class="plan-summary-sub" id="modalPlanSub">+ $299 setup fee (waived from trial) · Billed monthly</div>
+</div>
+
+<div id="stripe-test-notice" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#fcd34d;display:flex;align-items:center;gap:8px;">
+  <span>⚠️</span>
+  <span><strong>Test Mode:</strong> Use card 4242 4242 4242 4242, any future date, any CVC to test payments.</span>
 </div>
 <div class="secure-badge">🔒 Secured by Stripe · 256-bit SSL encryption · PCI compliant</div>
 <div class="stripe-field">

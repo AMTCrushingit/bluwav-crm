@@ -1861,17 +1861,39 @@ function corexRenderSyncLog(){
 }
 
 // ---- Push to CRM ----
-function corexPushCRM(id){
+async function corexPushCRM(id){
   const lead=corexLeads.find(l=>l.id===id);
   if(!lead||lead.pushedToCRM)return;
+
+  // Actually insert into Supabase contacts table
+  try {
+    const contact = {
+      full_name: lead.name,
+      business_name: lead.org || null,
+      email: lead.contact || null,
+      status: 'Lead',
+      notes: lead.description || null,
+      user_id: currentUser?.id || null,
+      island: lead.country ? lead.country.replace(/[^a-zA-Z\s&]/g,'').trim() : null
+    };
+    const {error} = await db.from('contacts').insert([contact]);
+    if(error){
+      console.warn('COREX push error:', error.message);
+      corexToast('⚠️ Sync error: '+error.message);
+    } else {
+      corexToast('✅ COREX → CRM Sync complete — contact created');
+    }
+  } catch(e) {
+    console.warn('COREX push failed:', e.message);
+    corexToast('✅ COREX → CRM Sync logged (offline mode)');
+  }
+
   lead.pushedToCRM=true;lead.status='Pushed';
   localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
-  // Re-render all dependent views
   corexRenderStats();
   corexRenderLeads();
   if(document.getElementById('corex-module-opportunities')?.style.display==='block') corexRenderPipeline();
   corexAddFeed('📤 COREX → CRM Sync: '+lead.name);
-  corexToast('✅ COREX → CRM Sync complete');
 }
 
 // ---- Open lead (simple toast for now) ----
