@@ -1062,6 +1062,7 @@ async function initDashboard(){
   if(sn)sn.value=name;
 
   loadData();
+  loadTasks();
   initChart();
   setTimeout(startPresence, 100);
   setTimeout(startRealtime, 500);
@@ -2409,14 +2410,24 @@ async function sendEmailFromModal(){
     // Refresh email log if visible
     if(typeof renderEmailLog==='function') renderEmailLog();
   } else {
-    // Fallback: open mailto so email is never lost
-    const mailtoUrl = 'mailto:'+encodeURIComponent(to)+
-      '?subject='+encodeURIComponent(subject)+
-      '&body='+encodeURIComponent(message);
-    window.open(mailtoUrl,'_blank');
-    showToast('📧 Opening your email client to send...','success');
-    closeModal('sendEmail');
+    // Formspree failed — save to email_log as draft and notify user
+    try {
+      await db.from('email_log').insert([{
+        to_email:      to,
+        subject:       subject,
+        message:       message,
+        contact_name:  matchedContact ? matchedContact.full_name : null,
+        contact_id:    matchedContact ? matchedContact.id : null,
+        sent_at:       new Date().toISOString(),
+        sent_by:       currentUser?.id || null,
+        sent_by_email: currentUser?.email || null,
+        status:        'failed'
+      }]);
+    } catch(e2){ console.warn('email_log draft:', e2.message); }
+    // Show error with copy option — keep user in CRM
+    showToast('⚠️ Email service unavailable. Message saved to log. Contact hello@bluwavgrowth.com to configure email sending.','');
     if(sendBtn){ sendBtn.disabled=false; sendBtn.textContent='Send Email'; }
+    // Don't close modal — let user copy the message manually
   }
 }
 

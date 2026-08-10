@@ -7,29 +7,15 @@
 <title>BluWav CRM — Settings</title>
 <link href="bluwav.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-function handlePhotoUpload(input){
-  if(!input.files||!input.files[0]) return;
-  const file = input.files[0];
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const av = document.getElementById('profileAvatar');
-    if(av){
-      av.style.backgroundImage = 'url('+e.target.result+')';
-      av.style.backgroundSize = 'cover';
-      av.style.backgroundPosition = 'center';
-      av.textContent = '';
-    }
-    showToast('Photo updated — click Save Changes to apply','success');
-  };
-  reader.readAsDataURL(file);
-}
-
-
-function openDeleteMemberBtn(btn){ var id=btn.getAttribute("data-id"); openDeleteModal(id); }
 function openEditMemberBtn(btn){
   var id = btn.getAttribute('data-id');
-  var name = btn.getAttribute('data-name');
+  var row = btn.closest('[data-member-id]') || btn.parentElement.parentElement;
+  var name = row ? (row.querySelector('.member-name') || {}).textContent || '' : '';
   openEditModal(id, name);
+}
+function openDeleteMemberBtn(btn){
+  var id = btn.getAttribute('data-id');
+  openDeleteModal(id);
 }
 
 </script>
@@ -189,13 +175,13 @@ function openEditMemberBtn(btn){
 <body>
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-logo">
-<span style="font-size:1.3rem;font-weight:800;letter-spacing:-0.5px;line-height:1;"><span style="color:#fff;">Blu</span><span style="color:#00C8E0;">Wav</span></span>
+<div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div>
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
 <div class="nav-section">
 <div class="nav-label">Main</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">🏠</span><span class="nav-text"> Dashboard</span></a>
+<a class="nav-item" href="dashboard.html"><span class="nav-icon">🏠</span><span class="nav-text"> Dashboard</span></a>
 <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span><span class="nav-badge" id="navCount">—</span></a>
 <a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
 <a class="nav-item" href="activities.html"><span class="nav-icon">📋</span><span class="nav-text"> Activities</span></a>
@@ -231,7 +217,7 @@ function openEditMemberBtn(btn){
 </aside>
 <div class="main">
 <header class="topbar">
-<div class="topbar-left"><h1>Settings</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Settings</div></div>
+<div class="topbar-left"><h1>Settings</h1><div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Settings</div></div>
 <div class="topbar-right">
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
@@ -263,8 +249,7 @@ function openEditMemberBtn(btn){
 <div class="card-header"><div class="card-title">Personal Information</div><div class="card-sub">Update your name, email and profile photo</div></div>
 <div class="card-body">
 <div class="avatar-upload">
-<input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="handlePhotoUpload(this)" />
-<div class="avatar-large" id="profileAvatar" onclick="document.getElementById('photoUpload').click()" style="cursor:pointer;" title="Click to upload photo">AM</div>
+<div class="avatar-large" id="profileAvatar">AM</div>
 <div class="avatar-actions">
 <button class="btn-upload">📷 Upload Photo</button>
 <div class="avatar-hint">JPG, PNG up to 2MB</div>
@@ -568,8 +553,8 @@ function openEditMemberBtn(btn){
         actionCell = '<span style="font-size:11px;color:var(--text3);">—</span>';
       } else {
         actionCell = '<div class="member-actions">' +
-          '<button class="btn-edit-member" data-id="' + p.id + '" data-name="' + (p.full_name||'').replace(/"/g,'&quot;') + '" onclick="openEditMemberBtn(this)">' +
-          '<button class="btn-delete-member" data-id="' + p.id + '" onclick="openDeleteMemberBtn(this)">Delete</button>' +
+          '<button class="btn-edit-member" data-id="' + p.id + '" onclick="openEditMemberBtn(this)">✏️ Edit</button>' +
+          '<button class="btn-delete-member" data-id="' + p.id + '" onclick="openDeleteMemberBtn(this)">🗑 Remove</button>' +
           '</div>';
       }
       return '<tr>' +
@@ -702,34 +687,16 @@ function openEditMemberBtn(btn){
     const btn = event?.target;
     if(btn){btn.disabled=true;btn.textContent='Saving...';}
     try{
-      const {data:{session}} = await db.auth.getSession();
-      if(!session){showToast('Not logged in — please refresh','error');return;}
-      const uid = session.user.id;
-
-      if(section==='Profile'){
-        // Try multiple possible ID patterns
-        const nameEl = document.getElementById('firstName') ||
-                       document.getElementById('profileName') ||
-                       document.getElementById('settingsName') ||
-                       document.querySelector('input[placeholder*="name"], input[placeholder*="Name"]');
-        const name = nameEl ? nameEl.value.trim() : '';
+      if(section==='Account'){
+        const nameEl=document.getElementById('sn-name')||document.querySelector('input[placeholder="Your full name"]');
+        const name=nameEl?nameEl.value.trim():'';
         if(!name){showToast('Please enter your name','error');return;}
-        const {error} = await db.from('profiles').update({full_name:name}).eq('id',uid);
+        const {data:{session}}=await db.auth.getSession();
+        if(!session){showToast('Not logged in','error');return;}
+        const {error}=await db.from('profiles').update({full_name:name}).eq('id',session.user.id);
         if(error){showToast('Error: '+error.message,'error');return;}
-        // Update sidebar name
-        ['sidebarName','topName'].forEach(id=>{
-          const el=document.getElementById(id); if(el) el.textContent=name;
-        });
       }
-      if(section==='Password'){
-        const pwEl  = document.getElementById('newPassword') || document.querySelector('input[type="password"]');
-        const pw    = pwEl ? pwEl.value.trim() : '';
-        if(!pw || pw.length < 8){showToast('Password must be at least 8 characters','error');return;}
-        const {error} = await db.auth.updateUser({password: pw});
-        if(error){showToast('Error: '+error.message,'error');return;}
-        if(pwEl) pwEl.value = '';
-      }
-      showToast('✅ '+section+' saved successfully','success');
+      showToast('✅ '+section+' settings saved','success');
     }catch(e){
       showToast('Error: '+e.message,'error');
     }finally{
@@ -745,7 +712,7 @@ function openEditMemberBtn(btn){
 
   // ── SESSION TIMEOUT (5 min inactivity) ──
   (function(){
-    const TIMEOUT_MS = 10 * 60 * 1000; // 30 minutes
+    const TIMEOUT_MS = 10 * 60 * 1000; // 5 minutes
     let timer;
 
     function resetTimer(){
