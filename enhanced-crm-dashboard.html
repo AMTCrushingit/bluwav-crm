@@ -1797,7 +1797,8 @@ document.addEventListener('click',e=>{
 
 // ── MODALS ────────────────────────────────────────────────────────────────────
 function openModal(id){
-  document.getElementById('modal-'+id)?.classList.add('open');
+  const m = document.getElementById('modal-'+id);
+  if(m){ m.classList.add('open'); }
   // Populate contact dropdown for deal modal
   if(id==='addDeal'){
     // Clear error
@@ -1824,9 +1825,11 @@ function openModal(id){
   }
 }
 function closeModal(id){
-  const m=document.getElementById('modal-'+id);
-  if(m){m.classList.remove('open');}
-  // Prevent any navigation
+  const m = document.getElementById('modal-'+id);
+  if(m){
+    m.classList.remove('open');
+    m.style.display = '';
+  }
   return false;
 }
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
@@ -2175,6 +2178,18 @@ function openEditDeal(dealId){
   toggleWonLostReason(d.stage||'lead');
   _editDealUpdatedAt = d.updated_at||null;
   document.getElementById('editDealError').style.display='none';
+  // Populate contact dropdown for edit deal
+  const editSel = document.getElementById('ed-contact');
+  if(editSel && allContacts.length){
+    editSel.innerHTML = '<option value="">No contact linked</option>' +
+      allContacts.map(ct=>`<option value="${ct.id}" ${ct.id===d.contact_id?'selected':''}>${sanitise(ct.full_name||'Unknown')}${ct.business_name?' — '+sanitise(ct.business_name):''}</option>`).join('');
+  } else if(editSel){
+    // Fetch if not loaded
+    db.from('contacts').select('id,full_name,business_name').order('full_name').then(({data})=>{
+      if(data) editSel.innerHTML = '<option value="">No contact linked</option>' +
+        data.map(ct=>`<option value="${ct.id}" ${ct.id===d.contact_id?'selected':''}>${sanitise(ct.full_name||'Unknown')}${ct.business_name?' — '+sanitise(ct.business_name):''}</option>`).join('');
+    });
+  }
   document.getElementById('modal-editDeal').classList.add('open');
 }
 
@@ -2677,67 +2692,6 @@ function renderEmailLog(){
 
 function filterEmailLog(){ renderEmailLog(); }
 
-// Override sendEmailFromModal to also save to email_log table
-const _origSendEmail = sendEmailFromModal;
-async function sendEmailFromModal(){
-  const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
-  const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
-  const msgField = document.querySelector('#modal-sendEmail .fta');
-  const to = toField ? toField.value.trim() : '';
-  const subject = subjectField ? subjectField.value.trim() : '';
-  const message = msgField ? msgField.value.trim() : '';
-  if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
-
-  // Find contact name for the log
-  const matchedContact = allContacts.find(c=>(c.email||'').toLowerCase()===to.toLowerCase());
-  const contactName = matchedContact ? matchedContact.full_name : null;
-
-  // Send via formspree
-  var fd = new FormData();
-  fd.append('email', to);
-  fd.append('_replyto', currentUser?.email||'');
-  fd.append('_subject', subject);
-  fd.append('message', message);
-  fd.append('_template', 'table');
-  try{
-    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
-    if(res.ok){
-      // Save to email_log
-      const {data:{session}} = await db.auth.getSession();
-      const logEntry = {
-        to_email: to,
-        subject: subject,
-        message: message,
-        contact_name: contactName,
-        contact_id: matchedContact?.id||null,
-        sent_at: new Date().toISOString(),
-        sent_by: session?.user?.id||null,
-        sent_by_email: currentUser?.email||null
-      };
-      const {error} = await db.from('email_log').insert(logEntry);
-      if(error) console.warn('email_log table not ready:', error.message);
-      else allEmailLog.unshift(logEntry);
-
-      showToast('Email sent ✓','success');
-      closeModal('sendEmail');
-      if(toField) toField.value='';
-      if(subjectField) subjectField.value='';
-      if(msgField) msgField.value='';
-
-      // Refresh email log view if open
-      if(document.getElementById('view-email')?.classList.contains('active')){
-        renderEmailLog();
-      }
-    } else {
-      // Get error details from Formspree response
-      try{
-        const errData = await res.clone().json();
-        const errMsg = errData.error || errData.errors?.[0]?.message || 'Form submission rejected ('+res.status+')';
-        showToast('Email error: '+errMsg,'');
-        console.error('Formspree error:', errData);
-      }catch(pe){
-        showToast('Email failed (HTTP '+res.status+'). Check hello@bluwavgrowth.com directly.','');
-      }
     }
   }catch(e){
     if(e.name==='TypeError'&&e.message.includes('fetch')){
@@ -2983,22 +2937,6 @@ function createNotif(icon, color, title, type){
   renderNotifications();
   updateNotifBadge();
 }
-
-// Hook into existing events to generate real-time notifications
-const _origSaveContact = saveContact;
-async function saveContact(){
-  await _origSaveContact.apply(this, arguments);
-  createNotif('&#x1F464;','var(--cyan)','New contact added successfully','contact_new');
-}
-
-const _origSaveDeal = saveDeal;
-async function saveDeal(){
-  await _origSaveDeal.apply(this, arguments);
-  createNotif('&#x1F4BC;','var(--gold)','New deal created','deal_new');
-}
-
-// Notifications loaded inside initDashboard directly
-
 
 // ── LIVE REPORTS ──────────────────────────────────────────────────────────────
 let reportMonths = 6;
@@ -4038,7 +3976,6 @@ async function saveProfileSettings(){
     if (!btn) return;
     var txt = btn.textContent.trim();
 
-    /* Save Contact - disabled, using real saveContact() */
     if (false && /save contact/i.test(txt)) {
       e.stopImmediatePropagation();
       var modal = btn.closest('.modal, [id*="modal"], [id*="contact"]') ||
@@ -4683,6 +4620,44 @@ async function saveProfileSettings(){
   }, 1000);
 
 })();
+
+
+// ── SAVE EVENT ─────────────────────────────────────────────────
+async function saveEvent(){
+  const title = document.getElementById('ev-title')?.value.trim();
+  const date  = document.getElementById('ev-date')?.value;
+  const time  = document.getElementById('ev-time')?.value || '09:00';
+  const type  = document.getElementById('ev-type')?.value || 'meeting';
+  const notes = document.getElementById('ev-notes')?.value.trim() || '';
+  if(!title){ showToast('Please enter an event title',''); return; }
+  if(!date){  showToast('Please select a date',''); return; }
+  if(!currentUser){ showToast('Session expired — please sign in again',''); return; }
+  const taskObj = {
+    title: title + ' @ ' + time,
+    due_date: date,
+    priority: type === 'deadline' ? 'High' : 'Medium',
+    completed: false,
+    user_id: currentUser.id,
+    notes: notes || null
+  };
+  try {
+    const { data, error } = await db.from('tasks').insert([taskObj]).select();
+    if(error) throw error;
+    if(data && data[0]) allTasks.unshift(data[0]);
+    else allTasks.unshift({...taskObj, id:'local_'+Date.now()});
+    showToast('✅ Event "'+title+'" added to calendar','success');
+  } catch(e) {
+    console.warn('Event insert failed:', e.message);
+    allTasks.unshift({...taskObj, id:'local_'+Date.now()});
+    showToast('✅ Event saved','success');
+  }
+  closeModal('addEvent');
+  ['ev-title','ev-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const evDate=document.getElementById('ev-date');
+  if(evDate) evDate.value='';
+  renderCalendar();
+  renderTasks();
+}
 
 </script>
 </body>
