@@ -443,7 +443,7 @@ async function processPayment(planName, amount){
 <div class="plan-feature no"><span class="ck" style="color:var(--text3);">&#10007;</span> Pipeline tracking</div>
 <div class="plan-feature no"><span class="ck" style="color:var(--text3);">&#10007;</span> Team members</div>
 </div>
-<button class="plan-btn cyan" onclick="openPaymentModal('starter','monthly')">Start Free Trial &rarr;</button>
+<button class="plan-btn cyan" onclick="openPaymentModal('starter','monthly')">🧪 Test Activation &rarr;</button>
 </div>
 <!-- CRM LITE -->
 <div class="plan-card">
@@ -465,7 +465,7 @@ async function processPayment(planName, amount){
 <div class="plan-feature no"><span class="ck" style="color:var(--text3);">&#10007;</span> WhatsApp integration</div>
 <div class="plan-feature no"><span class="ck" style="color:var(--text3);">&#10007;</span> Advanced automation</div>
 </div>
-<button class="plan-btn cyan" onclick="openPaymentModal('lite','monthly')">Start Free Trial &rarr;</button>
+<button class="plan-btn cyan" onclick="openPaymentModal('lite','monthly')">🧪 Test Activation &rarr;</button>
 </div>
 <!-- CRM PREMIUM — MOST POPULAR -->
 <div class="plan-card popular current">
@@ -491,7 +491,7 @@ async function processPayment(planName, amount){
 <div class="plan-feature"><span class="ck">&#10003;</span> Priority support (24hr)</div>
 </div>
 <button class="plan-btn active-plan">&#10003; Your Current Plan (Trial)</button>
-<button class="plan-btn orange" onclick="openPaymentModal('premium','monthly')">Activate CRM Premium &rarr;</button>
+<button class="plan-btn orange" onclick="openPaymentModal('premium','monthly')">🧪 Test Activation &rarr;</button>
 <button class="plan-btn ghost" onclick="openPaymentModal('nonprofit','monthly')" style="font-size:11px;padding:8px;">&#127807; Nonprofit Rate: $99/mo + $199 onboarding</button>
 </div>
 </div>
@@ -519,7 +519,7 @@ async function processPayment(planName, amount){
 <div class="plan-feature"><span class="ck">&#10003;</span> Quarterly strategy calls</div>
 <div class="plan-feature"><span class="ck">&#10003;</span> Priority 12hr support</div>
 </div>
-<button class="plan-btn cyan" onclick="openPaymentModal('enterprise','monthly')">Book an Enterprise Call &rarr;</button>
+<button class="plan-btn cyan" onclick="openPaymentModal('enterprise','monthly')">🧪 Test Enterprise Flow &rarr;</button>
 </div>
 <!-- WHITE LABEL AGENCY -->
 <div class="plan-card agency">
@@ -609,6 +609,11 @@ async function processPayment(planName, amount){
 <div class="plan-summary-name" id="modalPlanName">CRM Premium</div>
 <div class="plan-summary-price" id="modalPlanPrice">$179/month</div>
 <div class="plan-summary-sub" id="modalPlanSub">+ $299 setup fee (waived from trial) · Billed monthly</div>
+  </div>
+  <div style="background:rgba(99,102,241,0.12);border:2px solid rgba(99,102,241,0.4);border-radius:12px;padding:14px 16px;margin:12px 0;text-align:center;">
+    <div style="font-size:13px;font-weight:800;color:#a5b4fc;margin-bottom:4px;">🧪 BETA TEST MODE</div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.6;"><strong>No payment will be taken.</strong> This simulates the full activation flow. In production, Stripe processes payment securely.</div>
+  </div>
 </div>
 
 <div id="stripe-test-notice" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#fcd34d;display:flex;align-items:center;gap:8px;">
@@ -617,24 +622,15 @@ async function processPayment(planName, amount){
 </div>
 <div class="secure-badge">🔒 Secured by Stripe · 256-bit SSL encryption · PCI compliant</div>
 <div class="stripe-field">
-<label>Card Number</label>
-<input id="cardNumber" placeholder="4242 4242 4242 4242" type="text" maxlength="19" oninput="formatCard(this)" style="font-family:monospace;letter-spacing:2px;"/>
-<div id="card-errors" style="color:#ef4444;font-size:12px;margin-top:4px;"></div>
 </div>
 <div class="stripe-row">
 <div class="stripe-field">
-<label>Expiry Date</label>
-<input id="cardExpiry" placeholder="MM / YY" type="text" maxlength="7" oninput="formatExpiry(this)"/>
 </div>
 <div class="stripe-field">
-<label>CVC</label>
-<input id="cardCVC" placeholder="123" type="text" maxlength="4"/>
 </div>
 </div>
 <div class="stripe-row">
 <div class="stripe-field">
-<label>Name on Card</label>
-<input id="cardName" placeholder="Your full name" type="text" autocomplete="cc-name"/>
 </div>
 <div class="stripe-field">
 <label>Email</label>
@@ -642,14 +638,10 @@ async function processPayment(planName, amount){
 </div>
 </div>
 <div style="background:rgba(0,194,209,0.08);border:1px solid rgba(0,194,209,0.2);border-radius:8px;padding:10px 14px;margin-top:8px;">
-  <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px;">&#128272; Test Mode — Use these test card details:</div>
-  <div style="font-size:12px;color:var(--text2);font-family:monospace;">Card: 4242 4242 4242 4242</div>
-  <div style="font-size:12px;color:var(--text2);font-family:monospace;">Expiry: 12 / 28 &nbsp; CVC: 123</div>
-</div>
 </div>
 <div class="modal-footer">
 <button class="btn-cancel" onclick="closePaymentModal()">Cancel</button>
-<button class="btn-pay" id="payBtn" onclick="processPayment()">⚡ Activate Plan</button>
+  <button class="btn-pay" id="payBtn" onclick="processPayment()" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">🧪 Simulate Activation (Beta)</button>
 </div>
 </div>
 </div>
