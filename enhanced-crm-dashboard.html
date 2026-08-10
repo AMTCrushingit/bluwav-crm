@@ -1072,8 +1072,9 @@ async function initDashboard(){
 
   loadData();
   initChart();
-  startPresence();
-  startRealtime();
+  // Non-blocking background tasks
+  setTimeout(startPresence, 100);
+  setTimeout(startRealtime, 500);
   setTimeout(loadNotifications, 2000);
 
   // ── TRIAL COUNTDOWN ─────────────────────────────────────
@@ -1144,7 +1145,10 @@ function updateTrialCountdown(profile) {
 
 // ── TEAM SWITCHER ─────────────────────────────────────────────────────────────
 async function loadTeam(myName){
-  const {data} = await db.from('profiles').select('*');
+  // Non-blocking with timeout — never hangs dashboard
+  const _tq = db.from('profiles').select('*');
+  const _tt = new Promise(r=>setTimeout(()=>r({data:[]}),5000));
+  const {data} = await Promise.race([_tq,_tt]).catch(()=>({data:[]}));
   allTeam = data||[];
   const switcher = document.getElementById('teamSwitcherBtns');
   let html = `<span class="team-switcher-label">Viewing:</span>
@@ -3381,6 +3385,8 @@ let _realtimeChannel = null;
 
 function startRealtime(){
   if(_realtimeChannel) return;
+  // Non-blocking — realtime is enhancement only, never blocks UI
+  try {
 
   _realtimeChannel = db.channel('bluwav-crm-live')
 
@@ -3546,6 +3552,7 @@ function startRealtime(){
         },5000);
       }
     });
+  } catch(e){ console.warn('Realtime init failed:', e.message); }
 }
 
 function stopRealtime(){
