@@ -105,8 +105,8 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 <input autocomplete="new-password" class="gate-input" id="gateInput" onkeydown="if(event.key==='Enter')checkGate()" placeholder="" type="password"/>
 <div class="gate-error" id="gateError">⚠ Incorrect access code. Please try again.</div>
 <button class="gate-btn" onclick="checkGate()">Continue →</button>
-<p class="gate-contact" style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:20px;">Don't have an access code? Contact
-      <a href="mailto:hello@bluwavgrowth.com" style="color:#00C8E0;text-decoration:underline;font-weight:700;pointer-events:all;position:relative;z-index:99999;">hello@bluwavgrowth.com</a>
+<p class="gate-contact" style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:20px;position:relative;z-index:100000;">Don't have an access code? Contact
+      <a href="mailto:hello@bluwavgrowth.com" onclick="event.stopPropagation();window.location.href='mailto:hello@bluwavgrowth.com';return false;" style="color:#00C8E0;text-decoration:underline;font-weight:700;cursor:pointer;position:relative;z-index:100000;">hello@bluwavgrowth.com</a>
 </p>
 </div>
 </div>
