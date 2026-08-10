@@ -48,7 +48,9 @@ async function processPayment(planName, amount){
     if(currentUser){
       await db.from('profiles').update({
         plan: planName,
-        plan_activated_at: new Date().toISOString()
+        plan_activated_at: new Date().toISOString(),
+        subscription_status: 'active',
+        subscription_lapsed_at: null
       }).eq('id', currentUser.id).catch(()=>{});
     }
     return;
@@ -252,7 +254,18 @@ async function processPayment(planName, amount){
     ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:5px;}
     @media(max-width:1100px){.plans-grid{grid-template-columns:repeat(2,1fr);}}
     @media(max-width:700px){.plans-grid{grid-template-columns:1fr;}.plan-info-grid{grid-template-columns:1fr;}.usage-grid{grid-template-columns:1fr;}}
-  </style>
+  
+    /* Grace period styles */
+    .grace-banner{background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(239,68,68,0.08));border:1px solid rgba(245,158,11,0.35);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:none;}
+    .grace-banner.show{display:flex;align-items:center;gap:14px;}
+    .grace-icon{font-size:28px;flex-shrink:0;}
+    .grace-title{font-size:14px;font-weight:700;color:#fcd34d;margin-bottom:3px;}
+    .grace-msg{font-size:12px;color:var(--text2);line-height:1.5;}
+    .grace-days{font-size:24px;font-weight:800;color:#f87171;font-variant-numeric:tabular-nums;}
+    .readonly-banner{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:none;text-align:center;}
+    .readonly-banner.show{display:block;}
+
+</style>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -408,10 +421,29 @@ async function processPayment(planName, amount){
   </div>
 </div>
 
+
+<!-- GRACE PERIOD BANNER -->
+<div class="grace-banner" id="graceBanner">
+  <div class="grace-icon">⚠️</div>
+  <div style="flex:1;">
+    <div class="grace-title">Subscription Lapsed — Grace Period Active</div>
+    <div class="grace-msg">Your subscription has lapsed. You have <strong id="graceDaysLeft" style="color:#fcd34d;">7</strong> days to reactivate before your account becomes read-only. Your data is safe.</div>
+    <button onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})" style="margin-top:8px;background:var(--gold);color:#0a0e1a;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;">Reactivate Now →</button>
+  </div>
+</div>
+
+<!-- READ-ONLY BANNER -->
+<div class="readonly-banner" id="readonlyBanner">
+  <div style="font-size:28px;margin-bottom:8px;">🔒</div>
+  <div style="font-size:15px;font-weight:700;color:#fca5a5;margin-bottom:6px;">Account is Read-Only</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">Your grace period has ended. You can view your data but cannot add, edit, or delete anything until you reactivate your subscription.</div>
+  <button onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})" style="background:var(--cyan);color:#0a0e1a;border:none;border-radius:9px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;">Reactivate Subscription →</button>
+</div>
+
 <div id="plans">
 <div class="section-header">
 <div class="section-title">&#128421;&#65039; CRM Plans</div>
-<div class="section-sub">Every plan includes a 14-day free trial &middot; No credit card required &middot; Cancel anytime</div>
+<div class="section-sub">Every plan includes a 14-day free trial &middot; Setup fee applies &middot; Cancel anytime</div>
 </div>
 <div class="trial-note">⭐ Every plan includes a <strong>14-day free trial</strong> — no credit card required. Billing starts only after your trial ends.</div>
 <!-- Billing Toggle -->
@@ -474,7 +506,7 @@ async function processPayment(planName, amount){
 <div class="plan-name">CRM Premium</div>
 <div class="plan-tagline">Complete CRM &mdash; the full BluWav experience for growing teams.</div>
 <div class="plan-price-block">
-<div class="plan-setup">$299 onboarding fee <span style="color:var(--green);font-size:11px;">(waived from trial)</span></div>
+<div class="plan-setup">$299 onboarding fee</div>
 <div class="plan-price-main" style="color:var(--orange);">$<span id="premiumPrice">179</span> <span>/month</span></div>
 <div class="plan-price-annual" id="premiumAnnual">or <strong>$1,990/year</strong> &mdash; 2 months free</div>
 <div class="nonprofit-badge">&#127807; Nonprofit rate: $99/mo &middot; $199 onboarding</div>
@@ -492,7 +524,7 @@ async function processPayment(planName, amount){
 </div>
 <button class="plan-btn active-plan">&#10003; Your Current Plan (Trial)</button>
 <button class="plan-btn orange" onclick="openPaymentModal('premium','monthly')">🧪 Test Activation &rarr;</button>
-<button class="plan-btn ghost" onclick="openPaymentModal('nonprofit','monthly')" style="font-size:11px;padding:8px;">&#127807; Nonprofit Rate: $99/mo + $199 onboarding</button>
+<div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center;">&#127807; Nonprofit? <a href="mailto:hello@bluwavgrowth.com" style="color:var(--cyan);">Contact us for special pricing</a></div>
 </div>
 </div>
 
@@ -608,7 +640,7 @@ async function processPayment(planName, amount){
 <div class="plan-summary">
 <div class="plan-summary-name" id="modalPlanName">CRM Premium</div>
 <div class="plan-summary-price" id="modalPlanPrice">$179/month</div>
-<div class="plan-summary-sub" id="modalPlanSub">+ $299 setup fee (waived from trial) · Billed monthly</div>
+<div class="plan-summary-sub" id="modalPlanSub">+ $299 setup fee  · Billed monthly</div>
   </div>
   <div style="background:rgba(99,102,241,0.12);border:2px solid rgba(99,102,241,0.4);border-radius:12px;padding:14px 16px;margin:12px 0;text-align:center;">
     <div style="font-size:13px;font-weight:800;color:#a5b4fc;margin-bottom:4px;">🧪 BETA TEST MODE</div>
@@ -792,9 +824,9 @@ function toggleBilling(cb){
 // Stripe SDK replaced with HTML card inputs
 
 const PLAN_DETAILS={
-  starter:{name:'CRM Starter',price:'$59/month',sub:'✅ $99 onboarding waived from trial · Cancel anytime'},
-  lite:{name:'CRM Lite',price:'$99/month',sub:'✅ $199 onboarding waived from trial · or $990/year · Cancel anytime'},
-  premium:{name:'CRM Premium',price:'$179/month',sub:'✅ $299 onboarding waived from trial · or $1,990/year · Cancel anytime'},
+  starter:{name:'CRM Starter',price:'$59/month',sub:'✅ $99 onboarding one-time setup fee · Cancel anytime'},
+  lite:{name:'CRM Lite',price:'$99/month',sub:'✅ $199 onboarding one-time setup fee · or $990/year · Cancel anytime'},
+  premium:{name:'CRM Premium',price:'$179/month',sub:'✅ $299 onboarding one-time setup fee · or $1,990/year · Cancel anytime'},
   nonprofit:{name:'CRM Premium — Nonprofit Rate',price:'$99/month',sub:'+ $199 onboarding · Verified nonprofits only'},
   enterprise:{name:'CRM Enterprise',price:'$499/month',sub:'+ $399 white-glove onboarding · Full team setup included'},
   agency:{name:'White-Label CRM',price:'$697/month',sub:'+ $499 onboarding · Annual contract · Unlimited clients'},
@@ -885,6 +917,55 @@ async function processPayment(){
   ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=>{document.addEventListener(evt,resetTimer,true);});
   resetTimer();
 })();
+
+// ── SUBSCRIPTION & GRACE PERIOD LOGIC ──────────────────────────
+async function checkSubscriptionStatus(){
+  if(!currentUser) return;
+
+  try {
+    const {data:profile} = await db.from('profiles')
+      .select('plan, plan_activated_at, subscription_status, subscription_lapsed_at')
+      .eq('id', currentUser.id)
+      .single();
+
+    if(!profile) return;
+
+    const status = profile.subscription_status || 'trial';
+    const lapsedAt = profile.subscription_lapsed_at ? new Date(profile.subscription_lapsed_at) : null;
+    const now = new Date();
+    const GRACE_DAYS = 7;
+
+    if(status === 'lapsed' && lapsedAt){
+      const daysSinceLapse = Math.floor((now - lapsedAt) / (1000*60*60*24));
+      const daysLeft = Math.max(0, GRACE_DAYS - daysSinceLapse);
+
+      if(daysLeft > 0){
+        // Grace period active
+        const graceBanner = document.getElementById('graceBanner');
+        const graceDaysEl = document.getElementById('graceDaysLeft');
+        if(graceBanner){ graceBanner.classList.add('show'); }
+        if(graceDaysEl){ graceDaysEl.textContent = daysLeft; }
+      } else {
+        // Grace period expired — read-only mode
+        const readonlyBanner = document.getElementById('readonlyBanner');
+        if(readonlyBanner){ readonlyBanner.classList.add('show'); }
+        // Disable action buttons
+        document.querySelectorAll('.btn-activate, .btn-upgrade').forEach(btn=>{
+          if(!btn.onclick || !btn.onclick.toString().includes('plans')) {
+            btn.disabled = true;
+            btn.style.opacity = '0.4';
+          }
+        });
+      }
+    }
+  } catch(e){
+    console.warn('Subscription check:', e.message);
+  }
+}
+
+// Run on page load
+setTimeout(checkSubscriptionStatus, 1500);
+
 </script>
 </body>
 </html>
