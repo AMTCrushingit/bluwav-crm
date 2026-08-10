@@ -337,7 +337,7 @@ async function processPayment(planName, amount){
     <h3 style="margin:0;" id="trialHeading">&#x1F389; Your 14-Day Free Trial is Active</h3>
     <span id="trialUrgencyBadge" style="display:none;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);animation:pulse 1.5s infinite;">&#x26A0;&#xFE0F; EXPIRING SOON</span>
   </div>
-  <p id="trialSubtext">Full access to all BluWav CRM features &#x2014; no credit card required</p>
+  <p id="trialSubtext">Full access to all BluWav CRM features &#x2014; setup fee applies at signup</p>
   <div class="trial-progress">
     <div class="trial-bar"><div class="trial-fill" id="trialFill" style="width:100%;"></div></div>
     <div class="trial-dates">
@@ -363,7 +363,7 @@ async function processPayment(planName, amount){
 <div class="info-row"><span class="info-label">Plan</span><span class="info-value" style="color:var(--gold);">BluWav CRM Premium (Trial)</span></div>
 <div class="info-row"><span class="info-label">Trial Ends</span><span class="info-value" id="trialEndDate">—</span></div>
 <div class="info-row"><span class="info-label">Post-Trial Price</span><span class="info-value">$179/mo <span style="color:var(--green);font-size:11px;">&#x2705; $299 Onboarding & Setup</span></span></div>
-<div class="info-row"><span class="info-label">Setup Fee</span><span class="info-value" style="color:var(--green);">✅ Waived — upgrading from trial</span></div>
+<div class="info-row"><span class="info-label">Setup Fee</span><span class="info-value">Charged at signup · One-time</span></div>
 <div class="info-row"><span class="info-label">Billing Cycle</span><span class="info-value">Monthly · 1st of month</span></div>
 <div class="info-row"><span class="info-label">Admin</span><span class="info-value" id="adminName">—</span></div>
 </div>
@@ -381,7 +381,14 @@ async function processPayment(planName, amount){
 <!-- GROWTH SYSTEMS — redirects to bluwavgrowth.com -->
 <div style="background:linear-gradient(135deg,rgba(0,200,224,0.06),rgba(0,200,224,0.02));border:1px solid rgba(0,200,224,0.2);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
   <div style="display:flex;align-items:center;gap:14px;">
-    <div style="width:44px;height:44px;border-radius:10px;background:rgba(0,200,224,0.1);border:1px solid rgba(0,200,224,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">&#x1F30A;</div>
+    <div style="background:rgba(0,194,209,0.06);border:1px solid rgba(0,194,209,0.2);border-radius:14px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+  <div>
+    <div style="font-size:14px;font-weight:800;color:var(--cyan);margin-bottom:4px;">🌊 BluWav Growth System Packages</div>
+    <div style="font-size:13px;color:var(--text2);">Website · Google Visibility · WhatsApp · Automation · Delivered in 48hrs</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:4px;">Ripple $397/mo · Current $697/mo · Surge $1,497/mo+</div>
+  </div>
+  <a href="https://www.bluwavgrowth.com" target="_blank" style="background:var(--cyan);color:#0a0e1a;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;">View Growth Plans →</a>
+</div>
     <div>
       <div style="font-size:14px;font-weight:800;color:var(--cyan);margin-bottom:3px;">BluWav Growth System Packages</div>
       <div style="font-size:12px;color:var(--text3);">Website &middot; Google Visibility &middot; WhatsApp &middot; Automation &middot; Delivered in 48 hours</div>
@@ -398,15 +405,7 @@ async function processPayment(planName, amount){
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
     <div style="display:flex;align-items:center;gap:14px;">
       <div style="width:44px;height:44px;border-radius:10px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">&#127968;</div>
-      <div>
-        <div style="font-size:14px;font-weight:800;color:var(--green);margin-bottom:3px;">Hosting Renewal</div>
-        <div style="font-size:12px;color:var(--text3);">After first 3 months &mdash; secure hosting, SSL, updates &amp; support</div>
-        <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
-          <span style="font-size:10px;font-weight:700;background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);border-radius:20px;padding:2px 9px;">&#10003; SSL Included</span>
-          <span style="font-size:10px;font-weight:700;background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);border-radius:20px;padding:2px 9px;">&#10003; Auto Updates</span>
-          <span style="font-size:10px;font-weight:700;background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);border-radius:20px;padding:2px 9px;">&#10003; Priority Support</span>
-        </div>
-      </div>
+      
     </div>
     <div style="text-align:right;flex-shrink:0;">
       <!-- Savings badge -->
@@ -445,7 +444,7 @@ async function processPayment(planName, amount){
 <div class="section-title">&#128421;&#65039; CRM Plans</div>
 <div class="section-sub">Every plan includes a 14-day free trial &middot; Setup fee applies &middot; Cancel anytime</div>
 </div>
-<div class="trial-note">⭐ Every plan includes a <strong>14-day free trial</strong> — no credit card required. Billing starts only after your trial ends.</div>
+<div class="trial-note">⭐ Every plan includes a <strong>14-day free trial</strong>. Onboarding & Setup fee charged at signup. Monthly billing starts after your trial ends.</div>
 <!-- Billing Toggle -->
 <div class="billing-toggle-wrap">
 <span class="active" id="monthlyLabel">Monthly</span>
@@ -784,7 +783,7 @@ async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');s
     } else {
       if(circle) circle.className='trial-days-circle';
       if(heading) heading.textContent='\U0001f389 Your 14-Day Free Trial is Active';
-      if(subtext) subtext.textContent='Full access to all BluWav CRM features \u2014 no credit card required';
+      if(subtext) subtext.textContent='Full access to all BluWav CRM features — setup fee applies at signup';
       if(endEl){endEl.textContent='Ends in '+daysLeft+' days \u2014 no card needed';endEl.style.color='';}
       if(ctaEl) ctaEl.textContent='';
     }
