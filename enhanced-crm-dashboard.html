@@ -359,8 +359,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="sb-bottom">
 <div class="trial-w">
 <div class="tw-label">&#x23F1; 14-Day Free Trial</div>
-<div class="tw-days">14</div>
-<div class="tw-sub">days remaining · No card needed</div>
+<div class="tw-days" id="trialDaysCount">—</div>
+<div class="tw-sub" id="trialDaysSub">days remaining · No card needed</div>
 <div class="tw-bar"><div class="tw-fill"></div></div>
 </div>
 <div class="user-card" onclick="showView('settings')">
@@ -1074,8 +1074,72 @@ async function initDashboard(){
   initChart();
   startPresence();
   startRealtime();
-  // Load notifications after data loads
   setTimeout(loadNotifications, 2000);
+
+  // ── TRIAL COUNTDOWN ─────────────────────────────────────
+  updateTrialCountdown(profile);
+}
+
+function updateTrialCountdown(profile) {
+  const countEl = document.getElementById('trialDaysCount');
+  const subEl   = document.getElementById('trialDaysSub');
+  if (!countEl) return;
+
+  // Use trial_started_at if exists, otherwise created_at from profile
+  // Fall back to auth user created_at
+  const startStr = profile?.trial_started_at
+    || profile?.created_at
+    || currentUser?.created_at
+    || null;
+
+  if (!startStr) {
+    countEl.textContent = '14';
+    return;
+  }
+
+  const start    = new Date(startStr);
+  const now      = new Date();
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const elapsed  = Math.floor((now - start) / msPerDay);
+  const daysLeft = Math.max(0, 14 - elapsed);
+
+  countEl.textContent = daysLeft;
+
+  // Update colour based on urgency
+  if (daysLeft <= 0) {
+    countEl.style.color = '#ef4444';
+    countEl.textContent = '0';
+    if (subEl) subEl.textContent = 'Trial expired · Upgrade to continue';
+    // Show upgrade prompt
+    const trialW = document.querySelector('.trial-w');
+    if (trialW) {
+      trialW.style.borderColor = 'rgba(239,68,68,0.5)';
+      trialW.style.background  = 'rgba(239,68,68,0.06)';
+    }
+  } else if (daysLeft <= 3) {
+    countEl.style.color = '#ef4444';
+    if (subEl) subEl.textContent = 'days left · Upgrade now!';
+    const trialW = document.querySelector('.trial-w');
+    if (trialW) trialW.style.borderColor = 'rgba(239,68,68,0.4)';
+  } else if (daysLeft <= 7) {
+    countEl.style.color = '#f59e0b';
+    if (subEl) subEl.textContent = 'days remaining · No card needed';
+  } else {
+    countEl.style.color = 'var(--text)';
+    if (subEl) subEl.textContent = 'days remaining · No card needed';
+  }
+
+  // Also update billing page trial banner if visible
+  const trialHeading = document.getElementById('trialHeading');
+  if (trialHeading) {
+    trialHeading.textContent = daysLeft > 0
+      ? '🎉 Your 14-Day Free Trial — ' + daysLeft + ' days remaining'
+      : '⚠️ Your Free Trial Has Expired';
+  }
+  const trialSubtext = document.getElementById('trialSubtext');
+  if (trialSubtext && daysLeft > 0) {
+    trialSubtext.textContent = 'Full access to all BluWav CRM features — ' + daysLeft + ' days left · No credit card required';
+  }
 }
 
 // ── TEAM SWITCHER ─────────────────────────────────────────────────────────────
