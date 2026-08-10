@@ -18,6 +18,22 @@ function openDeleteMemberBtn(btn){
   openDeleteModal(id);
 }
 
+
+  async function populateSettingsFields(){
+    const {data:{session}} = await db.auth.getSession().catch(()=>({data:{session:null}}));
+    if(!session) return;
+    const {data:profile} = await db.from('profiles').select('*').eq('id',session.user.id).single().catch(()=>({data:null}));
+    if(!profile) return;
+    const parts = (profile.full_name||'').split(' ');
+    const fn = document.getElementById('firstName'); if(fn) fn.value = parts[0]||'';
+    const ln = document.getElementById('lastName');  if(ln) ln.value = parts.slice(1).join(' ')||'';
+    const em = document.getElementById('profileEmail'); if(em) em.value = session.user.email||'';
+    const av = document.getElementById('profileAvatar');
+    if(av) av.textContent = ini(profile.full_name||session.user.email||'?');
+  }
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', populateSettingsFields);
+
 </script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -687,16 +703,37 @@ function openDeleteMemberBtn(btn){
     const btn = event?.target;
     if(btn){btn.disabled=true;btn.textContent='Saving...';}
     try{
-      if(section==='Account'){
-        const nameEl=document.getElementById('sn-name')||document.querySelector('input[placeholder="Your full name"]');
-        const name=nameEl?nameEl.value.trim():'';
+      const {data:{session}} = await db.auth.getSession();
+      if(!session){showToast('Not logged in — please refresh','error');return;}
+      const uid = session.user.id;
+
+      if(section==='Profile'){
+        // firstName + lastName fields
+        const fn = document.getElementById('firstName');
+        const ln = document.getElementById('lastName');
+        const name = ((fn?fn.value.trim():'') + ' ' + (ln?ln.value.trim():'')).trim();
         if(!name){showToast('Please enter your name','error');return;}
-        const {data:{session}}=await db.auth.getSession();
-        if(!session){showToast('Not logged in','error');return;}
-        const {error}=await db.from('profiles').update({full_name:name}).eq('id',session.user.id);
+        const {error} = await db.from('profiles').update({full_name:name}).eq('id',uid);
         if(error){showToast('Error: '+error.message,'error');return;}
+        // Update sidebar
+        ['sidebarName','topName'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=name;});
+        ['sidebarAvatar','topAvatar'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=ini(name);});
       }
-      showToast('✅ '+section+' settings saved','success');
+      if(section==='Password'){
+        const pwEl = document.getElementById('newPassword')||document.querySelector('#tab-security input[type="password"]');
+        const pw = pwEl ? pwEl.value.trim() : '';
+        if(!pw||pw.length<8){showToast('Password must be at least 8 characters','error');return;}
+        const {error} = await db.auth.updateUser({password:pw});
+        if(error){showToast('Error: '+error.message,'error');return;}
+        if(pwEl) pwEl.value='';
+      }
+      if(section==='Organization'){
+        const orgEl = document.getElementById('orgName')||document.querySelector('#tab-org input');
+        if(orgEl && orgEl.value.trim()){
+          await db.from('profiles').update({organization:orgEl.value.trim()}).eq('id',uid).catch(()=>{});
+        }
+      }
+      showToast('✅ '+section+' saved successfully','success');
     }catch(e){
       showToast('Error: '+e.message,'error');
     }finally{

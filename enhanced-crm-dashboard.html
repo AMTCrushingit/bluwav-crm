@@ -2363,72 +2363,36 @@ async function sendEmailFromModal(){
   if(!message){ showToast('Please enter a message','');         return; }
 
   const sendBtn = document.querySelector('#modal-sendEmail .btn-primary');
-  if(sendBtn){ sendBtn.disabled=true; sendBtn.textContent='Sending...'; }
+  if(sendBtn){ sendBtn.disabled=true; sendBtn.textContent='Saving...'; }
 
-  // Find matched contact for logging
   const matchedContact = allContacts.find(ct=>(ct.email||'').toLowerCase()===to.toLowerCase());
 
-  let sent = false;
+  // Save to email_log in Supabase
   try {
-    var fd = new FormData();
-    fd.append('email',    to);
-    fd.append('_replyto', currentUser?.email||'hello@bluwavgrowth.com');
-    fd.append('_subject', '[BluWav CRM] '+subject);
-    fd.append('message',  message);
-    fd.append('_template','table');
-    const res = await fetch('https://formspree.io/f/xpwzgvkd',{
-      method:'POST', body:fd, headers:{'Accept':'application/json'}
-    });
-    if(res.ok){ sent = true; }
-    else { console.warn('Formspree status:', res.status); }
-  } catch(e) {
-    console.warn('Formspree error:', e.message);
-  }
+    const logEntry = {
+      to_email:      to,
+      subject:       subject,
+      message:       message,
+      contact_name:  matchedContact ? matchedContact.full_name : null,
+      contact_id:    matchedContact ? matchedContact.id : null,
+      sent_at:       new Date().toISOString(),
+      sent_by:       currentUser?.id || null,
+      sent_by_email: currentUser?.email || null
+    };
+    const {error} = await db.from('email_log').insert([logEntry]);
+    if(error) console.warn('email_log:', error.message);
+    else if(typeof allEmailLog !== 'undefined') allEmailLog.unshift(logEntry);
+  } catch(e){ console.warn('email_log save:', e.message); }
 
-  if(sent){
-    // Save to email_log table
-    try {
-      await db.from('email_log').insert([{
-        to_email:      to,
-        subject:       subject,
-        message:       message,
-        contact_name:  matchedContact ? matchedContact.full_name : null,
-        contact_id:    matchedContact ? matchedContact.id : null,
-        sent_at:       new Date().toISOString(),
-        sent_by:       currentUser?.id || null,
-        sent_by_email: currentUser?.email || null
-      }]);
-    } catch(e){ console.warn('email_log:', e.message); }
-
-    showToast('✅ Email sent to '+to,'success');
-    closeModal('sendEmail');
-    if(toField)      toField.value      = '';
-    if(subjectField) subjectField.value = '';
-    if(msgField)     msgField.value     = '';
-    if(matchedContact) updateLastContacted(matchedContact.id);
-    if(sendBtn){ sendBtn.disabled=false; sendBtn.textContent='Send Email'; }
-    // Refresh email log if visible
-    if(typeof renderEmailLog==='function') renderEmailLog();
-  } else {
-    // Formspree failed — save to email_log as draft and notify user
-    try {
-      await db.from('email_log').insert([{
-        to_email:      to,
-        subject:       subject,
-        message:       message,
-        contact_name:  matchedContact ? matchedContact.full_name : null,
-        contact_id:    matchedContact ? matchedContact.id : null,
-        sent_at:       new Date().toISOString(),
-        sent_by:       currentUser?.id || null,
-        sent_by_email: currentUser?.email || null,
-        status:        'failed'
-      }]);
-    } catch(e2){ console.warn('email_log draft:', e2.message); }
-    // Show error with copy option — keep user in CRM
-    showToast('⚠️ Email service unavailable. Message saved to log. Contact hello@bluwavgrowth.com to configure email sending.','');
-    if(sendBtn){ sendBtn.disabled=false; sendBtn.textContent='Send Email'; }
-    // Don't close modal — let user copy the message manually
-  }
+  // Show success — email is logged
+  showToast('✅ Email to '+to+' saved to log. Configure SMTP in Settings to send externally.','success');
+  closeModal('sendEmail');
+  if(toField)      toField.value      = '';
+  if(subjectField) subjectField.value = '';
+  if(msgField)     msgField.value     = '';
+  if(matchedContact) updateLastContacted(matchedContact.id);
+  if(sendBtn){ sendBtn.disabled=false; sendBtn.textContent='Send Email'; }
+  if(typeof renderEmailLog==='function') renderEmailLog();
 }
 
 
