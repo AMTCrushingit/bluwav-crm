@@ -3440,14 +3440,6 @@ window.addEventListener('beforeunload',stopRealtime);
 
 
 // ── FIX 2: Calendar event modal ───────────────────────────────────────────────
-function openAddEvent(){
-  var titleEl = document.getElementById('addTaskModalTitle');
-  if(titleEl) titleEl.textContent = '📅 Add Event';
-  var dateEl = document.getElementById('task-due-date');
-  if(dateEl && !dateEl.value){
-    var today = new Date().toISOString().split('T')[0];
-    dateEl.value = today;
-  }
   openModal('addTask');
 }
 
