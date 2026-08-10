@@ -702,16 +702,34 @@ function openEditMemberBtn(btn){
     const btn = event?.target;
     if(btn){btn.disabled=true;btn.textContent='Saving...';}
     try{
-      if(section==='Account'){
-        const nameEl=document.getElementById('sn-name')||document.querySelector('input[placeholder="Your full name"]');
-        const name=nameEl?nameEl.value.trim():'';
+      const {data:{session}} = await db.auth.getSession();
+      if(!session){showToast('Not logged in — please refresh','error');return;}
+      const uid = session.user.id;
+
+      if(section==='Profile'){
+        // Try multiple possible ID patterns
+        const nameEl = document.getElementById('firstName') ||
+                       document.getElementById('profileName') ||
+                       document.getElementById('settingsName') ||
+                       document.querySelector('input[placeholder*="name"], input[placeholder*="Name"]');
+        const name = nameEl ? nameEl.value.trim() : '';
         if(!name){showToast('Please enter your name','error');return;}
-        const {data:{session}}=await db.auth.getSession();
-        if(!session){showToast('Not logged in','error');return;}
-        const {error}=await db.from('profiles').update({full_name:name}).eq('id',session.user.id);
+        const {error} = await db.from('profiles').update({full_name:name}).eq('id',uid);
         if(error){showToast('Error: '+error.message,'error');return;}
+        // Update sidebar name
+        ['sidebarName','topName'].forEach(id=>{
+          const el=document.getElementById(id); if(el) el.textContent=name;
+        });
       }
-      showToast('✅ '+section+' settings saved','success');
+      if(section==='Password'){
+        const pwEl  = document.getElementById('newPassword') || document.querySelector('input[type="password"]');
+        const pw    = pwEl ? pwEl.value.trim() : '';
+        if(!pw || pw.length < 8){showToast('Password must be at least 8 characters','error');return;}
+        const {error} = await db.auth.updateUser({password: pw});
+        if(error){showToast('Error: '+error.message,'error');return;}
+        if(pwEl) pwEl.value = '';
+      }
+      showToast('✅ '+section+' saved successfully','success');
     }catch(e){
       showToast('Error: '+e.message,'error');
     }finally{

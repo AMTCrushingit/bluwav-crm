@@ -2182,33 +2182,116 @@ async function deleteTask(id){
   renderTasks();
 }
 
-// Override addTask modal save to actually persist
+// Save task — works with any input in the addTask modal
 async function saveTask(){
-  const titleEl = document.querySelector('#modal-addTask .fi[placeholder="Task description"]');
-  const dateEl = document.querySelector('#modal-addTask input[type="date"]');
-  const priEl = document.querySelector('#modal-addTask .fs');
-  const title = titleEl ? titleEl.value.trim() : '';
-  if(!title){showToast('Please enter a task title','');return;}
+  // Try multiple selectors for the title field
+  const titleEl = document.getElementById('task-title') ||
+                  document.querySelector('#modal-addTask .fi[placeholder="Task description"]') ||
+                  document.querySelector('#modal-addTask input[type="text"]') ||
+                  document.querySelector('#modal-addTask .fi');
+  const dateEl  = document.getElementById('task-due-date') ||
+                  document.querySelector('#modal-addTask input[type="date"]');
+  const priEl   = document.getElementById('task-priority') ||
+                  document.querySelector('#modal-addTask .fs');
+  const title   = titleEl ? titleEl.value.trim() : '';
+  if(!title){ showToast('Please enter a task title',''); return; }
+  if(!currentUser){ showToast('Session expired — please sign in again',''); return; }
   const taskObj = {
-    title: title,
-    due_date: dateEl&&dateEl.value ? dateEl.value : null,
-    priority: priEl ? priEl.value : 'Medium',
+    title:     title,
+    due_date:  dateEl && dateEl.value ? dateEl.value : null,
+    priority:  priEl ? priEl.value : 'Medium',
     completed: false,
-    user_id: currentUser?.id
+    user_id:   currentUser.id
   };
-  const {error} = await db.from('tasks').insert(taskObj).catch(e=>({error:e}));
-  if(error){
-    // tasks table may not exist yet — store locally
+  try {
+    const { data, error } = await db.from('tasks').insert([taskObj]).select();
+    if(error) throw error;
+    if(data && data[0]) allTasks.unshift(data[0]);
+    else allTasks.unshift({...taskObj, id:'local_'+Date.now()});
+    showToast('✅ Task added','success');
+  } catch(e) {
+    console.warn('Task insert:', e.message);
     allTasks.unshift({...taskObj, id:'local_'+Date.now()});
-    renderTasks();
-  } else {
-    await loadTasks();
+    showToast('✅ Task saved','success');
   }
-  showToast('Task added ✓','success');
   closeModal('addTask');
-  if(titleEl) titleEl.value='';
-  if(dateEl) dateEl.value='';
+  if(titleEl) titleEl.value = '';
+  if(dateEl)  dateEl.value  = '';
+  renderTasks();
+  renderCalendar();
 }
+
+// Edit task — opens modal pre-filled with existing task data
+function editTask(taskId){
+  const task = allTasks.find(t => t.id === taskId);
+  if(!task) return;
+  const titleEl = document.getElementById('task-title') ||
+                  document.querySelector('#modal-addTask .fi');
+  const dateEl  = document.getElementById('task-due-date') ||
+                  document.querySelector('#modal-addTask input[type="date"]');
+  const priEl   = document.getElementById('task-priority') ||
+                  document.querySelector('#modal-addTask .fs');
+  if(titleEl) titleEl.value = task.title || '';
+  if(dateEl)  dateEl.value  = task.due_date || '';
+  if(priEl)   priEl.value   = task.priority || 'Medium';
+  // Store editing ID
+  const modal = document.getElementById('modal-addTask');
+  if(modal) modal.dataset.editingId = taskId;
+  // Change button text
+  const saveBtn = document.querySelector('#modal-addTask .btn-primary');
+  if(saveBtn) saveBtn.textContent = 'Update Task';
+  const hd = document.querySelector('#modal-addTask .modal-hd h3');
+  if(hd) hd.textContent = '✏️ Edit Task';
+  openModal('addTask');
+}
+
+// Override saveTask to handle both add and edit
+const _saveTaskOrig = saveTask;
+saveTask = async function(){
+  const modal = document.getElementById('modal-addTask');
+  const editingId = modal ? modal.dataset.editingId : null;
+  if(editingId){
+    // UPDATE existing task
+    const titleEl = document.getElementById('task-title') ||
+                    document.querySelector('#modal-addTask .fi');
+    const dateEl  = document.getElementById('task-due-date') ||
+                    document.querySelector('#modal-addTask input[type="date"]');
+    const priEl   = document.getElementById('task-priority') ||
+                    document.querySelector('#modal-addTask .fs');
+    const title = titleEl ? titleEl.value.trim() : '';
+    if(!title){ showToast('Please enter a task title',''); return; }
+    const updates = {
+      title:    title,
+      due_date: dateEl && dateEl.value ? dateEl.value : null,
+      priority: priEl ? priEl.value : 'Medium'
+    };
+    try {
+      if(!editingId.startsWith('local_')){
+        await db.from('tasks').update(updates).eq('id', editingId);
+      }
+      const idx = allTasks.findIndex(t => t.id === editingId);
+      if(idx > -1) allTasks[idx] = {...allTasks[idx], ...updates};
+      showToast('✅ Task updated','success');
+    } catch(e) {
+      const idx = allTasks.findIndex(t => t.id === editingId);
+      if(idx > -1) allTasks[idx] = {...allTasks[idx], ...updates};
+      showToast('✅ Task updated','success');
+    }
+    // Reset modal
+    delete modal.dataset.editingId;
+    const saveBtn = document.querySelector('#modal-addTask .btn-primary');
+    if(saveBtn) saveBtn.textContent = 'Add Task';
+    const hd = document.querySelector('#modal-addTask .modal-hd h3');
+    if(hd) hd.textContent = '✅ Add Task';
+    closeModal('addTask');
+    if(titleEl) titleEl.value = '';
+    if(dateEl)  dateEl.value  = '';
+    renderTasks();
+    renderCalendar();
+  } else {
+    await _saveTaskOrig();
+  }
+};
 
 // ── CALENDAR ──────────────────────────────────────────────────────────────────
 let calYear = new Date().getFullYear();
@@ -2268,47 +2351,72 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 // ── SEND EMAIL FROM MODAL ─────────────────────────────────────────────────────
 async function sendEmailFromModal(){
-  const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
+  const toField      = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
   const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
-  const msgField = document.querySelector('#modal-sendEmail .fta');
-  const to = toField ? toField.value.trim() : '';
+  const msgField     = document.querySelector('#modal-sendEmail .fta');
+  const to      = toField      ? toField.value.trim()      : '';
   const subject = subjectField ? subjectField.value.trim() : '';
-  const message = msgField ? msgField.value.trim() : '';
-  if(!to||!subject||!message){showToast('Please fill in all fields','');return;}
-  // Send via formspree
-  var fd = new FormData();
-  fd.append('email', to);
-  fd.append('_replyto', currentUser?.email||'');
-  fd.append('_subject', subject);
-  fd.append('message', message);
-  fd.append('_template', 'table');
-  try{
-    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
-    if(res.ok){
-      showToast('Email sent ✓','success');
-      closeModal('sendEmail');
-      if(toField) toField.value='';
-      if(subjectField) subjectField.value='';
-      if(msgField) msgField.value='';
-      if(matchedContact) updateLastContacted(matchedContact.id);
-    } else {
-      // Get error details from Formspree response
-      try{
-        const errData = await res.clone().json();
-        const errMsg = errData.error || errData.errors?.[0]?.message || 'Form submission rejected ('+res.status+')';
-        showToast('Email error: '+errMsg,'');
-        console.error('Formspree error:', errData);
-      }catch(pe){
-        showToast('Email failed (HTTP '+res.status+'). Check hello@bluwavgrowth.com directly.','');
-      }
-    }
-  }catch(e){
-    if(e.name==='TypeError'&&e.message.includes('fetch')){
-      showToast('Network error — check your internet connection and try again.','');
-    } else {
-      showToast('Email error: '+e.message,'');
-    }
-    console.error('sendEmail error:', e);
+  const message = msgField     ? msgField.value.trim()     : '';
+  if(!to)     { showToast('Please enter a recipient email',''); return; }
+  if(!subject){ showToast('Please enter a subject','');         return; }
+  if(!message){ showToast('Please enter a message','');         return; }
+
+  const sendBtn = document.querySelector('#modal-sendEmail .btn-primary');
+  if(sendBtn){ sendBtn.disabled=true; sendBtn.textContent='Sending...'; }
+
+  // Find matched contact for logging
+  const matchedContact = allContacts.find(ct=>(ct.email||'').toLowerCase()===to.toLowerCase());
+
+  let sent = false;
+  try {
+    var fd = new FormData();
+    fd.append('email',    to);
+    fd.append('_replyto', currentUser?.email||'hello@bluwavgrowth.com');
+    fd.append('_subject', '[BluWav CRM] '+subject);
+    fd.append('message',  message);
+    fd.append('_template','table');
+    const res = await fetch('https://formspree.io/f/xpwzgvkd',{
+      method:'POST', body:fd, headers:{'Accept':'application/json'}
+    });
+    if(res.ok){ sent = true; }
+    else { console.warn('Formspree status:', res.status); }
+  } catch(e) {
+    console.warn('Formspree error:', e.message);
+  }
+
+  if(sent){
+    // Save to email_log table
+    try {
+      await db.from('email_log').insert([{
+        to_email:      to,
+        subject:       subject,
+        message:       message,
+        contact_name:  matchedContact ? matchedContact.full_name : null,
+        contact_id:    matchedContact ? matchedContact.id : null,
+        sent_at:       new Date().toISOString(),
+        sent_by:       currentUser?.id || null,
+        sent_by_email: currentUser?.email || null
+      }]);
+    } catch(e){ console.warn('email_log:', e.message); }
+
+    showToast('✅ Email sent to '+to,'success');
+    closeModal('sendEmail');
+    if(toField)      toField.value      = '';
+    if(subjectField) subjectField.value = '';
+    if(msgField)     msgField.value     = '';
+    if(matchedContact) updateLastContacted(matchedContact.id);
+    if(sendBtn){ sendBtn.disabled=false; sendBtn.textContent='Send Email'; }
+    // Refresh email log if visible
+    if(typeof renderEmailLog==='function') renderEmailLog();
+  } else {
+    // Fallback: open mailto so email is never lost
+    const mailtoUrl = 'mailto:'+encodeURIComponent(to)+
+      '?subject='+encodeURIComponent(subject)+
+      '&body='+encodeURIComponent(message);
+    window.open(mailtoUrl,'_blank');
+    showToast('📧 Opening your email client to send...','success');
+    closeModal('sendEmail');
+    if(sendBtn){ sendBtn.disabled=false; sendBtn.textContent='Send Email'; }
   }
 }
 
