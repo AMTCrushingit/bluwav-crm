@@ -359,8 +359,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="sb-bottom">
 <div class="trial-w">
 <div class="tw-label">&#x23F1; 14-Day Free Trial</div>
-<div class="tw-days" id="trialDaysCount">—</div>
-<div class="tw-sub" id="trialDaysSub">days remaining · No card needed</div>
+<div class="tw-days">14</div>
+<div class="tw-sub">days remaining · No card needed</div>
 <div class="tw-bar"><div class="tw-fill"></div></div>
 </div>
 <div class="user-card" onclick="showView('settings')">
@@ -417,7 +417,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <!-- Stats -->
 <div class="stats-grid">
-<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Contacts</span><span>👥</span></div><div class="stat-val" id="metricContacts">—</div><div class="stat-chg up" id="contactTrend"></div></div>
+<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Contacts</span><span>👥</span></div><div class="stat-val" id="metricContacts">—</div><div class="stat-chg up" id="contactTrend">↑ loading</div></div>
 <div class="stat g"><div class="stat-hd"><span class="stat-lbl">Open Deals</span><span>💼</span></div><div class="stat-val" id="metricDeals">—</div><div class="stat-chg up">↑ active</div></div>
 <div class="stat o"><div class="stat-hd"><span class="stat-lbl">Pipeline Value</span><span>💰</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">↑ pipeline</div></div>
 <div class="stat s"><div class="stat-hd"><span class="stat-lbl">Deals Won</span><span>🏆</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">This month</div></div>
@@ -448,7 +448,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel" id="rightPanel">
 <div class="panel-hd"><div class="panel-title" id="rightPanelTitle">⚡ Activity</div><button class="btn btn-ghost btn-sm">All →</button></div>
 <div class="panel-body" id="rightPanelBody" style="padding:0 20px;">
-<div style="text-align:center;padding:32px;color:var(--text3);">No recent activity</div>
+<div style="text-align:center;padding:32px;color:var(--text3);">Loading...</div>
 </div>
 </div>
 </div>
@@ -466,7 +466,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div style="overflow-x:auto;">
 <table class="tbl">
 <thead><tr><th>Name</th><th>Company</th><th>Status</th><th>Date</th></tr></thead>
-<tbody id="recentContactsBody"></tbody>
+<tbody id="recentContactsBody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -530,7 +530,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </table>
 </div>
 <div style="padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--navy-border);">
-<span id="contactCount" style="font-size:0.73rem;color:var(--text3);"></span>
+<span id="contactCount" style="font-size:0.73rem;color:var(--text3);">Loading...</span>
 <div style="display:flex;gap:6px;">
 <button class="btn btn-ghost btn-sm" onclick="prevPage()">← Prev</button>
 <span id="pageIndicator" style="font-size:0.75rem;color:var(--text3);padding:6px 10px;"></span>
@@ -600,7 +600,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
       </table>
     </div>
     <div style="padding:12px 20px;border-top:1px solid var(--navy-border);">
-      <span id="dealsListCount" style="font-size:0.73rem;color:var(--text3);"></span>
+      <span id="dealsListCount" style="font-size:0.73rem;color:var(--text3);">Loading...</span>
     </div>
   </div>
 </div>
@@ -714,7 +714,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel-hd"><div class="panel-title">⚙️ Account Settings</div></div>
 <div class="panel-body">
 <div style="display:flex;flex-direction:column;gap:16px;">
-<div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" autocomplete="off" placeholder="Your name"/></div>
+<div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
 <div class="fg"><label class="fl">Email</label><input class="fi" id="settingsEmail" placeholder="your@email.com" readonly="" style="opacity:0.6;cursor:not-allowed;" type="email"/></div>
 <div class="fg"><label class="fl">Role</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
 <button class="btn btn-primary btn-sm" onclick="saveProfileSettings()" style="align-self:flex-start;" id="settingsSaveBtn">Save Changes</button>
@@ -895,13 +895,6 @@ let currentSortCol = 'name', currentSortDir = 'asc';
 let revenueChart = null, reportsChart = null;
 
 const COLORS = ['#00C8E0','#C9A84C','#22C55E','#FF6B2B','#a78bfa','#2980B9','#E74C3C','#27AE60'];
-
-// ── XSS SANITISATION ───────────────────────────────────────────
-function sanitise(str){
-  if(!str)return'';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
-}
-// ───────────────────────────────────────────────────────────────
 function ini(n){return(n||'?').split(' ').map(x=>x[0]||'').join('').toUpperCase().slice(0,2);}
 function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
 function fmt(v){return '$'+(v||0).toLocaleString();}
@@ -942,7 +935,7 @@ function showToast(msg,type=''){
 })();
 
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
-const AUTH_TIMEOUT = 10 * 60 * 1000; // 5 minutes
+const AUTH_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 // Activity tracker — resets on any user interaction
 function touchActivity() {
@@ -954,13 +947,11 @@ function touchActivity() {
 
 // Main auth init — runs immediately
 (async function() {
-  // 1. Check gate was passed (prevents bypass via direct URL)
-  // Check Supabase session
+  // 1. Check if we have a session at all
   const { data: { session } } = await db.auth.getSession();
 
   if (!session) {
     // No session — go to login
-    sessionStorage.removeItem('bw_gate_ok');
     window.location.href = 'login.html';
     return;
   }
@@ -1011,14 +1002,14 @@ async function initDashboard(){
     profile = {full_name:autoName,role:autoRole};
   }
 
-  // Role from database only — never from email string
-  const dbRole = (profile.role||'salesperson').toLowerCase();
-  if(dbRole === 'admin' || dbRole === 'owner'){
-    userRole = 'admin';
-  } else if(dbRole === 'manager'){
-    userRole = 'manager';
+  // Role logic: Leah Ryan = admin, Andrea M. Tanguay = manager
+  const email = currentUser.email||'';
+  if(profile.role==='admin'||profile.role==='owner'){
+    userRole='admin';
+  } else if(profile.role==='manager'){
+    userRole='manager';
   } else {
-    userRole = 'salesperson';
+    userRole = profile.role||'salesperson';
   }
 
   viewingUserId = (userRole==='manager'||userRole==='admin') ? null : currentUser.id;
@@ -1072,80 +1063,14 @@ async function initDashboard(){
 
   loadData();
   initChart();
-  // Non-blocking background tasks
   setTimeout(startPresence, 100);
   setTimeout(startRealtime, 500);
+  // Load notifications after data loads
   setTimeout(loadNotifications, 2000);
-
-  // ── TRIAL COUNTDOWN ─────────────────────────────────────
-  updateTrialCountdown(profile);
-}
-
-function updateTrialCountdown(profile) {
-  const countEl = document.getElementById('trialDaysCount');
-  const subEl   = document.getElementById('trialDaysSub');
-  if (!countEl) return;
-
-  // Use trial_started_at if exists, otherwise created_at from profile
-  // Fall back to auth user created_at
-  const startStr = profile?.trial_started_at
-    || profile?.created_at
-    || currentUser?.created_at
-    || null;
-
-  if (!startStr) {
-    countEl.textContent = '14';
-    return;
-  }
-
-  const start    = new Date(startStr);
-  const now      = new Date();
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const elapsed  = Math.floor((now - start) / msPerDay);
-  const daysLeft = Math.max(0, 14 - elapsed);
-
-  countEl.textContent = daysLeft;
-
-  // Update colour based on urgency
-  if (daysLeft <= 0) {
-    countEl.style.color = '#ef4444';
-    countEl.textContent = '0';
-    if (subEl) subEl.textContent = 'Trial expired · Upgrade to continue';
-    // Show upgrade prompt
-    const trialW = document.querySelector('.trial-w');
-    if (trialW) {
-      trialW.style.borderColor = 'rgba(239,68,68,0.5)';
-      trialW.style.background  = 'rgba(239,68,68,0.06)';
-    }
-  } else if (daysLeft <= 3) {
-    countEl.style.color = '#ef4444';
-    if (subEl) subEl.textContent = 'days left · Upgrade now!';
-    const trialW = document.querySelector('.trial-w');
-    if (trialW) trialW.style.borderColor = 'rgba(239,68,68,0.4)';
-  } else if (daysLeft <= 7) {
-    countEl.style.color = '#f59e0b';
-    if (subEl) subEl.textContent = 'days remaining · No card needed';
-  } else {
-    countEl.style.color = 'var(--text)';
-    if (subEl) subEl.textContent = 'days remaining · No card needed';
-  }
-
-  // Also update billing page trial banner if visible
-  const trialHeading = document.getElementById('trialHeading');
-  if (trialHeading) {
-    trialHeading.textContent = daysLeft > 0
-      ? '🎉 Your 14-Day Free Trial — ' + daysLeft + ' days remaining'
-      : '⚠️ Your Free Trial Has Expired';
-  }
-  const trialSubtext = document.getElementById('trialSubtext');
-  if (trialSubtext && daysLeft > 0) {
-    trialSubtext.textContent = 'Full access to all BluWav CRM features — ' + daysLeft + ' days left · No credit card required';
-  }
 }
 
 // ── TEAM SWITCHER ─────────────────────────────────────────────────────────────
 async function loadTeam(myName){
-  // Non-blocking with timeout — never hangs dashboard
   const _tq = db.from('profiles').select('*');
   const _tt = new Promise(r=>setTimeout(()=>r({data:[]}),5000));
   const {data} = await Promise.race([_tq,_tt]).catch(()=>({data:[]}));
@@ -1188,9 +1113,9 @@ async function loadData(){
   const {data:cd, count:cc} = await cq;
   contacts = (cd||[]).map(c=>({
     id:c.id,
-    full_name:sanitise(c.full_name||'Unknown'),
+    full_name:c.full_name||'Unknown',
     email:c.email||'',
-    business_name:sanitise(c.business_name||''),
+    business_name:c.business_name||'',
     phone:c.phone||c.whatsapp||'',
     status:c.status||'Lead',
     island:c.island||'',
@@ -1220,7 +1145,7 @@ async function loadData(){
   const {data:dealsData} = await dq;
   deals = (dealsData||[]).map(d=>({
     ...d,
-    deal_name:sanitise(d.deal_name||d.title||'Untitled Deal'),
+    deal_name:d.deal_name||d.title||'Untitled Deal',
     deal_value:d.deal_value||d.value||0,
     deal_type:d.deal_type||'Ripple',
     stage:d.stage||'lead',
@@ -1272,11 +1197,10 @@ async function loadData(){
 function renderPipeline(){
   // stageMap: key=DB value (lowercase), id=Title Case matching HTML element IDs
   var stageMap = [
-    {key:'lead',         id:'Lead'},
-    {key:'qualified',    id:'Qualified'},
-    {key:'proposal',     id:'Proposal'},
-    {key:'negotiation',  id:'Negotiation'},
-    {key:'won',          id:'Won'}
+    {key:'lead',      id:'Lead'},
+    {key:'qualified', id:'Qualified'},
+    {key:'proposal',  id:'Proposal'},
+    {key:'won',       id:'Won'}
   ];
   stageMap.forEach(function(s){
     var stage = s.key;
@@ -1572,7 +1496,7 @@ function globalSearchFn(q){
   const fc=allContacts.filter(c=>
     (c.full_name||'').toLowerCase().includes(ql)||
     (c.email||'').toLowerCase().includes(ql)||
-    (sanitise(c.business_name||'')).toLowerCase().includes(ql)||
+    (c.business_name||'').toLowerCase().includes(ql)||
     (c.phone||'').toLowerCase().includes(ql)
   );
   const fd=allDeals.filter(d=>(d.deal_name||d.title||'').toLowerCase().includes(ql));
@@ -1801,66 +1725,35 @@ document.addEventListener('click',e=>{
 
 // ── MODALS ────────────────────────────────────────────────────────────────────
 function openModal(id){
-  const m = document.getElementById('modal-'+id);
-  if(m){ m.classList.add('open'); }
-  // Populate contact dropdowns when deal modals open
-  if(id === 'addDeal' || id === 'editDeal'){
-    var selId = id === 'addDeal' ? 'md-contact' : 'ed-contact';
-    var sel = document.getElementById(selId);
-    if(sel && allContacts.length){
-      var currentVal = sel.value;
-      sel.innerHTML = '<option value="">— Select client —</option>' +
-        allContacts.map(function(ct){
-          return '<option value="'+ct.id+'"'+(ct.id===currentVal?' selected':'')+'>'+
-            (ct.full_name||'Unknown')+(ct.business_name?' — '+ct.business_name:'')+
-            '</option>';
-        }).join('');
-    } else if(sel && !allContacts.length){
+  // Populate contact dropdowns for deal modals
+  if(id==='addDeal'||id==='editDeal'){
+    var selId=id==='addDeal'?'md-contact':'ed-contact';
+    var sel=document.getElementById(selId);
+    if(sel&&allContacts.length){
+      var cur=sel.value;
+      sel.innerHTML='<option value="">— Select client —</option>'+
+        allContacts.map(function(ct){return '<option value="'+ct.id+'"'+(ct.id===cur?' selected':'')+'>'+(ct.full_name||'Unknown')+(ct.business_name?' — '+ct.business_name:'')+'</option>';}).join('');
+    } else if(sel){
       db.from('contacts').select('id,full_name,business_name').order('full_name').then(function(r){
-        if(r.data && r.data.length){
-          sel.innerHTML = '<option value="">— Select client —</option>' +
-            r.data.map(function(ct){
-              return '<option value="'+ct.id+'">'+
-                (ct.full_name||'Unknown')+(ct.business_name?' — '+ct.business_name:'')+
-                '</option>';
-            }).join('');
-        }
+        if(r.data&&r.data.length) sel.innerHTML='<option value="">— Select client —</option>'+r.data.map(function(ct){return '<option value="'+ct.id+'">'+(ct.full_name||'Unknown')+(ct.business_name?' — '+ct.business_name:'')+'</option>';}).join('');
       });
     }
   }
+  document.getElementById('modal-'+id)?.classList.add('open');
   // Populate contact dropdown for deal modal
   if(id==='addDeal'){
     // Clear error
     var errEl=document.getElementById('dealError');
     if(errEl){errEl.style.display='none';errEl.textContent='';}
-    // Populate contact dropdown — always populate, fetch if needed
+    // Populate contact dropdown
     const sel=document.getElementById('md-contact');
-    if(sel){
-      if(allContacts.length){
-        sel.innerHTML='<option value="">— Select client —</option>'+
-          allContacts.map(ct=>`<option value="${ct.id}">${ct.full_name||'Unknown'}${ct.business_name?' — '+ct.business_name:''}</option>`).join('');
-      } else {
-        // Fetch contacts if not loaded yet
-        db.from('contacts').select('id,full_name,business_name').order('full_name').then(({data})=>{
-          if(data&&data.length){
-            sel.innerHTML='<option value="">— Select client —</option>'+
-              data.map(ct=>`<option value="${ct.id}">${ct.full_name||'Unknown'}${ct.business_name?' — '+ct.business_name:''}</option>`).join('');
-          } else {
-            sel.innerHTML='<option value="">No contacts yet — add one first</option>';
-          }
-        });
-      }
+    if(sel&&allContacts.length){
+      sel.innerHTML='<option value="">No contact linked</option>'+
+        allContacts.map(c=>`<option value="${c.id}">${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
     }
   }
 }
-function closeModal(id){
-  const m = document.getElementById('modal-'+id);
-  if(m){
-    m.classList.remove('open');
-    m.style.display = '';
-  }
-  return false;
-}
+function closeModal(id){document.getElementById('modal-'+id)?.classList.remove('open');}
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
 
 async function saveContact(){
@@ -1883,17 +1776,6 @@ async function saveContact(){
   const urlParams = new URLSearchParams(window.location.search);
   const source = urlParams.get('utm_source')||urlParams.get('src')||'crm_manual';
   const leadCode = source.toUpperCase().replace(/[^A-Z0-9]/g,'_')+'_'+Date.now().toString(36).toUpperCase();
-  // Check for duplicate email before inserting
-  if(contact.email){
-    const {data:existing} = await db.from('contacts')
-      .select('id,full_name')
-      .eq('email', contact.email)
-      .limit(1);
-    if(existing && existing.length > 0){
-      showToast('⚠️ A contact with this email already exists: '+existing[0].full_name,'');
-      return;
-    }
-  }
   const {error} = await db.from('contacts').insert(contact);
   if(error){
     console.error('Save contact error:',error);
@@ -1901,20 +1783,16 @@ async function saveContact(){
     return;
   }
   showToast('Contact saved ✓','success');
+  // Admin notification removed per user request
   closeModal('addContact');
   // Clear form
   ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
   });
   await loadData();
-  // loadData() already updates metricContacts — but force update here too
-  const newCount = allContacts.length;
-  const mc=document.getElementById('metricContacts');if(mc)mc.textContent=newCount;
-  const nb=document.getElementById('navContactsBadge');if(nb)nb.textContent=newCount;
-  const ca=document.getElementById('countAll');if(ca)ca.textContent=newCount;
-  const ct=document.getElementById('contactTrend');if(ct&&newCount>0)ct.textContent='↑ '+newCount+' total';
-  // Refresh contacts view if open
-  if(typeof filteredContacts!=='undefined'){filteredContacts=allContacts.slice();if(typeof sortContacts==='function')sortContacts();}
+  // If contacts view is open, refresh it
+  filteredContacts=allContacts.slice();
+  sortContacts();
 }
 
 async function saveDeal(){
@@ -2121,7 +1999,7 @@ function editContact(id){
   document.getElementById('ec-last').value = nameParts.slice(1).join(' ')||'';
   document.getElementById('ec-email').value = c.email||'';
   document.getElementById('ec-phone').value = c.phone||c.whatsapp||'';
-  document.getElementById('ec-biz').value = sanitise(c.business_name||'');
+  document.getElementById('ec-biz').value = c.business_name||'';
   document.getElementById('ec-location').value = c.island||'';
   document.getElementById('ec-notes').value = c.notes||'';
   const statusEl = document.getElementById('ec-status');
@@ -2195,7 +2073,7 @@ function openEditDeal(dealId){
   const sel = document.getElementById('ed-contact');
   if(sel){
     sel.innerHTML = '<option value="">-- Select existing client --</option>' +
-      allContacts.map(ct=>`<option value="${ct.id}" ${ct.id===d.contact_id?'selected':''}>${ct.full_name||'Unknown'}${ct.business_name?' — '+ct.business_name:''}</option>`).join('');
+      allContacts.map(c=>`<option value="${c.id}" ${c.id===d.contact_id?'selected':''}>${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
   }
   // Pre-fill new fields
   const closeDateEl = document.getElementById('ed-close-date');
@@ -2207,18 +2085,6 @@ function openEditDeal(dealId){
   toggleWonLostReason(d.stage||'lead');
   _editDealUpdatedAt = d.updated_at||null;
   document.getElementById('editDealError').style.display='none';
-  // Populate contact dropdown for edit deal
-  const editSel = document.getElementById('ed-contact');
-  if(editSel && allContacts.length){
-    editSel.innerHTML = '<option value="">No contact linked</option>' +
-      allContacts.map(ct=>`<option value="${ct.id}" ${ct.id===d.contact_id?'selected':''}>${sanitise(ct.full_name||'Unknown')}${ct.business_name?' — '+sanitise(ct.business_name):''}</option>`).join('');
-  } else if(editSel){
-    // Fetch if not loaded
-    db.from('contacts').select('id,full_name,business_name').order('full_name').then(({data})=>{
-      if(data) editSel.innerHTML = '<option value="">No contact linked</option>' +
-        data.map(ct=>`<option value="${ct.id}" ${ct.id===d.contact_id?'selected':''}>${sanitise(ct.full_name||'Unknown')}${ct.business_name?' — '+sanitise(ct.business_name):''}</option>`).join('');
-    });
-  }
   document.getElementById('modal-editDeal').classList.add('open');
 }
 
@@ -2397,47 +2263,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 // ── ADD EDIT BUTTON TO DEAL CARDS in renderPipeline ──────────────────────────
 // Patch renderPipeline to include edit buttons on deal cards
-function renderPipeline(){
-  var stageMap = [
-    {key:'lead',         id:'Lead'},
-    {key:'qualified',    id:'Qualified'},
-    {key:'proposal',     id:'Proposal'},
-    {key:'negotiation',  id:'Negotiation'},
-    {key:'won',          id:'Won'}
-  ];
-  stageMap.forEach(function(s){
-    var stage = s.key;
-    var stageId = s.id;
-    const deals = allDeals.filter(d=>(d.stage||'').toLowerCase()===stage);
-    ['col','dCol'].forEach(prefix=>{
-      const el=document.getElementById(prefix+stageId);
-      if(el) el.textContent=deals.length;
-    });
-    ['deals','dDeals'].forEach(prefix=>{
-      const el=document.getElementById(prefix+stageId);
-      if(!el) return;
-      el.innerHTML=deals.slice(0,5).map(function(d){
-        var now=new Date();
-        var daysLeft=d.close_date?Math.ceil((new Date(d.close_date)-now)/86400000):null;
-        var urgencyHtml='';
-        if(daysLeft!==null&&daysLeft<=3&&daysLeft>=0) urgencyHtml='<span style="color:#ef4444;font-size:10px;font-weight:700;">&#x26A0; '+daysLeft+'d left</span>';
-        else if(daysLeft!==null&&daysLeft<=7&&daysLeft>=0) urgencyHtml='<span style="color:var(--gold);font-size:10px;">&#x1F4C5; '+daysLeft+'d left</span>';
-        var closeDateStr=d.close_date?new Date(d.close_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
-        var dealStatus=stage==='won'?'✓ Won':(closeDateStr||'Active');
-        var html='<div class="deal deal-nav" style="cursor:pointer;">';
-        html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;">';
-        html+='<div class="deal-name">'+(d.deal_name||d.title||'Untitled')+'</div>';
-        html+='<button data-deal-id="'+d.id+'" class="deal-edit-btn" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.7rem;padding:0 0 0 6px;flex-shrink:0;" title="Edit">&#x270F;&#xFE0F;</button>';
-        html+='</div>';
-        html+='<div class="deal-co">'+(d.contact_name||'—')+'</div>';
-        html+='<div class="deal-val">'+fmt(d.deal_value||d.value||0)+'</div>';
-        html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-top:3px;">';
-        html+='<div class="deal-date">'+dealStatus+'</div>'+urgencyHtml+'</div></div>';
-        return html;
-      }).join('')||'<div style="text-align:center;padding:12px;color:var(--text3);font-size:0.75rem;">No deals</div>';
-    });
-  });
-}
+
 
 
 // ── SEND EMAIL FROM MODAL ─────────────────────────────────────────────────────
@@ -2458,28 +2284,31 @@ async function sendEmailFromModal(){
   fd.append('_template', 'table');
   try{
     const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
-    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
     if(res.ok){
-      showToast('✅ Email sent to '+to,'success');
+      showToast('Email sent ✓','success');
       closeModal('sendEmail');
       if(toField) toField.value='';
       if(subjectField) subjectField.value='';
       if(msgField) msgField.value='';
-      if(typeof matchedContact!=='undefined'&&matchedContact) updateLastContacted(matchedContact.id);
+      if(matchedContact) updateLastContacted(matchedContact.id);
     } else {
-      // Fallback: open mailto so email is never lost
-      const mailtoUrl='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
-      window.open(mailtoUrl,'_blank');
-      showToast('Opening your email client to send...','success');
-      closeModal('sendEmail');
+      // Get error details from Formspree response
+      try{
+        const errData = await res.clone().json();
+        const errMsg = errData.error || errData.errors?.[0]?.message || 'Form submission rejected ('+res.status+')';
+        showToast('Email error: '+errMsg,'');
+        console.error('Formspree error:', errData);
+      }catch(pe){
+        showToast('Email failed (HTTP '+res.status+'). Check hello@bluwavgrowth.com directly.','');
+      }
     }
   }catch(e){
-    if(sendBtn){sendBtn.disabled=false;sendBtn.textContent='Send Email';}
-    // Fallback to mailto
-    const mailtoUrl='mailto:'+to+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
-    window.open(mailtoUrl,'_blank');
-    showToast('Opening your email client...','success');
-    closeModal('sendEmail');
+    if(e.name==='TypeError'&&e.message.includes('fetch')){
+      showToast('Network error — check your internet connection and try again.','');
+    } else {
+      showToast('Email error: '+e.message,'');
+    }
+    console.error('sendEmail error:', e);
   }
 }
 
@@ -2720,6 +2549,58 @@ function renderEmailLog(){
 
 function filterEmailLog(){ renderEmailLog(); }
 
+
+
+  // Find contact name for the log
+  const matchedContact = allContacts.find(c=>(c.email||'').toLowerCase()===to.toLowerCase());
+  const contactName = matchedContact ? matchedContact.full_name : null;
+
+  // Send via formspree
+  var fd = new FormData();
+  fd.append('email', to);
+  fd.append('_replyto', currentUser?.email||'');
+  fd.append('_subject', subject);
+  fd.append('message', message);
+  fd.append('_template', 'table');
+  try{
+    const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
+    if(res.ok){
+      // Save to email_log
+      const {data:{session}} = await db.auth.getSession();
+      const logEntry = {
+        to_email: to,
+        subject: subject,
+        message: message,
+        contact_name: contactName,
+        contact_id: matchedContact?.id||null,
+        sent_at: new Date().toISOString(),
+        sent_by: session?.user?.id||null,
+        sent_by_email: currentUser?.email||null
+      };
+      const {error} = await db.from('email_log').insert(logEntry);
+      if(error) console.warn('email_log table not ready:', error.message);
+      else allEmailLog.unshift(logEntry);
+
+      showToast('Email sent ✓','success');
+      closeModal('sendEmail');
+      if(toField) toField.value='';
+      if(subjectField) subjectField.value='';
+      if(msgField) msgField.value='';
+
+      // Refresh email log view if open
+      if(document.getElementById('view-email')?.classList.contains('active')){
+        renderEmailLog();
+      }
+    } else {
+      // Get error details from Formspree response
+      try{
+        const errData = await res.clone().json();
+        const errMsg = errData.error || errData.errors?.[0]?.message || 'Form submission rejected ('+res.status+')';
+        showToast('Email error: '+errMsg,'');
+        console.error('Formspree error:', errData);
+      }catch(pe){
+        showToast('Email failed (HTTP '+res.status+'). Check hello@bluwavgrowth.com directly.','');
+      }
     }
   }catch(e){
     if(e.name==='TypeError'&&e.message.includes('fetch')){
@@ -3360,7 +3241,7 @@ function exportContactsCSV(){
       c.full_name||'',
       c.email||'',
       c.phone||'',
-      sanitise(c.business_name||''),
+      c.business_name||'',
       c.status||'Lead',
       c.island||'',
       c.last_contacted ? new Date(c.last_contacted).toLocaleDateString() : '',
@@ -3385,8 +3266,6 @@ let _realtimeChannel = null;
 
 function startRealtime(){
   if(_realtimeChannel) return;
-  // Non-blocking — realtime is enhancement only, never blocks UI
-  try {
 
   _realtimeChannel = db.channel('bluwav-crm-live')
 
@@ -3520,7 +3399,7 @@ function startRealtime(){
         renderPipeline();
         var editId2=document.getElementById('ed-id')?.value;
         if(editId2===delDId && document.getElementById('modal-editDeal')?.classList.contains('open')){
-          closeModal('editDeal');
+          document.getElementById('modal-editDeal').classList.remove('open');
           showToast('⚠️ This deal was deleted by another team member.','');
         }
         if(delDeal&&delDeal.agent_id!==currentUser?.id){
@@ -3552,7 +3431,6 @@ function startRealtime(){
         },5000);
       }
     });
-  } catch(e){ console.warn('Realtime init failed:', e.message); }
 }
 
 function stopRealtime(){
@@ -3562,13 +3440,15 @@ window.addEventListener('beforeunload',stopRealtime);
 
 
 // ── FIX 2: Calendar event modal ───────────────────────────────────────────────
-function openAddEvent(dateStr){
-  // Open dedicated event modal
-  var dateEl = document.getElementById('ev-date');
-  if(dateEl){
-    dateEl.value = dateStr || new Date().toISOString().split('T')[0];
+function openAddEvent(){
+  var titleEl = document.getElementById('addTaskModalTitle');
+  if(titleEl) titleEl.textContent = '📅 Add Event';
+  var dateEl = document.getElementById('task-due-date');
+  if(dateEl && !dateEl.value){
+    var today = new Date().toISOString().split('T')[0];
+    dateEl.value = today;
   }
-  openModal('addEvent');
+  openModal('addTask');
 }
 
 function resetTaskModal(){
@@ -3825,40 +3705,23 @@ async function saveProfileSettings(){
 <!-- ADD EVENT MODAL -->
 <div class="modal-overlay" id="modal-addEvent">
   <div class="modal" style="max-width:480px;">
-    <div class="modal-hd">
-      <h3>📅 New Event</h3>
-      <button class="modal-close" onclick="closeModal('addEvent')">✕</button>
-    </div>
+    <div class="modal-hd"><h3>📅 New Event</h3><button class="modal-close" onclick="closeModal('addEvent')">✕</button></div>
     <div class="modal-body" style="display:grid;gap:14px;">
-      <div>
-        <label class="fl">Event Title *</label>
-        <input class="fi" id="ev-title" placeholder="e.g. Client Meeting" style="margin-top:6px;" />
-      </div>
+      <div><label class="fl">Event Title *</label><input class="fi" id="ev-title" placeholder="e.g. Client Meeting" style="margin-top:6px;" /></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div>
-          <label class="fl">Date *</label>
-          <input class="fi" id="ev-date" type="date" style="margin-top:6px;" />
-        </div>
-        <div>
-          <label class="fl">Time</label>
-          <input class="fi" id="ev-time" type="time" value="09:00" style="margin-top:6px;" />
-        </div>
+        <div><label class="fl">Date *</label><input class="fi" id="ev-date" type="date" style="margin-top:6px;" /></div>
+        <div><label class="fl">Time</label><input class="fi" id="ev-time" type="time" value="09:00" style="margin-top:6px;" /></div>
       </div>
-      <div>
-        <label class="fl">Type</label>
+      <div><label class="fl">Type</label>
         <select class="fs" id="ev-type" style="margin-top:6px;">
           <option value="meeting">📅 Meeting</option>
           <option value="call">📞 Call</option>
           <option value="followup">🔄 Follow-up</option>
           <option value="demo">🖥️ Demo</option>
           <option value="deadline">⏰ Deadline</option>
-          <option value="other">📌 Other</option>
         </select>
       </div>
-      <div>
-        <label class="fl">Notes</label>
-        <textarea class="fi" id="ev-notes" rows="3" placeholder="Optional notes..." style="margin-top:6px;resize:vertical;"></textarea>
-      </div>
+      <div><label class="fl">Notes</label><textarea class="fi" id="ev-notes" rows="3" placeholder="Optional notes..." style="margin-top:6px;resize:vertical;"></textarea></div>
     </div>
     <div class="modal-ft">
       <button class="btn btn-ghost" onclick="closeModal('addEvent')">Cancel</button>
@@ -3867,8 +3730,6 @@ async function saveProfileSettings(){
   </div>
 </div>
 
-
-
 <script>
 // ── SAVE EVENT ─────────────────────────────────────────────────
 async function saveEvent(){
@@ -3876,39 +3737,29 @@ async function saveEvent(){
   var date  = document.getElementById('ev-date')  ? document.getElementById('ev-date').value  : '';
   var time  = document.getElementById('ev-time')  ? document.getElementById('ev-time').value  : '09:00';
   var type  = document.getElementById('ev-type')  ? document.getElementById('ev-type').value  : 'meeting';
-  var notes = document.getElementById('ev-notes') ? document.getElementById('ev-notes').value.trim() : '';
   if(!title){ showToast('Please enter an event title',''); return; }
   if(!date){  showToast('Please select a date',''); return; }
-  if(!currentUser){ showToast('Session expired — please sign in again',''); return; }
-  var taskObj = {
-    title:     title + ' @ ' + time,
-    due_date:  date,
-    priority:  type === 'deadline' ? 'High' : 'Medium',
-    completed: false,
-    user_id:   currentUser.id,
-    notes:     notes || null
-  };
+  if(!currentUser){ showToast('Session expired',''); return; }
+  var taskObj = { title: title+' @ '+time, due_date: date, priority: type==='deadline'?'High':'Medium', completed: false, user_id: currentUser.id };
   try {
-    var result = await db.from('tasks').insert([taskObj]).select();
-    if(result.error) throw result.error;
-    if(result.data && result.data[0]) allTasks.unshift(result.data[0]);
-    else allTasks.unshift(Object.assign({id:'local_'+Date.now()}, taskObj));
-    showToast('✅ Event "'+title+'" added to calendar','success');
+    var r = await db.from('tasks').insert([taskObj]).select();
+    if(r.error) throw r.error;
+    allTasks.unshift(r.data&&r.data[0] ? r.data[0] : Object.assign({id:'local_'+Date.now()},taskObj));
+    showToast('✅ Event added to calendar','success');
   } catch(e) {
-    console.warn('Event insert failed:', e.message);
-    allTasks.unshift(Object.assign({id:'local_'+Date.now()}, taskObj));
+    allTasks.unshift(Object.assign({id:'local_'+Date.now()},taskObj));
     showToast('✅ Event saved','success');
   }
   closeModal('addEvent');
-  ['ev-title','ev-notes'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.value='';
-  });
-  var evDate = document.getElementById('ev-date');
-  if(evDate) evDate.value = '';
-  renderCalendar();
-  renderTasks();
+  ['ev-title','ev-notes'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var evDate=document.getElementById('ev-date'); if(evDate)evDate.value='';
+  renderCalendar(); renderTasks();
 }
-
+function openAddEvent(dateStr){
+  var dateEl=document.getElementById('ev-date');
+  if(dateEl) dateEl.value=dateStr||new Date().toISOString().split('T')[0];
+  openModal('addEvent');
+}
 </script>
 
 </body>
