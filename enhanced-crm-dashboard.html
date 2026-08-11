@@ -1083,8 +1083,8 @@ async function initDashboard(){
   if(sr)sr.value=userRole.charAt(0).toUpperCase()+userRole.slice(1);
   if(sn)sn.value=name;
 
-  loadData();
-  loadTasks();
+  // Load data in parallel for speed
+  Promise.all([loadData(), loadTasks()]).catch(()=>{});
   initChart();
   setTimeout(startPresence, 100);
   setTimeout(startRealtime, 500);
@@ -3799,4 +3799,4 @@ function openAddEvent(dateStr){
 </script>
 
 </body>
-</html>
+</html><!-- v1786412449 -->
