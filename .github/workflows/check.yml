@@ -1,0 +1,36 @@
+name: Syntax Check
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check JS syntax in all HTML files
+        run: |
+          python3 << 'PYEOF'
+          import re, sys, subprocess, tempfile, os, glob
+          errors = []
+          for fname in sorted(glob.glob('*.html')):
+              with open(fname) as f: c = f.read()
+              scripts = re.findall(r'<script[^>]*>(.*?)</script>', c, re.DOTALL)
+              for i, s in enumerate(scripts):
+                  if len(s.strip()) < 20: continue
+                  with tempfile.NamedTemporaryFile(mode='w', suffix='.js', delete=False) as f:
+                      f.write(s); fn = f.name
+                  r = subprocess.run(['node','--check',fn], capture_output=True, text=True)
+                  os.unlink(fn)
+                  if r.returncode != 0:
+                      errors.append(f'{fname} block {i}: {r.stderr.strip()[:80]}')
+          if errors:
+              print('SYNTAX ERRORS FOUND:')
+              for e in errors: print(' ', e)
+              sys.exit(1)
+          print(f'All {len(glob.glob("*.html"))} HTML files passed syntax check')
+          PYEOF
