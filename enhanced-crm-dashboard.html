@@ -1108,7 +1108,7 @@ async function initDashboard(){
 
 // ── TEAM SWITCHER ─────────────────────────────────────────────────────────────
 async function loadTeam(myName){
-  const _tq=db.from('profiles').select('id,full_name,role,email,last_seen,is_online,trial_started_at,created_at');
+  const _tq=db.from('profiles').select('id,full_name,role,last_seen,is_online,trial_started_at,created_at');
   const _tt=new Promise(r=>setTimeout(()=>r({data:[]}),5000));
   const {data}=await Promise.race([_tq,_tt]).catch(()=>({data:[]}));
   allTeam = data||[];
@@ -1147,7 +1147,7 @@ async function loadData(){
   if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
     cq = cq.eq('user_id', viewingUserId);
   }
-  const {data:cd, count:cc} = await cq;
+  const {data:cd} = await cq; const cc = null;
   contacts = (cd||[]).map(c=>({
     id:c.id,
     full_name:c.full_name||'Unknown',
