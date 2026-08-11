@@ -643,9 +643,8 @@ function trialDaysLeft(p){
   if(!session){window.location.href='login.html';return;}
   const {data:profile}=await db.from('profiles').select('*').eq('id',session.user.id).single();
   const role=(profile?.role||'salesperson').toLowerCase();
-  // Super Admin is owner-only
-  if(role!=='owner'&&role!=='super_admin'){
-    // Admin gets redirected to dashboard with admin view
+  // Allow manager, admin, owner to access Super Admin
+  if(role==='salesperson'){
     window.location.href='enhanced-crm-dashboard.html';return;
   }
   const name=profile?.full_name||session.user.email?.split('@')[0]||'Founder';

@@ -343,6 +343,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns">Communicate</div>
 <a class="ni" id="nav-email" onclick="showView('email')"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
+<a class="ni" id="nav-whatsapp" onclick="showView('whatsapp')"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
 <a class="ni" href="automations.html"><span class="ni-icon">⚡</span><span class="nav-text">Automations</span></a>
 <div class="ns">Performance</div>
 <a class="ni" href="agent-dashboard.html"><span class="ni-icon">📈</span><span class="nav-text">Agent Dashboard</span></a>
@@ -352,9 +353,9 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" id="nav-reports" onclick="showView('reports')"><span class="ni-icon">📈</span><span class="nav-text">Reports</span></a>
 <a class="ni" id="nav-settings" onclick="showView('settings')"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
 <a class="ni" href="billing.html"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
-<!-- Manager/Admin only -->
-<div class="ns" id="adminNav" style="display:none;">Admin</div>
-<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
+<!-- Admin section -->
+<div class="ns">Admin</div>
+<a class="ni" href="superadmin.html" id="adminLink"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
 <div class="trial-w">
@@ -660,6 +661,38 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div><!-- /reports -->
 <!-- ══ TASKS VIEW ══ -->
+
+<!-- VIEW: WHATSAPP -->
+<div class="view" id="view-whatsapp">
+  <div class="view-hd">
+    <h2 class="view-title">💬 WhatsApp</h2>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;">
+    <div class="panel">
+      <div class="panel-title">📱 Send WhatsApp Message</div>
+      <div class="panel-body" style="display:grid;gap:14px;">
+        <div><label class="fl">Contact</label>
+          <select class="fs" id="wa-contact-select" style="margin-top:6px;" onchange="waFillPhone(this.value)">
+            <option value="">— Select contact —</option>
+          </select>
+        </div>
+        <div><label class="fl">Phone Number</label>
+          <input class="fi" id="wa-phone-input" placeholder="+1868 555 0000" style="margin-top:6px;" />
+        </div>
+        <div><label class="fl">Message</label>
+          <textarea class="fi" id="wa-message-input" rows="5" placeholder="Type your message..." style="margin-top:6px;resize:vertical;"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="sendWhatsAppFromView()" style="background:#25D366;border-color:#25D366;">💬 Open WhatsApp</button>
+        <p style="font-size:0.75rem;color:var(--text3);">Opens WhatsApp with your message pre-filled. Send from WhatsApp then return to CRM.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">📋 Contacts with Phone Numbers</div>
+      <div class="panel-body" id="wa-contacts-list" style="max-height:400px;overflow-y:auto;"></div>
+    </div>
+  </div>
+</div>
+
 <div class="view" id="view-tasks">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
   <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Productivity</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Tasks</h1></div>
@@ -1004,12 +1037,15 @@ async function initDashboard(){
 
   // Role logic: Leah Ryan = admin, Andrea M. Tanguay = manager
   const email = currentUser.email||'';
-  if(profile.role==='admin'||profile.role==='owner'){
+  const dbRole = (profile.role||'salesperson').toLowerCase();
+  if(dbRole==='owner'||dbRole==='super_admin'){
+    userRole='owner';
+  } else if(dbRole==='admin'){
     userRole='admin';
-  } else if(profile.role==='manager'){
+  } else if(dbRole==='manager'){
     userRole='manager';
   } else {
-    userRole = profile.role||'salesperson';
+    userRole='salesperson';
   }
 
   viewingUserId = (userRole==='manager'||userRole==='admin') ? null : currentUser.id;
@@ -1042,6 +1078,7 @@ async function initDashboard(){
   } else if(userRole==='manager'){
     banner.className='role-banner manager';
     banner.innerHTML='👑 Manager View — You can see all team data, commissions, and the leaderboard.';
+    document.getElementById('adminLink').style.display='flex';
     document.getElementById('adminNav').style.display='block';
     document.getElementById('adminLink').style.display='flex';
     document.getElementById('teamSwitcher').style.display='block';
@@ -1854,6 +1891,7 @@ function showView(name){
     const ssf=document.getElementById('contactStatusFilter');if(ssf)ssf.value='';
   }
   if(name==='tasks') loadTasks();
+  if(name==='whatsapp') initWhatsAppView();
   if(name==='calendar') loadTasks().then(()=>renderCalendar());
   if(name==='deals' && dealsViewMode==='list') setTimeout(renderDealsList,100);
   if(name==='email') loadEmailLog();
@@ -2173,6 +2211,24 @@ async function toggleTask(id, completed){
   const t = allTasks.find(x=>x.id===id);
   if(t) t.completed = completed;
   renderTasks();
+}
+
+function editTask(taskId){
+  const task = allTasks.find(t=>t.id===taskId);
+  if(!task) return;
+  const titleEl = document.getElementById('task-title') || document.querySelector('#modal-addTask .fi');
+  const dateEl  = document.getElementById('task-due-date') || document.querySelector('#modal-addTask input[type="date"]');
+  const priEl   = document.getElementById('task-priority') || document.querySelector('#modal-addTask .fs');
+  if(titleEl) titleEl.value = task.title||'';
+  if(dateEl)  dateEl.value  = task.due_date||'';
+  if(priEl)   priEl.value   = task.priority||'Medium';
+  const modal = document.getElementById('modal-addTask');
+  if(modal) modal.dataset.editingId = taskId;
+  const saveBtn = document.querySelector('#modal-addTask .btn-primary');
+  if(saveBtn) saveBtn.textContent = 'Update Task';
+  const hd = document.querySelector('#modal-addTask .modal-hd h3');
+  if(hd) hd.textContent = '✏️ Edit Task';
+  openModal('addTask');
 }
 
 async function deleteTask(id){
