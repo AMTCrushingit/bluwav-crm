@@ -1094,7 +1094,7 @@ async function initDashboard(){
 
 // ── TEAM SWITCHER ─────────────────────────────────────────────────────────────
 async function loadTeam(myName){
-  const _tq = db.from('profiles').select('*');
+  const _tq = db.from('profiles').select('id,full_name,role,email,last_seen,is_online,trial_started_at,created_at');
   const _tt = new Promise(r=>setTimeout(()=>r({data:[]}),5000));
   const {data} = await Promise.race([_tq,_tt]).catch(()=>({data:[]}));
   allTeam = data||[];
@@ -1129,11 +1129,17 @@ async function loadData(){
   try {
   // Load contacts — matches dashboard.html exactly (contacts table, RLS-filtered)
   let contacts=[], cCount=0;
-  let cq = db.from('contacts').select('id,full_name,email,phone,whatsapp,business_name,island,notes,user_id,created_at,status,deal_value,last_contacted',{count:'exact'}).order('created_at',{ascending:false});
+  let cq = db.from('contacts').select('id,full_name,email,phone,whatsapp,business_name,island,notes,user_id,created_at,status,deal_value,last_contacted').order('created_at',{ascending:false}).limit(500);
   if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
     cq = cq.eq('user_id', viewingUserId);
   }
-  const {data:cd, count:cc} = await cq;
+  // Run contacts and deals in parallel
+  let dq2 = db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,contact_id,deal_type,created_at,close_date,probability,won_lost_reason,notes').order('created_at',{ascending:false}).limit(500);
+  if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null && userRole==='salesperson'){
+    dq2 = dq2.eq('agent_id', viewingUserId);
+  }
+  const [{data:cd}, {data:dealsParallel}] = await Promise.all([cq, dq2]);
+  const cc = cd ? cd.length : 0;
   contacts = (cd||[]).map(c=>({
     id:c.id,
     full_name:c.full_name||'Unknown',
@@ -1159,7 +1165,7 @@ async function loadData(){
 
   // Deals — matches dashboard.html exactly
   let deals=[];
-  let dq = db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,contact_id,deal_type,created_at,close_date,probability,won_lost_reason,notes').order('created_at',{ascending:false});
+  let dq = db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,contact_id,deal_type,created_at,close_date,probability,won_lost_reason,notes').order('created_at',{ascending:false}).limit(500);
   if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
     dq = dq.eq('agent_id', viewingUserId);
   } else if(userRole==='salesperson'){
