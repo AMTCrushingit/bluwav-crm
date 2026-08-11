@@ -1074,8 +1074,6 @@ async function loadTeam(myName){
   const _tq=db.from('profiles').select('id,full_name,role,email,last_seen,is_online,trial_started_at,created_at');
   const _tt=new Promise(r=>setTimeout(()=>r({data:[]}),5000));
   const {data}=await Promise.race([_tq,_tt]).catch(()=>({data:[]}));
-  const _tt = new Promise(r=>setTimeout(()=>r({data:[]}),5000));
-  const {data} = await Promise.race([_tq,_tt]).catch(()=>({data:[]}));
   allTeam = data||[];
   const switcher = document.getElementById('teamSwitcherBtns');
   let html = `<span class="team-switcher-label">Viewing:</span>
