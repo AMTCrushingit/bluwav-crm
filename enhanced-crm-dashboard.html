@@ -1922,13 +1922,8 @@ document.addEventListener('click',e=>{
 var presenceInterval = null;
 
 async function updatePresence(online) {
-  if (!currentUser) return;
-  try {
-    await db.from('profiles').update({
-      last_seen: new Date().toISOString(),
-      is_online: online
-    }).eq('id', currentUser.id);
-  } catch(e) { /* non-blocking */ }
+  // Presence tracking disabled — columns not in schema
+  return;
 }
 
 function startPresence() {
