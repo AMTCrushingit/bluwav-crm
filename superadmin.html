@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BluWav CRM — Founder Dashboard</title>
+<title>BluWav CRM — Super Admin (Owner)</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -258,7 +258,7 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
     <div class="topbar-left">
       <div>
         <div class="topbar-title" id="viewTitle">&#x1F4CA; Command Centre</div>
-        <div class="topbar-sub">BluWav CRM &mdash; Founder Dashboard</div>
+        <div class="topbar-sub">BluWav CRM &mdash; Super Admin — Owner</div>
       </div>
     </div>
     <div class="topbar-right">
@@ -642,8 +642,10 @@ function trialDaysLeft(p){
   const {data:{session}}=await db.auth.getSession();
   if(!session){window.location.href='login.html';return;}
   const {data:profile}=await db.from('profiles').select('*').eq('id',session.user.id).single();
-  const role=profile?.role||'salesperson';
-  if(role!=='admin'&&role!=='manager'&&role!=='owner'){
+  const role=(profile?.role||'salesperson').toLowerCase();
+  // Super Admin is owner-only
+  if(role!=='owner'&&role!=='super_admin'){
+    // Admin gets redirected to dashboard with admin view
     window.location.href='enhanced-crm-dashboard.html';return;
   }
   const name=profile?.full_name||session.user.email?.split('@')[0]||'Founder';

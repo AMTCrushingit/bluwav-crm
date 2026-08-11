@@ -355,6 +355,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <!-- Manager/Admin only -->
 <div class="ns" id="adminNav" style="display:none;">Admin</div>
 <a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
+<a class="ni" href="superadmin.html" id="adminPanelLink" style="display:none;"><span class="ni-icon">⚙️</span><span class="nav-text">Admin Panel</span></a>
 </nav>
 <div class="sb-bottom">
 <div class="trial-w">
@@ -1004,15 +1005,19 @@ async function initDashboard(){
 
   // Role logic: Leah Ryan = admin, Andrea M. Tanguay = manager
   const email = currentUser.email||'';
-  if(profile.role==='admin'||profile.role==='owner'){
-    userRole='admin';
-  } else if(profile.role==='manager'){
-    userRole='manager';
+  // Role hierarchy: salesperson < manager < admin < owner
+  const dbRole = (profile.role||'salesperson').toLowerCase();
+  if(dbRole === 'owner' || dbRole === 'super_admin'){
+    userRole = 'owner';      // Super Admin — sees all tenants, COREX
+  } else if(dbRole === 'admin'){
+    userRole = 'admin';      // Admin — sees all team data, no COREX
+  } else if(dbRole === 'manager'){
+    userRole = 'manager';    // Manager — sees team data, commissions
   } else {
-    userRole = profile.role||'salesperson';
+    userRole = 'salesperson'; // Agent — sees own data only
   }
 
-  viewingUserId = (userRole==='manager'||userRole==='admin') ? null : currentUser.id;
+  viewingUserId = (userRole==='manager'||userRole==='admin'||userRole==='owner') ? null : currentUser.id;
 
   const name = profile.full_name||currentUser.email?.split('@')[0]||'User';
   document.getElementById('dashGreeting').textContent = window._greet+', '+name.split(' ')[0]+' 👋';
@@ -1031,11 +1036,21 @@ async function initDashboard(){
 
   // Role banner
   const banner=document.getElementById('roleBanner');
-  if(userRole==='admin'){
+  if(userRole==='owner'){
     banner.className='role-banner admin';
-    banner.innerHTML='🛡 Admin View — Full visibility, full control. No sales attribution.';
+    banner.innerHTML='👑 Owner View — Full platform access. All tenants, COREX intelligence, billing.';
     document.getElementById('adminNav').style.display='block';
-    document.getElementById('adminLink').style.display='flex';
+    document.getElementById('adminLink').style.display='flex';  // Super Admin link
+    const apl=document.getElementById('adminPanelLink'); if(apl) apl.style.display='none';
+    document.getElementById('teamSwitcher').style.display='block';
+    document.getElementById('rightPanelTitle').textContent='Team Leaderboard';
+    loadTeam(name);
+  } else if(userRole==='admin'){
+    banner.className='role-banner admin';
+    banner.innerHTML='🛡 Admin View — Full team visibility. Manage users, deals, and reports.';
+    document.getElementById('adminNav').style.display='block';
+    const apl=document.getElementById('adminPanelLink'); if(apl) apl.style.display='flex'; // Admin Panel
+    document.getElementById('adminLink').style.display='none'; // Hide Super Admin
     document.getElementById('teamSwitcher').style.display='block';
     document.getElementById('rightPanelTitle').textContent='Team Leaderboard';
     loadTeam(name);
@@ -1043,13 +1058,17 @@ async function initDashboard(){
     banner.className='role-banner manager';
     banner.innerHTML='👑 Manager View — You can see all team data, commissions, and the leaderboard.';
     document.getElementById('adminNav').style.display='block';
-    document.getElementById('adminLink').style.display='flex';
+    document.getElementById('adminLink').style.display='none';  // No Super Admin
+    const apl2=document.getElementById('adminPanelLink'); if(apl2) apl2.style.display='none'; // No Admin Panel
     document.getElementById('teamSwitcher').style.display='block';
     document.getElementById('rightPanelTitle').textContent='Team Leaderboard';
     loadTeam(name);
   } else {
     banner.className='role-banner salesperson';
     banner.innerHTML='💼 Salesperson View — You can only see your own contacts, deals & activities.';
+    document.getElementById('adminLink').style.display='none';
+    const apl3=document.getElementById('adminPanelLink'); if(apl3) apl3.style.display='none';
+    const adminNav=document.getElementById('adminNav'); if(adminNav) adminNav.style.display='none';
     loadActivityFeed();
   }
 
@@ -1187,7 +1206,7 @@ async function loadData(){
   renderRecentContacts();
   renderContactsTable();
   // Refresh leaderboard now that allDeals is populated
-  if(userRole==='manager'||userRole==='admin'){
+  if(userRole==='manager'||userRole==='admin'||userRole==='owner'){
     loadLeaderboard();
   }
   } catch(e){ console.error('loadData error:',e); }
@@ -2745,7 +2764,7 @@ async function loadNotifications(){
     });
 
     // 3. Recent team activity (manager/admin only) — use in-memory data, no extra DB queries
-    if(userRole==='manager'||userRole==='admin'){
+    if(userRole==='manager'||userRole==='admin'||userRole==='owner'){
       const yesterday = new Date(now.getTime()-24*60*60*1000);
       const lastWeek = new Date(now.getTime()-7*24*60*60*1000);
 
