@@ -353,10 +353,11 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" id="nav-reports" onclick="showView('reports')"><span class="ni-icon">📈</span><span class="nav-text">Reports</span></a>
 <a class="ni" id="nav-settings" onclick="showView('settings')"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
 <a class="ni" href="billing.html"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
-<!-- Manager/Admin only -->
-<div class="ns" id="adminNav" style="display:none;">Admin</div>
-<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
+<!-- Admin section — always visible -->
+<div class="ns">Admin</div>
 <a class="ni" href="superadmin.html" id="adminPanelLink" style="display:none;"><span class="ni-icon">⚙️</span><span class="nav-text">Admin Panel</span></a>
+<a class="ni" id="adminLink" href="superadmin.html" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
+<a class="ni" id="superAdminLocked" href="#" onclick="showToast('🔒 Super Admin is restricted to the Founder only','');return false;" style="opacity:0.5;cursor:not-allowed;"><span class="ni-icon">🔒</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
 <div class="trial-w">
@@ -1040,8 +1041,8 @@ async function initDashboard(){
   if(userRole==='owner'){
     banner.className='role-banner admin';
     banner.innerHTML='👑 Owner View — Full platform access. All tenants, COREX intelligence, billing.';
-    document.getElementById('adminNav').style.display='block';
-    document.getElementById('adminLink').style.display='flex';  // Super Admin link
+    document.getElementById('adminLink').style.display='flex';  // Real Super Admin
+    const sal=document.getElementById('superAdminLocked'); if(sal) sal.style.display='none';
     const apl=document.getElementById('adminPanelLink'); if(apl) apl.style.display='none';
     document.getElementById('teamSwitcher').style.display='block';
     document.getElementById('rightPanelTitle').textContent='Team Leaderboard';
@@ -1049,9 +1050,9 @@ async function initDashboard(){
   } else if(userRole==='admin'){
     banner.className='role-banner admin';
     banner.innerHTML='🛡 Admin View — Full team visibility. Manage users, deals, and reports.';
-    document.getElementById('adminNav').style.display='block';
-    const apl=document.getElementById('adminPanelLink'); if(apl) apl.style.display='flex'; // Admin Panel
-    document.getElementById('adminLink').style.display='none'; // Hide Super Admin
+    const apl=document.getElementById('adminPanelLink'); if(apl) apl.style.display='flex';
+    document.getElementById('adminLink').style.display='none';
+    const sal2=document.getElementById('superAdminLocked'); if(sal2) sal2.style.display='flex';
     document.getElementById('teamSwitcher').style.display='block';
     document.getElementById('rightPanelTitle').textContent='Team Leaderboard';
     loadTeam(name);
@@ -1059,8 +1060,9 @@ async function initDashboard(){
     banner.className='role-banner manager';
     banner.innerHTML='👑 Manager View — You can see all team data, commissions, and the leaderboard.';
     document.getElementById('adminNav').style.display='block';
-    document.getElementById('adminLink').style.display='none';  // No Super Admin
-    const apl2=document.getElementById('adminPanelLink'); if(apl2) apl2.style.display='none'; // No Admin Panel
+    document.getElementById('adminLink').style.display='none';
+    const apl2=document.getElementById('adminPanelLink'); if(apl2) apl2.style.display='none';
+    const sal3=document.getElementById('superAdminLocked'); if(sal3) sal3.style.display='flex';
     document.getElementById('teamSwitcher').style.display='block';
     document.getElementById('rightPanelTitle').textContent='Team Leaderboard';
     loadTeam(name);
@@ -1069,7 +1071,7 @@ async function initDashboard(){
     banner.innerHTML='💼 Salesperson View — You can only see your own contacts, deals & activities.';
     document.getElementById('adminLink').style.display='none';
     const apl3=document.getElementById('adminPanelLink'); if(apl3) apl3.style.display='none';
-    const adminNav=document.getElementById('adminNav'); if(adminNav) adminNav.style.display='none';
+    const sal4=document.getElementById('superAdminLocked'); if(sal4) sal4.style.display='flex';
     loadActivityFeed();
   }
 
@@ -1875,6 +1877,7 @@ function showView(name){
     const ssf=document.getElementById('contactStatusFilter');if(ssf)ssf.value='';
   }
   if(name==='tasks') loadTasks();
+  if(name==='whatsapp'){ loadData().then(()=>initWhatsAppView()); }
   if(name==='calendar') loadTasks().then(()=>renderCalendar());
   if(name==='deals' && dealsViewMode==='list') setTimeout(renderDealsList,100);
   if(name==='email') loadEmailLog();
@@ -2157,9 +2160,15 @@ async function updateDeal(){
 let allTasks = [];
 
 async function loadTasks(){
-  const {data} = await db.from('tasks').select('*').order('created_at',{ascending:false}).catch(()=>({data:[]}));
+  if(!currentUser) return;
+  const {data} = await db.from('tasks')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('due_date', {ascending:true})
+    .catch(()=>({data:[]}));
   allTasks = data||[];
   renderTasks();
+  renderCalendar();
 }
 
 function renderTasks(){
