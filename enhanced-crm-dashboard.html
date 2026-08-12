@@ -583,7 +583,15 @@
     // ═════════════════════════════════════════
     const SUPABASE_URL='https://izyuupdmlzcphvdpigrs.supabase.co';
     const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog';
-    const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    // Safe Supabase init — deferred until DOM and CDN are ready
+    let supabase = null;
+    function getSupabase() {
+      if (!supabase) {
+        if (!window.supabase) { throw new Error('Supabase CDN not loaded'); }
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+      return supabase;
+    }
 
     let currentUser=null, orgProfiles=[], sidebarCollapsed=false;
     let contactsData=[],filteredContacts=[],contactsPage=1;const PAGE_SIZE=20;
@@ -613,8 +621,8 @@
       if(cb)cb();
     }
     function closeModal(){document.getElementById('modal-ov-i3j4').classList.remove('open');}
-    document.getElementById('modal-close-m7n8').addEventListener('click',closeModal);
-    document.getElementById('modal-ov-i3j4').addEventListener('click',function(e){if(e.target===this)closeModal();});
+    document.getElementById('modal-close-m7n8')?.addEventListener('click',closeModal);
+    document.getElementById('modal-ov-i3j4')?.addEventListener('click',function(e){if(e.target===this)closeModal();});
 
     // ═════════════════════════════════════════
     //  HELPERS
@@ -627,30 +635,55 @@
       return `<span class="badge ${m[s]||'badge-muted'}">${(s||'').replace(/_/g,' ')}</span>`;
     }
     function profileOptions(selId){return orgProfiles.map(p=>`<option value="${p.id}"${p.id===selId?' selected':''}>${p.full_name||p.email||'Unknown'}</option>`).join('');}
-    function getGreeting(){const h=15;return h<12?'Good morning':h<17?'Good afternoon':'Good evening';}
+    function getGreeting(){const h=17;return h<12?'Good morning':h<17?'Good afternoon':'Good evening';}
 
     // ═════════════════════════════════════════
     //  AUTH
     // ═════════════════════════════════════════
     async function checkAuth(){
-      const{data:{session},error}=await supabase.auth.getSession();
-      if(error||!session){
-        document.getElementById('loading-screen-a1b2').innerHTML='<p style="color:var(--text3);font-size:0.85rem;">Redirecting to login...</p>';
-        setTimeout(()=>{window.location.href='login.html';},1500);return;
+      const loader = document.getElementById('loading-screen-a1b2');
+      // Hard failsafe: hide loader after 10s no matter what
+      const hardTimeout = setTimeout(() => {
+        if (loader) loader.style.display = 'none';
+        window.location.href = 'login.html';
+      }, 10000);
+      try {
+      const loader = document.getElementById('loading-screen-a1b2');
+      // Fallback: if auth takes more than 8 seconds, redirect to login
+      const fallback = setTimeout(()=>{ window.location.href='login.html'; }, 8000);
+      try {
+        const{data:{session},error}=await getSupabase().auth.getSession();
+        if(error||!session){
+          if(loader) loader.innerHTML='<p style="color:var(--text3);font-size:0.85rem;">Redirecting to login...</p>';
+          clearTimeout(fallback);
+          setTimeout(()=>{window.location.href='login.html';},1500);
+          return;
+        }
+        const uid=session.user.id;
+        const{data:profile,error:pErr}=await getSupabase().from('profiles').select('*').eq('user_id',uid).single();
+        if(pErr||!profile){
+          showToast('Profile not found. Please contact your administrator.','error');
+          clearTimeout(fallback);
+          setTimeout(()=>{window.location.href='login.html';},2000);
+          return;
+        }
+        currentUser={id:profile.id,user_id:uid,full_name:profile.full_name,role:profile.role,org_id:profile.org_id,email:profile.email,phone:profile.phone,avatar_url:profile.avatar_url};
+        await loadOrgProfiles();
+        setupUI();
+        clearTimeout(fallback);
+        document.getElementById('mob-menu-btn-q1w2').style.display='';
+        const hash=window.location.hash.replace('#','');
+        if(hash&&document.getElementById('sec-'+hash)){showSection(hash);}else{loadDashboard();}
+      } catch(err) {
+        console.error('Auth error:',err);
+        clearTimeout(fallback);
+        if(loader) loader.innerHTML='<p style="color:var(--text3);font-size:0.85rem;">Redirecting to login...</p>';
+        setTimeout(()=>{window.location.href='login.html';},1500);
+      } finally {
+        if(loader) loader.style.display='none';
       }
-      const uid=session.user.id;
-      const{data:profile,error:pErr}=await supabase.from('profiles').select('*').eq('user_id',uid).single();
-      if(pErr||!profile){showToast('Profile not found.','error');document.getElementById('loading-screen-a1b2').style.display='none';return;}
-      currentUser={id:profile.id,user_id:uid,full_name:profile.full_name,role:profile.role,org_id:profile.org_id,email:profile.email,phone:profile.phone,avatar_url:profile.avatar_url};
-      await loadOrgProfiles();
-      setupUI();
-      document.getElementById('loading-screen-a1b2').style.display='none';
-      document.getElementById('mob-menu-btn-q1w2').style.display='';
-      // Hash routing
-      const hash=window.location.hash.replace('#','');
-      if(hash&&document.getElementById('sec-'+hash)){showSection(hash);}else{loadDashboard();}
     }
-    async function loadOrgProfiles(){const{data}=await supabase.from('profiles').select('*').eq('org_id',currentUser.org_id);orgProfiles=data||[];}
+    async function loadOrgProfiles(){const{data}=await getSupabase().from('profiles').select('*').eq('org_id',currentUser.org_id);orgProfiles=data||[];}
 
     function setupUI(){
       const u=currentUser;
@@ -661,8 +694,8 @@
       rb.className='badge '+(roleMap[u.role]||'badge-cyan');
       rb.textContent=(u.role||'agent').replace(/_/g,' ');
       if(u.role==='super_admin'||u.role==='admin')document.getElementById('nav-sa-v1w2').style.display='';
-      supabase.from('organizations').select('name').eq('id',u.org_id).single().then(({data})=>{document.getElementById('topbar-org-i7j8').textContent=data?data.name:'';});
-      document.getElementById('topbar-date-k9l0').textContent='Tue, Aug 11, 2026 • 3:02 PM EDT';
+      getSupabase().from('organizations').select('name').eq('id',u.org_id).single().then(({data})=>{document.getElementById('topbar-org-i7j8').textContent=data?data.name:'';});
+      document.getElementById('topbar-date-k9l0').textContent='Tue, Aug 11, 2026 • 5:07 PM EDT';
       // Role banner
       const banner=document.getElementById('role-banner-m1n2');
       if(u.role==='manager'){banner.style.display='';banner.className='role-banner mgr';banner.innerHTML='<i data-lucide="crown" class="w-4 h-4 inline mr-1"></i>Manager View — You can see all team data, commissions, and the leaderboard';}
@@ -688,7 +721,7 @@
       if(loaders[id])loaders[id]();
     }
 
-    document.getElementById('nav-links-r7s8').addEventListener('click',function(e){
+    document.getElementById('nav-links-r7s8')?.addEventListener('click',function(e){
       const link=e.target.closest('.ni');if(!link)return;
       const sec=link.dataset.section;if(!sec)return;
       showSection(sec);
@@ -696,17 +729,17 @@
     });
 
     // Sidebar toggle
-    document.getElementById('sidebar-toggle-p5q6').addEventListener('click',function(){
+    document.getElementById('sidebar-toggle-p5q6')?.addEventListener('click',function(){
       sidebarCollapsed=!sidebarCollapsed;
       document.getElementById('sidebar-k3m4').classList.toggle('collapsed',sidebarCollapsed);
       document.getElementById('main-wrap-e3f4').classList.toggle('collapsed',sidebarCollapsed);
     });
 
     // Mobile menu
-    document.getElementById('mob-menu-btn-q1w2').addEventListener('click',function(){document.getElementById('sidebar-k3m4').classList.toggle('mob-open');});
+    document.getElementById('mob-menu-btn-q1w2')?.addEventListener('click',function(){document.getElementById('sidebar-k3m4').classList.toggle('mob-open');});
 
     // Logout
-    document.getElementById('logout-btn-c1d2').addEventListener('click',async function(){await supabase.auth.signOut();window.location.href='login.html';});
+    document.getElementById('logout-btn-c1d2')?.addEventListener('click',async function(){await getSupabase().auth.signOut();window.location.href='login.html';});
 
     // ═════════════════════════════════════════
     //  DASHBOARD
@@ -717,23 +750,23 @@
       document.getElementById('dash-greet-o3p4').textContent=`${getGreeting()}, ${firstName} 👋`;
       document.getElementById('dash-date-q5r6').textContent='Tuesday, August 11, 2026';
 
-      const{count:cCount}=await supabase.from('contacts').select('*',{count:'exact',head:true}).eq('org_id',oid);
+      const{count:cCount}=await getSupabase().from('contacts').select('*',{count:'exact',head:true}).eq('org_id',oid);
       document.getElementById('st-contacts-s7t8').textContent=(cCount||0).toLocaleString();
 
-      const{data:openDeals}=await supabase.from('deals').select('value').eq('org_id',oid).not('stage','in','("won","lost")');
+      const{data:openDeals}=await getSupabase().from('deals').select('value').eq('org_id',oid).not('stage','in','("won","lost")');
       document.getElementById('st-deals-u9v0').textContent=(openDeals||[]).length;
       const pv=(openDeals||[]).reduce((s,d)=>s+Number(d.value||0),0);
       document.getElementById('st-pipeline-w1x2').textContent=fmtMoney(pv);
 
       const mStart=new Date(2026,7,1).toISOString();
-      const{count:wonCount}=await supabase.from('deals').select('*',{count:'exact',head:true}).eq('org_id',oid).eq('stage','won').gte('closed_at',mStart);
+      const{count:wonCount}=await getSupabase().from('deals').select('*',{count:'exact',head:true}).eq('org_id',oid).eq('stage','won').gte('closed_at',mStart);
       document.getElementById('st-won-y3z4').textContent=(wonCount||0).toLocaleString();
 
       // Pipeline summary
       const stages=['lead','qualified','proposal','won'];
       const sLabels={lead:'Lead',qualified:'Qualified',proposal:'Proposal',won:'Won'};
       const sCols={lead:'c',qualified:'g',proposal:'o',won:'s'};
-      const{data:allDeals}=await supabase.from('deals').select('stage,value').eq('org_id',oid);
+      const{data:allDeals}=await getSupabase().from('deals').select('stage,value').eq('org_id',oid);
       let sumHtml='';
       stages.forEach(st=>{const d=(allDeals||[]).filter(x=>x.stage===st);sumHtml+=`<div class="stat ${sCols[st]}"><div class="stat-label">${sLabels[st]}</div><div style="font-size:1.2rem;font-weight:700;" class="tabular-nums">${d.length}</div><div style="font-size:0.72rem;color:var(--text3);" class="tabular-nums">${fmtMoney(d.reduce((s,x)=>s+Number(x.value||0),0))}</div></div>`;});
       document.getElementById('pipe-summary-i3j4').innerHTML=sumHtml;
@@ -742,19 +775,19 @@
       const months=[];
       for(let i=5;i>=0;i--){const dt=new Date(2026,7-i,1);months.push({label:dt.toLocaleDateString('en-US',{month:'short',year:'numeric'}),start:new Date(dt.getFullYear(),dt.getMonth(),1).toISOString(),end:new Date(dt.getFullYear(),dt.getMonth()+1,0,23,59,59).toISOString()});}
       const trendData=[];
-      for(const m of months){const{count}=await supabase.from('deals').select('*',{count:'exact',head:true}).eq('org_id',oid).gte('created_at',m.start).lte('created_at',m.end);trendData.push(count||0);}
+      for(const m of months){const{count}=await getSupabase().from('deals').select('*',{count:'exact',head:true}).eq('org_id',oid).gte('created_at',m.start).lte('created_at',m.end);trendData.push(count||0);}
       const ctx=document.getElementById('chart-trend-k5l6').getContext('2d');
       if(chartTrend)chartTrend.destroy();
       chartTrend=new Chart(ctx,{type:'line',data:{labels:months.map(m=>m.label),datasets:[{label:'Deals Created',data:trendData,borderColor:'#00C8E0',backgroundColor:'rgba(0,200,224,0.1)',fill:true,tension:0.3,pointBackgroundColor:'#00C8E0'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9BAAC8'}}},scales:{x:{ticks:{color:'#9BAAC8'},grid:{color:'rgba(37,51,82,0.4)'}},y:{ticks:{color:'#9BAAC8'},grid:{color:'rgba(37,51,82,0.4)'},beginAtZero:true}}}});
 
       // Recent contacts
-      const{data:recentC}=await supabase.from('contacts').select('*').eq('org_id',oid).order('created_at',{ascending:false}).limit(10);
+      const{data:recentC}=await getSupabase().from('contacts').select('*').eq('org_id',oid).order('created_at',{ascending:false}).limit(10);
       const rcT=document.getElementById('dash-rc-m7n8');
       if(!recentC||recentC.length===0){rcT.innerHTML='<tr><td colspan="4" class="text-center py-4" style="color:var(--text3);font-size:0.8rem;">No contacts yet</td></tr>';}
       else{rcT.innerHTML=recentC.map(c=>`<tr><td style="font-weight:600;">${c.full_name||'—'}</td><td>${c.company||'—'}</td><td>${statusBadge(c.status)}</td><td class="tabular-nums">${fmtDate(c.created_at)}</td></tr>`).join('');}
 
       // Recent activity
-      const{data:acts}=await supabase.from('activities').select('*').eq('org_id',oid).order('created_at',{ascending:false}).limit(10);
+      const{data:acts}=await getSupabase().from('activities').select('*').eq('org_id',oid).order('created_at',{ascending:false}).limit(10);
       const actDiv=document.getElementById('dash-act-o9p0');
       if(!acts||acts.length===0){actDiv.innerHTML='<div class="empty-state"><p style="font-size:0.8rem;">No recent activity</p></div>';}
       else{actDiv.innerHTML=acts.map(a=>`<div class="act-item"><div class="act-icon c"><i data-lucide="activity" class="w-3.5 h-3.5"></i></div><div class="min-w-0"><p style="font-size:0.78rem;color:var(--text2);">${a.description||a.type}</p><p style="font-size:0.67rem;color:var(--text3);" class="tabular-nums">${fmtDate(a.created_at)}</p></div></div>`).join('');
@@ -762,16 +795,16 @@
     }
 
     // Quick actions
-    document.getElementById('qa-contact-a5b6').addEventListener('click',()=>openContactModal());
-    document.getElementById('qa-deal-c7d8').addEventListener('click',()=>openDealModal());
-    document.getElementById('qa-task-e9f0').addEventListener('click',()=>openTaskModal());
-    document.getElementById('qa-email-g1h2').addEventListener('click',()=>{showSection('email');});
+    document.getElementById('qa-contact-a5b6')?.addEventListener('click',()=>openContactModal());
+    document.getElementById('qa-deal-c7d8')?.addEventListener('click',()=>openDealModal());
+    document.getElementById('qa-task-e9f0')?.addEventListener('click',()=>openTaskModal());
+    document.getElementById('qa-email-g1h2')?.addEventListener('click',()=>{showSection('email');});
 
     // ═════════════════════════════════════════
     //  CONTACTS
     // ═════════════════════════════════════════
     async function loadContacts(){
-      const{data,error}=await supabase.from('contacts').select('*').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
+      const{data,error}=await getSupabase().from('contacts').select('*').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
       if(error){showToast(error.message,'error');return;}
       contactsData=data||[];filteredContacts=[...contactsData];contactsPage=1;renderContacts();
     }
@@ -799,14 +832,14 @@
       if(prevB)prevB.addEventListener('click',()=>{contactsPage--;renderContacts();});
       if(nextB)nextB.addEventListener('click',()=>{contactsPage++;renderContacts();});
     }
-    document.getElementById('c-search-q1r2').addEventListener('input',()=>{contactsPage=1;renderContacts();});
-    document.getElementById('c-filter-s3t4').addEventListener('change',()=>{contactsPage=1;renderContacts();});
-    document.getElementById('c-tbody-w7x8').addEventListener('click',function(e){
+    document.getElementById('c-search-q1r2')?.addEventListener('input',()=>{contactsPage=1;renderContacts();});
+    document.getElementById('c-filter-s3t4')?.addEventListener('change',()=>{contactsPage=1;renderContacts();});
+    document.getElementById('c-tbody-w7x8')?.addEventListener('click',function(e){
       const eb=e.target.closest('.c-edit'),db=e.target.closest('.c-del');
       if(eb){const c=contactsData.find(x=>x.id===eb.dataset.id);if(c)openContactModal(c);}
       if(db){if(confirm('Delete this contact?'))deleteContact(db.dataset.id);}
     });
-    document.getElementById('new-contact-btn-u5v6').addEventListener('click',()=>openContactModal());
+    document.getElementById('new-contact-btn-u5v6')?.addEventListener('click',()=>openContactModal());
 
     function openContactModal(contact){
       const isE=!!contact;
@@ -825,20 +858,20 @@
           const obj={full_name:name,company:document.getElementById('mc-co').value.trim(),email:em,phone:document.getElementById('mc-ph').value.trim(),status:document.getElementById('mc-st').value,assigned_to:document.getElementById('mc-as').value||null,notes:document.getElementById('mc-nt').value.trim(),org_id:currentUser.org_id};
           const btn=document.getElementById('mc-save');btn.innerHTML='<span class="spinner"></span> Saving...';btn.disabled=true;
           let error;
-          if(isE){({error}=await supabase.from('contacts').update(obj).eq('id',contact.id));}
-          else{({error}=await supabase.from('contacts').insert(obj));}
+          if(isE){({error}=await getSupabase().from('contacts').update(obj).eq('id',contact.id));}
+          else{({error}=await getSupabase().from('contacts').insert(obj));}
           if(error){showToast(error.message,'error');btn.textContent=isE?'Update':'Add';btn.disabled=false;return;}
           showToast(isE?'Contact updated':'Contact added');closeModal();loadContacts();
         });
       });
     }
-    async function deleteContact(id){const{error}=await supabase.from('contacts').delete().eq('id',id);if(error){showToast(error.message,'error');return;}showToast('Contact deleted');loadContacts();}
+    async function deleteContact(id){const{error}=await getSupabase().from('contacts').delete().eq('id',id);if(error){showToast(error.message,'error');return;}showToast('Contact deleted');loadContacts();}
 
     // ═════════════════════════════════════════
     //  DEALS (Kanban)
     // ═════════════════════════════════════════
     async function loadDeals(){
-      const{data,error}=await supabase.from('deals').select('*, contacts(full_name, company)').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
+      const{data,error}=await getSupabase().from('deals').select('*, contacts(full_name, company)').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
       if(error){showToast(error.message,'error');return;}
       dealsData=data||[];renderKanban();
     }
@@ -874,22 +907,22 @@
           e.preventDefault();this.style.background='';
           const did=e.dataTransfer.getData('text/plain');const ns=this.dataset.stage;
           const upd={stage:ns};if(ns==='won')upd.closed_at=new Date().toISOString();
-          const{error}=await supabase.from('deals').update(upd).eq('id',did);
+          const{error}=await getSupabase().from('deals').update(upd).eq('id',did);
           if(error){showToast(error.message,'error');return;}
           showToast(`Deal moved to ${ns}`);loadDeals();
         });
       });
       document.querySelectorAll('.deal-del').forEach(btn=>{
         btn.addEventListener('click',async function(e){e.stopPropagation();if(!confirm('Delete this deal?'))return;
-          const{error}=await supabase.from('deals').delete().eq('id',this.dataset.id);
+          const{error}=await getSupabase().from('deals').delete().eq('id',this.dataset.id);
           if(error){showToast(error.message,'error');return;}showToast('Deal deleted');loadDeals();});
       });
     }
-    document.getElementById('new-deal-btn-a1b2').addEventListener('click',()=>openDealModal());
+    document.getElementById('new-deal-btn-a1b2')?.addEventListener('click',()=>openDealModal());
 
     async function openDealModal(deal){
       const isE=!!deal;
-      const{data:cl}=await supabase.from('contacts').select('id, full_name, company').eq('org_id',currentUser.org_id).order('full_name');
+      const{data:cl}=await getSupabase().from('contacts').select('id, full_name, company').eq('org_id',currentUser.org_id).order('full_name');
       const cOpts=(cl||[]).map(c=>`<option value="${c.id}"${isE&&deal.contact_id===c.id?' selected':''}>${c.full_name}${c.company?' ('+c.company+')':''}</option>`).join('');
       const html=`<label>Title *</label><input id="md-t" type="text" value="${isE?deal.title||'':''}">
         <label>Value ($)</label><input id="md-v" type="number" value="${isE?deal.value||'':''}">
@@ -905,7 +938,7 @@
           const obj={title,value:parseFloat(document.getElementById('md-v').value)||0,stage,contact_id:document.getElementById('md-c').value||null,assigned_to:document.getElementById('md-a').value||null,notes:document.getElementById('md-n').value.trim(),org_id:currentUser.org_id};
           if(stage==='won')obj.closed_at=new Date().toISOString();
           const btn=document.getElementById('md-save');btn.innerHTML='<span class="spinner"></span> Saving...';btn.disabled=true;
-          let error;if(isE){({error}=await supabase.from('deals').update(obj).eq('id',deal.id));}else{({error}=await supabase.from('deals').insert(obj));}
+          let error;if(isE){({error}=await getSupabase().from('deals').update(obj).eq('id',deal.id));}else{({error}=await getSupabase().from('deals').insert(obj));}
           if(error){showToast(error.message,'error');btn.textContent=isE?'Update':'Create';btn.disabled=false;return;}
           showToast(isE?'Deal updated':'Deal created');closeModal();loadDeals();
         });
@@ -916,7 +949,7 @@
     //  TASKS
     // ═════════════════════════════════════════
     async function loadTasks(){
-      let q=supabase.from('tasks').select('*').eq('org_id',currentUser.org_id).order('due_date',{ascending:true});
+      let q=getSupabase().from('tasks').select('*').eq('org_id',currentUser.org_id).order('due_date',{ascending:true});
       if(currentUser.role==='agent')q=q.eq('assigned_to',currentUser.id);
       const{data,error}=await q;if(error){showToast(error.message,'error');return;}
       tasksData=data||[];renderTasks();
@@ -946,20 +979,20 @@
       container.innerHTML=html;
       if(typeof lucide!=='undefined'&&typeof lucide.createIcons==='function')lucide.createIcons();
     }
-    document.getElementById('tasks-wrap-g7h8').addEventListener('click',function(e){
+    document.getElementById('tasks-wrap-g7h8')?.addEventListener('click',function(e){
       const eb=e.target.closest('.t-edit'),db=e.target.closest('.t-del');
       if(eb){const t=tasksData.find(x=>x.id===eb.dataset.id);if(t)openTaskModal(t);}
       if(db){if(confirm('Delete this task?'))deleteTask(db.dataset.id);}
     });
-    document.getElementById('tasks-wrap-g7h8').addEventListener('change',function(e){if(e.target.classList.contains('task-chk'))toggleTask(e.target.dataset.id,e.target.checked);});
-    async function toggleTask(id,done){const{error}=await supabase.from('tasks').update({status:done?'completed':'pending'}).eq('id',id);if(error){showToast(error.message,'error');return;}loadTasks();}
-    async function deleteTask(id){const{error}=await supabase.from('tasks').delete().eq('id',id);if(error){showToast(error.message,'error');return;}showToast('Task deleted');loadTasks();}
-    document.getElementById('new-task-btn-e5f6').addEventListener('click',()=>openTaskModal());
+    document.getElementById('tasks-wrap-g7h8')?.addEventListener('change',function(e){if(e.target.classList.contains('task-chk'))toggleTask(e.target.dataset.id,e.target.checked);});
+    async function toggleTask(id,done){const{error}=await getSupabase().from('tasks').update({status:done?'completed':'pending'}).eq('id',id);if(error){showToast(error.message,'error');return;}loadTasks();}
+    async function deleteTask(id){const{error}=await getSupabase().from('tasks').delete().eq('id',id);if(error){showToast(error.message,'error');return;}showToast('Task deleted');loadTasks();}
+    document.getElementById('new-task-btn-e5f6')?.addEventListener('click',()=>openTaskModal());
 
     async function openTaskModal(task){
       const isE=!!task;
-      const{data:cl}=await supabase.from('contacts').select('id, full_name').eq('org_id',currentUser.org_id);
-      const{data:dl}=await supabase.from('deals').select('id, title').eq('org_id',currentUser.org_id);
+      const{data:cl}=await getSupabase().from('contacts').select('id, full_name').eq('org_id',currentUser.org_id);
+      const{data:dl}=await getSupabase().from('deals').select('id, title').eq('org_id',currentUser.org_id);
       const cO=(cl||[]).map(c=>`<option value="${c.id}"${isE&&task.contact_id===c.id?' selected':''}>${c.full_name}</option>`).join('');
       const dO=(dl||[]).map(d=>`<option value="${d.id}"${isE&&task.deal_id===d.id?' selected':''}>${d.title}</option>`).join('');
       const html=`<label>Title *</label><input id="mt-t" type="text" value="${isE?task.title||'':''}">
@@ -975,7 +1008,7 @@
           const title=document.getElementById('mt-t').value.trim();if(!title){showToast('Title is required','error');return;}
           const obj={title,description:document.getElementById('mt-d').value.trim(),due_date:document.getElementById('mt-dd').value||null,status:document.getElementById('mt-s').value,assigned_to:document.getElementById('mt-a').value||null,contact_id:document.getElementById('mt-c').value||null,deal_id:document.getElementById('mt-dl').value||null,org_id:currentUser.org_id};
           const btn=document.getElementById('mt-save');btn.innerHTML='<span class="spinner"></span> Saving...';btn.disabled=true;
-          let error;if(isE){({error}=await supabase.from('tasks').update(obj).eq('id',task.id));}else{({error}=await supabase.from('tasks').insert(obj));}
+          let error;if(isE){({error}=await getSupabase().from('tasks').update(obj).eq('id',task.id));}else{({error}=await getSupabase().from('tasks').insert(obj));}
           if(error){showToast(error.message,'error');btn.textContent=isE?'Update':'Add';btn.disabled=false;return;}
           showToast(isE?'Task updated':'Task added');closeModal();loadTasks();
         });
@@ -986,7 +1019,7 @@
     //  CALENDAR
     // ═════════════════════════════════════════
     async function loadCalendar(){
-      const{data}=await supabase.from('tasks').select('*').eq('org_id',currentUser.org_id).not('due_date','is',null);
+      const{data}=await getSupabase().from('tasks').select('*').eq('org_id',currentUser.org_id).not('due_date','is',null);
       calTasks=data||[];renderCalendar();
     }
     function renderCalendar(){
@@ -1013,14 +1046,14 @@
       else{td.innerHTML=dt.map(t=>`<div class="flex items-center gap-2 py-2" style="border-bottom:1px solid rgba(37,51,82,0.4);">${statusBadge(t.status)}<span style="font-size:0.82rem;">${t.title}</span></div>`).join('');}
       p.style.display='block';
     }
-    document.getElementById('cal-prev-i9j0').addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();});
-    document.getElementById('cal-next-m3n4').addEventListener('click',()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();});
+    document.getElementById('cal-prev-i9j0')?.addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();});
+    document.getElementById('cal-next-m3n4')?.addEventListener('click',()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();});
 
     // ═════════════════════════════════════════
     //  EMAIL
     // ═════════════════════════════════════════
     async function loadEmails(){
-      let q=supabase.from('email_log').select('*').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
+      let q=getSupabase().from('email_log').select('*').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
       if(emailFilter==='sent')q=q.eq('status','sent');else if(emailFilter==='draft')q=q.eq('status','draft');
       const{data,error}=await q;if(error){showToast(error.message,'error');return;}
       emailsData=data||[];renderEmailList();
@@ -1042,13 +1075,13 @@
       document.getElementById('em-detail-a7b8').innerHTML=`<div style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--navy-border);"><h3 style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:8px;">${e.subject||'(no subject)'}</h3><div style="font-size:0.72rem;color:var(--text3);" class="space-y-1"><div><b>From:</b> ${e.from_email||'—'}</div><div><b>To:</b> ${e.to_email||'—'}</div><div><b>Date:</b> ${fmtDate(e.created_at)}</div><div>${statusBadge(e.status)}</div></div></div><div style="font-size:0.82rem;white-space:pre-wrap;color:var(--text2);">${e.body||''}</div>`;
     }
     document.querySelectorAll('.em-filter').forEach(btn=>{btn.addEventListener('click',function(){emailFilter=this.dataset.filter;document.querySelectorAll('.em-filter').forEach(b=>{b.classList.remove('btn-primary');b.classList.add('btn-secondary');});this.classList.remove('btn-secondary');this.classList.add('btn-primary');loadEmails();});});
-    document.getElementById('compose-btn-w3x4').addEventListener('click',()=>{
+    document.getElementById('compose-btn-w3x4')?.addEventListener('click',()=>{
       const html=`<label>To *</label><input id="me-to" type="email" placeholder="recipient@example.com"><label>Subject</label><input id="me-sub" type="text"><label>Body</label><textarea id="me-body" rows="6"></textarea><button class="btn btn-primary w-full mt-4" id="me-send"><i data-lucide="send" class="w-4 h-4"></i> Send Email</button>`;
       openModal('Compose Email',html,()=>{document.getElementById('me-send').addEventListener('click',async()=>{
         const to=document.getElementById('me-to').value.trim();if(!to){showToast('Recipient is required','error');return;}
         const obj={org_id:currentUser.org_id,from_email:currentUser.email||'me',to_email:to,subject:document.getElementById('me-sub').value.trim(),body:document.getElementById('me-body').value.trim(),status:'sent'};
         const btn=document.getElementById('me-send');btn.innerHTML='<span class="spinner"></span> Sending...';btn.disabled=true;
-        const{error}=await supabase.from('email_log').insert(obj);if(error){showToast(error.message,'error');btn.innerHTML='Send Email';btn.disabled=false;return;}
+        const{error}=await getSupabase().from('email_log').insert(obj);if(error){showToast(error.message,'error');btn.innerHTML='Send Email';btn.disabled=false;return;}
         showToast('Email sent');closeModal();loadEmails();
       });});
     });
@@ -1057,7 +1090,7 @@
     //  WHATSAPP
     // ═════════════════════════════════════════
     async function loadWhatsApp(){
-      const{data}=await supabase.from('contacts').select('*').eq('org_id',currentUser.org_id).not('phone','is',null).order('full_name');
+      const{data}=await getSupabase().from('contacts').select('*').eq('org_id',currentUser.org_id).not('phone','is',null).order('full_name');
       waContacts=(data||[]).filter(c=>c.phone&&c.phone.trim());renderWaContacts();
       waSelectedContact=null;document.getElementById('wa-hdr-g3h4').style.display='none';document.getElementById('wa-compose-k7l8').style.display='none';document.getElementById('wa-empty-q3r4').style.display='';document.getElementById('wa-msgs-i5j6').innerHTML='';
     }
@@ -1073,23 +1106,23 @@
       document.getElementById('wa-hdr-g3h4').style.display='';
       document.getElementById('wa-hdr-g3h4').innerHTML=`<div class="flex items-center gap-2"><div style="width:30px;height:30px;border-radius:50%;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;color:var(--success);font-size:0.6rem;font-weight:700;">${initials(c.full_name)}</div><div><div style="font-size:0.82rem;font-weight:600;">${c.full_name}</div><div style="font-size:0.68rem;color:var(--text3);">${c.phone}</div></div></div>`;
       document.getElementById('wa-compose-k7l8').style.display='';document.getElementById('wa-empty-q3r4').style.display='none';
-      const{data}=await supabase.from('activities').select('*').eq('org_id',currentUser.org_id).eq('type','whatsapp').eq('entity_id',c.id).order('created_at',{ascending:true});
+      const{data}=await getSupabase().from('activities').select('*').eq('org_id',currentUser.org_id).eq('type','whatsapp').eq('entity_id',c.id).order('created_at',{ascending:true});
       const md=document.getElementById('wa-msgs-i5j6');
       md.innerHTML=(data||[]).map(a=>`<div class="chat-out">${a.description||''}<div style="font-size:0.6rem;opacity:0.7;margin-top:4px;" class="tabular-nums">${fmtDate(a.created_at)}</div></div>`).join('');
       md.scrollTop=md.scrollHeight;
     }
-    document.getElementById('wa-send-o1p2').addEventListener('click',async function(){
+    document.getElementById('wa-send-o1p2')?.addEventListener('click',async function(){
       if(!waSelectedContact)return;const input=document.getElementById('wa-input-m9n0');const msg=input.value.trim();if(!msg)return;
-      const{error}=await supabase.from('activities').insert({org_id:currentUser.org_id,user_id:currentUser.user_id,type:'whatsapp',description:msg,entity_type:'contact',entity_id:waSelectedContact.id});
+      const{error}=await getSupabase().from('activities').insert({org_id:currentUser.org_id,user_id:currentUser.user_id,type:'whatsapp',description:msg,entity_type:'contact',entity_id:waSelectedContact.id});
       if(error){showToast(error.message,'error');return;}input.value='';selectWaContact(waSelectedContact);
     });
-    document.getElementById('wa-new-c9d0').addEventListener('click',()=>{if(waContacts.length>0)selectWaContact(waContacts[0]);});
+    document.getElementById('wa-new-c9d0')?.addEventListener('click',()=>{if(waContacts.length>0)selectWaContact(waContacts[0]);});
 
     // ═════════════════════════════════════════
     //  AUTOMATIONS
     // ═════════════════════════════════════════
     async function loadAutomations(){
-      const{data,error}=await supabase.from('automations').select('*').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
+      const{data,error}=await getSupabase().from('automations').select('*').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
       if(error){showToast(error.message,'error');return;}autoData=data||[];renderAutomations();
     }
     function renderAutomations(){
@@ -1101,15 +1134,15 @@
         <td><button class="auto-del" data-id="${a.id}" style="color:var(--error);cursor:pointer;background:none;border:none;"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
       if(typeof lucide!=='undefined'&&typeof lucide.createIcons==='function')lucide.createIcons();
     }
-    document.getElementById('auto-tbody-u7v8').addEventListener('change',async function(e){if(e.target.classList.contains('auto-tog')){const{error}=await supabase.from('automations').update({is_active:e.target.checked}).eq('id',e.target.dataset.id);if(error)showToast(error.message,'error');else showToast('Automation updated');}});
-    document.getElementById('auto-tbody-u7v8').addEventListener('click',async function(e){const db=e.target.closest('.auto-del');if(db&&confirm('Delete this automation?')){const{error}=await supabase.from('automations').delete().eq('id',db.dataset.id);if(error){showToast(error.message,'error');return;}showToast('Automation deleted');loadAutomations();}});
-    document.getElementById('new-auto-btn-s5t6').addEventListener('click',()=>{
+    document.getElementById('auto-tbody-u7v8')?.addEventListener('change',async function(e){if(e.target.classList.contains('auto-tog')){const{error}=await getSupabase().from('automations').update({is_active:e.target.checked}).eq('id',e.target.dataset.id);if(error)showToast(error.message,'error');else showToast('Automation updated');}});
+    document.getElementById('auto-tbody-u7v8')?.addEventListener('click',async function(e){const db=e.target.closest('.auto-del');if(db&&confirm('Delete this automation?')){const{error}=await getSupabase().from('automations').delete().eq('id',db.dataset.id);if(error){showToast(error.message,'error');return;}showToast('Automation deleted');loadAutomations();}});
+    document.getElementById('new-auto-btn-s5t6')?.addEventListener('click',()=>{
       const html=`<label>Name *</label><input id="ma-n" type="text"><label>Trigger</label><select id="ma-tr"><option value="contact_created">Contact Created</option><option value="deal_stage_changed">Deal Stage Changed</option><option value="task_due">Task Due</option></select><label>Action</label><select id="ma-ac"><option value="send_email">Send Email</option><option value="send_whatsapp">Send WhatsApp</option><option value="create_task">Create Task</option></select><div class="flex items-center gap-2 mt-4"><label style="font-size:0.8rem;">Active</label><input type="checkbox" id="ma-act" checked style="accent-color:var(--cyan);width:16px;height:16px;"></div><button class="btn btn-primary w-full mt-4" id="ma-save">Create Automation</button>`;
       openModal('New Automation',html,()=>{document.getElementById('ma-save').addEventListener('click',async()=>{
         const name=document.getElementById('ma-n').value.trim();if(!name){showToast('Name is required','error');return;}
         const obj={name,trigger_type:document.getElementById('ma-tr').value,action_type:document.getElementById('ma-ac').value,is_active:document.getElementById('ma-act').checked,org_id:currentUser.org_id};
         const btn=document.getElementById('ma-save');btn.innerHTML='<span class="spinner"></span> Saving...';btn.disabled=true;
-        const{error}=await supabase.from('automations').insert(obj);if(error){showToast(error.message,'error');btn.textContent='Create';btn.disabled=false;return;}
+        const{error}=await getSupabase().from('automations').insert(obj);if(error){showToast(error.message,'error');btn.textContent='Create';btn.disabled=false;return;}
         showToast('Automation created');closeModal();loadAutomations();
       });});
     });
@@ -1123,10 +1156,10 @@
       const sm=parseInt(ms.value);const mS=new Date(2026,sm,1).toISOString();const mE=new Date(2026,sm+1,0,23,59,59).toISOString();const oid=currentUser.org_id;
       const stats=[];
       for(const p of orgProfiles){
-        const{count:cA}=await supabase.from('contacts').select('*',{count:'exact',head:true}).eq('org_id',oid).eq('assigned_to',p.id).gte('created_at',mS).lte('created_at',mE);
-        const{data:wd}=await supabase.from('deals').select('value').eq('org_id',oid).eq('assigned_to',p.id).eq('stage','won').gte('closed_at',mS).lte('closed_at',mE);
+        const{count:cA}=await getSupabase().from('contacts').select('*',{count:'exact',head:true}).eq('org_id',oid).eq('assigned_to',p.id).gte('created_at',mS).lte('created_at',mE);
+        const{data:wd}=await getSupabase().from('deals').select('value').eq('org_id',oid).eq('assigned_to',p.id).eq('stage','won').gte('closed_at',mS).lte('closed_at',mE);
         const rev=(wd||[]).reduce((s,d)=>s+Number(d.value||0),0);
-        const{count:tc}=await supabase.from('tasks').select('*',{count:'exact',head:true}).eq('org_id',oid).eq('assigned_to',p.id).eq('status','completed').gte('created_at',mS).lte('created_at',mE);
+        const{count:tc}=await getSupabase().from('tasks').select('*',{count:'exact',head:true}).eq('org_id',oid).eq('assigned_to',p.id).eq('status','completed').gte('created_at',mS).lte('created_at',mE);
         stats.push({name:p.full_name||p.email,contacts:cA||0,dealsWon:(wd||[]).length,revenue:rev,tasks:tc||0});
       }
       stats.sort((a,b)=>b.revenue-a.revenue);
@@ -1141,33 +1174,33 @@
     //  COMMISSION
     // ═════════════════════════════════════════
     async function loadCommission(){
-      const{data,error}=await supabase.from('payout_requests').select('*, profiles(full_name)').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
+      const{data,error}=await getSupabase().from('payout_requests').select('*, profiles(full_name)').eq('org_id',currentUser.org_id).order('created_at',{ascending:false});
       if(error){showToast(error.message,'error');return;}
       const tb=document.getElementById('payout-tbody-o7p8');const payouts=data||[];
       const isA=currentUser.role==='admin'||currentUser.role==='super_admin'||currentUser.role==='manager';
       if(payouts.length===0){tb.innerHTML='<tr><td colspan="6" class="text-center py-4" style="color:var(--text3);">No payouts yet</td></tr>';}
       else{tb.innerHTML=payouts.map(p=>`<tr><td>${p.profiles?p.profiles.full_name:'—'}</td><td class="tabular-nums">${fmtMoney(p.amount)}</td><td>${p.period||'—'}</td><td>${statusBadge(p.status)}</td><td class="tabular-nums">${fmtDate(p.created_at)}</td><td>${isA&&p.status==='pending'?`<button class="btn btn-sm btn-primary po-appr" data-id="${p.id}">Approve</button>`:''}${isA&&p.status==='approved'?`<button class="btn btn-sm btn-secondary po-paid" data-id="${p.id}">Mark Paid</button>`:''}</td></tr>`).join('');}
     }
-    document.getElementById('calc-btn-i1j2').addEventListener('click',function(){
+    document.getElementById('calc-btn-i1j2')?.addEventListener('click',function(){
       const sale=parseFloat(document.getElementById('comm-sale-c5d6').value)||0;const rate=parseFloat(document.getElementById('comm-rate-e7f8').value)||0;const bonus=parseFloat(document.getElementById('comm-bonus-g9h0').value)||0;
       const base=sale*(rate/100);const total=base+bonus;
       const d=document.getElementById('comm-result-k3l4');d.style.display='block';
       d.innerHTML=`<div class="grid grid-cols-3 gap-3 text-center"><div class="stat c"><div class="stat-label">Base</div><div style="font-size:1.1rem;font-weight:700;color:var(--cyan);" class="tabular-nums">${fmtMoney(base)}</div></div><div class="stat g"><div class="stat-label">Bonus</div><div style="font-size:1.1rem;font-weight:700;color:var(--gold);" class="tabular-nums">${fmtMoney(bonus)}</div></div><div class="stat s"><div class="stat-label">Total</div><div style="font-size:1.1rem;font-weight:700;color:var(--success);" class="tabular-nums">${fmtMoney(total)}</div></div></div>`;
     });
-    document.getElementById('req-payout-m5n6').addEventListener('click',()=>{
+    document.getElementById('req-payout-m5n6')?.addEventListener('click',()=>{
       const html=`<label>Amount ($) *</label><input id="mp-a" type="number"><label>Period</label><input id="mp-p" type="text" placeholder="e.g. August 2026"><button class="btn btn-primary w-full mt-4" id="mp-save">Submit Request</button>`;
       openModal('Request Payout',html,()=>{document.getElementById('mp-save').addEventListener('click',async()=>{
         const amt=parseFloat(document.getElementById('mp-a').value);if(!amt){showToast('Amount is required','error');return;}
         const obj={org_id:currentUser.org_id,agent_id:currentUser.id,amount:amt,period:document.getElementById('mp-p').value.trim(),status:'pending'};
         const btn=document.getElementById('mp-save');btn.innerHTML='<span class="spinner"></span> Submitting...';btn.disabled=true;
-        const{error}=await supabase.from('payout_requests').insert(obj);if(error){showToast(error.message,'error');btn.textContent='Submit';btn.disabled=false;return;}
+        const{error}=await getSupabase().from('payout_requests').insert(obj);if(error){showToast(error.message,'error');btn.textContent='Submit';btn.disabled=false;return;}
         showToast('Payout request submitted');closeModal();loadCommission();
       });});
     });
-    document.getElementById('payout-tbody-o7p8').addEventListener('click',async function(e){
+    document.getElementById('payout-tbody-o7p8')?.addEventListener('click',async function(e){
       const ab=e.target.closest('.po-appr'),pb=e.target.closest('.po-paid');
-      if(ab){const{error}=await supabase.from('payout_requests').update({status:'approved'}).eq('id',ab.dataset.id);if(error){showToast(error.message,'error');return;}showToast('Payout approved');loadCommission();}
-      if(pb){const{error}=await supabase.from('payout_requests').update({status:'paid'}).eq('id',pb.dataset.id);if(error){showToast(error.message,'error');return;}showToast('Payout marked as paid');loadCommission();}
+      if(ab){const{error}=await getSupabase().from('payout_requests').update({status:'approved'}).eq('id',ab.dataset.id);if(error){showToast(error.message,'error');return;}showToast('Payout approved');loadCommission();}
+      if(pb){const{error}=await getSupabase().from('payout_requests').update({status:'paid'}).eq('id',pb.dataset.id);if(error){showToast(error.message,'error');return;}showToast('Payout marked as paid');loadCommission();}
     });
 
     // ═════════════════════════════════════════
@@ -1195,10 +1228,10 @@
     }
     async function applyReports(){
       const sd=document.getElementById('rpt-start-u3v4').value,ed=document.getElementById('rpt-end-w5x6').value,oid=currentUser.org_id;
-      const{count:tc}=await supabase.from('contacts').select('*',{count:'exact',head:true}).eq('org_id',oid).gte('created_at',sd).lte('created_at',ed+'T23:59:59');
-      const{data:ad}=await supabase.from('deals').select('*').eq('org_id',oid).gte('created_at',sd).lte('created_at',ed+'T23:59:59');
+      const{count:tc}=await getSupabase().from('contacts').select('*',{count:'exact',head:true}).eq('org_id',oid).gte('created_at',sd).lte('created_at',ed+'T23:59:59');
+      const{data:ad}=await getSupabase().from('deals').select('*').eq('org_id',oid).gte('created_at',sd).lte('created_at',ed+'T23:59:59');
       const wd=(ad||[]).filter(d=>d.stage==='won');const rev=wd.reduce((s,d)=>s+Number(d.value||0),0);
-      const{count:tkc}=await supabase.from('tasks').select('*',{count:'exact',head:true}).eq('org_id',oid).eq('status','completed').gte('created_at',sd).lte('created_at',ed+'T23:59:59');
+      const{count:tkc}=await getSupabase().from('tasks').select('*',{count:'exact',head:true}).eq('org_id',oid).eq('status','completed').gte('created_at',sd).lte('created_at',ed+'T23:59:59');
       document.getElementById('rpt-stats-a9b0').innerHTML=`<div class="stat c"><div class="stat-label">Total Contacts</div><div class="stat-val">${(tc||0).toLocaleString()}</div></div><div class="stat g"><div class="stat-label">Total Deals</div><div class="stat-val">${(ad||[]).length}</div></div><div class="stat s"><div class="stat-label">Revenue Won</div><div class="stat-val" style="color:var(--success);">${fmtMoney(rev)}</div></div><div class="stat o"><div class="stat-label">Tasks Done</div><div class="stat-val">${(tkc||0).toLocaleString()}</div></div>`;
 
       const sc={};(ad||[]).forEach(d=>{sc[d.stage]=(sc[d.stage]||0)+1;});
@@ -1206,33 +1239,33 @@
       chartStage=new Chart(ctx2,{type:'bar',data:{labels:Object.keys(sc).map(s=>s.charAt(0).toUpperCase()+s.slice(1)),datasets:[{label:'Deals',data:Object.values(sc),backgroundColor:['#00C8E0','#C9A84C','#FF6B2B','#22C55E','#EF4444'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9BAAC8'},grid:{display:false}},y:{ticks:{color:'#9BAAC8'},grid:{color:'rgba(37,51,82,0.4)'},beginAtZero:true}}}});
 
       const months=[];for(let i=5;i>=0;i--){const dt=new Date(2026,7-i,1);months.push({label:dt.toLocaleDateString('en-US',{month:'short'}),start:new Date(dt.getFullYear(),dt.getMonth(),1).toISOString(),end:new Date(dt.getFullYear(),dt.getMonth()+1,0,23,59,59).toISOString()});}
-      const cc=[];for(const m of months){const{count}=await supabase.from('contacts').select('*',{count:'exact',head:true}).eq('org_id',oid).gte('created_at',m.start).lte('created_at',m.end);cc.push(count||0);}
+      const cc=[];for(const m of months){const{count}=await getSupabase().from('contacts').select('*',{count:'exact',head:true}).eq('org_id',oid).gte('created_at',m.start).lte('created_at',m.end);cc.push(count||0);}
       const ctx3=document.getElementById('chart-ctime-e3f4').getContext('2d');if(chartCtime)chartCtime.destroy();
       chartCtime=new Chart(ctx3,{type:'line',data:{labels:months.map(m=>m.label),datasets:[{label:'Contacts',data:cc,borderColor:'#00C8E0',backgroundColor:'rgba(0,200,224,0.1)',fill:true,tension:0.3,pointBackgroundColor:'#00C8E0'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9BAAC8'}}},scales:{x:{ticks:{color:'#9BAAC8'},grid:{display:false}},y:{ticks:{color:'#9BAAC8'},grid:{color:'rgba(37,51,82,0.4)'},beginAtZero:true}}}});
 
       const ctx4=document.getElementById('chart-pie-g5h6').getContext('2d');if(chartPie)chartPie.destroy();
       chartPie=new Chart(ctx4,{type:'doughnut',data:{labels:Object.keys(sc).map(s=>s.charAt(0).toUpperCase()+s.slice(1)),datasets:[{data:Object.values(sc),backgroundColor:['#00C8E0','#C9A84C','#FF6B2B','#22C55E','#EF4444']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9BAAC8'}}}}});
     }
-    document.getElementById('rpt-apply-y7z8').addEventListener('click',applyReports);
+    document.getElementById('rpt-apply-y7z8')?.addEventListener('click',applyReports);
 
     // ═════════════════════════════════════════
     //  SETTINGS
     // ═════════════════════════════════════════
     async function loadSettings(){
       if(!currentUser){showToast('Not authenticated','error');return;}
-      const{data:org}=await supabase.from('organizations').select('*').eq('id',currentUser.org_id).single();
+      const{data:org}=await getSupabase().from('organizations').select('*').eq('id',currentUser.org_id).single();
       if(org){document.getElementById('set-org-i7j8').value=org.name||'';document.getElementById('set-dom-k9l0').value=org.domain||'';document.getElementById('set-ind-m1n2').value=(org.settings||{}).industry||'';}
       document.getElementById('set-name-q5r6').value=currentUser.full_name||'';document.getElementById('set-email-s7t8').value=currentUser.email||'';document.getElementById('set-phone-u9v0').value=currentUser.phone||'';document.getElementById('set-avatar-w1x2').value=currentUser.avatar_url||'';
     }
-    document.getElementById('save-org-o3p4').addEventListener('click',async()=>{
+    document.getElementById('save-org-o3p4')?.addEventListener('click',async()=>{
       if(!currentUser){showToast('Not authenticated','error');return;}
-      const{error}=await supabase.from('organizations').update({name:document.getElementById('set-org-i7j8').value.trim(),domain:document.getElementById('set-dom-k9l0').value.trim()}).eq('id',currentUser.org_id);
+      const{error}=await getSupabase().from('organizations').update({name:document.getElementById('set-org-i7j8').value.trim(),domain:document.getElementById('set-dom-k9l0').value.trim()}).eq('id',currentUser.org_id);
       if(error){showToast(error.message,'error');return;}showToast('Organization saved');
     });
-    document.getElementById('save-profile-y3z4').addEventListener('click',async()=>{
+    document.getElementById('save-profile-y3z4')?.addEventListener('click',async()=>{
       if(!currentUser){showToast('Not authenticated','error');return;}
       const upd={full_name:document.getElementById('set-name-q5r6').value.trim(),phone:document.getElementById('set-phone-u9v0').value.trim(),avatar_url:document.getElementById('set-avatar-w1x2').value.trim()};
-      const{error}=await supabase.from('profiles').update(upd).eq('id',currentUser.id);
+      const{error}=await getSupabase().from('profiles').update(upd).eq('id',currentUser.id);
       if(error){showToast(error.message,'error');return;}
       currentUser.full_name=upd.full_name;currentUser.phone=upd.phone;
       document.getElementById('sb-uname-y7z8').textContent=upd.full_name;document.getElementById('sb-avatar-t5u6').textContent=initials(upd.full_name);
@@ -1248,11 +1281,11 @@
         ct.innerHTML='<div class="panel text-center" style="padding:48px 20px;"><i data-lucide="shield-alert" class="w-12 h-12 mx-auto mb-3" style="color:var(--error);"></i><h2 style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--error);">Access Denied</h2><p style="font-size:0.82rem;color:var(--text3);margin-top:8px;">This area is restricted to administrators.</p></div>';
         if(typeof lucide!=='undefined'&&typeof lucide.createIcons==='function')lucide.createIcons();return;
       }
-      const{data:orgs}=await supabase.from('organizations').select('*').order('created_at',{ascending:false});
-      const{data:users}=await supabase.from('profiles').select('*').order('created_at',{ascending:false});
-      const{count:tu}=await supabase.from('profiles').select('*',{count:'exact',head:true});
-      const{count:to}=await supabase.from('organizations').select('*',{count:'exact',head:true});
-      const{count:tcn}=await supabase.from('contacts').select('*',{count:'exact',head:true});
+      const{data:orgs}=await getSupabase().from('organizations').select('*').order('created_at',{ascending:false});
+      const{data:users}=await getSupabase().from('profiles').select('*').order('created_at',{ascending:false});
+      const{count:tu}=await getSupabase().from('profiles').select('*',{count:'exact',head:true});
+      const{count:to}=await getSupabase().from('organizations').select('*',{count:'exact',head:true});
+      const{count:tcn}=await getSupabase().from('contacts').select('*',{count:'exact',head:true});
       ct.innerHTML=`<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div class="stat c"><div class="stat-label">Total Users</div><div class="stat-val">${(tu||0).toLocaleString()}</div></div>
         <div class="stat g"><div class="stat-label">Total Organizations</div><div class="stat-val">${(to||0).toLocaleString()}</div></div>
