@@ -1098,18 +1098,30 @@ async function initDashboard(){
   if(sr)sr.value=userRole.charAt(0).toUpperCase()+userRole.slice(1);
   if(sn)sn.value=name;
 
-  // Wait for session to be confirmed then load data
+  // Wait for confirmed session then load — handles race condition
   async function loadDataWhenReady(){
+    // First attempt with current session
     const {data:{session}} = await db.auth.getSession();
-    if(session){
+    if(session && session.user){
       await loadData();
-      if(allContacts.length===0){
-        setTimeout(async()=>{
+    }
+    // Backup: also listen for auth state change
+    db.auth.onAuthStateChange(async(event, sess)=>{
+      if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED') && sess){
+        if(allContacts.length===0 && allDeals.length===0){
           _loadDataInFlight=false;
           await loadData();
-        },2000);
+        }
       }
-    }
+    });
+    // Final safety net — retry after 3s if still empty
+    setTimeout(async()=>{
+      if(allContacts.length===0 && allDeals.length===0){
+        console.log('Safety retry: loadData');
+        _loadDataInFlight=false;
+        await loadData();
+      }
+    },3000);
   }
   loadDataWhenReady();
   initChart();
@@ -1239,7 +1251,13 @@ async function loadData(){
   if(userRole==='manager'||userRole==='admin'){
     loadLeaderboard();
   }
-  } catch(e){ console.error('loadData error:',e); }
+  } catch(e){
+    console.error('loadData error:',e);
+    // Show visible error so we can diagnose
+    const mc = document.getElementById('metricContacts');
+    if(mc && mc.textContent==='—') mc.textContent='!';
+    showToast('Data load error: '+e.message+' — tap refresh to retry','');
+  }
   finally { _loadDataInFlight = false; }
 }
 
