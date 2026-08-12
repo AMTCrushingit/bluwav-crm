@@ -1098,15 +1098,20 @@ async function initDashboard(){
   if(sr)sr.value=userRole.charAt(0).toUpperCase()+userRole.slice(1);
   if(sn)sn.value=name;
 
-  // Load data with auto-retry if empty
-  loadData().then(()=>{
-    setTimeout(()=>{
+  // Wait for session to be confirmed then load data
+  async function loadDataWhenReady(){
+    const {data:{session}} = await db.auth.getSession();
+    if(session){
+      await loadData();
       if(allContacts.length===0){
-        _loadDataInFlight=false;
-        loadData();
+        setTimeout(async()=>{
+          _loadDataInFlight=false;
+          await loadData();
+        },2000);
       }
-    },2500);
-  });
+    }
+  }
+  loadDataWhenReady();
   initChart();
   setTimeout(startRealtime, 1000);
   setTimeout(loadNotifications, 3000);
