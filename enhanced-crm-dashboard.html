@@ -1065,24 +1065,24 @@ async function initDashboard(){
   else if(userRole==='manager'){badge.className='role-badge manager';badge.textContent='👑 Manager';}
   else{badge.className='role-badge salesperson';badge.textContent='💼 Salesperson';}
 
-  // Role banner
-  const banner=document.getElementById('roleBanner');
+  // Role banner — null-safe
+  const banner=document.getElementById('roleBanner')||{className:'',innerHTML:'',style:{}};
   if(userRole==='admin'){
     banner.className='role-banner admin';
     banner.innerHTML='🛡 Admin View — Full visibility, full control. No sales attribution.';
-    document.getElementById('adminNav').style.display='block';
-    document.getElementById('adminLink').style.display='flex';
-    document.getElementById('teamSwitcher').style.display='block';
-    document.getElementById('rightPanelTitle').textContent='Team Leaderboard';
+    document.getElementById('adminNav')?.style && (document.getElementById('adminNav').style.display='block');
+    document.getElementById('adminLink')?.style && (document.getElementById('adminLink').style.display='flex');
+    document.getElementById('teamSwitcher')?.style && (document.getElementById('teamSwitcher').style.display='block');
+    document.getElementById('rightPanelTitle') && (document.getElementById('rightPanelTitle').textContent='Team Leaderboard');
     loadTeam(name);
   } else if(userRole==='manager'){
     banner.className='role-banner manager';
     banner.innerHTML='👑 Manager View — You can see all team data, commissions, and the leaderboard.';
-    document.getElementById('adminLink').style.display='flex';
-    document.getElementById('adminNav').style.display='block';
-    document.getElementById('adminLink').style.display='flex';
-    document.getElementById('teamSwitcher').style.display='block';
-    document.getElementById('rightPanelTitle').textContent='Team Leaderboard';
+    document.getElementById('adminLink')?.style && (document.getElementById('adminLink').style.display='flex');
+    document.getElementById('adminNav')?.style && (document.getElementById('adminNav').style.display='block');
+    document.getElementById('adminLink')?.style && (document.getElementById('adminLink').style.display='flex');
+    document.getElementById('teamSwitcher')?.style && (document.getElementById('teamSwitcher').style.display='block');
+    document.getElementById('rightPanelTitle') && (document.getElementById('rightPanelTitle').textContent='Team Leaderboard');
     loadTeam(name);
   } else {
     banner.className='role-banner salesperson';
