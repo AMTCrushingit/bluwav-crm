@@ -6,43 +6,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BluWav Business OS — Business Insights</title>
 <link href="bluwav.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-// Load real report data from Supabase
-async function loadReportData(){
-  if(!currentUser) return;
-  try {
-    // Customers by status
-    const {data:contacts} = await db.from('contacts').select('status,created_at').eq('user_id',currentUser.id);
-    // Opportunities by stage
-    const {data:deals} = await db.from('deals').select('stage,value,deal_value,created_at').eq('agent_id',currentUser.id);
-    
-    if(contacts && contacts.length){
-      // Update contact stats
-      const total = contacts.length;
-      const leads = contacts.filter(c=>c.status==='Lead').length;
-      const qualified = contacts.filter(c=>c.status==='Qualified').length;
-      const customers = contacts.filter(c=>c.status==='Customer').length;
-      const els = {
-        'rMetricLeads': leads,
-        'rMetricCustomers': total,
-        'rMetricCustomers': customers
-      };
-      Object.entries(els).forEach(([id,val])=>{
-        const el=document.getElementById(id); if(el) el.textContent=val;
-      });
-    }
-    if(deals && deals.length){
-      const won = deals.filter(d=>(d.stage||'').toLowerCase()==='won');
-      const revenue = won.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
-      const revEl = document.getElementById('rMetricRev');
-      if(revEl) revEl.textContent='$'+revenue.toLocaleString();
-      const wonEl = document.getElementById('rMetricWon');
-      if(wonEl) wonEl.textContent=won.length;
-    }
-  } catch(e){ console.warn('Report data:', e.message); }
-}
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -494,8 +458,12 @@ async function loadReportData(){
   function setRange(r,btn){
     document.querySelectorAll('.range-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    // Re-render with date filter applied
     renderAll();
+  }
+
+  function signOut(){
+    sessionStorage.removeItem('bw_gate_ok');
+    db.auth.signOut().then(()=>{ window.location.href='login.html'; }).catch(()=>{ window.location.href='login.html'; });
   }
 
   const chartDefaults = {

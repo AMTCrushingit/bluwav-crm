@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BluWav CRM — Super Admin (Owner)</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -184,413 +185,395 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
 </style>
 </head>
 <body>
-
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="sidebar-logo" style="padding:16px 14px;"><span style="font-size:1.3rem;font-weight:800;letter-spacing:-0.5px;line-height:1;"><span style="color:#fff;">Blu</span><span style="color:#00C8E0;">Wav</span></span></div>
-  <nav class="sidebar-nav">
-    <div class="nav-section">
-      <div class="nav-label">Overview</div>
-      <a class="nav-item active" onclick="showView('overview')"><span class="nav-icon">&#x1F4CA;</span> Command Centre</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Business</div>
-      <a class="nav-item" onclick="showView('cashflow')"><span class="nav-icon">&#x1F4B0;</span> Cash Flow</a>
-      <a class="nav-item" onclick="showView('tenants')"><span class="nav-icon">&#x1F3E2;</span> Tenant Health</a>
-      <a class="nav-item" onclick="showView('targets')"><span class="nav-icon">&#x1F3AF;</span> Sales Targets</a>
-      <a class="nav-item" onclick="showView('payouts')"><span class="nav-icon">&#x1F4B8;</span> Payouts</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">Platform</div>
-      <a class="nav-item" onclick="showView('users')"><span class="nav-icon">&#x1F465;</span> Users & Roles</a>
-      <a class="nav-item" onclick="showView('alldeals')"><span class="nav-icon">&#x1F4BC;</span> All Opportunities</a>
-      <a class="nav-item" onclick="showView('allcontacts')"><span class="nav-icon">&#x1F464;</span> All Customers</a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label" style="color:var(--corex);letter-spacing:.12em;">&#x1F9E0; COREX</div>
-      <a class="nav-item" onclick="showView('corex')" id="corex-nav-item">
-        <span class="nav-icon">&#x26A1;</span> Intelligence Hub
+<div class="sidebar-logo" style="padding:16px 14px;"><span style="font-size:1.3rem;font-weight:800;letter-spacing:-0.5px;line-height:1;"><span style="color:#fff;">Blu</span><span style="color:#00C8E0;">Wav</span></span></div>
+<nav class="sidebar-nav">
+<div class="nav-section">
+<div class="nav-label">Overview</div>
+<a class="nav-item active" onclick="showView('overview')"><span class="nav-icon">📊</span> Command Centre</a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Business</div>
+<a class="nav-item" onclick="showView('cashflow')"><span class="nav-icon">💰</span> Cash Flow</a>
+<a class="nav-item" onclick="showView('tenants')"><span class="nav-icon">🏢</span> Tenant Health</a>
+<a class="nav-item" onclick="showView('targets')"><span class="nav-icon">🎯</span> Sales Targets</a>
+<a class="nav-item" onclick="showView('payouts')"><span class="nav-icon">💸</span> Payouts</a>
+</div>
+<div class="nav-section">
+<div class="nav-label">Platform</div>
+<a class="nav-item" onclick="showView('users')"><span class="nav-icon">👥</span> Users &amp; Roles</a>
+<a class="nav-item" onclick="showView('alldeals')"><span class="nav-icon">💼</span> All Opportunities</a>
+<a class="nav-item" onclick="showView('allcontacts')"><span class="nav-icon">👤</span> All Customers</a>
+</div>
+<div class="nav-section">
+<div class="nav-label" style="color:var(--corex);letter-spacing:.12em;">🧠 COREX</div>
+<a class="nav-item" id="corex-nav-item" onclick="showView('corex')">
+<span class="nav-icon">⚡</span> Intelligence Hub
       </a>
-      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('opportunities'),100)" style="padding-left:28px;font-size:12px;">
-        <span class="nav-icon" style="font-size:11px;">&#x1F3AF;</span> Opportunity Intel
+<a class="nav-item" onclick="showView('corex');setTimeout(()=&gt;corexShowModule('opportunities'),100)" style="padding-left:28px;font-size:12px;">
+<span class="nav-icon" style="font-size:11px;">🎯</span> Opportunity Intel
       </a>
-      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('scanner'),100)" style="padding-left:28px;font-size:12px;">
-        <span class="nav-icon" style="font-size:11px;">&#x1F4E1;</span> Procurement Scanner
+<a class="nav-item" onclick="showView('corex');setTimeout(()=&gt;corexShowModule('scanner'),100)" style="padding-left:28px;font-size:12px;">
+<span class="nav-icon" style="font-size:11px;">📡</span> Procurement Scanner
       </a>
-      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('digest'),100)" style="padding-left:28px;font-size:12px;">
-        <span class="nav-icon" style="font-size:11px;">&#x1F4CA;</span> Intelligence Digest
+<a class="nav-item" onclick="showView('corex');setTimeout(()=&gt;corexShowModule('digest'),100)" style="padding-left:28px;font-size:12px;">
+<span class="nav-icon" style="font-size:11px;">📊</span> Intelligence Digest
       </a>
-      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('outreach'),100)" style="padding-left:28px;font-size:12px;">
-        <span class="nav-icon" style="font-size:11px;">&#x1F4E4;</span> Outreach Automation
+<a class="nav-item" onclick="showView('corex');setTimeout(()=&gt;corexShowModule('outreach'),100)" style="padding-left:28px;font-size:12px;">
+<span class="nav-icon" style="font-size:11px;">📤</span> Outreach Automation
       </a>
-      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('crmsync'),100)" style="padding-left:28px;font-size:12px;">
-        <span class="nav-icon" style="font-size:11px;">&#x1F504;</span> CRM Sync Layer
+<a class="nav-item" onclick="showView('corex');setTimeout(()=&gt;corexShowModule('crmsync'),100)" style="padding-left:28px;font-size:12px;">
+<span class="nav-icon" style="font-size:11px;">🔄</span> CRM Sync Layer
       </a>
-      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('routing'),100)" style="padding-left:28px;font-size:12px;">
-        <span class="nav-icon" style="font-size:11px;">&#x1F465;</span> Agent Routing
+<a class="nav-item" onclick="showView('corex');setTimeout(()=&gt;corexShowModule('routing'),100)" style="padding-left:28px;font-size:12px;">
+<span class="nav-icon" style="font-size:11px;">👥</span> Agent Routing
       </a>
-      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('awards'),100)" style="padding-left:28px;font-size:12px;">
-        <span class="nav-icon" style="font-size:11px;">&#x1F3C6;</span> Award Monitoring
+<a class="nav-item" onclick="showView('corex');setTimeout(()=&gt;corexShowModule('awards'),100)" style="padding-left:28px;font-size:12px;">
+<span class="nav-icon" style="font-size:11px;">🏆</span> Award Monitoring
       </a>
-      <a class="nav-item" onclick="showView('corex');setTimeout(()=>corexShowModule('trends'),100)" style="padding-left:28px;font-size:12px;">
-        <span class="nav-icon" style="font-size:11px;">&#x1F4C8;</span> Market Trends
+<a class="nav-item" onclick="showView('corex');setTimeout(()=&gt;corexShowModule('trends'),100)" style="padding-left:28px;font-size:12px;">
+<span class="nav-icon" style="font-size:11px;">📈</span> Market Trends
       </a>
-    </div>
-    <div class="nav-section">
-      <div class="nav-label">System</div>
-      <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">&#x2190;</span> Back to CRM</a>
-    </div>
-  </nav>
-  <div class="sidebar-bottom">
-    <div class="founder-badge">
-      <div class="fb-label">&#x1F512; Founder Access</div>
-      <div class="fb-name" id="founderName">Loading...</div>
-    </div>
-    <button class="signout-btn" onclick="signOut()">&#x1F6AA; Sign Out</button>
-  </div>
+</div>
+<div class="nav-section">
+<div class="nav-label">System</div>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">←</span> Back to CRM</a>
+</div>
+</nav>
+<div class="sidebar-bottom">
+<div class="founder-badge">
+<div class="fb-label">🔒 Founder Access</div>
+<div class="fb-name" id="founderName">Loading...</div>
+</div>
+<button class="signout-btn" onclick="signOut()">🚪 Sign Out</button>
+</div>
 </aside>
-
 <!-- MAIN -->
 <div class="main">
-
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <div class="topbar-left">
-      <div>
-        <div class="topbar-title" id="viewTitle">&#x1F4CA; Command Centre</div>
-        <div class="topbar-sub">BluWav CRM &mdash; Super Admin — Owner</div>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <span class="last-updated" id="lastUpdated">Loading...</span>
-      <button class="refresh-btn" onclick="loadAll()">&#x21BB; Refresh</button>
-    </div>
-  </header>
-
-  <!-- COMMAND STRIP -->
-  <div class="command-strip">
-    <div class="cmd-tile t-green">
-      <div class="cmd-val" id="cmdMRR">$0</div>
-      <div class="cmd-lbl">Est. MRR</div>
-      <div class="cmd-sub" id="cmdMRRSub">from won deals</div>
-    </div>
-    <div class="cmd-tile t-cyan">
-      <div class="cmd-val" id="cmdPipeline">$0</div>
-      <div class="cmd-lbl">Opportunity Value</div>
-      <div class="cmd-sub">open deals</div>
-    </div>
-    <div class="cmd-tile t-gold">
-      <div class="cmd-val" id="cmdWonMonth">0</div>
-      <div class="cmd-lbl">Won This Month</div>
-      <div class="cmd-sub" id="cmdWonMonthVal">$0 revenue</div>
-    </div>
-    <div class="cmd-tile t-orange">
-      <div class="cmd-val" id="cmdTrials">0</div>
-      <div class="cmd-lbl">Active Trials</div>
-      <div class="cmd-sub" id="cmdTrialsExpiring">0 expiring soon</div>
-    </div>
-    <div class="cmd-tile t-purple">
-      <div class="cmd-val" id="cmdPayouts">$0</div>
-      <div class="cmd-lbl">Payouts Pending</div>
-      <div class="cmd-sub" id="cmdPayoutCount">0 requests</div>
-    </div>
-    <div class="cmd-tile t-cyan">
-      <div class="cmd-val" id="cmdOnline">0</div>
-      <div class="cmd-lbl">Online Now</div>
-      <div class="cmd-sub" id="cmdTotalUsers">0 total users</div>
-    </div>
-  </div>
-
-  <!-- CONTENT -->
-  <div class="content">
-
-    <!-- ══ OVERVIEW ══ -->
-    <div class="view active" id="view-overview">
-      <div class="two-col">
-        <!-- Revenue Trend Chart -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">&#x1F4C8; Revenue Trend</div>
-              <div class="card-sub">Won deals by month &mdash; real data</div>
-            </div>
-            <div style="display:flex;gap:6px;">
-              <button class="btn btn-ghost btn-sm rng-btn active" onclick="setChartRange(3,this)">3M</button>
-              <button class="btn btn-ghost btn-sm rng-btn" onclick="setChartRange(6,this)">6M</button>
-              <button class="btn btn-ghost btn-sm rng-btn" onclick="setChartRange(12,this)">12M</button>
-            </div>
-          </div>
-          <div class="card-body"><div class="chart-wrap"><canvas id="revenueChart"></canvas></div></div>
-        </div>
-        <!-- Tenant Health Summary -->
-        <div class="card">
-          <div class="card-header">
-            <div><div class="card-title">&#x1F3E2; Tenant Health</div><div class="card-sub">All users at a glance</div></div>
-            <button class="btn btn-ghost btn-sm" onclick="showView('tenants')">View All &#x2192;</button>
-          </div>
-          <div class="card-body" id="tenantHealthSummary">
-            <div class="empty">Loading...</div>
-          </div>
-        </div>
-      </div>
-      <div class="two-col">
-        <!-- Agent Leaderboard -->
-        <div class="card">
-          <div class="card-header">
-            <div><div class="card-title">&#x1F3C6; Agent Leaderboard</div><div class="card-sub">Real performance data</div></div>
-          </div>
-          <div class="card-body" id="agentLeaderboard">
-            <div class="empty">Loading...</div>
-          </div>
-        </div>
-        <!-- Recent Activity -->
-        <div class="card">
-          <div class="card-header">
-            <div><div class="card-title">&#x1F4CB; Recent Activity</div><div class="card-sub">Latest across platform</div></div>
-          </div>
-          <div class="card-body" id="recentActivityBody">
-            <div class="empty">Loading...</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ CASH FLOW ══ -->
-    <div class="view" id="view-cashflow">
-      <div class="three-col">
-        <div class="card">
-          <div class="card-header"><div class="card-title">&#x1F4B0; Estimated MRR</div></div>
-          <div class="card-body">
-            <div style="font-size:32px;font-weight:800;color:var(--green);" id="cfMRR">$0</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px;">Monthly Recurring Revenue</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:8px;" id="cfMRRBreakdown">Based on won deals</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">&#x1F4C5; ARR Projection</div></div>
-          <div class="card-body">
-            <div style="font-size:32px;font-weight:800;color:var(--cyan);" id="cfARR">$0</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px;">Annual Run Rate (MRR &times; 12)</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:8px;" id="cfARRNote">Projection only</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">&#x1F4B8; Commission Liability</div></div>
-          <div class="card-body">
-            <div style="font-size:32px;font-weight:800;color:var(--orange);" id="cfCommission">$0</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px;">Est. owed to agents (20%)</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:8px;" id="cfCommissionNote">From won deals this month</div>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">&#x1F4CA; Revenue by Month</div><div class="card-sub">Won deal value &mdash; all agents</div></div>
-        </div>
-        <div class="card-body"><div class="chart-wrap" style="height:260px;"><canvas id="cashflowChart"></canvas></div></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">&#x1F4C5; Opportunities Closing Soon</div><div class="card-sub">Next 30 days by close date</div></div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead><tr><th>Deal</th><th>Agent</th><th>Value</th><th>Close Date</th><th>Days Left</th><th>Prob%</th></tr></thead>
-            <tbody id="closingSoonBody"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ TENANT HEALTH ══ -->
-    <div class="view" id="view-tenants">
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">&#x1F3E2; Tenant Health Board</div><div class="card-sub" id="tenantCountLabel">All users</div></div>
-          <div style="display:flex;gap:8px;">
-            <input class="search-bar" placeholder="&#x1F50D; Search..." oninput="filterTenants(this.value)"/>
-            <button class="btn btn-primary btn-sm" onclick="openModal('addUser')">+ New User</button>
-          </div>
-        </div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead><tr><th>User</th><th>Role</th><th>Trial Status</th><th>Last Active</th><th>Customers</th><th>Opportunities</th><th>Health</th><th>Actions</th></tr></thead>
-            <tbody id="tenantHealthBody"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ SALES TARGETS ══ -->
-    <div class="view" id="view-targets">
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">&#x1F3AF; Monthly Sales Target</div><div class="card-sub" id="targetMonthLabel">This month</div></div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:13px;color:var(--text3);">Target: $</span>
-            <input type="number" id="targetInput" value="10000" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;padding:5px 8px;outline:none;" oninput="renderTargets()"/>
-          </div>
-        </div>
-        <div class="card-body">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <span style="font-size:13px;color:var(--text2);" id="targetProgressLabel">$0 of $10,000</span>
-            <span style="font-size:13px;font-weight:700;" id="targetPct">0%</span>
-          </div>
-          <div class="progress-wrap" style="height:10px;margin-bottom:16px;">
-            <div class="progress-fill" id="targetBar" style="width:0%;background:linear-gradient(90deg,var(--cyan),var(--green));"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;" id="targetStats"></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">&#x1F4CA; Agent Performance This Month</div></div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead><tr><th>Agent</th><th>Opportunities</th><th>Won</th><th>Pipeline</th><th>Won Value</th><th>Commission</th><th>Win Rate</th></tr></thead>
-            <tbody id="agentPerfBody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">&#x1F4CA; Conversion Funnel</div><div class="card-sub">This month</div></div>
-        <div class="card-body" id="funnelBody"></div>
-      </div>
-    </div>
-
-    <!-- ══ PAYOUTS ══ -->
-    <div class="view" id="view-payouts">
-      <div class="three-col">
-        <div class="card">
-          <div class="card-header"><div class="card-title">&#x23F3; Pending</div></div>
-          <div class="card-body">
-            <div style="font-size:28px;font-weight:800;color:var(--gold);" id="payoutPendingAmt">$0</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px;" id="payoutPendingCount">0 requests</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">&#x2705; Approved</div></div>
-          <div class="card-body">
-            <div style="font-size:28px;font-weight:800;color:var(--green);" id="payoutApprovedAmt">$0</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px;">This month</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">&#x1F4B0; Est. Liability</div></div>
-          <div class="card-body">
-            <div style="font-size:28px;font-weight:800;color:var(--orange);" id="payoutLiability">$0</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px;">20% of won deals</div>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">&#x1F4CB; Payout Requests</div><div class="card-sub">Approve or reject agent commission requests</div></div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead><tr><th>Agent</th><th>Amount</th><th>Period</th><th>Submitted</th><th>Bank Details</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="payoutBody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ USERS ══ -->
-    <div class="view" id="view-users">
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">&#x1F465; All Users &amp; Roles</div></div>
-          <div style="display:flex;gap:8px;">
-            <input class="search-bar" placeholder="&#x1F50D; Search users..." oninput="filterTable('usersTbody',this.value,[0,1])"/>
-            <button class="btn btn-primary btn-sm" onclick="openModal('addUser')">+ Add User</button>
-          </div>
-        </div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead><tr><th>Name</th><th>Role</th><th>User ID</th><th>Joined</th><th>Last Seen</th><th>Actions</th></tr></thead>
-            <tbody id="usersTbody"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ ALL DEALS ══ -->
-    <div class="view" id="view-alldeals">
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">&#x1F4BC; All Opportunities &mdash; Platform Wide</div></div>
-          <input class="search-bar" placeholder="&#x1F50D; Search deals..." oninput="filterTable('allOpportunitiesTbody',this.value,[0,1,2])"/>
-        </div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead><tr><th>Deal</th><th>Stage</th><th>Value</th><th>Agent</th><th>Close Date</th><th>Created</th><th>Actions</th></tr></thead>
-            <tbody id="allOpportunitiesTbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ ALL CONTACTS ══ -->
-    <div class="view" id="view-allcontacts">
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">&#x1F464; All Customers &mdash; Platform Wide</div></div>
-          <input class="search-bar" placeholder="&#x1F50D; Search contacts..." oninput="filterTable('allCustomersTbody',this.value,[0,1,2])"/>
-        </div>
-        <div class="tbl-wrap">
-          <table class="tbl">
-            <thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Location</th><th>Agent</th><th>Added</th><th>Actions</th></tr></thead>
-            <tbody id="allCustomersTbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /content -->
+<!-- TOPBAR -->
+<header class="topbar">
+<div class="topbar-left">
+<div>
+<div class="topbar-title" id="viewTitle">📊 Command Centre</div>
+<div class="topbar-sub">BluWav CRM — Super Admin — Owner</div>
+</div>
+</div>
+<div class="topbar-right">
+<span class="last-updated" id="lastUpdated">Loading...</span>
+<button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+</div>
+</header>
+<!-- COMMAND STRIP -->
+<div class="command-strip">
+<div class="cmd-tile t-green">
+<div class="cmd-val" id="cmdMRR">$0</div>
+<div class="cmd-lbl">Est. MRR</div>
+<div class="cmd-sub" id="cmdMRRSub">from won deals</div>
+</div>
+<div class="cmd-tile t-cyan">
+<div class="cmd-val" id="cmdPipeline">$0</div>
+<div class="cmd-lbl">Opportunity Value</div>
+<div class="cmd-sub">open deals</div>
+</div>
+<div class="cmd-tile t-gold">
+<div class="cmd-val" id="cmdWonMonth">0</div>
+<div class="cmd-lbl">Won This Month</div>
+<div class="cmd-sub" id="cmdWonMonthVal">$0 revenue</div>
+</div>
+<div class="cmd-tile t-orange">
+<div class="cmd-val" id="cmdTrials">0</div>
+<div class="cmd-lbl">Active Trials</div>
+<div class="cmd-sub" id="cmdTrialsExpiring">0 expiring soon</div>
+</div>
+<div class="cmd-tile t-purple">
+<div class="cmd-val" id="cmdPayouts">$0</div>
+<div class="cmd-lbl">Payouts Pending</div>
+<div class="cmd-sub" id="cmdPayoutCount">0 requests</div>
+</div>
+<div class="cmd-tile t-cyan">
+<div class="cmd-val" id="cmdOnline">0</div>
+<div class="cmd-lbl">Online Now</div>
+<div class="cmd-sub" id="cmdTotalUsers">0 total users</div>
+</div>
+</div>
+<!-- CONTENT -->
+<div class="content">
+<!-- ══ OVERVIEW ══ -->
+<div class="view active" id="view-overview">
+<div class="two-col">
+<!-- Revenue Trend Chart -->
+<div class="card">
+<div class="card-header">
+<div>
+<div class="card-title">📈 Revenue Trend</div>
+<div class="card-sub">Won deals by month — real data</div>
+</div>
+<div style="display:flex;gap:6px;">
+<button class="btn btn-ghost btn-sm rng-btn active" onclick="setChartRange(3,this)">3M</button>
+<button class="btn btn-ghost btn-sm rng-btn" onclick="setChartRange(6,this)">6M</button>
+<button class="btn btn-ghost btn-sm rng-btn" onclick="setChartRange(12,this)">12M</button>
+</div>
+</div>
+<div class="card-body"><div class="chart-wrap"><canvas id="revenueChart"></canvas></div></div>
+</div>
+<!-- Tenant Health Summary -->
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">🏢 Tenant Health</div><div class="card-sub">All users at a glance</div></div>
+<button class="btn btn-ghost btn-sm" onclick="showView('tenants')">View All →</button>
+</div>
+<div class="card-body" id="tenantHealthSummary">
+<div class="empty">Loading...</div>
+</div>
+</div>
+</div>
+<div class="two-col">
+<!-- Agent Leaderboard -->
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">🏆 Agent Leaderboard</div><div class="card-sub">Real performance data</div></div>
+</div>
+<div class="card-body" id="agentLeaderboard">
+<div class="empty">Loading...</div>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">📋 Recent Activity</div><div class="card-sub">Latest across platform</div></div>
+</div>
+<div class="card-body" id="recentActivityBody">
+<div class="empty">Loading...</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ══ CASH FLOW ══ -->
+<div class="view" id="view-cashflow">
+<div class="three-col">
+<div class="card">
+<div class="card-header"><div class="card-title">💰 Estimated MRR</div></div>
+<div class="card-body">
+<div id="cfMRR" style="font-size:32px;font-weight:800;color:var(--green);">$0</div>
+<div style="font-size:13px;color:var(--text3);margin-top:4px;">Monthly Recurring Revenue</div>
+<div id="cfMRRBreakdown" style="font-size:13px;color:var(--text3);margin-top:8px;">Based on won deals</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">📅 ARR Projection</div></div>
+<div class="card-body">
+<div id="cfARR" style="font-size:32px;font-weight:800;color:var(--cyan);">$0</div>
+<div style="font-size:13px;color:var(--text3);margin-top:4px;">Annual Run Rate (MRR × 12)</div>
+<div id="cfARRNote" style="font-size:13px;color:var(--text3);margin-top:8px;">Projection only</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">💸 Commission Liability</div></div>
+<div class="card-body">
+<div id="cfCommission" style="font-size:32px;font-weight:800;color:var(--orange);">$0</div>
+<div style="font-size:13px;color:var(--text3);margin-top:4px;">Est. owed to agents (20%)</div>
+<div id="cfCommissionNote" style="font-size:13px;color:var(--text3);margin-top:8px;">From won deals this month</div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">📊 Revenue by Month</div><div class="card-sub">Won deal value — all agents</div></div>
+</div>
+<div class="card-body"><div class="chart-wrap" style="height:260px;"><canvas id="cashflowChart"></canvas></div></div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">📅 Opportunities Closing Soon</div><div class="card-sub">Next 30 days by close date</div></div>
+<div class="tbl-wrap">
+<table class="tbl">
+<thead><tr><th>Deal</th><th>Agent</th><th>Value</th><th>Close Date</th><th>Days Left</th><th>Prob%</th></tr></thead>
+<tbody id="closingSoonBody"><tr><td class="empty" colspan="6">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ══ TENANT HEALTH ══ -->
+<div class="view" id="view-tenants">
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">🏢 Tenant Health Board</div><div class="card-sub" id="tenantCountLabel">All users</div></div>
+<div style="display:flex;gap:8px;">
+<input class="search-bar" oninput="filterTenants(this.value)" placeholder="🔍 Search..."/>
+<button class="btn btn-primary btn-sm" onclick="openModal('addUser')">+ New User</button>
+</div>
+</div>
+<div class="tbl-wrap">
+<table class="tbl">
+<thead><tr><th>User</th><th>Role</th><th>Trial Status</th><th>Last Active</th><th>Customers</th><th>Opportunities</th><th>Health</th><th>Actions</th></tr></thead>
+<tbody id="tenantHealthBody"><tr><td class="empty" colspan="8">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ══ SALES TARGETS ══ -->
+<div class="view" id="view-targets">
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">🎯 Monthly Sales Target</div><div class="card-sub" id="targetMonthLabel">This month</div></div>
+<div style="display:flex;align-items:center;gap:8px;">
+<span style="font-size:13px;color:var(--text3);">Target: $</span>
+<input id="targetInput" oninput="renderTargets()" style="width:90px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:12px;padding:5px 8px;outline:none;" type="number" value="10000"/>
+</div>
+</div>
+<div class="card-body">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+<span id="targetProgressLabel" style="font-size:13px;color:var(--text2);">$0 of $10,000</span>
+<span id="targetPct" style="font-size:13px;font-weight:700;">0%</span>
+</div>
+<div class="progress-wrap" style="height:10px;margin-bottom:16px;">
+<div class="progress-fill" id="targetBar" style="width:0%;background:linear-gradient(90deg,var(--cyan),var(--green));"></div>
+</div>
+<div id="targetStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;"></div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">📊 Agent Performance This Month</div></div>
+<div class="tbl-wrap">
+<table class="tbl">
+<thead><tr><th>Agent</th><th>Opportunities</th><th>Won</th><th>Pipeline</th><th>Won Value</th><th>Commission</th><th>Win Rate</th></tr></thead>
+<tbody id="agentPerfBody"><tr><td class="empty" colspan="7">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">📊 Conversion Funnel</div><div class="card-sub">This month</div></div>
+<div class="card-body" id="funnelBody"></div>
+</div>
+</div>
+<!-- ══ PAYOUTS ══ -->
+<div class="view" id="view-payouts">
+<div class="three-col">
+<div class="card">
+<div class="card-header"><div class="card-title">⏳ Pending</div></div>
+<div class="card-body">
+<div id="payoutPendingAmt" style="font-size:28px;font-weight:800;color:var(--gold);">$0</div>
+<div id="payoutPendingCount" style="font-size:13px;color:var(--text3);margin-top:4px;">0 requests</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">✅ Approved</div></div>
+<div class="card-body">
+<div id="payoutApprovedAmt" style="font-size:28px;font-weight:800;color:var(--green);">$0</div>
+<div style="font-size:13px;color:var(--text3);margin-top:4px;">This month</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">💰 Est. Liability</div></div>
+<div class="card-body">
+<div id="payoutLiability" style="font-size:28px;font-weight:800;color:var(--orange);">$0</div>
+<div style="font-size:13px;color:var(--text3);margin-top:4px;">20% of won deals</div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">📋 Payout Requests</div><div class="card-sub">Approve or reject agent commission requests</div></div>
+<div class="tbl-wrap">
+<table class="tbl">
+<thead><tr><th>Agent</th><th>Amount</th><th>Period</th><th>Submitted</th><th>Bank Details</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="payoutBody"><tr><td class="empty" colspan="7">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ══ USERS ══ -->
+<div class="view" id="view-users">
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">👥 All Users &amp; Roles</div></div>
+<div style="display:flex;gap:8px;">
+<input class="search-bar" oninput="filterTable('usersTbody',this.value,[0,1])" placeholder="🔍 Search users..."/>
+<button class="btn btn-primary btn-sm" onclick="openModal('addUser')">+ Add User</button>
+</div>
+</div>
+<div class="tbl-wrap">
+<table class="tbl">
+<thead><tr><th>Name</th><th>Role</th><th>User ID</th><th>Joined</th><th>Last Seen</th><th>Actions</th></tr></thead>
+<tbody id="usersTbody"><tr><td class="empty" colspan="6">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ══ ALL DEALS ══ -->
+<div class="view" id="view-alldeals">
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">💼 All Opportunities — Platform Wide</div></div>
+<input class="search-bar" oninput="filterTable('allOpportunitiesTbody',this.value,[0,1,2])" placeholder="🔍 Search deals..."/>
+</div>
+<div class="tbl-wrap">
+<table class="tbl">
+<thead><tr><th>Deal</th><th>Stage</th><th>Value</th><th>Agent</th><th>Close Date</th><th>Created</th><th>Actions</th></tr></thead>
+<tbody id="allOpportunitiesTbody"><tr><td class="empty" colspan="7">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ══ ALL CONTACTS ══ -->
+<div class="view" id="view-allcontacts">
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">👤 All Customers — Platform Wide</div></div>
+<input class="search-bar" oninput="filterTable('allCustomersTbody',this.value,[0,1,2])" placeholder="🔍 Search contacts..."/>
+</div>
+<div class="tbl-wrap">
+<table class="tbl">
+<thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Location</th><th>Agent</th><th>Added</th><th>Actions</th></tr></thead>
+<tbody id="allCustomersTbody"><tr><td class="empty" colspan="7">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+</div><!-- /content -->
 </div><!-- /main -->
-
 <!-- MODALS -->
 <div class="modal-overlay" id="modal-addUser">
-  <div class="modal">
-    <div class="modal-hd"><h3>&#x1F464; Add / Invite User</h3><button class="modal-close" onclick="closeModal('addUser')">&#x2715;</button></div>
-    <div class="modal-body">
-      <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="au-name" placeholder="Full name"/></div>
-      <div class="fg"><label class="fl">Email *</label><input class="fi" id="au-email" placeholder="email@example.com" type="email"/></div>
-      <div class="fg"><label class="fl">Role</label>
-        <select class="fs" id="au-role">
-          <option value="salesperson">Salesperson</option>
-          <option value="manager">Manager</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('addUser')">Cancel</button>
-      <button class="btn btn-primary" onclick="addUser()">Send Invite</button>
-    </div>
-  </div>
+<div class="modal">
+<div class="modal-hd"><h3>👤 Add / Invite User</h3><button class="modal-close" onclick="closeModal('addUser')">✕</button></div>
+<div class="modal-body">
+<div class="fg"><label class="fl">Full Name *</label><input class="fi" id="au-name" placeholder="Full name"/></div>
+<div class="fg"><label class="fl">Email *</label><input class="fi" id="au-email" placeholder="email@example.com" type="email"/></div>
+<div class="fg"><label class="fl">Role</label>
+<select class="fs" id="au-role">
+<option value="salesperson">Salesperson</option>
+<option value="manager">Manager</option>
+<option value="admin">Admin</option>
+</select>
 </div>
-
+</div>
+<div class="modal-footer">
+<button class="btn btn-ghost" onclick="closeModal('addUser')">Cancel</button>
+<button class="btn btn-primary" onclick="addUser()">Send Invite</button>
+</div>
+</div>
+</div>
 <div class="modal-overlay" id="modal-editUser">
-  <div class="modal">
-    <div class="modal-hd"><h3>&#x270F;&#xFE0F; Edit User</h3><button class="modal-close" onclick="closeModal('editUser')">&#x2715;</button></div>
-    <div class="modal-body">
-      <input type="hidden" id="eu-id"/>
-      <div class="fg"><label class="fl">Full Name</label><input class="fi" id="eu-name" placeholder="Full name"/></div>
-      <div class="fg"><label class="fl">Role</label>
-        <select class="fs" id="eu-role">
-          <option value="salesperson">Salesperson</option>
-          <option value="manager">Manager</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-danger" onclick="confirmDelete(document.getElementById('eu-id').value, document.getElementById('eu-name').value)">Delete User</button>
-      <button class="btn btn-ghost" onclick="closeModal('editUser')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveUser()">Save Changes</button>
-    </div>
-  </div>
+<div class="modal">
+<div class="modal-hd"><h3>✏️ Edit User</h3><button class="modal-close" onclick="closeModal('editUser')">✕</button></div>
+<div class="modal-body">
+<input id="eu-id" type="hidden"/>
+<div class="fg"><label class="fl">Full Name</label><input class="fi" id="eu-name" placeholder="Full name"/></div>
+<div class="fg"><label class="fl">Role</label>
+<select class="fs" id="eu-role">
+<option value="salesperson">Salesperson</option>
+<option value="manager">Manager</option>
+<option value="admin">Admin</option>
+</select>
 </div>
-
+</div>
+<div class="modal-footer">
+<button class="btn btn-danger" onclick="confirmDelete(document.getElementById('eu-id').value, document.getElementById('eu-name').value)">Delete User</button>
+<button class="btn btn-ghost" onclick="closeModal('editUser')">Cancel</button>
+<button class="btn btn-primary" onclick="saveUser()">Save Changes</button>
+</div>
+</div>
+</div>
 <div class="toast" id="toast"></div>
-
 <script>
 const {createClient} = supabase;
 const db = createClient(
@@ -1409,6 +1392,15 @@ const COREX_MAX_ATTEMPTS=3;
 const COREX_LOCKOUT_MS=10*60*1000;
 const COREX_INACTIVITY_MS=10*60*1000;
 
+// Clear stale lockout if it has expired (handles browser restarts)
+(function(){
+  const lockout=parseInt(localStorage.getItem('corex_sa_lockout')||'0');
+  if(lockout && Date.now()>=lockout){
+    localStorage.removeItem('corex_sa_lockout');
+    localStorage.removeItem('corex_sa_attempts');
+  }
+})();
+
 // ---- Security Gate ----
 function cgGetAttempts(){return parseInt(localStorage.getItem('corex_sa_attempts')||'0');}
 function cgSetAttempts(n){localStorage.setItem('corex_sa_attempts',String(n));}
@@ -1486,6 +1478,7 @@ function cgVerifyPassphrase(){
   const err=document.getElementById('cg-err-1');
   if(val===COREX_PASSPHRASE){
     err.style.display='none';
+    cgSetAttempts(0); // Reset attempts on correct passphrase
     document.getElementById('cg-step-1').style.display='none';
     document.getElementById('cg-step-2').style.display='block';
     document.getElementById('cg-dot-1').style.cssText='width:8px;height:8px;border-radius:50%;background:#a78bfa;transition:all .3s;';
@@ -2042,338 +2035,311 @@ function corexToast(msg){
 })();
 
 </script>
-
-    <!-- ================================================================
+<!-- ================================================================
          COREX INTELLIGENCE ENGINE — Super Admin Module
          ================================================================ -->
-    <div class="view" id="view-corex">
-
-      <!-- COREX Security Gate (inline, protects this module only) -->
-      <div id="corex-gate-inline" style="
+<div class="view" id="view-corex">
+<!-- COREX Security Gate (inline, protects this module only) -->
+<div id="corex-gate-inline" style="
         position:fixed;inset:0;z-index:9999;
         background:radial-gradient(ellipse at 50% 30%,#1a0a3e 0%,#0d0a1a 60%,#080510 100%);
         display:none;align-items:center;justify-content:center;
         font-family:'Segoe UI',system-ui,sans-serif;
       ">
-        <div style="
+<div style="
           background:linear-gradient(145deg,#1a1035,#120d24);
           border:1px solid rgba(167,139,250,0.2);border-radius:24px;
           padding:52px 48px;width:440px;max-width:92vw;
           box-shadow:0 0 80px rgba(139,92,246,0.2),0 24px 64px rgba(0,0,0,0.5);
           text-align:center;
         ">
-          <div style="font-size:42px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(167,139,250,0.6));">&#x1F9E0;</div>
-          <div style="font-size:24px;font-weight:700;margin-bottom:6px;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
-          <div style="font-size:13px;color:#9d8fd4;margin-bottom:28px;letter-spacing:.06em;text-transform:uppercase;">BluWav · Super Admin · Restricted Access</div>
-
-          <!-- Step dots -->
-          <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px;">
-            <div id="cg-dot-1" style="width:8px;height:8px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px rgba(139,92,246,0.6);transition:all .3s;"></div>
-            <div style="width:24px;height:1px;background:rgba(167,139,250,0.2);"></div>
-            <div id="cg-dot-2" style="width:8px;height:8px;border-radius:50%;background:#2d1f5e;transition:all .3s;"></div>
+<div style="font-size:42px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(167,139,250,0.6));">🧠</div>
+<div style="font-size:24px;font-weight:700;margin-bottom:6px;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
+<div style="font-size:13px;color:#9d8fd4;margin-bottom:28px;letter-spacing:.06em;text-transform:uppercase;">BluWav · Super Admin · Restricted Access</div>
+<!-- Step dots -->
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px;">
+<div id="cg-dot-1" style="width:8px;height:8px;border-radius:50%;background:#8b5cf6;box-shadow:0 0 8px rgba(139,92,246,0.6);transition:all .3s;"></div>
+<div style="width:24px;height:1px;background:rgba(167,139,250,0.2);"></div>
+<div id="cg-dot-2" style="width:8px;height:8px;border-radius:50%;background:#2d1f5e;transition:all .3s;"></div>
+</div>
+<!-- Locked panel -->
+<div id="cg-locked" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:14px;padding:24px;margin-bottom:16px;">
+<div style="font-size:32px;margin-bottom:8px;">🔐</div>
+<div style="font-size:15px;font-weight:700;color:#fca5a5;margin-bottom:6px;">Access Temporarily Locked</div>
+<div style="font-size:14px;color:#7c6fa0;margin-bottom:10px;">3 failed attempts detected. Try again after:</div>
+<div id="cg-lockout-timer" style="font-size:24px;font-weight:700;color:#f87171;font-variant-numeric:tabular-nums;">10:00</div>
+<button onclick="localStorage.removeItem('corex_sa_lockout');localStorage.removeItem('corex_sa_attempts');location.reload();" style="margin-top:12px;background:rgba(139,92,246,0.15);border:1px solid rgba(167,139,250,0.3);color:#c4b5fd;border-radius:8px;padding:7px 16px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">🔑 Admin Override — Clear Lockout</button>
+</div>
+<!-- Auth form -->
+<div id="cg-form">
+<!-- Step 1 -->
+<div id="cg-step-1">
+<div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;text-align:left;">Step 1 of 2 — Access Passphrase</div>
+<input autocomplete="off" id="cg-passphrase" onkeydown="if(event.key==='Enter')cgVerifyPassphrase()" placeholder="Enter your passphrase" spellcheck="false" style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.05em;" type="password"/>
+<div id="cg-err-1" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:11px 14px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
+<button onclick="cgVerifyPassphrase()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Continue →</button>
+</div>
+<!-- Step 2 -->
+<div id="cg-step-2" style="display:none;">
+<div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;text-align:left;">Step 2 of 2 — Security PIN</div>
+<input autocomplete="off" id="cg-pin" inputmode="numeric" maxlength="6" onkeydown="if(event.key==='Enter')cgVerifyPIN()" placeholder="Enter your PIN" style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.1em;" type="password"/>
+<div id="cg-err-2" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:11px 14px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
+<button onclick="cgVerifyPIN()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Unlock COREX 🔓</button>
+</div>
+<div id="cg-attempts" style="display:none;font-size:11px;color:#4c3494;margin-top:12px;">⚠️ Failed attempts: <span id="cg-attempt-count" style="color:#ef4444;font-weight:700;">0</span> / 3</div>
+</div>
+<div style="border-top:1px solid rgba(167,139,250,0.1);margin-top:20px;padding-top:14px;font-size:12px;color:#7c6fa0;letter-spacing:.04em;line-height:1.7;">
+            🔒 COREX is a restricted internal system.<br/>
+            Unauthorised access attempts are logged.<br/>
+            BluWav · Founder &amp; Executive Director access only.
           </div>
-
-          <!-- Locked panel -->
-          <div id="cg-locked" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:14px;padding:24px;margin-bottom:16px;">
-            <div style="font-size:32px;margin-bottom:8px;">&#x1F510;</div>
-            <div style="font-size:15px;font-weight:700;color:#fca5a5;margin-bottom:6px;">Access Temporarily Locked</div>
-            <div style="font-size:14px;color:#7c6fa0;margin-bottom:10px;">3 failed attempts detected. Try again after:</div>
-            <div id="cg-lockout-timer" style="font-size:24px;font-weight:700;color:#f87171;font-variant-numeric:tabular-nums;">30:00</div>
-          </div>
-
-          <!-- Auth form -->
-          <div id="cg-form">
-            <!-- Step 1 -->
-            <div id="cg-step-1">
-              <div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;text-align:left;">Step 1 of 2 — Access Passphrase</div>
-              <input id="cg-passphrase" type="password" placeholder="Enter your passphrase"
-                autocomplete="off" spellcheck="false"
-                style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.05em;"
-                onkeydown="if(event.key==='Enter')cgVerifyPassphrase()" />
-              <div id="cg-err-1" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:11px 14px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
-              <button onclick="cgVerifyPassphrase()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Continue &#x2192;</button>
-            </div>
-            <!-- Step 2 -->
-            <div id="cg-step-2" style="display:none;">
-              <div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;text-align:left;">Step 2 of 2 — Security PIN</div>
-              <input id="cg-pin" type="password" placeholder="Enter your PIN"
-                autocomplete="off" inputmode="numeric" maxlength="6"
-                style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.1em;"
-                onkeydown="if(event.key==='Enter')cgVerifyPIN()" />
-              <div id="cg-err-2" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:11px 14px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
-              <button onclick="cgVerifyPIN()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Unlock COREX &#x1F513;</button>
-            </div>
-            <div id="cg-attempts" style="display:none;font-size:11px;color:#4c3494;margin-top:12px;">&#x26A0;&#xFE0F; Failed attempts: <span id="cg-attempt-count" style="color:#ef4444;font-weight:700;">0</span> / 3</div>
-          </div>
-
-          <div style="border-top:1px solid rgba(167,139,250,0.1);margin-top:20px;padding-top:14px;font-size:12px;color:#7c6fa0;letter-spacing:.04em;line-height:1.7;">
-            &#x1F512; COREX is a restricted internal system.<br>
-            Unauthorised access attempts are logged.<br>
-            BluWav · Founder & Executive Director access only.
-          </div>
-        </div>
-      </div>
-
-      <!-- Auto-lock overlay -->
-      <div id="corex-autolock-inline" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(13,10,26,0.95);backdrop-filter:blur(12px);align-items:center;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif;">
-        <div style="background:linear-gradient(145deg,#1a1035,#120d24);border:1px solid rgba(167,139,250,0.2);border-radius:20px;padding:40px 36px;width:360px;max-width:90vw;text-align:center;box-shadow:0 0 60px rgba(139,92,246,0.15);">
-          <div style="font-size:36px;margin-bottom:12px;">&#x1F512;</div>
-          <div style="font-size:18px;font-weight:700;color:#c4b5fd;margin-bottom:8px;">Session Locked</div>
-          <div style="font-size:13px;color:#7c6fa0;margin-bottom:24px;line-height:1.5;">COREX locked due to inactivity.<br>Re-enter credentials to continue.</div>
-          <button onclick="cgAutoLockResume()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.4);">&#x1F510; Unlock COREX</button>
-        </div>
-      </div>
-
-      <!-- COREX CONTENT (shown after auth) -->
-      <div id="corex-content" style="display:none;width:100%;">
-
-        <!-- COREX Top Bar -->
-        <div style="background:linear-gradient(135deg,#241e50,#1c1640);border:1px solid rgba(167,139,250,0.25);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <div style="display:flex;align-items:center;gap:14px;">
-            <div style="font-size:28px;filter:drop-shadow(0 0 12px rgba(167,139,250,0.5));">&#x1F9E0;</div>
-            <div>
-              <div style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
-              <div style="font-size:13px;color:#9d8fd4;margin-top:2px;">Caribbean Opportunity & Revenue Intelligence Engine · Super Admin Only</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(139,92,246,0.1);border:1px solid rgba(167,139,250,0.25);color:#c4b5fd;font-size:10px;font-weight:600;padding:4px 12px;border-radius:9999px;">
-              <span style="width:6px;height:6px;border-radius:50%;background:#a78bfa;display:inline-block;animation:corex-pulse 2s ease-in-out infinite;"></span>
+</div>
+</div>
+<!-- Auto-lock overlay -->
+<div id="corex-autolock-inline" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(13,10,26,0.95);backdrop-filter:blur(12px);align-items:center;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif;">
+<div style="background:linear-gradient(145deg,#1a1035,#120d24);border:1px solid rgba(167,139,250,0.2);border-radius:20px;padding:40px 36px;width:360px;max-width:90vw;text-align:center;box-shadow:0 0 60px rgba(139,92,246,0.15);">
+<div style="font-size:36px;margin-bottom:12px;">🔒</div>
+<div style="font-size:18px;font-weight:700;color:#c4b5fd;margin-bottom:8px;">Session Locked</div>
+<div style="font-size:13px;color:#7c6fa0;margin-bottom:24px;line-height:1.5;">COREX locked due to inactivity.<br/>Re-enter credentials to continue.</div>
+<button onclick="cgAutoLockResume()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.4);">🔐 Unlock COREX</button>
+</div>
+</div>
+<!-- COREX CONTENT (shown after auth) -->
+<div id="corex-content" style="display:none;width:100%;">
+<!-- COREX Top Bar -->
+<div style="background:linear-gradient(135deg,#241e50,#1c1640);border:1px solid rgba(167,139,250,0.25);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+<div style="display:flex;align-items:center;gap:14px;">
+<div style="font-size:28px;filter:drop-shadow(0 0 12px rgba(167,139,250,0.5));">🧠</div>
+<div>
+<div style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
+<div style="font-size:13px;color:#9d8fd4;margin-top:2px;">Caribbean Opportunity &amp; Revenue Intelligence Engine · Super Admin Only</div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;">
+<div style="display:inline-flex;align-items:center;gap:5px;background:rgba(139,92,246,0.1);border:1px solid rgba(167,139,250,0.25);color:#c4b5fd;font-size:10px;font-weight:600;padding:4px 12px;border-radius:9999px;">
+<span style="width:6px;height:6px;border-radius:50%;background:#a78bfa;display:inline-block;animation:corex-pulse 2s ease-in-out infinite;"></span>
               Active — Intelligence Cycle Running
             </div>
-            <button id="corex-run-btn" onclick="corexRunCycle()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.3);">&#x25B6; Run Intelligence Cycle</button>
-            <button onclick="cgLockCOREX()" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">&#x1F512; Lock</button>
-          </div>
-        </div>
-
-        <!-- COREX Sub-nav tabs -->
-        <div style="display:flex;gap:6px;background:rgba(28,22,64,0.8);border:1px solid rgba(167,139,250,0.18);border-radius:12px;padding:6px;margin-bottom:20px;flex-wrap:wrap;" id="corex-tabs">
-          <button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">&#x26A1; Intelligence Hub</button>
-          <button class="corex-tab" data-module="opportunities" onclick="corexShowModule('opportunities')">&#x1F3AF; Opportunity Intel</button>
-          <button class="corex-tab" data-module="scanner" onclick="corexShowModule('scanner')">&#x1F4E1; Procurement Scanner</button>
-          <button class="corex-tab" data-module="digest" onclick="corexShowModule('digest')">&#x1F4CA; Intelligence Digest</button>
-          <button class="corex-tab" data-module="outreach" onclick="corexShowModule('outreach')">&#x1F4E4; Outreach Automation</button>
-          <button class="corex-tab" data-module="crmsync" onclick="corexShowModule('crmsync')">&#x1F504; CRM Sync Layer</button>
-          <button class="corex-tab" data-module="routing" onclick="corexShowModule('routing')">&#x1F465; Agent Routing</button>
-          <button class="corex-tab" data-module="awards" onclick="corexShowModule('awards')">&#x1F3C6; Award Monitoring</button>
-          <button class="corex-tab" data-module="trends" onclick="corexShowModule('trends')">&#x1F4C8; Market Trends</button>
-        </div>
-
-        <!-- COREX Stats Row -->
-        <div id="corex-stats-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;"></div>
-
-        <!-- MODULE: COMMAND CENTER -->
-        <div class="corex-module" id="corex-module-command">
-          <div style="display:grid;grid-template-columns:65fr 35fr;gap:14px;margin-bottom:14px;">
-            <div class="card">
-              <div class="card-header">
-                <div>
-                  <div class="card-title">&#x1F3AF; Active Opportunities</div>
-                  <div class="card-sub">Ranked by COREX Fit Index</div>
-                </div>
-                <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                  <input type="text" id="corex-search" placeholder="Search opportunities..." onInput="corexRenderLeads()" style="padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;width:160px;" />
-                  <select id="corex-filter-source" onchange="corexRenderLeads()" style="padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
-                    <option value="">All Sources</option><option value="rfp">&#x1F4CB; RFP</option><option value="directory">&#x1F3E2; Directory</option><option value="jobboard">&#x1F4BC; Job Board</option><option value="donor">&#x1F331; Donor</option><option value="founder">&#x1F4E3; Founder</option>
-                  </select>
-                  <select id="corex-filter-score" onchange="corexRenderLeads()" style="padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
-                    <option value="">All Scores</option><option value="75">&#x2265;75 Hot</option><option value="50">50-74</option><option value="0">&lt;50</option>
-                  </select>
-                  <select id="corex-filter-status" onchange="corexRenderLeads()" style="padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
-                    <option value="">All Status</option><option value="New">New</option><option value="Reviewed">Reviewed</option><option value="Pushed">Pushed</option><option value="Assigned">Assigned</option>
-                  </select>
-                </div>
-              </div>
-              <div style="max-height:420px;overflow-y:auto;">
-                <table style="width:100%;border-collapse:collapse;">
-                  <thead><tr style="background:var(--bg3);">
-                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
-                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
-                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
-                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
-                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
-                    <th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Actions</th>
-                  </tr></thead>
-                  <tbody id="corex-leads-tbody"></tbody>
-                </table>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header"><div class="card-title">&#x26A1; COREX Activity Stream</div></div>
-              <div id="corex-activity-feed" style="max-height:460px;overflow-y:auto;"></div>
-            </div>
-          </div>
-          <!-- Source Health -->
-          <div class="card">
-            <div class="card-header"><div class="card-title">&#x1F4E1; Procurement Scanner — Source Health</div></div>
-            <div class="card-body">
-              <div id="corex-source-health" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- MODULE: OPPORTUNITY INTELLIGENCE -->
-        <div class="corex-module" id="corex-module-opportunities" style="display:none;">
-          <div class="card">
-            <div class="card-header">
-              <div><div class="card-title">&#x1F3AF; Opportunity Intelligence</div><div class="card-sub">Full pipeline — ranked by COREX Fit Index</div></div>
-            </div>
-            <div style="overflow-x:auto;">
-              <table style="width:100%;border-collapse:collapse;">
-                <thead><tr style="background:var(--bg3);">
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Organisation</th>
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Source</th>
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Tags</th>
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Deadline</th>
-                  <th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Budget</th>
-                </tr></thead>
-                <tbody id="corex-pipeline-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- MODULE: PROCUREMENT SCANNER -->
-        <div class="corex-module" id="corex-module-scanner" style="display:none;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="corex-sources-grid"></div>
-        </div>
-
-        <!-- MODULE: INTELLIGENCE DIGEST -->
-        <div class="corex-module" id="corex-module-digest" style="display:none;">
-          <div class="card">
-            <div class="card-header">
-              <div><div class="card-title">&#x1F4CA; COREX Intelligence Digest</div><div class="card-sub" id="corex-digest-date"></div></div>
-              <div style="display:flex;gap:8px;">
-                <button id="corex-gen-digest-btn" onclick="corexGenerateDigest()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">&#x2728; Generate Digest</button>
-                <button id="corex-copy-digest-btn" onclick="corexCopyDigest()" style="display:none;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;">&#x1F4CB; Copy</button>
-              </div>
-            </div>
-            <div class="card-body" id="corex-digest-output" style="min-height:200px;">
-              <div style="text-align:center;padding:40px;color:var(--text3);">
-                <div style="font-size:32px;margin-bottom:10px;opacity:.3;">&#x1F4CA;</div>
-                <div style="font-size:16px;font-weight:500;">No digest generated yet</div>
-                <div style="font-size:14px;margin-top:6px;">Click "Generate Digest" to create today's COREX intelligence report.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- MODULE: OUTREACH AUTOMATION -->
-        <div class="corex-module" id="corex-module-outreach" style="display:none;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-            <div class="card">
-              <div class="card-header"><div class="card-title">&#x1F4F1; WhatsApp (Twilio)</div></div>
-              <div class="card-body" style="display:grid;gap:10px;">
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Webhook URL</label><input type="url" value="https://api.twilio.com/2010-04-01/Accounts/{SID}/Messages" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Account SID</label><input type="text" placeholder="AC..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Auth Token</label><input type="password" placeholder="Auth token..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Trigger Score Threshold: <span id="corex-wa-val">80</span></label><input type="range" id="corex-wa-threshold" min="0" max="100" value="80" oninput="document.getElementById('corex-wa-val').textContent=this.value" style="width:100%;" /></div>
-                <button onclick="corexToast('✅ WhatsApp config saved')" style="background:linear-gradient(135deg,#059669,#047857);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save Config</button>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header"><div class="card-title">&#x1F4E7; Email Triggers</div></div>
-              <div class="card-body" style="display:grid;gap:10px;">
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">SendGrid API Key</label><input type="password" placeholder="SG...." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">From Address</label><input type="email" value="corex@bluwav.com" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Digest Recipient</label><input type="email" placeholder="andrea@bluwav.com" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Trigger on Score ≥</label><input type="number" value="75" min="0" max="100" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <button onclick="corexToast('✅ Email config saved')" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save Config</button>
-              </div>
-            </div>
-          </div>
-          <div class="card" style="margin-top:14px;">
-            <div class="card-header"><div class="card-title">&#x1F4F1; WhatsApp Message Template</div></div>
-            <div class="card-body">
-              <textarea rows="7" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;resize:vertical;">&#x1F9E0; COREX Intelligence Alert — BluWav
+<button id="corex-run-btn" onclick="corexRunCycle()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.3);">▶ Run Intelligence Cycle</button>
+<button onclick="cgLockCOREX()" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🔒 Lock</button>
+</div>
+</div>
+<!-- COREX Sub-nav tabs -->
+<div id="corex-tabs" style="display:flex;gap:6px;background:rgba(28,22,64,0.8);border:1px solid rgba(167,139,250,0.18);border-radius:12px;padding:6px;margin-bottom:20px;flex-wrap:wrap;">
+<button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">⚡ Intelligence Hub</button>
+<button class="corex-tab" data-module="opportunities" onclick="corexShowModule('opportunities')">🎯 Opportunity Intel</button>
+<button class="corex-tab" data-module="scanner" onclick="corexShowModule('scanner')">📡 Procurement Scanner</button>
+<button class="corex-tab" data-module="digest" onclick="corexShowModule('digest')">📊 Intelligence Digest</button>
+<button class="corex-tab" data-module="outreach" onclick="corexShowModule('outreach')">📤 Outreach Automation</button>
+<button class="corex-tab" data-module="crmsync" onclick="corexShowModule('crmsync')">🔄 CRM Sync Layer</button>
+<button class="corex-tab" data-module="routing" onclick="corexShowModule('routing')">👥 Agent Routing</button>
+<button class="corex-tab" data-module="awards" onclick="corexShowModule('awards')">🏆 Award Monitoring</button>
+<button class="corex-tab" data-module="trends" onclick="corexShowModule('trends')">📈 Market Trends</button>
+</div>
+<!-- COREX Stats Row -->
+<div id="corex-stats-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;"></div>
+<!-- MODULE: COMMAND CENTER -->
+<div class="corex-module" id="corex-module-command">
+<div style="display:grid;grid-template-columns:65fr 35fr;gap:14px;margin-bottom:14px;">
+<div class="card">
+<div class="card-header">
+<div>
+<div class="card-title">🎯 Active Opportunities</div>
+<div class="card-sub">Ranked by COREX Fit Index</div>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;">
+<input id="corex-search" oninput="corexRenderLeads()" placeholder="Search opportunities..." style="padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;width:160px;" type="text"/>
+<select id="corex-filter-source" onchange="corexRenderLeads()" style="padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+<option value="">All Sources</option><option value="rfp">📋 RFP</option><option value="directory">🏢 Directory</option><option value="jobboard">💼 Job Board</option><option value="donor">🌱 Donor</option><option value="founder">📣 Founder</option>
+</select>
+<select id="corex-filter-score" onchange="corexRenderLeads()" style="padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+<option value="">All Scores</option><option value="75">≥75 Hot</option><option value="50">50-74</option><option value="0">&lt;50</option>
+</select>
+<select id="corex-filter-status" onchange="corexRenderLeads()" style="padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+<option value="">All Status</option><option value="New">New</option><option value="Reviewed">Reviewed</option><option value="Pushed">Pushed</option><option value="Assigned">Assigned</option>
+</select>
+</div>
+</div>
+<div style="max-height:420px;overflow-y:auto;">
+<table style="width:100%;border-collapse:collapse;">
+<thead><tr style="background:var(--bg3);">
+<th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
+<th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
+<th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
+<th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
+<th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
+<th style="padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Actions</th>
+</tr></thead>
+<tbody id="corex-leads-tbody"></tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">⚡ COREX Activity Stream</div></div>
+<div id="corex-activity-feed" style="max-height:460px;overflow-y:auto;"></div>
+</div>
+</div>
+<!-- Source Health -->
+<div class="card">
+<div class="card-header"><div class="card-title">📡 Procurement Scanner — Source Health</div></div>
+<div class="card-body">
+<div id="corex-source-health" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;"></div>
+</div>
+</div>
+</div>
+<!-- MODULE: OPPORTUNITY INTELLIGENCE -->
+<div class="corex-module" id="corex-module-opportunities" style="display:none;">
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">🎯 Opportunity Intelligence</div><div class="card-sub">Full pipeline — ranked by COREX Fit Index</div></div>
+</div>
+<div style="overflow-x:auto;">
+<table style="width:100%;border-collapse:collapse;">
+<thead><tr style="background:var(--bg3);">
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Opportunity</th>
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Organisation</th>
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Source</th>
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Tags</th>
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Routing Layer</th>
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Deadline</th>
+<th style="padding:11px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Budget</th>
+</tr></thead>
+<tbody id="corex-pipeline-tbody"></tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- MODULE: PROCUREMENT SCANNER -->
+<div class="corex-module" id="corex-module-scanner" style="display:none;">
+<div id="corex-sources-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;"></div>
+</div>
+<!-- MODULE: INTELLIGENCE DIGEST -->
+<div class="corex-module" id="corex-module-digest" style="display:none;">
+<div class="card">
+<div class="card-header">
+<div><div class="card-title">📊 COREX Intelligence Digest</div><div class="card-sub" id="corex-digest-date"></div></div>
+<div style="display:flex;gap:8px;">
+<button id="corex-gen-digest-btn" onclick="corexGenerateDigest()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">✨ Generate Digest</button>
+<button id="corex-copy-digest-btn" onclick="corexCopyDigest()" style="display:none;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;">📋 Copy</button>
+</div>
+</div>
+<div class="card-body" id="corex-digest-output" style="min-height:200px;">
+<div style="text-align:center;padding:40px;color:var(--text3);">
+<div style="font-size:32px;margin-bottom:10px;opacity:.3;">📊</div>
+<div style="font-size:16px;font-weight:500;">No digest generated yet</div>
+<div style="font-size:14px;margin-top:6px;">Click "Generate Digest" to create today's COREX intelligence report.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- MODULE: OUTREACH AUTOMATION -->
+<div class="corex-module" id="corex-module-outreach" style="display:none;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+<div class="card">
+<div class="card-header"><div class="card-title">📱 WhatsApp (Twilio)</div></div>
+<div class="card-body" style="display:grid;gap:10px;">
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Webhook URL</label><input style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" type="url" value="https://api.twilio.com/2010-04-01/Accounts/{SID}/Messages"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Account SID</label><input placeholder="AC..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" type="text"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Auth Token</label><input placeholder="Auth token..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" type="password"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Trigger Score Threshold: <span id="corex-wa-val">80</span></label><input id="corex-wa-threshold" max="100" min="0" oninput="document.getElementById('corex-wa-val').textContent=this.value" style="width:100%;" type="range" value="80"/></div>
+<button onclick="corexToast('✅ WhatsApp config saved')" style="background:linear-gradient(135deg,#059669,#047857);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save Config</button>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">📧 Email Triggers</div></div>
+<div class="card-body" style="display:grid;gap:10px;">
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">SendGrid API Key</label><input placeholder="SG...." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" type="password"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">From Address</label><input style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" type="email" value="corex@bluwav.com"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Digest Recipient</label><input placeholder="andrea@bluwav.com" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" type="email"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Trigger on Score ≥</label><input max="100" min="0" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" type="number" value="75"/></div>
+<button onclick="corexToast('✅ Email config saved')" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save Config</button>
+</div>
+</div>
+</div>
+<div class="card" style="margin-top:14px;">
+<div class="card-header"><div class="card-title">📱 WhatsApp Message Template</div></div>
+<div class="card-body">
+<textarea rows="7" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;resize:vertical;">🧠 COREX Intelligence Alert — BluWav
 
 *{{lead_name}}* from *{{company}}*
-&#x1F4CD; {{country}} | &#x1F3AF; COREX Fit Index: {{score}}/100
-&#x1F4CB; Source: {{source}} | &#x1F4B0; Budget: {{budget}}
+📍 {{country}} | 🎯 COREX Fit Index: {{score}}/100
+📋 Source: {{source}} | 💰 Budget: {{budget}}
 
-&#x1F4A1; High COREX Fit Index — qualified for CRM sync and outreach.
-&#x1F3F7;&#xFE0F; Tags: {{tags}}
+💡 High COREX Fit Index — qualified for CRM sync and outreach.
+🏷️ Tags: {{tags}}
 
-&#x1F449; Review in COREX &#x2192; BluWav Super Admin</textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- MODULE: CRM SYNC LAYER -->
-        <div class="corex-module" id="corex-module-crmsync" style="display:none;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-            <div class="card">
-              <div class="card-header"><div class="card-title">&#x1F504; CRM Connection</div></div>
-              <div class="card-body" style="display:grid;gap:10px;">
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">CRM Endpoint URL</label><input type="url" value="https://api.bluwavcrm.com/v1/leads" style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">API Token</label><input type="password" placeholder="sk-bluwav-..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" /></div>
-                <div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Push Mode</label>
-                  <div style="display:flex;gap:14px;margin-top:4px;">
-                    <label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input type="radio" name="corex-push-mode" value="auto" checked /> Auto (≥75)</label>
-                    <label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input type="radio" name="corex-push-mode" value="manual" /> Manual</label>
-                    <label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input type="radio" name="corex-push-mode" value="disabled" /> Disabled</label>
-                  </div>
-                </div>
-                <div style="display:flex;gap:8px;">
-                  <button onclick="corexToast('✅ COREX → CRM connection verified')" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;">&#x1F50C; Test Connection</button>
-                  <button onclick="corexToast('✅ CRM sync settings saved')" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save</button>
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header"><div class="card-title">&#x1F504; COREX → CRM Sync Flow</div></div>
-              <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.08);border-radius:8px;border-left:3px solid #8b5cf6;"><span style="font-size:18px;">&#x1F4E1;</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">1. COREX Scans Sources</div><div style="font-size:13px;color:var(--text3);">UNGM, ReliefWeb, Devex, CCCCC, JBDC, IDB, EU-LAC</div></div></div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(16,185,129,0.08);border-radius:8px;border-left:3px solid #10b981;"><span style="font-size:18px;">&#x1F3AF;</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">2. COREX Fit Index Scoring</div><div style="font-size:13px;color:var(--text3);">Industry · Geo · Budget · Org Type · Source · Urgency</div></div></div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.1);border-radius:8px;border-left:3px solid #a78bfa;"><span style="font-size:18px;">&#x1F465;</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">3. Agent Routing</div><div style="font-size:13px;color:var(--text3);">Devon · Aaliya · Marcus · Simone</div></div></div>
-                <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(245,158,11,0.08);border-radius:8px;border-left:3px solid #f59e0b;"><span style="font-size:18px;">&#x1F4E4;</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">4. COREX → CRM Sync</div><div style="font-size:13px;color:var(--text3);">Pipeline stages · Contact records · Opportunity tracking</div></div></div>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-title">&#x1F4CB; Recent Sync Actions</div></div>
-            <div id="corex-sync-log"></div>
-          </div>
-        </div>
-
-        <!-- MODULE: AGENT ROUTING -->
-        <div class="corex-module" id="corex-module-routing" style="display:none;">
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;" id="corex-agent-cards"></div>
-          <div class="card">
-            <div class="card-header"><div class="card-title">&#x2699;&#xFE0F; Routing Rules</div></div>
-            <div class="card-body" style="display:flex;flex-direction:column;gap:8px;" id="corex-routing-rules"></div>
-          </div>
-        </div>
-
-        <!-- MODULE: AWARD MONITORING -->
-        <div class="corex-module" id="corex-module-awards" style="display:none;">
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
-            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--text);">8</div><div style="font-size:13px;color:var(--text3);margin-top:2px;">Tenders Tracked</div></div>
-            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:#22c55e;">3</div><div style="font-size:13px;color:var(--text3);margin-top:2px;">Relationships Positioned</div></div>
-            <div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--corex-light);">5</div><div style="font-size:13px;color:var(--text3);margin-top:2px;">Follow-up Opportunities</div></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-title">&#x1F3C6; Award Queue</div></div>
-            <div id="corex-awards-list"></div>
-          </div>
-        </div>
-
-        <!-- MODULE: MARKET TRENDS -->
-        <div class="corex-module" id="corex-module-trends" style="display:none;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;" id="corex-trends-grid"></div>
-          <div class="card">
-            <div class="card-header"><div class="card-title">&#x1F30A; Caribbean Digital Transformation Index</div></div>
-            <div class="card-body"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="corex-dti-grid"></div></div>
-          </div>
-        </div>
-
-      </div><!-- end corex-content -->
-    </div><!-- end view-corex -->
-
+👉 Review in COREX → BluWav Super Admin</textarea>
+</div>
+</div>
+</div>
+<!-- MODULE: CRM SYNC LAYER -->
+<div class="corex-module" id="corex-module-crmsync" style="display:none;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+<div class="card">
+<div class="card-header"><div class="card-title">🔄 CRM Connection</div></div>
+<div class="card-body" style="display:grid;gap:10px;">
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">CRM Endpoint URL</label><input style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" type="url" value="https://api.bluwavcrm.com/v1/leads"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">API Token</label><input placeholder="sk-bluwav-..." style="width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;" type="password"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Push Mode</label>
+<div style="display:flex;gap:14px;margin-top:4px;">
+<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input checked="" name="corex-push-mode" type="radio" value="auto"/> Auto (≥75)</label>
+<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input name="corex-push-mode" type="radio" value="manual"/> Manual</label>
+<label style="font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--text2);"><input name="corex-push-mode" type="radio" value="disabled"/> Disabled</label>
+</div>
+</div>
+<div style="display:flex;gap:8px;">
+<button onclick="corexToast('✅ COREX → CRM connection verified')" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit;">🔌 Test Connection</button>
+<button onclick="corexToast('✅ CRM sync settings saved')" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Save</button>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">🔄 COREX → CRM Sync Flow</div></div>
+<div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+<div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.08);border-radius:8px;border-left:3px solid #8b5cf6;"><span style="font-size:18px;">📡</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">1. COREX Scans Sources</div><div style="font-size:13px;color:var(--text3);">UNGM, ReliefWeb, Devex, CCCCC, JBDC, IDB, EU-LAC</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(16,185,129,0.08);border-radius:8px;border-left:3px solid #10b981;"><span style="font-size:18px;">🎯</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">2. COREX Fit Index Scoring</div><div style="font-size:13px;color:var(--text3);">Industry · Geo · Budget · Org Type · Source · Urgency</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(139,92,246,0.1);border-radius:8px;border-left:3px solid #a78bfa;"><span style="font-size:18px;">👥</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">3. Agent Routing</div><div style="font-size:13px;color:var(--text3);">Devon · Aaliya · Marcus · Simone</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(245,158,11,0.08);border-radius:8px;border-left:3px solid #f59e0b;"><span style="font-size:18px;">📤</span><div><div style="font-size:14px;font-weight:600;color:var(--text);">4. COREX → CRM Sync</div><div style="font-size:13px;color:var(--text3);">Pipeline stages · Contact records · Opportunity tracking</div></div></div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">📋 Recent Sync Actions</div></div>
+<div id="corex-sync-log"></div>
+</div>
+</div>
+<!-- MODULE: AGENT ROUTING -->
+<div class="corex-module" id="corex-module-routing" style="display:none;">
+<div id="corex-agent-cards" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;"></div>
+<div class="card">
+<div class="card-header"><div class="card-title">⚙️ Routing Rules</div></div>
+<div class="card-body" id="corex-routing-rules" style="display:flex;flex-direction:column;gap:8px;"></div>
+</div>
+</div>
+<!-- MODULE: AWARD MONITORING -->
+<div class="corex-module" id="corex-module-awards" style="display:none;">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+<div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--text);">8</div><div style="font-size:13px;color:var(--text3);margin-top:2px;">Tenders Tracked</div></div>
+<div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:#22c55e;">3</div><div style="font-size:13px;color:var(--text3);margin-top:2px;">Relationships Positioned</div></div>
+<div class="card" style="text-align:center;padding:16px;"><div style="font-size:26px;font-weight:800;color:var(--corex-light);">5</div><div style="font-size:13px;color:var(--text3);margin-top:2px;">Follow-up Opportunities</div></div>
+</div>
+<div class="card">
+<div class="card-header"><div class="card-title">🏆 Award Queue</div></div>
+<div id="corex-awards-list"></div>
+</div>
+</div>
+<!-- MODULE: MARKET TRENDS -->
+<div class="corex-module" id="corex-module-trends" style="display:none;">
+<div id="corex-trends-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;"></div>
+<div class="card">
+<div class="card-header"><div class="card-title">🌊 Caribbean Digital Transformation Index</div></div>
+<div class="card-body"><div id="corex-dti-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div></div>
+</div>
+</div>
+</div><!-- end corex-content -->
+</div><!-- end view-corex -->
 </body>
 </html>
