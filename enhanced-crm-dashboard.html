@@ -357,11 +357,11 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
-<div class="trial-w">
+<div class="trial-w" id="trialWidget">
 <div class="tw-label">⏱ 14-Day Free Trial</div>
-<div class="tw-days">14</div>
-<div class="tw-sub">days remaining · No card needed</div>
-<div class="tw-bar"><div class="tw-fill"></div></div>
+<div class="tw-days" id="trialDaysNum">14</div>
+<div class="tw-sub" id="trialSub">days remaining · No card needed</div>
+<div class="tw-bar"><div class="tw-fill" id="trialFill" style="width:100%;"></div></div>
 </div>
 <div class="user-card" onclick="window.location.href='settings.html'">
 <div class="avatar" id="sidebarAvatar">—</div>
@@ -922,9 +922,44 @@ let revenueChart = null, reportsChart = null;
 const COLORS = ['#00C8E0','#C9A84C','#22C55E','#FF6B2B','#a78bfa','#2980B9','#E74C3C','#27AE60'];
 function ini(n){return(n||'?').split(' ').map(x=>x[0]||'').join('').toUpperCase().slice(0,2);}
 function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
-function fmt(v){return '$'+(v||0).toLocaleString();}
 
-// ── TOAST ─────────────────────────────────────────────────────────────────────
+// -- TRIAL COUNTDOWN --
+function updateTrialWidget(signupDateStr){
+  const TRIAL_DAYS=14;
+  const widget=document.getElementById('trialWidget');
+  const daysEl=document.getElementById('trialDaysNum');
+  const subEl=document.getElementById('trialSub');
+  const fillEl=document.getElementById('trialFill');
+  if(!daysEl)return;
+  const start=signupDateStr?new Date(signupDateStr):new Date();
+  const elapsed=Math.floor((Date.now()-start)/(1000*60*60*24));
+  const remaining=Math.max(0,TRIAL_DAYS-elapsed);
+  const pct=Math.max(0,Math.min(100,(remaining/TRIAL_DAYS)*100));
+  daysEl.textContent=remaining;
+  if(remaining===0){
+    if(subEl)subEl.textContent='Trial expired - Upgrade to continue';
+    if(widget)widget.style.borderColor='rgba(239,68,68,0.5)';
+    if(daysEl)daysEl.style.color='#ef4444';
+    if(fillEl)fillEl.style.background='#ef4444';
+  }else if(remaining<=3){
+    if(subEl)subEl.textContent='days remaining - Upgrade soon!';
+    if(widget)widget.style.borderColor='rgba(239,68,68,0.4)';
+    if(daysEl)daysEl.style.color='#ef4444';
+    if(fillEl)fillEl.style.background='linear-gradient(90deg,#ef4444,#f97316)';
+  }else if(remaining<=7){
+    if(subEl)subEl.textContent='days remaining - No card needed';
+    if(widget)widget.style.borderColor='rgba(245,158,11,0.4)';
+    if(daysEl)daysEl.style.color='var(--gold)';
+    if(fillEl)fillEl.style.background='linear-gradient(90deg,var(--orange),var(--gold))';
+  }else{
+    if(subEl)subEl.textContent='days remaining - No card needed';
+    if(fillEl)fillEl.style.background='linear-gradient(90deg,var(--orange),var(--gold))';
+  }
+  if(fillEl)fillEl.style.width=pct+'%';
+  localStorage.setItem('bw_trial_start',start.toISOString());
+  localStorage.setItem('bw_trial_days_left',remaining);
+}
+
 
 // ── ADMIN NOTIFICATION ────────────────────────────────────────────────────────
 // Sends email to BluWav admin when key events happen (new contact, deal, payment)
@@ -1084,6 +1119,9 @@ async function initDashboard(){
     banner.innerHTML='💼 Salesperson View — You can only see your own contacts, deals & activities.';
     loadActivityFeed();
   }
+
+  // Trial countdown
+  updateTrialWidget(profile?.created_at || currentUser.created_at);
 
   // Workspace Settings
   const se=document.getElementById('settingsEmail');

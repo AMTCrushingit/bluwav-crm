@@ -211,20 +211,41 @@ function handlePhotoUpload(input){
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Growth</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
-<a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
-<div class="ns">Performance</div>
-<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
-<a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
-<a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
+<a class="nav-item" style="display:none;"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
+<a class="nav-item" style="display:none;"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
+<a class="nav-item" style="display:none;"><span class="nav-icon">⚡</span><span class="nav-text"> Workflows</span></a>
+<a class="nav-item" style="pointer-events:none;opacity:0.4;"><span class="nav-icon">📡</span><span class="nav-text"> Communications <span style="font-size:0.65rem;opacity:0.6;">Coming soon</span></span></a>
 <div class="ns">Insights</div>
 <a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
-<a class="active" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
+<div class="ns">Workspace</div>
+<a class="active" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
-<div class="trial-pill"><div class="tp-label">⏱ 14-Day Free Trial</div><div class="tp-sub">No card needed · Full access</div><button class="btn-upgrade">Upgrade Plan</button></div>
+<div class="trial-pill" id="trialPill">
+<div class="tp-label">⏱ 14-Day Free Trial</div>
+<div class="tp-sub"><span id="trialDaysNum">14</span> days remaining · No card needed</div>
+<div style="height:5px;border-radius:3px;background:rgba(255,255,255,0.1);overflow:hidden;margin:6px 0;">
+<div id="trialFill" style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--orange),var(--gold));width:100%;transition:width 0.5s;"></div>
+</div>
+<button class="btn-upgrade" onclick="window.location.href='billing.html'">Upgrade Plan</button>
+</div>
+<script>
+(function(){
+  const start = localStorage.getItem('bw_trial_start');
+  if(!start) return;
+  const elapsed = Math.floor((Date.now() - new Date(start)) / (1000*60*60*24));
+  const remaining = Math.max(0, 14 - elapsed);
+  const pct = Math.max(0,(remaining/14)*100);
+  const d = document.getElementById('trialDaysNum');
+  const f = document.getElementById('trialFill');
+  const p = document.getElementById('trialPill');
+  if(d) d.textContent = remaining;
+  if(f) f.style.width = pct + '%';
+  if(remaining <= 3 && p){ p.style.borderColor='rgba(239,68,68,0.5)'; if(d) d.style.color='#ef4444'; }
+  else if(remaining <= 7 && p){ p.style.borderColor='rgba(245,158,11,0.4)'; }
+})();
+</script>
 <div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Loading...</div><div class="user-role" id="sidebarRole">—</div></div></div>
 <button class="signout-btn" onclick="signOut()">🚪 Sign Out</button>
 </div>
