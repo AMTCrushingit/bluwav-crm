@@ -3778,6 +3778,79 @@ function openAddEvent(dateStr){
   if(dateEl) dateEl.value=dateStr||new Date().toISOString().split('T')[0];
   openModal('addEvent');
 }
+
+
+// ── DEAL EDIT ──────────────────────────────────────────────────
+function openDeal(dealId){
+  var d=allDeals.find(function(x){return x.id===dealId;});
+  if(!d)return;
+  var idEl=document.getElementById('ed-id');
+  var nameEl=document.getElementById('ed-name');
+  var valEl=document.getElementById('ed-value');
+  var stageEl=document.getElementById('ed-stage');
+  var notesEl=document.getElementById('ed-notes');
+  var contEl=document.getElementById('ed-contact');
+  if(idEl)idEl.value=d.id;
+  if(nameEl)nameEl.value=d.deal_name||d.title||'';
+  if(valEl)valEl.value=d.deal_value||d.value||0;
+  if(stageEl)stageEl.value=(d.stage||'lead').toLowerCase();
+  if(notesEl)notesEl.value=d.notes||'';
+  if(contEl&&allContacts.length){
+    contEl.innerHTML='<option value="">No contact</option>'+
+      allContacts.map(function(ct){return '<option value="'+ct.id+'"'+(ct.id===d.contact_id?' selected':'')+'>'+
+        (ct.full_name||'Unknown')+'</option>';}).join('');
+  }
+  openModal('editDeal');
+}
+
+// ── WHATSAPP ───────────────────────────────────────────────────
+function initWhatsAppView(){
+  var sel=document.getElementById('wa-contact-select');
+  if(sel){
+    var wac=allContacts.filter(function(ct){return ct.phone||ct.whatsapp;});
+    sel.innerHTML='<option value="">— Select contact —</option>'+
+      wac.map(function(ct){return '<option value="'+ct.id+'">'+
+        (ct.full_name||'Unknown')+' — '+(ct.phone||ct.whatsapp||'')+'</option>';}).join('');
+  }
+  var list=document.getElementById('wa-contacts-list');
+  if(list){
+    var wac2=allContacts.filter(function(ct){return ct.phone||ct.whatsapp;});
+    if(wac2.length){
+      var html2='';
+      wac2.forEach(function(ct){
+        html2+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--navy-border);">';
+        html2+='<div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">'+(ct.full_name||'Unknown')+'</div>';
+        html2+='<div style="font-size:0.75rem;color:var(--text3);">'+(ct.phone||ct.whatsapp||'—')+'</div></div>';
+        html2+='<button onclick="quickWA(\''+ct.id+'\')" style="background:#25D366;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:0.75rem;font-weight:600;cursor:pointer;">💬</button>';
+        html2+='</div>';
+      });
+      list.innerHTML=html2;
+    } else {
+      list.innerHTML='<p style="color:var(--text3);padding:20px;text-align:center;">No contacts with phone numbers yet.</p>';
+    }
+  }
+}
+function waFillPhone(id){
+  var ct=allContacts.find(function(c){return c.id===id;});
+  if(ct){var el=document.getElementById('wa-phone-input');if(el)el.value=ct.phone||ct.whatsapp||'';}
+}
+function sendWhatsAppFromView(){
+  var phone=(document.getElementById('wa-phone-input')?document.getElementById('wa-phone-input').value:'').replace(/[^0-9+]/g,'');
+  var msg=document.getElementById('wa-message-input')?document.getElementById('wa-message-input').value.trim():'';
+  if(!phone){showToast('Please enter a phone number','');return;}
+  window.open('https://wa.me/'+phone.replace('+','')+(msg?'?text='+encodeURIComponent(msg):''),'_blank');
+  showToast('✅ WhatsApp opened','success');
+}
+function quickWA(id){
+  var ct=allContacts.find(function(c){return c.id===id;});
+  if(!ct)return;
+  var ph=(ct.phone||ct.whatsapp||'').replace(/[^0-9+]/g,'');
+  if(!ph){showToast('No phone number for this contact','');return;}
+  var sel=document.getElementById('wa-contact-select');if(sel)sel.value=id;
+  var el=document.getElementById('wa-phone-input');if(el)el.value=ct.phone||ct.whatsapp||'';
+  var msg=document.getElementById('wa-message-input');if(msg)msg.focus();
+}
+
 </script>
 
 </body>
