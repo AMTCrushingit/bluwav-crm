@@ -19,7 +19,7 @@ function openDeleteMemberBtn(btn){
 }
 
 
-  async function populateWorkspace SettingsFields(){
+  async function populateSettingsFields(){
     const {data:{session}} = await db.auth.getSession().catch(()=>({data:{session:null}}));
     if(!session) return;
     const {data:profile} = await db.from('profiles').select('*').eq('id',session.user.id).single().catch(()=>({data:null}));
@@ -32,7 +32,7 @@ function openDeleteMemberBtn(btn){
     if(av) av.textContent = ini(profile.full_name||session.user.email||'?');
   }
   // Run on page load
-  document.addEventListener('DOMContentLoaded', populateWorkspace SettingsFields);
+  document.addEventListener('DOMContentLoaded', populateSettingsFields);
 
 
   function handlePhotoUpload(input){
@@ -289,7 +289,7 @@ function openDeleteMemberBtn(btn){
 </div>
 <div class="save-bar">
 <button class="btn-ghost">Cancel</button>
-<button class="btn-save" onclick="saveWorkspace Settings('Profile')">Save Changes</button>
+<button class="btn-save" onclick="saveSettings('Profile')">Save Changes</button>
 </div>
 </div>
 </div>
@@ -301,7 +301,7 @@ function openDeleteMemberBtn(btn){
 <div class="form-group"><label>New Password</label><input placeholder="••••••••" type="password"/></div>
 <div class="form-group"><label>Confirm Password</label><input placeholder="••••••••" type="password"/></div>
 </div>
-<div class="save-bar"><button class="btn-save" onclick="saveWorkspace Settings('Password')">Update Password</button></div>
+<div class="save-bar"><button class="btn-save" onclick="saveSettings('Password')">Update Password</button></div>
 </div>
 </div>
 </div>
@@ -325,7 +325,7 @@ function openDeleteMemberBtn(btn){
 </div>
 </div>
 <div class="form-row full"><div class="form-group"><label>Company Description</label><textarea placeholder="Brief description of your business..." rows="3"></textarea></div></div>
-<div class="save-bar"><button class="btn-ghost">Cancel</button><button class="btn-save" onclick="saveWorkspace Settings('Workspace')">Save Changes</button></div>
+<div class="save-bar"><button class="btn-ghost">Cancel</button><button class="btn-save" onclick="saveSettings('Workspace')">Save Changes</button></div>
 </div>
 </div>
 <div class="settings-card">
@@ -339,7 +339,7 @@ function openDeleteMemberBtn(btn){
 <div class="form-group"><label>Timezone</label><select><option>America/Port_of_Spain (AST)</option><option>America/Barbados (AST)</option><option>America/Jamaica (EST)</option></select></div>
 <div class="form-group"><label>Language</label><select><option>English</option><option>Spanish</option><option>French</option></select></div>
 </div>
-<div class="save-bar"><button class="btn-save" onclick="saveWorkspace Settings('Preferences')">Save Preferences</button></div>
+<div class="save-bar"><button class="btn-save" onclick="saveSettings('Preferences')">Save Preferences</button></div>
 </div>
 </div>
 </div>
@@ -389,7 +389,7 @@ function openDeleteMemberBtn(btn){
 <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Team Activity Alerts</div><div class="toggle-sub">Get WhatsApp pings for important team actions</div></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
 </div>
 </div>
-<div class="save-bar"><button class="btn-save" onclick="saveWorkspace Settings('Notifications')">Save Preferences</button></div>
+<div class="save-bar"><button class="btn-save" onclick="saveSettings('Notifications')">Save Preferences</button></div>
 </div>
 <!-- INTEGRATIONS -->
 <div class="settings-section" id="section-integrations">
@@ -708,7 +708,7 @@ function openDeleteMemberBtn(btn){
       loadTeamMembers();
     }
   });
-  async function saveWorkspace Settings(section){
+  async function saveSettings(section){
     const btn = event?.target;
     if(btn){btn.disabled=true;btn.textContent='Saving...';}
     try{

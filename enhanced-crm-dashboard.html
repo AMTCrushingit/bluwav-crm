@@ -617,7 +617,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <button class="rng-btn" onclick="setReportRange(6,this)" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;">6 Months</button>
 <button class="rng-btn" onclick="setReportRange(12,this)" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;">12 Months</button>
 </div>
-<button class="btn btn-outline btn-sm" onclick="exportBusiness InsightsCSV()">📥 Export CSV</button>
+<button class="btn btn-outline btn-sm" onclick="exportReportsCSV()">📥 Export CSV</button>
 </div>
 <!-- KPI Stats -->
 <div class="stats-grid">
@@ -743,7 +743,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
 <div class="fg"><label class="fl">Email</label><input class="fi" id="settingsEmail" placeholder="your@email.com" readonly="" style="opacity:0.6;cursor:not-allowed;" type="email"/></div>
 <div class="fg"><label class="fl">Role</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
-<button class="btn btn-primary btn-sm" id="settingsSaveBtn" onclick="saveProfileWorkspace Settings()" style="align-self:flex-start;">Save Changes</button>
+<button class="btn btn-primary btn-sm" id="settingsSaveBtn" onclick="saveProfileSettings()" style="align-self:flex-start;">Save Changes</button>
 </div>
 </div>
 </div>
@@ -961,7 +961,7 @@ function showToast(msg,type=''){
 })();
 
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
-const AUTH_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 
 // Activity tracker — resets on any user interaction
 function touchActivity() {
@@ -1001,7 +1001,7 @@ function touchActivity() {
   // 3. Valid session within timeout — proceed
   touchActivity(); // record this visit
   currentUser = session.user;
-  await initCommand Center();
+  await initDashboard();
 
   // 4. Handle future sign-outs
   db.auth.onAuthStateChange((event) => {
@@ -1012,7 +1012,7 @@ function touchActivity() {
   });
 })();
 
-async function initCommand Center(){
+async function initDashboard(){
 
   // Get or create profile
   let profile = null;
@@ -1934,7 +1934,7 @@ function showView(name){
   if(name==='calendar') loadTasks().then(()=>renderCalendar());
   if(name==='deals' && dealsViewMode==='list') setTimeout(renderOpportunitiesList,100);
   if(name==='email') loadEmailLog();
-  if(name==='reports') setTimeout(loadBusiness Insights,100);
+  if(name==='reports') setTimeout(loadReports,100);
 }
 
 function toggleSidebar(){
@@ -2914,10 +2914,10 @@ function setReportRange(months, btn){
   if(btn){ btn.style.background='var(--cyan)'; btn.style.color='var(--navy-deep)'; }
   // Debounce — only fire after 150ms of no clicks
   clearTimeout(_reportDebounce);
-  _reportDebounce = setTimeout(loadBusiness Insights, 150);
+  _reportDebounce = setTimeout(loadReports, 150);
 }
 
-async function loadBusiness Insights(){
+async function loadReports(){
   // Use already-loaded allOpportunities + allCustomers — no extra DB calls needed
   const now = new Date();
   const cutoff = new Date(now);
@@ -3097,7 +3097,7 @@ async function loadBusiness Insights(){
   }
 }
 
-function exportBusiness InsightsCSV(){
+function exportReportsCSV(){
   const rows = [['Deal Name','Client','Value','Stage','Type','Close Date','Probability','Won/Lost Reason','Created']];
   allOpportunities.forEach(d=>{
     rows.push([
@@ -3498,7 +3498,7 @@ window.addEventListener('beforeunload',stopRealtime);
   if(dateEl) dateEl.value = '';
 
 // ── FIX 4: Workspace Settings — save profile to Supabase ────────────────────────────────
-async function saveProfileWorkspace Settings(){
+async function saveProfileSettings(){
   const nameEl = document.getElementById('settingsName');
   const btn = document.getElementById('settingsSaveBtn');
   const name = nameEl ? nameEl.value.trim() : '';
