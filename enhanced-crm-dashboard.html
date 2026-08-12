@@ -418,7 +418,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <!-- Stats -->
 <div class="stats-grid">
-<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Contacts</span><span>👥</span></div><div class="stat-val" id="metricContacts">—</div><div class="stat-chg up" id="contactTrend">↑ loading</div></div>
+<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Contacts</span><span>👥</span></div><div class="stat-val" id="metricContacts">—</div><div class="stat-chg up" id="contactTrend"></div></div>
 <div class="stat g"><div class="stat-hd"><span class="stat-lbl">Open Deals</span><span>💼</span></div><div class="stat-val" id="metricDeals">—</div><div class="stat-chg up">↑ active</div></div>
 <div class="stat o"><div class="stat-hd"><span class="stat-lbl">Pipeline Value</span><span>💰</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">↑ pipeline</div></div>
 <div class="stat s"><div class="stat-hd"><span class="stat-lbl">Deals Won</span><span>🏆</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">This month</div></div>
@@ -1195,6 +1195,13 @@ async function loadData(){
   const nb=document.getElementById('navContactsBadge');
   if(nb)nb.textContent=cCount;
   document.getElementById('countAll').textContent=cCount;
+  // Update per-status counts
+  const statusCounts={Lead:0,Qualified:0,Proposal:0,Won:0,Customer:0};
+  contacts.forEach(ct=>{ if(statusCounts[ct.status]!==undefined) statusCounts[ct.status]++; });
+  Object.entries(statusCounts).forEach(([s,n])=>{
+    const el=document.getElementById('count'+s);
+    if(el) el.textContent=n;
+  });
 
   // Deals — matches dashboard.html exactly
   let deals=[];
@@ -1508,6 +1515,10 @@ function filterContacts(){
 }
 
 function filterByStatus(status){
+  // Update active filter button
+  document.querySelectorAll('.status-filter-btn').forEach(b=>b.classList.remove('active'));
+  const activeBtn = document.querySelector(`.status-filter-btn[data-status="${status}"]`);
+  if(activeBtn) activeBtn.classList.add('active');
   const sf=document.getElementById('contactStatusFilter');
   if(sf)sf.value=status;
   filterContacts();
@@ -1978,7 +1989,14 @@ function startPresence() {
 }
 
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
-async function signOut(){sessionStorage.removeItem('bw_gate_ok');await db.auth.signOut();window.location.href='login.html';}
+async function signOut(){
+  try {
+    sessionStorage.removeItem('bw_gate_ok');
+    sessionStorage.removeItem('bw_last_active');
+    await db.auth.signOut();
+  } catch(e){ console.warn('signOut:',e.message); }
+  window.location.href='login.html';
+}
 
 // ── SESSION TIMEOUT (10 min) ───────────────────────────────────────────────────
 // Shows a lock screen overlay after 30 min inactivity.

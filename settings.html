@@ -34,6 +34,18 @@ function openDeleteMemberBtn(btn){
   // Run on page load
   document.addEventListener('DOMContentLoaded', populateSettingsFields);
 
+
+  function handlePhotoUpload(input){
+    if(!input.files||!input.files[0]) return;
+    const reader=new FileReader();
+    reader.onload=function(e){
+      const av=document.getElementById('profileAvatar');
+      if(av){av.style.backgroundImage='url('+e.target.result+')';av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
+      showToast('✅ Photo updated — save to apply','success');
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
 </script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -254,7 +266,8 @@ function openDeleteMemberBtn(btn){
 <div class="card-header"><div class="card-title">Personal Information</div><div class="card-sub">Update your name, email and profile photo</div></div>
 <div class="card-body">
 <div class="avatar-upload">
-<div class="avatar-large" id="profileAvatar">AM</div>
+<input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="handlePhotoUpload(this)"/>
+<div class="avatar-large" id="profileAvatar" onclick="document.getElementById('photoUpload').click()" style="cursor:pointer;" title="Click to change photo">AM</div>
 <div class="avatar-actions">
 <button class="btn-upload">📷 Upload Photo</button>
 <div class="avatar-hint">JPG, PNG up to 2MB</div>
