@@ -868,8 +868,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal">
 <div class="modal-hd"><h3>📧 Send Email</h3><button class="modal-close" onclick="closeModal('sendEmail')">✕</button></div>
 <div class="modal-body">
-<div class="fg"><label class="fl">To</label><input class="fi" placeholder="recipient@email.com"/></div>
-<div class="fg"><label class="fl">Subject</label><input class="fi" placeholder="Email subject"/></div>
+<div class="fg"><label class="fl">To</label><input class="fi" id="email-to" type="email" placeholder="recipient@email.com"/></div>
+<div class="fg"><label class="fl">Subject</label><input class="fi" id="email-subject" placeholder="Email subject"/></div>
 <div class="fg"><label class="fl">Message</label><textarea class="fta" placeholder="Your message..." style="min-height:120px;"></textarea></div>
 </div>
 <div class="modal-footer">
@@ -882,7 +882,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal">
 <div class="modal-hd"><h3>✅ Add Task</h3><button class="modal-close" onclick="closeModal('addTask')">✕</button></div>
 <div class="modal-body">
-<div class="fg"><label class="fl">Task Title <span class="req">*</span></label><input class="fi" placeholder="Task description"/></div>
+<div class="fg"><label class="fl">Task Title <span class="req">*</span></label><input class="fi" id="task-title-input" placeholder="Task description"/></div>
 <div class="fg-row">
 <div class="fg"><label class="fl">Due Date</label><input class="fi" id="task-due-date" style="cursor:pointer;" type="date"/></div>
 <div class="fg"><label class="fl">Priority</label><select class="fs"><option>High</option><option>Medium</option><option>Low</option></select></div>
