@@ -1098,10 +1098,18 @@ async function initDashboard(){
   if(sr)sr.value=userRole.charAt(0).toUpperCase()+userRole.slice(1);
   if(sn)sn.value=name;
 
-  loadData();
+  // Load data with auto-retry if empty
+  loadData().then(()=>{
+    setTimeout(()=>{
+      if(allContacts.length===0){
+        _loadDataInFlight=false;
+        loadData();
+      }
+    },2500);
+  });
   initChart();
-  setTimeout(startPresence, 100);
-  setTimeout(startRealtime, 500);
+  setTimeout(startRealtime, 1000);
+  setTimeout(loadNotifications, 3000);
   // Load notifications after data loads
   setTimeout(loadNotifications, 2000);
 }
