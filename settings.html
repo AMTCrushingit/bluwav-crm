@@ -6,7 +6,8 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BluWav Business OS — Workspace Settings</title>
 <link href="bluwav.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
 function openEditMemberBtn(btn){
   var id = btn.getAttribute('data-id');
   var row = btn.closest('[data-member-id]') || btn.parentElement.parentElement;
@@ -18,34 +19,30 @@ function openDeleteMemberBtn(btn){
   openDeleteModal(id);
 }
 
+async function populateSettingsFields(){
+  const {data:{session}} = await db.auth.getSession().catch(()=>({data:{session:null}}));
+  if(!session) return;
+  const {data:profile} = await db.from('profiles').select('*').eq('id',session.user.id).single().catch(()=>({data:null}));
+  if(!profile) return;
+  const parts = (profile.full_name||'').split(' ');
+  const fn = document.getElementById('firstName'); if(fn) fn.value = parts[0]||'';
+  const ln = document.getElementById('lastName');  if(ln) ln.value = parts.slice(1).join(' ')||'';
+  const em = document.getElementById('profileEmail'); if(em) em.value = session.user.email||'';
+  const av = document.getElementById('profileAvatar');
+  if(av) av.textContent = ini(profile.full_name||session.user.email||'?');
+}
+document.addEventListener('DOMContentLoaded', populateSettingsFields);
 
-  async function populateSettingsFields(){
-    const {data:{session}} = await db.auth.getSession().catch(()=>({data:{session:null}}));
-    if(!session) return;
-    const {data:profile} = await db.from('profiles').select('*').eq('id',session.user.id).single().catch(()=>({data:null}));
-    if(!profile) return;
-    const parts = (profile.full_name||'').split(' ');
-    const fn = document.getElementById('firstName'); if(fn) fn.value = parts[0]||'';
-    const ln = document.getElementById('lastName');  if(ln) ln.value = parts.slice(1).join(' ')||'';
-    const em = document.getElementById('profileEmail'); if(em) em.value = session.user.email||'';
-    const av = document.getElementById('profileAvatar');
-    if(av) av.textContent = ini(profile.full_name||session.user.email||'?');
-  }
-  // Run on page load
-  document.addEventListener('DOMContentLoaded', populateSettingsFields);
-
-
-  function handlePhotoUpload(input){
-    if(!input.files||!input.files[0]) return;
-    const reader=new FileReader();
-    reader.onload=function(e){
-      const av=document.getElementById('profileAvatar');
-      if(av){av.style.backgroundImage='url('+e.target.result+')';av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
-      showToast('✅ Photo updated — save to apply','success');
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-
+function handlePhotoUpload(input){
+  if(!input.files||!input.files[0]) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const av=document.getElementById('profileAvatar');
+    if(av){av.style.backgroundImage='url('+e.target.result+')';av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
+    showToast('✅ Photo updated — save to apply','success');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
 </script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -214,13 +211,16 @@ function openDeleteMemberBtn(btn){
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Growth</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html" style="display:none;"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
-<a class="nav-item" href="enhanced-crm-dashboard.html" style="display:none;"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
-<a class="nav-item" href="automations.html" style="display:none;"><span class="nav-icon">⚡</span><span class="nav-text"> Workflows</span></a>
-<a class="nav-item" style="pointer-events:none;opacity:0.4;"><span class="nav-icon">📡</span><span class="nav-text"> Communications <span style="font-size:0.65rem;opacity:0.6;">Coming soon</span></span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
+<a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
+<div class="ns">Performance</div>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
+<a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
+<a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
 <div class="ns">Insights</div>
 <a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
-<a class="nav-item" href="settings.html" class="active"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="active" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
@@ -263,7 +263,7 @@ function openDeleteMemberBtn(btn){
 <div class="card-header"><div class="card-title">Personal Information</div><div class="card-sub">Update your name, email and profile photo</div></div>
 <div class="card-body">
 <div class="avatar-upload">
-<input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="handlePhotoUpload(this)"/>
+<input accept="image/*" id="photoUpload" onchange="handlePhotoUpload(this)" style="display:none;" type="file"/>
 <div class="avatar-large" id="profileAvatar" onclick="document.getElementById('photoUpload').click()" style="cursor:pointer;" title="Click to change photo">AM</div>
 <div class="avatar-actions">
 <button class="btn-upload">📷 Upload Photo</button>

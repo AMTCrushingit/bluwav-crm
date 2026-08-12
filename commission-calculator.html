@@ -163,17 +163,20 @@
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Growth</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html" style="display:none;"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
-<a class="nav-item" href="enhanced-crm-dashboard.html" style="display:none;"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
-<a class="nav-item" href="automations.html" style="display:none;"><span class="nav-icon">⚡</span><span class="nav-text"> Workflows</span></a>
-<a class="nav-item" style="pointer-events:none;opacity:0.4;"><span class="nav-icon">📡</span><span class="nav-text"> Communications <span style="font-size:0.65rem;opacity:0.6;">Coming soon</span></span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
+<a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
+<div class="ns">Performance</div>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
+<a class="active" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
+<a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
 <div class="ns">Insights</div>
 <a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
-<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
-<div class="trial-pill"><div class="tp-label">⏱ 14-Day Free Trial</div><div class="tp-sub">No card needed &middot; Full access</div><button class="btn-upgrade" onclick="window.location.href='billing.html'">Upgrade Plan</button></div>
+<div class="trial-pill"><div class="tp-label">⏱ 14-Day Free Trial</div><div class="tp-sub">No card needed · Full access</div><button class="btn-upgrade" onclick="window.location.href='billing.html'">Upgrade Plan</button></div>
 <div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Loading...</div><div class="user-role" id="sidebarRole">—</div></div></div>
 <button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:8px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;">🚪 Sign Out</button>
 </div>
@@ -220,8 +223,8 @@
 <div class="calc-panel-title">Growth System Opportunities</div>
 <div class="calc-panel-sub">Add each Growth System deal you closed. Commission is 20% of the monthly fee (first 3 months). Unlock 25% with 3+ CRM clients.</div>
 <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-  <button class="add-btn" onclick="autoLoadWonOpportunities()" style="background:rgba(0,200,224,0.12);border:1px solid rgba(0,200,224,0.3);color:#00C8E0;">&#x1F504; Auto-load from CRM</button>
-  <button class="add-btn" onclick="addGrowthDeal()">+ Add Manually</button>
+<button class="add-btn" onclick="autoLoadWonOpportunities()" style="background:rgba(0,200,224,0.12);border:1px solid rgba(0,200,224,0.3);color:#00C8E0;">🔄 Auto-load from CRM</button>
+<button class="add-btn" onclick="addGrowthDeal()">+ Add Manually</button>
 </div>
 <div id="autoLoadStatus" style="font-size:12px;color:#6B7A99;margin-bottom:8px;display:none;"></div>
 <div id="growthOpportunities"></div>
@@ -258,9 +261,9 @@
 <div class="tab-content" id="tab-payout">
 <!-- Payout History (manager view) -->
 <div id="payoutHistorySection" style="display:none;margin-bottom:24px;">
-  <div class="calc-panel-title" style="margin-bottom:6px;">&#x1F4CB; Payout Requests</div>
-  <div class="calc-panel-sub" style="margin-bottom:12px;">All submitted payout requests from your team.</div>
-  <div id="payoutHistoryList" style="font-size:13px;color:#6B7A99;">Loading...</div>
+<div class="calc-panel-title" style="margin-bottom:6px;">📋 Payout Requests</div>
+<div class="calc-panel-sub" style="margin-bottom:12px;">All submitted payout requests from your team.</div>
+<div id="payoutHistoryList" style="font-size:13px;color:#6B7A99;">Loading...</div>
 </div>
 <div class="payout-form">
 <div class="calc-panel-title" style="margin-bottom:6px;">💸 Request Payout</div>
@@ -487,7 +490,7 @@ async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');s
   ['sidebarAvatar','topAvatar'].forEach(id=>document.getElementById(id).textContent=ini(name));
   document.getElementById('sidebarRole').textContent=(profile?.role||'salesperson').charAt(0).toUpperCase()+(profile?.role||'salesperson').slice(1);
   document.getElementById('topRole').textContent=(profile?.role||'salesperson').charAt(0).toUpperCase()+(profile?.role||'salesperson').slice(1);
-  if(profile?.role==='manager'||profile?.role==='owner')document.getElementById('adminNav').style.display='block';
+  if(profile?.role==='manager'||profile?.role==='owner'){const _an=document.getElementById('adminNav');if(_an)_an.style.display='block';}
   document.getElementById('agentName').value=name;
   document.getElementById('pay_name').value=name;
   document.getElementById('pay_email').value=user.email||'';
