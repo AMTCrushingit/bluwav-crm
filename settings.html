@@ -29,19 +29,51 @@ async function populateSettingsFields(){
   const ln = document.getElementById('lastName');  if(ln) ln.value = parts.slice(1).join(' ')||'';
   const em = document.getElementById('profileEmail'); if(em) em.value = session.user.email||'';
   const av = document.getElementById('profileAvatar');
-  if(av) av.textContent = ini(profile.full_name||session.user.email||'?');
+  if(av){
+    const savedUrl = profile.avatar_url || localStorage.getItem('bw_avatar_url');
+    if(savedUrl){ av.style.backgroundImage='url('+savedUrl+')'; av.style.backgroundSize='cover'; av.style.backgroundPosition='center'; av.textContent=''; }
+    else{ av.textContent = ini(profile.full_name||session.user.email||'?'); }
+  }
 }
 document.addEventListener('DOMContentLoaded', populateSettingsFields);
 
-function handlePhotoUpload(input){
+async function handlePhotoUpload(input){
   if(!input.files||!input.files[0]) return;
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const av=document.getElementById('profileAvatar');
-    if(av){av.style.backgroundImage='url('+e.target.result+')';av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';}
-    showToast('✅ Photo updated — save to apply','success');
+  const file = input.files[0];
+  if(file.size > 2*1024*1024){ showToast('Photo must be under 2MB','error'); return; }
+
+  // Show preview immediately
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const av = document.getElementById('profileAvatar');
+    if(av){ av.style.backgroundImage='url('+e.target.result+')'; av.style.backgroundSize='cover'; av.style.backgroundPosition='center'; av.textContent=''; }
   };
-  reader.readAsDataURL(input.files[0]);
+  reader.readAsDataURL(file);
+
+  // Save to Supabase Storage
+  try{
+    const {data:{session}} = await db.auth.getSession();
+    if(!session){ showToast('Not logged in','error'); return; }
+    const uid = session.user.id;
+    const ext = file.name.split('.').pop();
+    const path = uid+'/avatar.'+ext;
+
+    // Upload to storage bucket 'avatars'
+    const {error:upErr} = await db.storage.from('avatars').upload(path, file, {upsert:true});
+    if(upErr){ showToast('Photo saved locally only — storage: '+upErr.message,''); return; }
+
+    // Get public URL
+    const {data:{publicUrl}} = db.storage.from('avatars').getPublicUrl(path);
+
+    // Save URL to profile
+    await db.from('profiles').update({avatar_url: publicUrl}).eq('id', uid);
+
+    // Store in localStorage for other pages
+    localStorage.setItem('bw_avatar_url', publicUrl);
+    showToast('✅ Photo saved successfully','success');
+  }catch(e){
+    showToast('Photo preview updated — save profile to apply','');
+  }
 }
 </script>
 <style>
@@ -776,7 +808,7 @@ function handlePhotoUpload(input){
 
   // ── SESSION TIMEOUT (5 min inactivity) ──
   (function(){
-    const TIMEOUT_MS = 10 * 60 * 1000; // 5 minutes
+    const TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
     let timer;
 
     function resetTimer(){

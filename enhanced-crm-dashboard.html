@@ -425,7 +425,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="qa-grid">
 <div class="qa" onclick="openModal('addContact')"><div class="qa-icon">➕</div><div class="qa-lbl">New Contact</div></div>
 <div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">💼</div><div class="qa-lbl">New Deal</div></div>
-<div class="qa" onclick="openModal('sendEmail')"><div class="qa-icon">📧</div><div class="qa-lbl">Send Email</div></div>
+<div class="qa" style="opacity:0.35;pointer-events:none;cursor:not-allowed;" title="Email coming soon"><div class="qa-icon">📧</div><div class="qa-lbl">Send Email</div></div>
 <div class="qa" onclick="openModal('addTask')"><div class="qa-icon">✅</div><div class="qa-lbl">Add Task</div></div>
 </div>
 <!-- Pipeline + Right Panel (Leaderboard or Activity) -->
@@ -1971,7 +1971,7 @@ function showView(name){
   if(name==='calendar') loadTasks().then(()=>renderCalendar());
   if(name==='deals' && dealsViewMode==='list') setTimeout(renderOpportunitiesList,100);
   if(name==='email') loadEmailLog();
-  if(name==='reports') setTimeout(loadReports,100);
+  if(name==='reports'){ window.location.href='reports.html'; return; }
 }
 
 function toggleSidebar(){
