@@ -2215,8 +2215,12 @@ async function updateDeal(){
 let allTasks = [];
 
 async function loadTasks(){
-  const {data} = await db.from('tasks').select('*').order('created_at',{ascending:false}).catch(()=>({data:[]}));
-  allTasks = data||[];
+  let tasksData = [];
+  try {
+    const {data, error} = await db.from('tasks').select('*').order('created_at',{ascending:false});
+    if(!error) tasksData = data||[];
+  } catch(e){ console.warn('loadTasks:', e.message); }
+  allTasks = tasksData;
   renderTasks();
 }
 
@@ -2248,7 +2252,7 @@ function renderTasks(){
 }
 
 async function toggleTask(id, completed){
-  await db.from('tasks').update({completed}).eq('id',id).catch(()=>{});
+  try { await db.from('tasks').update({completed}).eq('id',id); } catch(e){ console.warn('toggleTask:',e.message); }
   const t = allTasks.find(x=>x.id===id);
   if(t) t.completed = completed;
   renderTasks();
@@ -2274,7 +2278,7 @@ function editTask(taskId){
 
 async function deleteTask(id){
   if(!confirm('Delete this task?')) return;
-  await db.from('tasks').delete().eq('id',id).catch(()=>{});
+  try { await db.from('tasks').delete().eq('id',id); } catch(e){ console.warn('deleteTask:',e.message); }
   allTasks = allTasks.filter(x=>x.id!==id);
   renderTasks();
 }
@@ -2293,7 +2297,14 @@ async function saveTask(){
     completed: false,
     user_id: currentUser?.id
   };
-  const {error} = await db.from('tasks').insert(taskObj).catch(e=>({error:e}));
+  let taskError = null;
+  try {
+    const result = await db.from('tasks').insert([taskObj]).select();
+    taskError = result.error;
+    if(!taskError && result.data && result.data[0]) allTasks.unshift(result.data[0]);
+    else if(!taskError) allTasks.unshift({...taskObj, id:'local_'+Date.now()});
+  } catch(e){ taskError = e; }
+  const error = taskError;
   if(error){
     // tasks table may not exist yet — store locally
     allTasks.unshift({...taskObj, id:'local_'+Date.now()});
@@ -3750,7 +3761,7 @@ async function saveEvent(){
   var taskObj = { title: title+' @ '+time, due_date: date, priority: type==='deadline'?'High':'Medium', completed: false, user_id: currentUser.id };
   try {
     var r = await db.from('tasks').insert([taskObj]).select();
-    if(r.error) throw r.error;
+    if(r.error){ console.warn('saveEvent insert:', r.error.message); throw r.error; }
     allTasks.unshift(r.data&&r.data[0] ? r.data[0] : Object.assign({id:'local_'+Date.now()},taskObj));
     showToast('✅ Event added to calendar','success');
   } catch(e) {
