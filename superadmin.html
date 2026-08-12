@@ -203,8 +203,8 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
     <div class="nav-section">
       <div class="nav-label">Platform</div>
       <a class="nav-item" onclick="showView('users')"><span class="nav-icon">&#x1F465;</span> Users & Roles</a>
-      <a class="nav-item" onclick="showView('alldeals')"><span class="nav-icon">&#x1F4BC;</span> All Deals</a>
-      <a class="nav-item" onclick="showView('allcontacts')"><span class="nav-icon">&#x1F464;</span> All Contacts</a>
+      <a class="nav-item" onclick="showView('alldeals')"><span class="nav-icon">&#x1F4BC;</span> All Opportunities</a>
+      <a class="nav-item" onclick="showView('allcontacts')"><span class="nav-icon">&#x1F464;</span> All Customers</a>
     </div>
     <div class="nav-section">
       <div class="nav-label" style="color:var(--corex);letter-spacing:.12em;">&#x1F9E0; COREX</div>
@@ -276,7 +276,7 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
     </div>
     <div class="cmd-tile t-cyan">
       <div class="cmd-val" id="cmdPipeline">$0</div>
-      <div class="cmd-lbl">Pipeline Value</div>
+      <div class="cmd-lbl">Opportunity Value</div>
       <div class="cmd-sub">open deals</div>
     </div>
     <div class="cmd-tile t-gold">
@@ -390,7 +390,7 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
         <div class="card-body"><div class="chart-wrap" style="height:260px;"><canvas id="cashflowChart"></canvas></div></div>
       </div>
       <div class="card">
-        <div class="card-header"><div class="card-title">&#x1F4C5; Deals Closing Soon</div><div class="card-sub">Next 30 days by close date</div></div>
+        <div class="card-header"><div class="card-title">&#x1F4C5; Opportunities Closing Soon</div><div class="card-sub">Next 30 days by close date</div></div>
         <div class="tbl-wrap">
           <table class="tbl">
             <thead><tr><th>Deal</th><th>Agent</th><th>Value</th><th>Close Date</th><th>Days Left</th><th>Prob%</th></tr></thead>
@@ -412,7 +412,7 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
-            <thead><tr><th>User</th><th>Role</th><th>Trial Status</th><th>Last Active</th><th>Contacts</th><th>Deals</th><th>Health</th><th>Actions</th></tr></thead>
+            <thead><tr><th>User</th><th>Role</th><th>Trial Status</th><th>Last Active</th><th>Customers</th><th>Opportunities</th><th>Health</th><th>Actions</th></tr></thead>
             <tbody id="tenantHealthBody"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody>
           </table>
         </div>
@@ -444,7 +444,7 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
         <div class="card-header"><div class="card-title">&#x1F4CA; Agent Performance This Month</div></div>
         <div class="tbl-wrap">
           <table class="tbl">
-            <thead><tr><th>Agent</th><th>Deals</th><th>Won</th><th>Pipeline</th><th>Won Value</th><th>Commission</th><th>Win Rate</th></tr></thead>
+            <thead><tr><th>Agent</th><th>Opportunities</th><th>Won</th><th>Pipeline</th><th>Won Value</th><th>Commission</th><th>Win Rate</th></tr></thead>
             <tbody id="agentPerfBody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
           </table>
         </div>
@@ -514,13 +514,13 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
     <div class="view" id="view-alldeals">
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">&#x1F4BC; All Deals &mdash; Platform Wide</div></div>
-          <input class="search-bar" placeholder="&#x1F50D; Search deals..." oninput="filterTable('allDealsTbody',this.value,[0,1,2])"/>
+          <div><div class="card-title">&#x1F4BC; All Opportunities &mdash; Platform Wide</div></div>
+          <input class="search-bar" placeholder="&#x1F50D; Search deals..." oninput="filterTable('allOpportunitiesTbody',this.value,[0,1,2])"/>
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
             <thead><tr><th>Deal</th><th>Stage</th><th>Value</th><th>Agent</th><th>Close Date</th><th>Created</th><th>Actions</th></tr></thead>
-            <tbody id="allDealsTbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+            <tbody id="allOpportunitiesTbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -530,13 +530,13 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
     <div class="view" id="view-allcontacts">
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">&#x1F464; All Contacts &mdash; Platform Wide</div></div>
-          <input class="search-bar" placeholder="&#x1F50D; Search contacts..." oninput="filterTable('allContactsTbody',this.value,[0,1,2])"/>
+          <div><div class="card-title">&#x1F464; All Customers &mdash; Platform Wide</div></div>
+          <input class="search-bar" placeholder="&#x1F50D; Search contacts..." oninput="filterTable('allCustomersTbody',this.value,[0,1,2])"/>
         </div>
         <div class="tbl-wrap">
           <table class="tbl">
             <thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Location</th><th>Agent</th><th>Added</th><th>Actions</th></tr></thead>
-            <tbody id="allContactsTbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+            <tbody id="allCustomersTbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -599,7 +599,7 @@ const db = createClient(
 );
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-let allContacts=[], allDeals=[], allProfiles=[], allPayouts=[];
+let allCustomers=[], allOpportunities=[], allProfiles=[], allPayouts=[];
 let revenueChartInst=null, cashflowChartInst=null;
 let chartMonths=6;
 
@@ -669,8 +669,8 @@ async function loadAll(){
       db.from('payout_requests').select('*').order('submitted_at',{ascending:false})
     ]);
 
-    allContacts=contacts||[];
-    allDeals=deals||[];
+    allCustomers=contacts||[];
+    allOpportunities=deals||[];
     allProfiles=profiles||[];
     allPayouts=payouts||[];
 
@@ -681,8 +681,8 @@ async function loadAll(){
     renderTargets();
     renderPayouts();
     renderUsers();
-    renderAllDeals();
-    renderAllContacts();
+    renderAllOpportunities();
+    renderAllCustomers();
     updateCharts();
 
     const now=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
@@ -697,15 +697,15 @@ function updateCommandStrip(){
   const now=new Date();
   const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
 
-  const openDeals=allDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
-  const wonDeals=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
-  const wonThisMonth=wonDeals.filter(d=>d.created_at&&new Date(d.created_at)>=monthStart);
+  const openOpportunities=allOpportunities.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+  const wonOpportunities=allOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const wonThisMonth=wonOpportunities.filter(d=>d.created_at&&new Date(d.created_at)>=monthStart);
   const wonThisMonthVal=wonThisMonth.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
-  const pipeVal=openDeals.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const pipeVal=openOpportunities.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
 
   // Estimated MRR from won deals (last 30 days)
   const last30=new Date(now.getTime()-30*24*60*60*1000);
-  const recentWon=wonDeals.filter(d=>d.created_at&&new Date(d.created_at)>=last30);
+  const recentWon=wonOpportunities.filter(d=>d.created_at&&new Date(d.created_at)>=last30);
   const estMRR=recentWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
 
   // Trials
@@ -759,10 +759,10 @@ function renderOverview(){
   const lb=document.getElementById('agentLeaderboard');
   if(lb){
     const agentStats=allProfiles.map(p=>{
-      const agDeals=allDeals.filter(d=>d.agent_id===p.id);
-      const agWon=agDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+      const agOpportunities=allOpportunities.filter(d=>d.agent_id===p.id);
+      const agWon=agOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
       const agVal=agWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
-      return {name:p.full_name||'Agent',deals:agDeals.length,won:agWon.length,val:agVal,color:getColor(p.full_name||p.id)};
+      return {name:p.full_name||'Agent',deals:agOpportunities.length,won:agWon.length,val:agVal,color:getColor(p.full_name||p.id)};
     }).sort((a,b)=>b.val-a.val).slice(0,5);
     const maxVal=agentStats[0]?.val||1;
     const ranks=['&#x1F947;','&#x1F948;','&#x1F949;','4','5'];
@@ -784,7 +784,7 @@ function renderOverview(){
   // Recent activity
   const ra=document.getElementById('recentActivityBody');
   if(ra){
-    const recent=allContacts.slice(0,8);
+    const recent=allCustomers.slice(0,8);
     ra.innerHTML=recent.map(c=>{
       const agent=allProfiles.find(p=>p.id===c.user_id);
       return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
@@ -808,10 +808,10 @@ function renderCashFlow(){
   const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
   const last30=new Date(now.getTime()-30*24*60*60*1000);
 
-  const wonDeals=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
-  const recentWon=wonDeals.filter(d=>d.created_at&&new Date(d.created_at)>=last30);
+  const wonOpportunities=allOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const recentWon=wonOpportunities.filter(d=>d.created_at&&new Date(d.created_at)>=last30);
   const estMRR=recentWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
-  const wonThisMonth=wonDeals.filter(d=>d.created_at&&new Date(d.created_at)>=monthStart);
+  const wonThisMonth=wonOpportunities.filter(d=>d.created_at&&new Date(d.created_at)>=monthStart);
   const wonThisMonthVal=wonThisMonth.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
   const commission=wonThisMonthVal*0.20;
 
@@ -824,7 +824,7 @@ function renderCashFlow(){
 
   // Closing soon table
   const in30=new Date(now.getTime()+30*24*60*60*1000);
-  const closing=allDeals.filter(d=>{
+  const closing=allOpportunities.filter(d=>{
     if(!d.close_date)return false;
     const cd=new Date(d.close_date);
     return cd>=now&&cd<=in30&&!['won','lost'].includes((d.stage||'').toLowerCase());
@@ -857,9 +857,9 @@ function renderTenantHealth(){
   tbody.innerHTML=allProfiles.map(p=>{
     const daysLeft=trialDaysLeft(p);
     const online=isOnline(p);
-    const contactCount=allContacts.filter(c=>c.user_id===p.id).length;
-    const dealCount=allDeals.filter(d=>d.agent_id===p.id).length;
-    const dealVal=allDeals.filter(d=>d.agent_id===p.id&&(d.stage||'').toLowerCase()==='won').reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+    const contactCount=allCustomers.filter(c=>c.user_id===p.id).length;
+    const dealCount=allOpportunities.filter(d=>d.agent_id===p.id).length;
+    const dealVal=allOpportunities.filter(d=>d.agent_id===p.id&&(d.stage||'').toLowerCase()==='won').reduce((s,d)=>s+(d.deal_value||d.value||0),0);
 
     // Health score
     let health='green', healthLabel='Healthy';
@@ -920,7 +920,7 @@ function renderTargets(){
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   setText('targetMonthLabel',months[now.getMonth()]+' '+now.getFullYear());
 
-  const wonThisMonth=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won'&&d.created_at&&new Date(d.created_at)>=monthStart);
+  const wonThisMonth=allOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won'&&d.created_at&&new Date(d.created_at)>=monthStart);
   const wonVal=wonThisMonth.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
   const pct=Math.min(100,Math.round((wonVal/target)*100));
   const barColor=pct>=100?'var(--green)':pct>=60?'var(--cyan)':pct>=30?'var(--gold)':'var(--red)';
@@ -950,14 +950,14 @@ function renderTargets(){
   const agentBody=document.getElementById('agentPerfBody');
   if(agentBody){
     const agentStats=allProfiles.map(p=>{
-      const agDeals=allDeals.filter(d=>d.agent_id===p.id&&d.created_at&&new Date(d.created_at)>=monthStart);
-      const agWon=agDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
-      const agPipe=agDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+      const agOpportunities=allOpportunities.filter(d=>d.agent_id===p.id&&d.created_at&&new Date(d.created_at)>=monthStart);
+      const agWon=agOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
+      const agPipe=agOpportunities.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
       const agWonVal=agWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
       const agPipeVal=agPipe.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
-      const winRate=agDeals.length?Math.round((agWon.length/agDeals.length)*100):0;
+      const winRate=agOpportunities.length?Math.round((agWon.length/agOpportunities.length)*100):0;
       const commission=agWonVal*0.20;
-      return {name:p.full_name||'Agent',deals:agDeals.length,won:agWon.length,pipeVal:agPipeVal,wonVal:agWonVal,commission,winRate,color:getColor(p.full_name||p.id)};
+      return {name:p.full_name||'Agent',deals:agOpportunities.length,won:agWon.length,pipeVal:agPipeVal,wonVal:agWonVal,commission,winRate,color:getColor(p.full_name||p.id)};
     }).sort((a,b)=>b.wonVal-a.wonVal);
 
     agentBody.innerHTML=agentStats.map(a=>`<tr>
@@ -980,7 +980,7 @@ function renderTargets(){
     const stages=['lead','qualified','proposal','won'];
     const labels=['Lead','Qualified','Proposal','Won'];
     const colors=['var(--text3)','var(--cyan)','var(--gold)','var(--green)'];
-    const counts=stages.map(s=>allDeals.filter(d=>(d.stage||'').toLowerCase()===s&&d.created_at&&new Date(d.created_at)>=monthStart).length);
+    const counts=stages.map(s=>allOpportunities.filter(d=>(d.stage||'').toLowerCase()===s&&d.created_at&&new Date(d.created_at)>=monthStart).length);
     const maxC=Math.max(...counts,1);
     funnelEl.innerHTML=stages.map((s,i)=>{
       const conv=i>0&&counts[i-1]>0?Math.round((counts[i]/counts[i-1])*100):null;
@@ -1011,7 +1011,7 @@ function renderPayouts(){
   const approvedAmt=approved.reduce((s,p)=>s+(p.amount||0),0);
 
   // Estimated liability from won deals this month
-  const wonThisMonth=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won'&&d.created_at&&new Date(d.created_at)>=monthStart);
+  const wonThisMonth=allOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won'&&d.created_at&&new Date(d.created_at)>=monthStart);
   const liability=wonThisMonth.reduce((s,d)=>s+(d.deal_value||d.value||0),0)*0.20;
 
   setText('payoutPendingAmt',fmt(pendingAmt));
@@ -1079,11 +1079,11 @@ function renderUsers(){
 }
 
 // ── ALL DEALS ─────────────────────────────────────────────────────────────────
-function renderAllDeals(){
-  const tbody=document.getElementById('allDealsTbody');
+function renderAllOpportunities(){
+  const tbody=document.getElementById('allOpportunitiesTbody');
   if(!tbody)return;
   const stageBadge={lead:'badge-muted',qualified:'badge-cyan',proposal:'badge-gold',won:'badge-green',lost:'badge-red'};
-  tbody.innerHTML=allDeals.map(d=>{
+  tbody.innerHTML=allOpportunities.map(d=>{
     const agent=allProfiles.find(p=>p.id===d.agent_id);
     const stage=(d.stage||'lead').toLowerCase();
     return `<tr>
@@ -1099,11 +1099,11 @@ function renderAllDeals(){
 }
 
 // ── ALL CONTACTS ──────────────────────────────────────────────────────────────
-function renderAllContacts(){
-  const tbody=document.getElementById('allContactsTbody');
+function renderAllCustomers(){
+  const tbody=document.getElementById('allCustomersTbody');
   if(!tbody)return;
   const statusBadge={Lead:'badge-muted',Qualified:'badge-cyan',Proposal:'badge-gold',Won:'badge-green',Inactive:'badge-red'};
-  tbody.innerHTML=allContacts.map(c=>{
+  tbody.innerHTML=allCustomers.map(c=>{
     const agent=allProfiles.find(p=>p.id===c.user_id);
     return `<tr>
       <td><div style="display:flex;align-items:center;gap:8px;">
@@ -1165,13 +1165,13 @@ function updateCharts(){
     const mEnd=new Date(now.getFullYear(),now.getMonth()-i+1,0);
     const label=mDate.toLocaleDateString('en-US',{month:'short'});
     months.push(label);
-    const mDeals=allDeals.filter(d=>{
+    const mOpportunities=allOpportunities.filter(d=>{
       if(!d.created_at)return false;
       const cd=new Date(d.created_at);
       return cd>=mDate&&cd<=mEnd;
     });
-    const mWon=mDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
-    const mPipe=mDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+    const mWon=mOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
+    const mPipe=mOpportunities.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
     const mWonVal=mWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
     const mPipeVal=mPipe.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
     wonData.push(mWonVal);
@@ -1208,8 +1208,8 @@ const viewTitles={
   targets:'&#x1F3AF; Sales Targets',
   payouts:'&#x1F4B8; Payout Management',
   users:'&#x1F465; Users & Roles',
-  alldeals:'&#x1F4BC; All Deals',
-  allcontacts:'&#x1F464; All Contacts',
+  alldeals:'&#x1F4BC; All Opportunities',
+  allcontacts:'&#x1F464; All Customers',
   corex:'&#x1F9E0; COREX Intelligence Engine',
 };
 function showView(name){
@@ -1291,8 +1291,8 @@ async function deleteContact(id){
   if(!confirm('Delete this contact?'))return;
   const {error}=await db.from('contacts').delete().eq('id',id);
   if(error){showToast('Error: '+error.message,'error');return;}
-  allContacts=allContacts.filter(c=>c.id!==id);
-  renderAllContacts();updateCommandStrip();
+  allCustomers=allCustomers.filter(c=>c.id!==id);
+  renderAllCustomers();updateCommandStrip();
   showToast('Contact deleted','success');
 }
 
@@ -1300,8 +1300,8 @@ async function deleteDeal(id){
   if(!confirm('Delete this deal?'))return;
   const {error}=await db.from('deals').delete().eq('id',id);
   if(error){showToast('Error: '+error.message,'error');return;}
-  allDeals=allDeals.filter(d=>d.id!==id);
-  renderAllDeals();updateCommandStrip();
+  allOpportunities=allOpportunities.filter(d=>d.id!==id);
+  renderAllOpportunities();updateCommandStrip();
   showToast('Deal deleted','success');
 }
 

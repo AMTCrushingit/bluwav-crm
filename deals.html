@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Deals &amp; Pipeline</title>
+<title>BluWav CRM — Opportunities &amp; Pipeline</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -165,9 +165,9 @@
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Dashboard</span></a>
-<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
-<a class="nav-item" href="deals.html" class="active"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
+<a class="nav-item" href="deals.html" class="active"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Communicate</div>
@@ -175,12 +175,12 @@
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
 <div class="ns">Performance</div>
-<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
 <a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
 <a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
 <div class="ns">Insights</div>
-<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
-<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
@@ -191,13 +191,13 @@
 </aside>
 <div class="main" id="mainContent">
 <header class="topbar">
-<div class="topbar-left"><h1>Deals &amp; Pipeline</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Deals</div></div>
+<div class="topbar-left"><h1>Opportunities &amp; Pipeline</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Command Center</a> / Opportunities</div></div>
 <div class="topbar-right">
 <div class="view-toggle">
 <button class="view-btn active" onclick="setView('kanban',this)">⊞ Kanban</button>
 <button class="view-btn" onclick="setView('list',this)">☰ List</button>
 </div>
-<button class="btn btn-ghost" onclick="exportDeals()">⬇ Export</button>
+<button class="btn btn-ghost" onclick="exportOpportunities()">⬇ Export</button>
 <button class="btn btn-primary" onclick="openModal()">+ New Deal</button>
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
@@ -210,8 +210,8 @@
 <!-- COMMISSION BAR -->
 <div class="comm-bar">
 <div class="comm-item"><div class="comm-val" id="commTotal">$0</div><div class="comm-lbl">Commission (MTD)</div></div>
-<div class="comm-item"><div class="comm-val" id="dealsWonCount" style="color:var(--gold);">0</div><div class="comm-lbl">Deals Won (MTD)</div></div>
-<div class="comm-item"><div class="comm-val" id="pipelineVal" style="color:var(--cyan);">$0</div><div class="comm-lbl">Pipeline Value</div></div>
+<div class="comm-item"><div class="comm-val" id="dealsWonCount" style="color:var(--gold);">0</div><div class="comm-lbl">Revenue Closed (MTD)</div></div>
+<div class="comm-item"><div class="comm-val" id="pipelineVal" style="color:var(--cyan);">$0</div><div class="comm-lbl">Opportunity Value</div></div>
 <div class="unlock-bar">
 <div class="unlock-label"><span>CRM Unlock Progress</span><span id="unlockCount">0/3</span></div>
 <div class="unlock-progress"><div class="unlock-fill" id="unlockFill" style="width:0%;"></div></div>
@@ -220,7 +220,7 @@
 </div>
 <!-- STATS -->
 <div class="stats-row">
-<div class="stat-card active-filter" onclick="filterStage('all',this)"><div class="stat-val" id="statAll">0</div><div class="stat-lbl">All Deals</div></div>
+<div class="stat-card active-filter" onclick="filterStage('all',this)"><div class="stat-val" id="statAll">0</div><div class="stat-lbl">All Opportunities</div></div>
 <div class="stat-card" onclick="filterStage('Lead',this)"><div class="stat-val" id="statLead" style="color:#94a3b8;">0</div><div class="stat-lbl">Lead</div></div>
 <div class="stat-card" onclick="filterStage('Qualified',this)"><div class="stat-val" id="statQualified" style="color:var(--cyan);">0</div><div class="stat-lbl">Qualified</div></div>
 <div class="stat-card" onclick="filterStage('Won',this)"><div class="stat-val" id="statWon" style="color:var(--green);">0</div><div class="stat-lbl">Won</div></div>
@@ -324,7 +324,7 @@ const STAGE_COLORS={lead:'#94a3b8',qualified:'#00C2D1',proposal:'#f59e0b',negoti
 const TYPE_COLORS={Ripple:'#00C2D1',Current:'#ff8c42',Surge:'#a78bfa','CRM Lite':'#D4AF37','CRM Premium':'#D4AF37','White-Label':'#a78bfa'};
 const TYPE_EMOJI={Ripple:'🌊',Current:'⚡',Surge:'🚀','CRM Lite':'💼','CRM Premium':'🖤','White-Label':'⚡'};
 
-let currentUser=null,userRole='salesperson',allDeals=[],allContacts=[],allProfiles=[],filtered=[],currentDeal=null,viewMode='kanban',stageFilter='all';
+let currentUser=null,userRole='salesperson',allOpportunities=[],allCustomers=[],allProfiles=[],filtered=[],currentDeal=null,viewMode='kanban',stageFilter='all';
 
 function ini(n){return(n||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);}
 function fmt$(v){return'$'+Number(v||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
@@ -355,9 +355,9 @@ function autoFillValue(type){document.getElementById('f_value').value=DEFAULT_VA
 async function loadData(){
   // Load contacts
   const{data:contacts}=await db.from('contacts').select('id,full_name,business_name').order('full_name');
-  allContacts=contacts||[];
+  allCustomers=contacts||[];
   const sel=document.getElementById('f_contact');
-  allContacts.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.full_name}${c.business_name?' — '+c.business_name:''}`;sel.appendChild(o);});
+  allCustomers.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.full_name}${c.business_name?' — '+c.business_name:''}`;sel.appendChild(o);});
 
   // Load profiles
   const{data:profiles}=await db.from('profiles').select('*');
@@ -365,10 +365,10 @@ async function loadData(){
   const agSel=document.getElementById('agentFilter');
   allProfiles.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.full_name||p.id;agSel.appendChild(o);});
 
-  await loadDeals();
+  await loadOpportunities();
 }
 
-async function loadDeals(){
+async function loadOpportunities(){
   // Use correct column names from actual schema
   // deals table has: id, contact_id, title, value, stage, notes, created_by, created_at
   // Plus our added: agent_id, deal_name, deal_type, deal_value, is_crm_client_deal, updated_at
@@ -376,7 +376,7 @@ async function loadDeals(){
   if(userRole==='salesperson')q=q.eq('agent_id',currentUser.id);
   const{data,error}=await q;
   if(error){showToast('Failed to load deals: '+error.message,'error');console.error(error);return;}
-  allDeals=(data||[]).map(d=>({
+  allOpportunities=(data||[]).map(d=>({
     ...d,
     deal_name: d.title||d.deal_name||'Untitled Deal',
     deal_value: d.value||d.deal_value||0,
@@ -390,24 +390,24 @@ async function loadDeals(){
 }
 
 function updateStats(){
-  document.getElementById('statAll').textContent=allDeals.length;
-  document.getElementById('statLead').textContent=allDeals.filter(d=>d.stage==='Lead').length;
-  document.getElementById('statQualified').textContent=allDeals.filter(d=>d.stage==='Qualified').length;
-  document.getElementById('statWon').textContent=allDeals.filter(d=>d.stage==='Won').length;
-  document.getElementById('statLost').textContent=allDeals.filter(d=>d.stage==='Lost').length;
-  document.getElementById('navDeals').textContent=allDeals.length;
+  document.getElementById('statAll').textContent=allOpportunities.length;
+  document.getElementById('statLead').textContent=allOpportunities.filter(d=>d.stage==='Lead').length;
+  document.getElementById('statQualified').textContent=allOpportunities.filter(d=>d.stage==='Qualified').length;
+  document.getElementById('statWon').textContent=allOpportunities.filter(d=>d.stage==='Won').length;
+  document.getElementById('statLost').textContent=allOpportunities.filter(d=>d.stage==='Lost').length;
+  document.getElementById('navOpportunities').textContent=allOpportunities.length;
 }
 
 function updateCommBar(){
   const now=new Date();
   const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const myDeals=allDeals.filter(d=>d.agent_id===currentUser.id);
-  const crmClients=myDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
+  const myOpportunities=allOpportunities.filter(d=>d.agent_id===currentUser.id);
+  const crmClients=myOpportunities.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
   const unlocked=crmClients>=UNLOCK_THRESHOLD;
-  const wonMTD=myDeals.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
+  const wonMTD=myOpportunities.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
   const totalComm=wonMTD.reduce((s,d)=>s+calcComm(d,unlocked),0);
-  const openDeals=allDeals.filter(d=>!['Won','Lost'].includes(d.stage));
-  const pipelineVal=openDeals.reduce((s,d)=>s+(d.deal_value||0),0);
+  const openOpportunities=allOpportunities.filter(d=>!['Won','Lost'].includes(d.stage));
+  const pipelineVal=openOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
   document.getElementById('commTotal').textContent=fmt$(totalComm);
   document.getElementById('dealsWonCount').textContent=wonMTD.length;
   document.getElementById('pipelineVal').textContent=fmt$(pipelineVal);
@@ -427,7 +427,7 @@ function applyFilters(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   const type=document.getElementById('typeFilter').value;
   const agent=document.getElementById('agentFilter').value;
-  filtered=allDeals.filter(d=>{
+  filtered=allOpportunities.filter(d=>{
     const mq=!q||(d.deal_name||'').toLowerCase().includes(q)||(d.deal_type||'').toLowerCase().includes(q);
     const ms=stageFilter==='all'||d.stage===stageFilter;
     const mt=!type||d.deal_type===type;
@@ -438,7 +438,7 @@ function applyFilters(){
   else renderList();
 }
 
-function getContactName(id){const c=allContacts.find(x=>x.id===id);return c?c.full_name:'—';}
+function getContactName(id){const c=allCustomers.find(x=>x.id===id);return c?c.full_name:'—';}
 function getAgentName(id){const p=allProfiles.find(x=>x.id===id);return p?p.full_name:'—';}
 
 function renderKanban(){
@@ -477,8 +477,8 @@ function renderKanban(){
 function renderList(){
   const tbody=document.getElementById('dealsTableBody');
   if(!filtered.length){tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3);">No deals — <span style="color:var(--cyan);cursor:pointer;" onclick="openModal()">Create first deal</span></td></tr>`;return;}
-  const myDeals=allDeals.filter(d=>d.agent_id===currentUser.id);
-  const crmClients=myDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
+  const myOpportunities=allOpportunities.filter(d=>d.agent_id===currentUser.id);
+  const crmClients=myOpportunities.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
   const unlocked=crmClients>=UNLOCK_THRESHOLD;
   tbody.innerHTML=filtered.map(d=>{
     const comm=calcComm(d,unlocked);
@@ -511,11 +511,11 @@ function setView(mode,btn){
 }
 
 function openPanel(id){
-  currentDeal=allDeals.find(d=>d.id===id);
+  currentDeal=allOpportunities.find(d=>d.id===id);
   if(!currentDeal)return;
   const d=currentDeal;
-  const myDeals=allDeals.filter(x=>x.agent_id===currentUser.id);
-  const crmClients=myDeals.filter(x=>x.is_crm_client_deal&&x.stage==='Won').length;
+  const myOpportunities=allOpportunities.filter(x=>x.agent_id===currentUser.id);
+  const crmClients=myOpportunities.filter(x=>x.is_crm_client_deal&&x.stage==='Won').length;
   const unlocked=crmClients>=UNLOCK_THRESHOLD;
   const comm=calcComm(d,unlocked);
   const stageIdx=STAGES.indexOf(d.stage);
@@ -560,8 +560,8 @@ async function changeStage(newStage){
   const{error}=await db.from('deals').update({stage:newStage,updated_at:new Date().toISOString()}).eq('id',currentDeal.id);
   if(error){showToast('Failed: '+error.message,'error');return;}
   currentDeal.stage=newStage;
-  const idx=allDeals.findIndex(d=>d.id===currentDeal.id);
-  if(idx>-1)allDeals[idx].stage=newStage;
+  const idx=allOpportunities.findIndex(d=>d.id===currentDeal.id);
+  if(idx>-1)allOpportunities[idx].stage=newStage;
   showToast(`✅ Moved to ${newStage}`,'success');
   closePanel();updateStats();updateCommBar();applyFilters();
 }
@@ -571,8 +571,8 @@ async function saveDeal(){
   const stage=document.getElementById('panelStage').value;
   const{error}=await db.from('deals').update({stage,updated_at:new Date().toISOString()}).eq('id',currentDeal.id);
   if(error){showToast('Save failed: '+error.message,'error');return;}
-  const idx=allDeals.findIndex(d=>d.id===currentDeal.id);
-  if(idx>-1)allDeals[idx].stage=stage;
+  const idx=allOpportunities.findIndex(d=>d.id===currentDeal.id);
+  if(idx>-1)allOpportunities[idx].stage=stage;
   showToast('✅ Deal saved','success');
   closePanel();updateStats();updateCommBar();applyFilters();
 }
@@ -582,7 +582,7 @@ async function deleteDeal(){
   if(!confirm(`Delete "${currentDeal.deal_name}"?`))return;
   const{error}=await db.from('deals').delete().eq('id',currentDeal.id);
   if(error){showToast('Delete failed','error');return;}
-  allDeals=allDeals.filter(d=>d.id!==currentDeal.id);
+  allOpportunities=allOpportunities.filter(d=>d.id!==currentDeal.id);
   showToast('🗑 Deleted','success');
   closePanel();updateStats();updateCommBar();applyFilters();
 }
@@ -591,7 +591,7 @@ async function quickDelete(id){
   if(!confirm('Delete this deal?'))return;
   const{error}=await db.from('deals').delete().eq('id',id);
   if(error){showToast('Delete failed','error');return;}
-  allDeals=allDeals.filter(d=>d.id!==id);
+  allOpportunities=allOpportunities.filter(d=>d.id!==id);
   updateStats();updateCommBar();applyFilters();
   showToast('🗑 Deleted','success');
 }
@@ -624,7 +624,7 @@ async function addDeal(){
     deal_type: type,
     stage: (data[0].stage||'lead').toLowerCase(),
   };
-  allDeals.unshift(newDeal);
+  allOpportunities.unshift(newDeal);
   showToast(`✅ "${name}" created`,'success');
   closeModal();
   ['f_name','f_value','f_notes'].forEach(id=>document.getElementById(id).value='');
@@ -632,7 +632,7 @@ async function addDeal(){
   updateStats();updateCommBar();applyFilters();
 }
 
-function exportDeals(){
+function exportOpportunities(){
   const headers=['deal_name','deal_type','deal_value','stage','is_crm_client_deal','created_at'];
   const rows=[headers.join(','),...filtered.map(d=>headers.map(h=>`"${(d[h]||'').toString()}"`).join(','))];
   const blob=new Blob([rows.join('\n')],{type:'text/csv'});

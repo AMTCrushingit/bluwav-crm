@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Contacts</title>
+<title>BluWav CRM — Customers</title>
 <link href="bluwav.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -33,9 +33,9 @@
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Dashboard</span></a>
-<a class="nav-item" href="contacts.html" class="active"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
-<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
+<a class="nav-item" href="contacts.html" class="active"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Communicate</div>
@@ -43,12 +43,12 @@
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
 <div class="ns">Performance</div>
-<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
 <a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
 <a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
 <div class="ns">Insights</div>
-<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
-<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
@@ -59,7 +59,7 @@
 </aside>
 <div class="main" id="mainContent">
 <header class="topbar">
-<div class="topbar-left"><h1>Contacts</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Contacts</div></div>
+<div class="topbar-left"><h1>Customers</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Command Center</a> / Customers</div></div>
 <div class="topbar-right">
 <button class="btn btn-ghost" onclick="exportCSV()">⬇ Export</button>
 <button class="btn btn-primary" onclick="openModal()">+ Add Contact</button>
@@ -79,7 +79,7 @@
 </div>
 </div>
 <div class="stats-row">
-<div class="stat-card active-filter" onclick="filterByStatus('all',this)"><div class="stat-icon" style="background:rgba(0,194,209,0.1);">👥</div><div class="stat-info"><div class="stat-val" id="statTotal">—</div><div class="stat-lbl">All Contacts</div></div></div>
+<div class="stat-card active-filter" onclick="filterByStatus('all',this)"><div class="stat-icon" style="background:rgba(0,194,209,0.1);">👥</div><div class="stat-info"><div class="stat-val" id="statTotal">—</div><div class="stat-lbl">All Customers</div></div></div>
 <div class="stat-card" onclick="filterByStatus('customer',this)"><div class="stat-icon" style="background:rgba(34,197,94,0.1);">✅</div><div class="stat-info"><div class="stat-val" id="statCustomer">—</div><div class="stat-lbl">Customers</div></div></div>
 <div class="stat-card" onclick="filterByStatus('lead',this)"><div class="stat-icon" style="background:rgba(0,194,209,0.1);">🎯</div><div class="stat-info"><div class="stat-val" id="statLead">—</div><div class="stat-lbl">Leads</div></div></div>
 <div class="stat-card" onclick="filterByStatus('prospect',this)"><div class="stat-icon" style="background:rgba(212,175,55,0.1);">⭐</div><div class="stat-info"><div class="stat-val" id="statProspect">—</div><div class="stat-lbl">Prospects</div></div></div>
@@ -237,7 +237,7 @@ function sanitise(str){
 }
 const{createClient}=supabase;
 const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
-let currentUser=null,userRole='salesperson',allContacts=[],filtered=[],selected=new Set(),currentPage=1,currentContact=null,statusFilter='all',sortField='created_at',sortDir='desc',currentTab='overview',contactActivities=[],logType='note',allProfiles=[];
+let currentUser=null,userRole='salesperson',allCustomers=[],filtered=[],selected=new Set(),currentPage=1,currentContact=null,statusFilter='all',sortField='created_at',sortDir='desc',currentTab='overview',contactActivities=[],logType='note',allProfiles=[];
 const PER_PAGE=15;
 const COLORS=['#00C2D1','#D4AF37','#22c55e','#ff8c42','#a78bfa','#f472b6','#60a5fa'];
 function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
@@ -306,35 +306,35 @@ async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');s
     banner.className='role-banner salesperson';
     banner.innerHTML='💼 Salesperson View — Showing only your contacts';
   }
-  loadContacts();
+  loadCustomers();
 })();
 
-async function loadContacts(){
+async function loadCustomers(){
   // RLS handles filtering automatically:
   // - Managers see ALL contacts (via RLS policy)
   // - Salespersons see only their own (user_id = auth.uid())
   const{data,error}=await db.from('contacts').select('id,full_name,email,phone,whatsapp,business_name,island,notes,user_id,created_at,status,deal_value,last_contacted').order('created_at',{ascending:false});
   if(error){showToast('Failed to load: '+error.message,'error');return;}
-  allContacts=data||[];
+  allCustomers=data||[];
   updateStats();
   applyFilters();
 }
 
 function updateStats(){
   const counts={customer:0,lead:0,prospect:0,inactive:0};
-  allContacts.forEach(c=>{
+  allCustomers.forEach(c=>{
     const s=(c.status||'lead').toLowerCase();
     if(s==='customer'||s==='won') counts.customer++;
     else if(s==='lead') counts.lead++;
     else if(s==='prospect'||s==='qualified'||s==='proposal') counts.prospect++;
     else if(s==='inactive') counts.inactive++;
   });
-  document.getElementById('statTotal').textContent=allContacts.length;
+  document.getElementById('statTotal').textContent=allCustomers.length;
   document.getElementById('statCustomer').textContent=counts.customer;
   document.getElementById('statLead').textContent=counts.lead;
   document.getElementById('statProspect').textContent=counts.prospect;
   document.getElementById('statInactive').textContent=counts.inactive;
-  document.getElementById('navCount').textContent=allContacts.length;
+  document.getElementById('navCount').textContent=allCustomers.length;
 }
 
 function applyFilters(){
@@ -344,7 +344,7 @@ function applyFilters(){
   const ownerEl=document.getElementById('ownerFilter');
   const ownerFilter=ownerEl?ownerEl.value:'';
   sortField=sort[0];sortDir=sort[1];
-  filtered=allContacts.filter(c=>{
+  filtered=allCustomers.filter(c=>{
     const mq=!q||(c.full_name||'').toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q)||(c.business_name||'').toLowerCase().includes(q)||(c.phone||'').includes(q);
     const mi=!island||c.location||c.island===island;
     const statusMap={'customer':['customer','won'],'lead':['lead'],'prospect':['prospect','qualified','proposal'],'inactive':['inactive']};
@@ -416,10 +416,10 @@ async function bulkDelete(){
   if(!confirm(`Delete ${selected.size} contact(s)?`))return;
   const{error}=await db.from('contacts').delete().in('id',[...selected]);
   if(error){showToast('Delete failed: '+error.message,'error');return;}
-  showToast(`🗑 ${selected.size} deleted`,'success');selected.clear();updateBulkBar();loadContacts();
+  showToast(`🗑 ${selected.size} deleted`,'success');selected.clear();updateBulkBar();loadCustomers();
 }
 function exportCSV(selOnly=false){
-  const data=selOnly?allContacts.filter(c=>selected.has(c.id)):filtered;
+  const data=selOnly?allCustomers.filter(c=>selected.has(c.id)):filtered;
   const headers=['full_name','email','phone','whatsapp','business_name','island','notes','created_at'];
   const rows=[headers.join(','),...data.map(c=>headers.map(h=>`"${(c[h]||'').toString().replace(/"/g,'""')}"`).join(','))];
   const blob=new Blob([rows.join('\n')],{type:'text/csv'});
@@ -428,7 +428,7 @@ function exportCSV(selOnly=false){
 }
 
 function openPanel(id){
-  currentContact=allContacts.find(c=>c.id===id);
+  currentContact=allCustomers.find(c=>c.id===id);
   if(!currentContact)return;
   currentTab='overview';
   document.querySelectorAll('.panel-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
@@ -571,8 +571,8 @@ async function saveContact(){
   const{error}=await db.from('contacts').update({notes:notesEl.value}).eq('id',currentContact.id);
   if(error){showToast('Save failed: '+error.message,'error');return;}
   currentContact.notes=notesEl.value;
-  const idx=allContacts.findIndex(c=>c.id===currentContact.id);
-  if(idx>-1)allContacts[idx].notes=notesEl.value;
+  const idx=allCustomers.findIndex(c=>c.id===currentContact.id);
+  if(idx>-1)allCustomers[idx].notes=notesEl.value;
   showToast('✅ Notes saved','success');
 }
 
@@ -581,7 +581,7 @@ async function deleteContact(){
   if(!confirm(`Delete ${currentContact.full_name}? This cannot be undone.`))return;
   const{error}=await db.from('contacts').delete().eq('id',currentContact.id);
   if(error){showToast('Delete failed: '+error.message,'error');return;}
-  showToast('🗑 Contact deleted','success');closePanel();loadContacts();
+  showToast('🗑 Contact deleted','success');closePanel();loadCustomers();
 }
 
 function openModal(){document.getElementById('modalOverlay').classList.add('open');}
@@ -611,7 +611,7 @@ async function addContact(){
   };
   const{error}=await db.from('contacts').insert([contact]);
   if(error){showToast('Failed: '+error.message,'error');console.error('Contact insert error:',error);return;}
-  showToast(`✅ ${name} added successfully`,'success');closeModal();loadContacts();
+  showToast(`✅ ${name} added successfully`,'success');closeModal();loadCustomers();
 }
 
 
@@ -662,7 +662,7 @@ async function updateContactStatusPanel(newStatus, contactId){
   const {error} = await db.from('contacts').update({status:newStatus}).eq('id',contactId);
   if(error){ showToast('Error saving status: '+error.message,'error'); return; }
   // Update local data
-  const c = allContacts.find(x=>x.id===contactId);
+  const c = allCustomers.find(x=>x.id===contactId);
   if(c) c.status = newStatus;
   showToast('Status updated: '+newStatus+' ✓','success');
   updateStats();

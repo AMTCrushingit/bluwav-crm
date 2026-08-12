@@ -157,9 +157,9 @@
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Dashboard</span></a>
-<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
-<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Communicate</div>
@@ -167,12 +167,12 @@
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
 <div class="ns">Performance</div>
-<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
 <a class="nav-item" href="commission-calculator.html" class="active"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
 <a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
 <div class="ns">Insights</div>
-<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
-<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
@@ -183,7 +183,7 @@
 </aside>
 <div class="main" id="mainContent">
 <header class="topbar">
-<div class="topbar-left"><h1>💰 Commission Calculator</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Commission Calculator</div></div>
+<div class="topbar-left"><h1>💰 Commission Calculator</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Command Center</a> / Commission Calculator</div></div>
 <div class="topbar-right">
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
@@ -220,14 +220,14 @@
 </div>
 </div>
 <div class="calc-panel" style="margin-top:16px;">
-<div class="calc-panel-title">Growth System Deals</div>
+<div class="calc-panel-title">Growth System Opportunities</div>
 <div class="calc-panel-sub">Add each Growth System deal you closed. Commission is 20% of the monthly fee (first 3 months). Unlock 25% with 3+ CRM clients.</div>
 <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-  <button class="add-btn" onclick="autoLoadWonDeals()" style="background:rgba(0,200,224,0.12);border:1px solid rgba(0,200,224,0.3);color:#00C8E0;">&#x1F504; Auto-load from CRM</button>
+  <button class="add-btn" onclick="autoLoadWonOpportunities()" style="background:rgba(0,200,224,0.12);border:1px solid rgba(0,200,224,0.3);color:#00C8E0;">&#x1F504; Auto-load from CRM</button>
   <button class="add-btn" onclick="addGrowthDeal()">+ Add Manually</button>
 </div>
 <div id="autoLoadStatus" style="font-size:12px;color:#6B7A99;margin-bottom:8px;display:none;"></div>
-<div id="growthDeals"></div>
+<div id="growthOpportunities"></div>
 <hr class="section-divider"/>
 <div class="section-title">CRM Clients (Monthly Recurring)</div>
 <div class="section-sub">Commission is 20% of monthly fee for 3 months. 3+ CRM clients in 60 days unlocks 25% rate.</div>
@@ -293,7 +293,7 @@
 </div>
 </div>
 <div class="form-row full">
-<div class="form-group"><label>Deals Summary *</label><textarea id="pay_summary" placeholder="List the deals you're claiming commission for:
+<div class="form-group"><label>Opportunities Summary *</label><textarea id="pay_summary" placeholder="List the deals you're claiming commission for:
 e.g. Ripple — Island Bites Restaurant — $1,200 — $240 commission
 CRM Premium — Sunrise Digital — $179/mo — $35.80 commission" rows="4"></textarea></div>
 </div>
@@ -414,7 +414,7 @@ CRM Premium — Sunrise Digital — $179/mo — $35.80 commission" rows="4"></te
 <div>
 <div style="font-size:14px;font-weight:700;margin-bottom:14px;">Performance Bonuses</div>
 <table class="ref-table">
-<thead><tr><th>Deals/Month</th><th>Bonus</th></tr></thead>
+<thead><tr><th>Opportunities/Month</th><th>Bonus</th></tr></thead>
 <tbody>
 <tr><td>3–4 deals</td><td style="color:var(--gold);font-weight:700;">+$100</td></tr>
 <tr><td>5–6 deals</td><td style="color:var(--gold);font-weight:700;">+$250</td></tr>
@@ -511,7 +511,7 @@ function switchTab(tabId,el){
 }
 
 function addGrowthDeal(){
-  const container=document.getElementById('growthDeals');
+  const container=document.getElementById('growthOpportunities');
   const id=`gd_${Date.now()}`;
   const div=document.createElement('div');
   div.className='deal-item';
@@ -604,7 +604,7 @@ function calculate(){
   let upsellBonus=0;
 
   // Growth deals
-  const growthItems=document.getElementById('growthDeals').children;
+  const growthItems=document.getElementById('growthOpportunities').children;
   Array.from(growthItems).forEach((item,i)=>{
     const selects=item.querySelectorAll('select');
     const inputs=item.querySelectorAll('input');
@@ -670,7 +670,7 @@ function calculate(){
 
 function loadScenario(type){
   // Clear existing
-  document.getElementById('growthDeals').innerHTML='';
+  document.getElementById('growthOpportunities').innerHTML='';
   document.getElementById('crmClients').innerHTML='';
 
   const scenarios={
@@ -786,9 +786,9 @@ async function submitPayout(){
 })();
 
 // ── AUTO-LOAD WON DEALS FROM CRM ─────────────────────────────────────────────
-async function autoLoadWonDeals(){
+async function autoLoadWonOpportunities(){
   const statusEl = document.getElementById('autoLoadStatus');
-  const container = document.getElementById('growthDeals');
+  const container = document.getElementById('growthOpportunities');
   if(statusEl){ statusEl.style.display='block'; statusEl.textContent='Loading won deals from CRM...'; }
 
   try{
@@ -796,7 +796,7 @@ async function autoLoadWonDeals(){
     if(!session){ if(statusEl) statusEl.textContent='Not logged in.'; return; }
 
     // Load won deals for this agent
-    const {data:wonDeals, error} = await db.from('deals')
+    const {data:wonOpportunities, error} = await db.from('deals')
       .select('*')
       .eq('agent_id', session.user.id)
       .eq('stage','won')
@@ -804,7 +804,7 @@ async function autoLoadWonDeals(){
       .limit(20);
 
     if(error){ if(statusEl) statusEl.textContent='Error: '+error.message; return; }
-    if(!wonDeals||!wonDeals.length){
+    if(!wonOpportunities||!wonOpportunities.length){
       if(statusEl) statusEl.textContent='No won deals found in CRM for your account.';
       return;
     }
@@ -813,7 +813,7 @@ async function autoLoadWonDeals(){
     container.innerHTML='';
 
     // Add each won deal
-    wonDeals.forEach((d,i)=>{
+    wonOpportunities.forEach((d,i)=>{
       const id = 'gd_auto_'+d.id;
       const dealName = d.deal_name||d.title||'Deal '+(i+1);
       const contactName = d.contact_name||'';
@@ -856,7 +856,7 @@ async function autoLoadWonDeals(){
     });
 
     updateCalc();
-    if(statusEl) statusEl.textContent=wonDeals.length+' won deal'+(wonDeals.length!==1?'s':'')+' loaded from CRM ✓';
+    if(statusEl) statusEl.textContent=wonOpportunities.length+' won deal'+(wonOpportunities.length!==1?'s':'')+' loaded from CRM ✓';
     statusEl.style.color='#22C55E';
 
   }catch(e){

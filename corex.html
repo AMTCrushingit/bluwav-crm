@@ -589,20 +589,20 @@
   </div>
   <button class="crm-toggle-btn" id="crm-sidebar-toggle"><span style="font-size:14px;">☰</span><span class="crm-nav-label">Collapse</span></button>
   <div class="crm-section-label">MAIN</div>
-  <a class="crm-nav-item" href="enhanced-crm-dashboard.html"><span class="crm-nav-icon">📊</span><span class="crm-nav-label">Dashboard</span></a>
-  <a class="crm-nav-item" href="contacts.html"><span class="crm-nav-icon">👥</span><span class="crm-nav-label">Contacts</span></a>
-  <a class="crm-nav-item" href="deals.html"><span class="crm-nav-icon">💼</span><span class="crm-nav-label">Deals</span></a>
+  <a class="crm-nav-item" href="enhanced-crm-dashboard.html"><span class="crm-nav-icon">📊</span><span class="crm-nav-label">Command Center</span></a>
+  <a class="crm-nav-item" href="contacts.html"><span class="crm-nav-icon">👥</span><span class="crm-nav-label">Customers</span></a>
+  <a class="crm-nav-item" href="deals.html"><span class="crm-nav-icon">💼</span><span class="crm-nav-label">Opportunities</span></a>
   <a class="crm-nav-item" href="enhanced-crm-dashboard.html#tasks"><span class="crm-nav-icon">✅</span><span class="crm-nav-label">Tasks</span></a>
   <a class="crm-nav-item" href="enhanced-crm-dashboard.html#calendar"><span class="crm-nav-icon">📅</span><span class="crm-nav-label">Calendar</span></a>
   <div class="crm-section-label">COMMUNICATE</div>
   <a class="crm-nav-item" href="enhanced-crm-dashboard.html#email"><span class="crm-nav-icon">📧</span><span class="crm-nav-label">Email</span></a>
   <a class="crm-nav-item" href="automations.html"><span class="crm-nav-icon">⚡</span><span class="crm-nav-label">Automations</span></a>
   <div class="crm-section-label">PERFORMANCE</div>
-  <a class="crm-nav-item" href="enhanced-crm-dashboard.html#agent-dashboard"><span class="crm-nav-icon">📈</span><span class="crm-nav-label">Agent Dashboard</span></a>
+  <a class="crm-nav-item" href="enhanced-crm-dashboard.html#agent-dashboard"><span class="crm-nav-icon">📈</span><span class="crm-nav-label">Agent Command Center</span></a>
   <a class="crm-nav-item" href="enhanced-crm-dashboard.html#commission"><span class="crm-nav-icon">💰</span><span class="crm-nav-label">Commission Calc</span></a>
   <a class="crm-nav-item" href="enhanced-crm-dashboard.html#onboarding"><span class="crm-nav-icon">🚀</span><span class="crm-nav-label">Onboarding</span></a>
   <div class="crm-section-label">INSIGHTS</div>
-  <a class="crm-nav-item" href="reports.html"><span class="crm-nav-icon">📊</span><span class="crm-nav-label">Reports</span></a>
+  <a class="crm-nav-item" href="reports.html"><span class="crm-nav-icon">📊</span><span class="crm-nav-label">Business Insights</span></a>
   <a class="crm-nav-item" href="settings.html"><span class="crm-nav-icon">⚙️</span><span class="crm-nav-label">System Controls</span></a>
   <a class="crm-nav-item" href="billing.html"><span class="crm-nav-icon">💳</span><span class="crm-nav-label">Billing</span></a>
   <div class="crm-section-label">ADMIN</div>
@@ -1202,7 +1202,7 @@ function renderAgents(){
 
 // ===== SETTINGS: SCORING WEIGHTS =====
 function renderWeights(){
-  const labels={industry:'Industry Fit',geo:'Geographic Fit',budget:'Budget/Project Size',orgType:'Organization Type',sourceQuality:'Source Quality',urgency:'Urgency/Deadline'};
+  const labels={industry:'Industry Fit',geo:'Geographic Fit',budget:'Budget/Project Size',orgType:'Workspace Type',sourceQuality:'Source Quality',urgency:'Urgency/Deadline'};
   const maxes={industry:25,geo:20,budget:20,orgType:15,sourceQuality:10,urgency:10};
   document.getElementById('scoring-weights').innerHTML=Object.keys(labels).map(k=>`
     <div>
@@ -1221,7 +1221,7 @@ function openLeadModal(leadId){
   const fb=l.fitBreakdown;
   const total=l.score;
   const maxW={industry:25,geo:20,budget:20,orgType:15,sourceQuality:10,urgency:10};
-  const fbLabels={industry:'Industry Fit',geo:'Geographic Fit',budget:'Budget/Project Size',orgType:'Organization Type',sourceQuality:'Source Quality',urgency:'Urgency/Deadline'};
+  const fbLabels={industry:'Industry Fit',geo:'Geographic Fit',budget:'Budget/Project Size',orgType:'Workspace Type',sourceQuality:'Source Quality',urgency:'Urgency/Deadline'};
   const fbColors={industry:'#0ea5e9',geo:'#22c55e',budget:'#f59e0b',orgType:'#6366f1',sourceQuality:'#8b5cf6',urgency:'#ef4444'};
   // conic gradient for donut
   let conic='',deg=0;
@@ -1589,7 +1589,7 @@ document.getElementById('sources-grid').addEventListener('click',function(e){
   }
 });
 
-// Settings: agents
+// Workspace Settings: agents
 document.getElementById('agents-list').addEventListener('click',function(e){
   const rm=e.target.closest('.remove-agent-btn');
   if(rm){agents.splice(parseInt(rm.dataset.idx),1);saveAgents();renderAgents();}
@@ -1601,7 +1601,7 @@ document.getElementById('add-agent-btn').addEventListener('click',function(){
   if(name&&spec&&region){agents.push({name,specialty:spec,region});saveAgents();renderAgents();toast('👤 Agent added');}
 });
 
-// Settings: weights
+// Workspace Settings: weights
 document.getElementById('scoring-weights').addEventListener('input',function(e){
   if(e.target.classList.contains('weight-slider')){
     const key=e.target.dataset.key;

@@ -4,16 +4,16 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Reports</title>
+<title>BluWav CRM — Business Insights</title>
 <link rel="stylesheet" href="bluwav.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 // Load real report data from Supabase
 async function loadReportData(){
   if(!currentUser) return;
   try {
-    // Contacts by status
+    // Customers by status
     const {data:contacts} = await db.from('contacts').select('status,created_at').eq('user_id',currentUser.id);
-    // Deals by stage
+    // Opportunities by stage
     const {data:deals} = await db.from('deals').select('stage,value,deal_value,created_at').eq('agent_id',currentUser.id);
     
     if(contacts && contacts.length){
@@ -24,7 +24,7 @@ async function loadReportData(){
       const customers = contacts.filter(c=>c.status==='Customer').length;
       const els = {
         'rMetricLeads': leads,
-        'rMetricContacts': total,
+        'rMetricCustomers': total,
         'rMetricCustomers': customers
       };
       Object.entries(els).forEach(([id,val])=>{
@@ -168,9 +168,9 @@ async function loadReportData(){
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Dashboard</span></a>
-<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
-<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Communicate</div>
@@ -178,12 +178,12 @@ async function loadReportData(){
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
 <div class="ns">Performance</div>
-<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
 <a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
 <a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
 <div class="ns">Insights</div>
-<a class="nav-item" href="reports.html" class="active"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
-<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="reports.html" class="active"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
@@ -194,7 +194,7 @@ async function loadReportData(){
 </aside>
 <div class="main">
 <header class="topbar">
-<div class="topbar-left"><h1>Reports &amp; Analytics</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Reports</div></div>
+<div class="topbar-left"><h1>Business Insights &amp; Analytics</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Command Center</a> / Business Insights</div></div>
 <div class="topbar-right">
 <button class="btn btn-ghost">⬇ Export PDF</button>
 <button class="btn btn-primary">📊 Custom Report</button>
@@ -224,7 +224,7 @@ async function loadReportData(){
 <div class="kpi-card c1">
 <div class="kpi-top"><div class="kpi-icon c1">💰</div><div class="kpi-trend up">↑ 18%</div></div>
 <div class="kpi-val">$48.2K</div>
-<div class="kpi-lbl">Pipeline Value</div>
+<div class="kpi-lbl">Opportunity Value</div>
 <div class="kpi-sub">vs $40.8K last period</div>
 </div>
 <div class="kpi-card c2">
@@ -257,7 +257,7 @@ async function loadReportData(){
 </div>
 <div class="chart-card">
 <div class="chart-header">
-<div><div class="chart-title">Deals by Stage</div><div class="chart-sub">Current distribution</div></div>
+<div><div class="chart-title">Opportunities by Stage</div><div class="chart-sub">Current distribution</div></div>
 </div>
 <div class="chart-body"><div class="chart-container"><canvas id="stageChart"></canvas></div></div>
 </div>
@@ -281,7 +281,7 @@ async function loadReportData(){
 <div class="bottom-grid">
 <!-- Leaderboard -->
 <div class="chart-card">
-<div class="chart-header"><div><div class="chart-title">Team Leaderboard</div><div class="chart-sub">Top performers this month</div></div></div>
+<div class="chart-header"><div><div class="chart-title">Team Performance</div><div class="chart-sub">Top performers this month</div></div></div>
 <div class="chart-body" style="padding:0 20px;">
 <div class="leaderboard-item">
 <div class="lb-rank gold">1</div>
@@ -303,9 +303,9 @@ async function loadReportData(){
 </div>
 </div>
 </div>
-<!-- Contacts by Island -->
+<!-- Customers by Island -->
 <div class="chart-card">
-<div class="chart-header"><div><div class="chart-title">Contacts by Island</div><div class="chart-sub">Geographic distribution</div></div></div>
+<div class="chart-header"><div><div class="chart-title">Customers by Island</div><div class="chart-sub">Geographic distribution</div></div></div>
 <div class="chart-body" style="padding:0 20px;">
 <div class="island-row"><div class="island-flag">🇹🇹</div><div class="island-name">Trinidad</div><div class="island-bar-wrap"><div class="island-bar" style="width:85%;"></div></div><div class="island-count">42</div></div>
 <div class="island-row"><div class="island-flag">🇧🇧</div><div class="island-name">Barbados</div><div class="island-bar-wrap"><div class="island-bar" style="width:60%;"></div></div><div class="island-count">28</div></div>
@@ -388,7 +388,7 @@ async function loadReportData(){
     type:'line',
     data:{
       labels: [],
-      datasets:[{label:'New Contacts',data: [],borderColor:'var(--cyan)',backgroundColor:'rgba(0,194,209,0.08)',fill:true,tension:0.4,pointBackgroundColor:'var(--cyan)',pointRadius:4}]
+      datasets:[{label:'New Customers',data: [],borderColor:'var(--cyan)',backgroundColor:'rgba(0,194,209,0.08)',fill:true,tension:0.4,pointBackgroundColor:'var(--cyan)',pointRadius:4}]
     },
     options:{responsive:true,maintainAspectRatio:false,...chartDefaults}
   });

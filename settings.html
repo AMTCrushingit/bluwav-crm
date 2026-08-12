@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Settings</title>
+<title>BluWav CRM — Workspace Settings</title>
 <link href="bluwav.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 function openEditMemberBtn(btn){
@@ -19,7 +19,7 @@ function openDeleteMemberBtn(btn){
 }
 
 
-  async function populateSettingsFields(){
+  async function populateWorkspace SettingsFields(){
     const {data:{session}} = await db.auth.getSession().catch(()=>({data:{session:null}}));
     if(!session) return;
     const {data:profile} = await db.from('profiles').select('*').eq('id',session.user.id).single().catch(()=>({data:null}));
@@ -32,7 +32,7 @@ function openDeleteMemberBtn(btn){
     if(av) av.textContent = ini(profile.full_name||session.user.email||'?');
   }
   // Run on page load
-  document.addEventListener('DOMContentLoaded', populateSettingsFields);
+  document.addEventListener('DOMContentLoaded', populateWorkspace SettingsFields);
 
 
   function handlePhotoUpload(input){
@@ -208,9 +208,9 @@ function openDeleteMemberBtn(btn){
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Dashboard</span></a>
-<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
-<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Communicate</div>
@@ -218,12 +218,12 @@ function openDeleteMemberBtn(btn){
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
 <div class="ns">Performance</div>
-<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
 <a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
 <a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
 <div class="ns">Insights</div>
-<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
-<a class="nav-item" href="settings.html" class="active"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
+<a class="nav-item" href="settings.html" class="active"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
@@ -234,7 +234,7 @@ function openDeleteMemberBtn(btn){
 </aside>
 <div class="main">
 <header class="topbar">
-<div class="topbar-left"><h1>Settings</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Settings</div></div>
+<div class="topbar-left"><h1>Workspace Settings</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Command Center</a> / Workspace Settings</div></div>
 <div class="topbar-right">
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
@@ -244,11 +244,11 @@ function openDeleteMemberBtn(btn){
 </div>
 </header>
 <div class="settings-layout">
-<!-- Settings Nav -->
+<!-- Workspace Settings Nav -->
 <div class="settings-nav">
 <div class="settings-nav-item active" onclick="switchSection('profile',this)"><span class="settings-nav-icon">👤</span> Profile</div>
-<div class="settings-nav-item" onclick="switchSection('org',this)"><span class="settings-nav-icon">🏢</span> Organization</div>
-<div class="settings-nav-item" onclick="switchSection('team',this)"><span class="settings-nav-icon">👥</span> Team Members</div>
+<div class="settings-nav-item" onclick="switchSection('org',this)"><span class="settings-nav-icon">🏢</span> Workspace</div>
+<div class="settings-nav-item" onclick="switchSection('team',this)"><span class="settings-nav-icon">👥</span> Team</div>
 <div class="settings-nav-divider"></div>
 <div class="settings-nav-item" onclick="switchSection('notifications',this)"><span class="settings-nav-icon">🔔</span> Notifications</div>
 <div class="settings-nav-item" onclick="switchSection('integrations',this)"><span class="settings-nav-icon">🔗</span> Integrations</div>
@@ -256,11 +256,11 @@ function openDeleteMemberBtn(btn){
 <div class="settings-nav-divider"></div>
 <div class="settings-nav-item" id="dangerNavItem" onclick="switchSection('danger',this)"><span class="settings-nav-icon">⚠️</span> Danger Zone</div>
 </div>
-<!-- Settings Content -->
+<!-- Workspace Settings Content -->
 <div>
 <!-- PROFILE -->
 <div class="settings-section active" id="section-profile">
-<div class="section-title">Profile Settings</div>
+<div class="section-title">Profile Workspace Settings</div>
 <div class="section-sub">Manage your personal account information</div>
 <div class="settings-card">
 <div class="card-header"><div class="card-title">Personal Information</div><div class="card-sub">Update your name, email and profile photo</div></div>
@@ -289,7 +289,7 @@ function openDeleteMemberBtn(btn){
 </div>
 <div class="save-bar">
 <button class="btn-ghost">Cancel</button>
-<button class="btn-save" onclick="saveSettings('Profile')">Save Changes</button>
+<button class="btn-save" onclick="saveWorkspace Settings('Profile')">Save Changes</button>
 </div>
 </div>
 </div>
@@ -301,13 +301,13 @@ function openDeleteMemberBtn(btn){
 <div class="form-group"><label>New Password</label><input placeholder="••••••••" type="password"/></div>
 <div class="form-group"><label>Confirm Password</label><input placeholder="••••••••" type="password"/></div>
 </div>
-<div class="save-bar"><button class="btn-save" onclick="saveSettings('Password')">Update Password</button></div>
+<div class="save-bar"><button class="btn-save" onclick="saveWorkspace Settings('Password')">Update Password</button></div>
 </div>
 </div>
 </div>
 <!-- ORGANIZATION -->
 <div class="settings-section" id="section-org">
-<div class="section-title">Organization Settings</div>
+<div class="section-title">Workspace Workspace Settings</div>
 <div class="section-sub">Configure your company profile and CRM preferences</div>
 <div class="settings-card">
 <div class="card-header"><div class="card-title">Company Profile</div></div>
@@ -325,7 +325,7 @@ function openDeleteMemberBtn(btn){
 </div>
 </div>
 <div class="form-row full"><div class="form-group"><label>Company Description</label><textarea placeholder="Brief description of your business..." rows="3"></textarea></div></div>
-<div class="save-bar"><button class="btn-ghost">Cancel</button><button class="btn-save" onclick="saveSettings('Organization')">Save Changes</button></div>
+<div class="save-bar"><button class="btn-ghost">Cancel</button><button class="btn-save" onclick="saveWorkspace Settings('Workspace')">Save Changes</button></div>
 </div>
 </div>
 <div class="settings-card">
@@ -339,13 +339,13 @@ function openDeleteMemberBtn(btn){
 <div class="form-group"><label>Timezone</label><select><option>America/Port_of_Spain (AST)</option><option>America/Barbados (AST)</option><option>America/Jamaica (EST)</option></select></div>
 <div class="form-group"><label>Language</label><select><option>English</option><option>Spanish</option><option>French</option></select></div>
 </div>
-<div class="save-bar"><button class="btn-save" onclick="saveSettings('Preferences')">Save Preferences</button></div>
+<div class="save-bar"><button class="btn-save" onclick="saveWorkspace Settings('Preferences')">Save Preferences</button></div>
 </div>
 </div>
 </div>
 <!-- TEAM -->
 <div class="settings-section" id="section-team">
-<div class="section-title">Team Members</div>
+<div class="section-title">Team</div>
 <div class="section-sub">Manage your team and their access levels</div>
 <div class="settings-card">
 <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
@@ -370,7 +370,7 @@ function openDeleteMemberBtn(btn){
 </div>
 <!-- NOTIFICATIONS -->
 <div class="settings-section" id="section-notifications">
-<div class="section-title">Notification Settings</div>
+<div class="section-title">Notification Workspace Settings</div>
 <div class="section-sub">Control how and when you receive alerts</div>
 <div class="settings-card">
 <div class="card-header"><div class="card-title">Email Notifications</div></div>
@@ -389,7 +389,7 @@ function openDeleteMemberBtn(btn){
 <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Team Activity Alerts</div><div class="toggle-sub">Get WhatsApp pings for important team actions</div></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
 </div>
 </div>
-<div class="save-bar"><button class="btn-save" onclick="saveSettings('Notifications')">Save Preferences</button></div>
+<div class="save-bar"><button class="btn-save" onclick="saveWorkspace Settings('Notifications')">Save Preferences</button></div>
 </div>
 <!-- INTEGRATIONS -->
 <div class="settings-section" id="section-integrations">
@@ -445,14 +445,14 @@ function openDeleteMemberBtn(btn){
 <button class="btn-danger" onclick="showToast('📦 Export started — you will receive an email shortly','success')">⬇ Export All Data</button>
 </div>
 <div class="danger-card">
-<div class="danger-title">Delete All Contacts</div>
+<div class="danger-title">Delete All Customers</div>
 <div class="danger-sub">Permanently delete all contacts from your CRM. This action cannot be undone.</div>
-<button class="btn-danger" onclick="if(confirm('Delete ALL contacts? This cannot be undone.'))showToast('🗑 All contacts deleted','success')">🗑 Delete All Contacts</button>
+<button class="btn-danger" onclick="if(confirm('Delete ALL contacts? This cannot be undone.'))showToast('🗑 All contacts deleted','success')">🗑 Delete All Customers</button>
 </div>
 <div class="danger-card">
-<div class="danger-title">Delete Organization</div>
+<div class="danger-title">Delete Workspace</div>
 <div class="danger-sub">Permanently delete your organization and all associated data. This will immediately cancel your subscription.</div>
-<button class="btn-danger" onclick="if(confirm('Delete your entire organization? This CANNOT be undone.'))showToast('Organization deletion requested','success')">💀 Delete Organization</button>
+<button class="btn-danger" onclick="if(confirm('Delete your entire organization? This CANNOT be undone.'))showToast('Workspace deletion requested','success')">💀 Delete Workspace</button>
 </div>
 </div>
 </div>
@@ -708,7 +708,7 @@ function openDeleteMemberBtn(btn){
       loadTeamMembers();
     }
   });
-  async function saveSettings(section){
+  async function saveWorkspace Settings(section){
     const btn = event?.target;
     if(btn){btn.disabled=true;btn.textContent='Saving...';}
     try{
@@ -736,7 +736,7 @@ function openDeleteMemberBtn(btn){
         if(error){showToast('Error: '+error.message,'error');return;}
         if(pwEl) pwEl.value='';
       }
-      if(section==='Organization'){
+      if(section==='Workspace'){
         const orgEl = document.getElementById('orgName')||document.querySelector('#tab-org input');
         if(orgEl && orgEl.value.trim()){
           await db.from('profiles').update({organization:orgEl.value.trim()}).eq('id',uid).catch(()=>{});

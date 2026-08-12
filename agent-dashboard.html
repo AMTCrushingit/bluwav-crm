@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Agent Dashboard</title>
+<title>BluWav CRM — Agent Command Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -159,9 +159,9 @@
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Dashboard</span></a>
-<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
-<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Communicate</div>
@@ -169,12 +169,12 @@
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
 <div class="ns">Performance</div>
-<a class="nav-item" href="agent-dashboard.html" class="active"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item" href="agent-dashboard.html" class="active"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
 <a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
 <a class="nav-item" href="agent-onboarding.html"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
 <div class="ns">Insights</div>
-<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
-<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
@@ -185,7 +185,7 @@
 </aside>
 <div class="main" id="mainContent">
 <header class="topbar">
-<div class="topbar-left"><h1>Agent Dashboard</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Agent Dashboard</div></div>
+<div class="topbar-left"><h1>Agent Command Center</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Command Center</a> / Agent Command Center</div></div>
 <div class="topbar-right">
 <button class="btn btn-primary" onclick="window.location.href='deals.html'">+ New Deal</button>
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
@@ -247,20 +247,20 @@
 </div>
 <div class="kpi-card c2">
 <div class="kpi-icon c2">💼</div>
-<div class="kpi-val" id="kpiDeals">0</div>
-<div class="kpi-lbl">Deals Won (MTD)</div>
-<div class="kpi-sub" id="kpiDealsSub">This month</div>
+<div class="kpi-val" id="kpiOpportunities">0</div>
+<div class="kpi-lbl">Revenue Closed (MTD)</div>
+<div class="kpi-sub" id="kpiOpportunitiesSub">This month</div>
 </div>
 <div class="kpi-card c3">
 <div class="kpi-icon c3">📊</div>
 <div class="kpi-val" id="kpiPipeline">$0</div>
-<div class="kpi-lbl">Pipeline Value</div>
+<div class="kpi-lbl">Opportunity Value</div>
 <div class="kpi-sub">Open deals</div>
 </div>
 <div class="kpi-card c4">
 <div class="kpi-icon c4">🎯</div>
-<div class="kpi-val" id="kpiContacts">0</div>
-<div class="kpi-lbl">My Contacts</div>
+<div class="kpi-val" id="kpiCustomers">0</div>
+<div class="kpi-lbl">My Customers</div>
 <div class="kpi-sub">Total leads</div>
 </div>
 </div>
@@ -284,20 +284,20 @@
 <!-- Leaderboard -->
 <div class="card">
 <div class="card-header">
-<div class="card-title">🏆 Team Leaderboard</div>
+<div class="card-title">🏆 Team Performance</div>
 <span id="lbMonth" style="font-size:12px;color:var(--text3);">This month</span>
 </div>
 <div class="card-body" id="leaderboard" style="padding:0 20px;">
 <div style="text-align:center;padding:20px;color:var(--text3);">Loading...</div>
 </div>
 </div>
-<!-- Recent Deals -->
+<!-- Recent Opportunities -->
 <div class="card">
 <div class="card-header">
-<div class="card-title">💼 My Recent Deals</div>
+<div class="card-title">💼 My Recent Opportunities</div>
 <a class="card-action" href="deals.html">View all →</a>
 </div>
-<div class="card-body" id="recentDeals" style="padding:0 20px;">
+<div class="card-body" id="recentOpportunities" style="padding:0 20px;">
 <div style="text-align:center;padding:20px;color:var(--text3);">Loading...</div>
 </div>
 </div>
@@ -326,7 +326,7 @@ const STAGES=['Lead','Qualified','Proposal','Negotiation','Won','Lost'];
 const STAGE_COLORS={Lead:'#94a3b8',Qualified:'#00C2D1',Proposal:'#f59e0b',Negotiation:'#ff8c42',Won:'#22c55e',Lost:'#ef4444'};
 const AGENT_COLORS=['#00C2D1','#D4AF37','#22c55e','#ff8c42','#a78bfa','#f472b6'];
 
-let currentUser=null,userRole='salesperson',allDeals=[],allContacts=[],allProfiles=[],viewingAgentId=null;
+let currentUser=null,userRole='salesperson',allOpportunities=[],allCustomers=[],allProfiles=[],viewingAgentId=null;
 
 function ini(n){return(n||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);}
 function fmt$(v){return'$'+Number(v||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
@@ -397,11 +397,11 @@ async function loadAll(){
 
   // Load contacts
   const{data:contacts}=await db.from('contacts').select('id,full_name,business_name,user_id');
-  allContacts=contacts||[];
+  allCustomers=contacts||[];
 
   // Load all deals
   const{data:deals}=await db.from('deals').select('*').order('created_at',{ascending:false});
-  allDeals=(deals||[]).map(d=>({
+  allOpportunities=(deals||[]).map(d=>({
     ...d,
     deal_name:d.deal_name||d.title||'Untitled',
     deal_value:d.deal_value||d.value||0,
@@ -417,23 +417,23 @@ async function loadAll(){
 
 function loadAgentData(){
   const agentId=viewingAgentId||currentUser.id;
-  const myDeals=allDeals.filter(d=>d.agent_id===agentId);
-  const myContacts=allContacts.filter(c=>c.user_id===agentId);
+  const myOpportunities=allOpportunities.filter(d=>d.agent_id===agentId);
+  const myCustomers=allCustomers.filter(c=>c.user_id===agentId);
 
   const now=new Date();
   const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
 
-  const crmClients=myDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
+  const crmClients=myOpportunities.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
   const unlocked=crmClients>=UNLOCK_THRESHOLD;
-  const wonMTD=myDeals.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
+  const wonMTD=myOpportunities.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
   const totalComm=wonMTD.reduce((s,d)=>s+calcComm(d,unlocked),0);
-  const openDeals=myDeals.filter(d=>!['Won','Lost'].includes(d.stage));
-  const pipelineVal=openDeals.reduce((s,d)=>s+(d.deal_value||0),0);
+  const openOpportunities=myOpportunities.filter(d=>!['Won','Lost'].includes(d.stage));
+  const pipelineVal=openOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
 
   document.getElementById('kpiComm').textContent=fmt$(totalComm);
-  document.getElementById('kpiDeals').textContent=wonMTD.length;
+  document.getElementById('kpiOpportunities').textContent=wonMTD.length;
   document.getElementById('kpiPipeline').textContent=fmt$(pipelineVal);
-  document.getElementById('kpiContacts').textContent=myContacts.length;
+  document.getElementById('kpiCustomers').textContent=myCustomers.length;
 
   // Unlock bar
   const pct=Math.min(100,(crmClients/UNLOCK_THRESHOLD)*100);
@@ -453,7 +453,7 @@ function loadAgentData(){
   // Pipeline mini
   const pipeline=document.getElementById('pipelineMini');
   pipeline.innerHTML=STAGES.map(stage=>{
-    const deals=myDeals.filter(d=>d.stage===stage);
+    const deals=myOpportunities.filter(d=>d.stage===stage);
     const val=deals.reduce((s,d)=>s+(d.deal_value||0),0);
     const color=STAGE_COLORS[stage];
     return`<div class="pipeline-stage" style="border-top:2px solid ${color};">
@@ -464,12 +464,12 @@ function loadAgentData(){
   }).join('');
 
   // Recent deals
-  const recentDeals=document.getElementById('recentDeals');
-  const recent=myDeals.slice(0,6);
+  const recentOpportunities=document.getElementById('recentOpportunities');
+  const recent=myOpportunities.slice(0,6);
   if(!recent.length){
-    recentDeals.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text3);">No deals yet — <a href="deals.html" style="color:var(--cyan);">Create first deal</a></div>`;
+    recentOpportunities.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text3);">No deals yet — <a href="deals.html" style="color:var(--cyan);">Create first deal</a></div>`;
   } else {
-    recentDeals.innerHTML=recent.map(d=>`
+    recentOpportunities.innerHTML=recent.map(d=>`
       <div class="deal-row">
         <div>
           <div class="deal-name">${d.deal_name}</div>
@@ -488,10 +488,10 @@ function renderLeaderboard(){
   const monthStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   const agents=allProfiles.filter(p=>p.role==='salesperson');
   const lb=agents.map(agent=>{
-    const agentDeals=allDeals.filter(d=>d.agent_id===agent.id);
-    const crmClients=agentDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
+    const agentOpportunities=allOpportunities.filter(d=>d.agent_id===agent.id);
+    const crmClients=agentOpportunities.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
     const unlocked=crmClients>=UNLOCK_THRESHOLD;
-    const wonMTD=agentDeals.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
+    const wonMTD=agentOpportunities.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
     const comm=wonMTD.reduce((s,d)=>s+calcComm(d,unlocked),0);
     return{...agent,comm,won:wonMTD.length};
   }).sort((a,b)=>b.comm-a.comm);
@@ -529,10 +529,10 @@ function renderChart(){
     const year=now.getFullYear();
     const month=String(now.getMonth()-5+i+1).padStart(2,'0');
     const monthStr=`${year}-${month}`;
-    const myDeals=allDeals.filter(d=>d.agent_id===currentUser.id);
-    const crmClients=myDeals.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
+    const myOpportunities=allOpportunities.filter(d=>d.agent_id===currentUser.id);
+    const crmClients=myOpportunities.filter(d=>d.is_crm_client_deal&&d.stage==='Won').length;
     const unlocked=crmClients>=UNLOCK_THRESHOLD;
-    const wonInMonth=myDeals.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
+    const wonInMonth=myOpportunities.filter(d=>d.stage==='Won'&&(d.updated_at||d.created_at||'').startsWith(monthStr));
     return wonInMonth.reduce((s,d)=>s+calcComm(d,unlocked),0);
   });
 
@@ -577,9 +577,9 @@ async function quickDeal(type,value){
   const{data,error}=await db.from('deals').insert([deal]).select();
   if(error){showToast('Failed: '+error.message,'error');return;}
   const newDeal={...data[0],deal_name:data[0].deal_name||data[0].title,deal_value:data[0].deal_value||data[0].value||value,deal_type:data[0].deal_type||type,stage:data[0].stage||'Lead',agent_id:data[0].agent_id||data[0].created_by};
-  allDeals.unshift(newDeal);
+  allOpportunities.unshift(newDeal);
   showToast(`✅ ${type} deal logged for ${name}`,'success');
-  notifyAdmin('💼 New Deal Logged — BluWav CRM Agent Dashboard',
+  notifyAdmin('💼 New Deal Logged — BluWav CRM Agent Command Center',
     'Agent: '+currentUser?.email+'\nContact: '+name+'\nType: '+type+'\nValue: $'+value+'\nTime: '+new Date().toLocaleString());
   loadAgentData();
   renderLeaderboard();

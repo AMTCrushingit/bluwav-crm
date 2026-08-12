@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Dashboard</title>
+<title>BluWav CRM — Command Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -336,9 +336,9 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
-<a class="ni active" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
-<a class="ni" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Contacts</span><span class="nb" id="navContactsBadge">—</span></a>
-<a class="ni" id="nav-deals" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Deals</span><span class="nb" id="navDealsBadge">—</span></a>
+<a class="ni active" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Command Center</span></a>
+<a class="ni" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
+<a class="ni" id="nav-deals" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span><span class="nb" id="navOpportunitiesBadge">—</span></a>
 <a class="ni" id="nav-tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
 <a class="ni" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns">Communicate</div>
@@ -346,12 +346,12 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" id="nav-whatsapp" onclick="showView('whatsapp')"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
 <a class="ni" href="automations.html"><span class="ni-icon">⚡</span><span class="nav-text">Automations</span></a>
 <div class="ns">Performance</div>
-<a class="ni" href="agent-dashboard.html"><span class="ni-icon">📈</span><span class="nav-text">Agent Dashboard</span></a>
+<a class="ni" href="agent-dashboard.html"><span class="ni-icon">📈</span><span class="nav-text">Agent Command Center</span></a>
 <a class="ni" href="commission-calculator.html"><span class="ni-icon">💰</span><span class="nav-text">Commission Calc</span></a>
 <a class="ni" href="agent-onboarding.html"><span class="ni-icon">🚀</span><span class="nav-text">Onboarding</span></a>
 <div class="ns">Insights</div>
-<a class="ni" id="nav-reports" onclick="showView('reports')"><span class="ni-icon">📈</span><span class="nav-text">Reports</span></a>
-<a class="ni" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" id="nav-reports" onclick="showView('reports')"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
+<a class="ni" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Workspace Settings</span></a>
 <a class="ni" href="billing.html"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <!-- Admin section -->
 <div class="ns">Admin</div>
@@ -392,7 +392,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ Add Contact</button>
 <button class="ib" onclick="loadData();showToast('Refreshed ✓','success')" title="Refresh data">↻</button>
 <button class="ib" onclick="toggleNotif()" title="Notifications">🔔<span class="ndot"></span></button>
-<button class="ib" onclick="window.location.href='settings.html'" title="Settings">⚙️</button>
+<button class="ib" onclick="window.location.href='settings.html'" title="Workspace Settings">⚙️</button>
 <div class="tb-div"></div>
 <div class="user-chip" onclick="showView('settings')">
 <div class="avatar" id="topAvatar" style="width:26px;height:26px;font-size:0.65rem;">—</div>
@@ -417,10 +417,10 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <!-- Stats -->
 <div class="stats-grid">
-<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Contacts</span><span>👥</span></div><div class="stat-val" id="metricContacts">—</div><div class="stat-chg up" id="contactTrend"></div></div>
-<div class="stat g"><div class="stat-hd"><span class="stat-lbl">Open Deals</span><span>💼</span></div><div class="stat-val" id="metricDeals">—</div><div class="stat-chg up">↑ active</div></div>
-<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Pipeline Value</span><span>💰</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">↑ pipeline</div></div>
-<div class="stat s"><div class="stat-hd"><span class="stat-lbl">Deals Won</span><span>🏆</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">This month</div></div>
+<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Customers</span><span>👥</span></div><div class="stat-val" id="metricCustomers">—</div><div class="stat-chg up" id="contactTrend"></div></div>
+<div class="stat g"><div class="stat-hd"><span class="stat-lbl">Active Opportunities</span><span>💼</span></div><div class="stat-val" id="metricOpportunities">—</div><div class="stat-chg up">↑ active</div></div>
+<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Opportunity Value</span><span>💰</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">↑ pipeline</div></div>
+<div class="stat s"><div class="stat-hd"><span class="stat-lbl">Revenue Closed</span><span>🏆</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">This month</div></div>
 </div>
 <!-- Quick Actions -->
 <div class="qa-grid">
@@ -452,7 +452,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 </div>
-<!-- Bottom: Pipeline Trend Chart + Recent Contacts -->
+<!-- Bottom: Pipeline Trend Chart + Recent Customers -->
 <div class="bottom-grid">
 <div class="panel">
 <div class="panel-hd"><div class="panel-title">📈 Pipeline Trend<span style="font-size:0.7rem;color:var(--text3);font-weight:400;margin-left:8px;">Last 6 months</span></div></div>
@@ -460,13 +460,13 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <div class="panel">
 <div class="panel-hd">
-<div class="panel-title">👥 Recent Contacts</div>
+<div class="panel-title">👥 Recent Customers</div>
 <button class="btn btn-ghost btn-sm" onclick="showView('contacts')">View All →</button>
 </div>
 <div style="overflow-x:auto;">
 <table class="tbl">
 <thead><tr><th>Name</th><th>Company</th><th>Status</th><th>Date</th></tr></thead>
-<tbody id="recentContactsBody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Loading...</td></tr></tbody>
+<tbody id="recentCustomersBody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -475,10 +475,10 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <!-- ══ CONTACTS VIEW ══ -->
 <div class="view" id="view-contacts">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
-<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">All Contacts</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Contact Manager</h1></div>
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">All Customers</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Customer Management</h1></div>
 <div style="display:flex;gap:8px;">
 <button class="btn btn-outline btn-sm" onclick="openCSVImport()">📥 Import CSV</button>
-<button class="btn btn-outline btn-sm" onclick="exportContactsCSV()">📤 Export</button>
+<button class="btn btn-outline btn-sm" onclick="exportCustomersCSV()">📤 Export</button>
 <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ New Contact</button>
 </div>
 </div>
@@ -493,19 +493,19 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 <div class="sort-controls">
-<input class="sort-input" id="contactSearch" oninput="filterContacts()" placeholder="🔍 Search by name, company, email..."/>
-<select class="sort-select" id="contactSortField" onchange="sortContacts()">
+<input class="sort-input" id="contactSearch" oninput="filterCustomers()" placeholder="🔍 Search by name, company, email..."/>
+<select class="sort-select" id="contactSortField" onchange="sortCustomers()">
 <option value="name">Sort: Name</option>
 <option value="company">Sort: Company</option>
 <option value="status">Sort: Status</option>
 <option value="value">Sort: Deal Value</option>
 <option value="lastContact">Sort: Last Contact</option>
 </select>
-<select class="sort-select" id="contactSortDir" onchange="sortContacts()">
+<select class="sort-select" id="contactSortDir" onchange="sortCustomers()">
 <option value="asc">A → Z</option>
 <option value="desc">Z → A</option>
 </select>
-<select class="sort-select" id="contactStatusFilter" onchange="filterContacts()">
+<select class="sort-select" id="contactStatusFilter" onchange="filterCustomers()">
 <option value="">All Statuses</option>
 <option value="Lead">Lead</option>
 <option value="Qualified">Qualified</option>
@@ -542,11 +542,11 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <!-- ══ DEALS VIEW ══ -->
 <div class="view" id="view-deals">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
-<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Sales Pipeline</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Deal Manager</h1></div>
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Sales Pipeline</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Opportunity Pipeline</h1></div>
 <div style="display:flex;gap:8px;align-items:center;">
 <div style="display:flex;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);padding:3px;gap:2px;">
-<button id="dealViewKanban" onclick="setDealsView('kanban')" style="padding:5px 12px;border-radius:6px;border:none;background:var(--cyan);color:var(--navy-deep);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;">Kanban</button>
-<button id="dealViewList" onclick="setDealsView('list')" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;">List</button>
+<button id="dealViewKanban" onclick="setOpportunitiesView('kanban')" style="padding:5px 12px;border-radius:6px;border:none;background:var(--cyan);color:var(--navy-deep);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;">Kanban</button>
+<button id="dealViewList" onclick="setOpportunitiesView('list')" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;">List</button>
 </div>
 <button class="btn btn-primary btn-sm" onclick="openModal('addDeal')">+ New Deal</button>
 </div>
@@ -558,13 +558,13 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="stat o"><div class="stat-hd"><span class="stat-lbl">Win Rate</span><span>🎯</span></div><div class="stat-val" id="dealMetricRate">0%</div><div class="stat-chg up">↑ vs last mo</div></div>
 </div>
 <div class="panel">
-<div class="panel-hd"><div class="panel-title">💼 All Deals — Kanban View</div></div>
+<div class="panel-hd"><div class="panel-title">💼 All Opportunities — Kanban View</div></div>
 <div class="panel-body">
 <div class="pipe-cols" style="grid-template-columns:repeat(4,1fr);">
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--text3);">Lead</span><span class="pipe-cnt" id="dColLead">0</span></div><div id="dDealsLead"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--cyan);">Qualified</span><span class="pipe-cnt" id="dColQualified">0</span></div><div id="dDealsQualified"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--gold);">Proposal</span><span class="pipe-cnt" id="dColProposal">0</span></div><div id="dDealsProposal"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--success);">Won ✓</span><span class="pipe-cnt" id="dColWon">0</span></div><div id="dDealsWon"></div></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--text3);">Lead</span><span class="pipe-cnt" id="dColLead">0</span></div><div id="dOpportunitiesLead"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--cyan);">Qualified</span><span class="pipe-cnt" id="dColQualified">0</span></div><div id="dOpportunitiesQualified"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--gold);">Proposal</span><span class="pipe-cnt" id="dColProposal">0</span></div><div id="dOpportunitiesProposal"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--success);">Won ✓</span><span class="pipe-cnt" id="dColWon">0</span></div><div id="dOpportunitiesWon"></div></div>
 </div>
 </div>
 </div>
@@ -572,10 +572,10 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div id="dealsListView" style="display:none;">
 <div class="panel">
 <div class="panel-hd">
-<div class="panel-title">📋 All Deals — List View</div>
+<div class="panel-title">📋 All Opportunities — List View</div>
 <div style="display:flex;gap:8px;align-items:center;">
-<input id="dealSearch" oninput="filterDealsList()" placeholder="🔍 Search deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.75rem;padding:5px 10px;outline:none;font-family:inherit;width:180px;"/>
-<select id="dealStageFilter" onchange="filterDealsList()" style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.75rem;padding:5px 10px;outline:none;font-family:inherit;">
+<input id="dealSearch" oninput="filterOpportunitiesList()" placeholder="🔍 Search deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.75rem;padding:5px 10px;outline:none;font-family:inherit;width:180px;"/>
+<select id="dealStageFilter" onchange="filterOpportunitiesList()" style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.75rem;padding:5px 10px;outline:none;font-family:inherit;">
 <option value="">All Stages</option>
 <option value="lead">Lead</option>
 <option value="qualified">Qualified</option>
@@ -588,12 +588,12 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div style="overflow-x:auto;">
 <table class="tbl" id="dealsListTable">
 <thead><tr>
-<th onclick="sortDealsList('deal_name')" style="cursor:pointer;">Deal <span class="sort-icon">▲</span></th>
-<th onclick="sortDealsList('contact_name')" style="cursor:pointer;">Client <span class="sort-icon">▲</span></th>
-<th onclick="sortDealsList('deal_value')" style="cursor:pointer;">Value <span class="sort-icon">▲</span></th>
-<th onclick="sortDealsList('stage')" style="cursor:pointer;">Stage <span class="sort-icon">▲</span></th>
-<th onclick="sortDealsList('close_date')" style="cursor:pointer;">Close Date <span class="sort-icon">▲</span></th>
-<th onclick="sortDealsList('probability')" style="cursor:pointer;">Prob% <span class="sort-icon">▲</span></th>
+<th onclick="sortOpportunitiesList('deal_name')" style="cursor:pointer;">Deal <span class="sort-icon">▲</span></th>
+<th onclick="sortOpportunitiesList('contact_name')" style="cursor:pointer;">Client <span class="sort-icon">▲</span></th>
+<th onclick="sortOpportunitiesList('deal_value')" style="cursor:pointer;">Value <span class="sort-icon">▲</span></th>
+<th onclick="sortOpportunitiesList('stage')" style="cursor:pointer;">Stage <span class="sort-icon">▲</span></th>
+<th onclick="sortOpportunitiesList('close_date')" style="cursor:pointer;">Close Date <span class="sort-icon">▲</span></th>
+<th onclick="sortOpportunitiesList('probability')" style="cursor:pointer;">Prob% <span class="sort-icon">▲</span></th>
 <th>Actions</th>
 </tr></thead>
 <tbody id="dealsListBody"></tbody>
@@ -608,7 +608,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <!-- ══ REPORTS VIEW ══ -->
 <div class="view" id="view-reports">
 <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Analytics</div>
-<h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Reports &amp; Insights</h1></div>
+<h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Business Insights &amp; Insights</h1></div>
 <!-- Date range filter -->
 <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
 <span style="font-size:0.75rem;color:var(--text3);font-weight:600;">Period:</span>
@@ -617,7 +617,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <button class="rng-btn" onclick="setReportRange(6,this)" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;">6 Months</button>
 <button class="rng-btn" onclick="setReportRange(12,this)" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;">12 Months</button>
 </div>
-<button class="btn btn-outline btn-sm" onclick="exportReportsCSV()">📥 Export CSV</button>
+<button class="btn btn-outline btn-sm" onclick="exportBusiness InsightsCSV()">📥 Export CSV</button>
 </div>
 <!-- KPI Stats -->
 <div class="stats-grid">
@@ -681,7 +681,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 <div class="panel">
-<div class="panel-title">📋 Contacts with Phone Numbers</div>
+<div class="panel-title">📋 Customers with Phone Numbers</div>
 <div class="panel-body" id="wa-contacts-list" style="max-height:400px;overflow-y:auto;"></div>
 </div>
 </div>
@@ -735,15 +735,15 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div><!-- /calendar -->
 <!-- ══ SETTINGS VIEW ══ -->
 <div class="view" id="view-settings">
-<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Organization</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Settings</h1></div>
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Workspace</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Workspace Settings</h1></div>
 <div class="panel">
-<div class="panel-hd"><div class="panel-title">⚙️ Account Settings</div></div>
+<div class="panel-hd"><div class="panel-title">⚙️ Account Workspace Settings</div></div>
 <div class="panel-body">
 <div style="display:flex;flex-direction:column;gap:16px;">
 <div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
 <div class="fg"><label class="fl">Email</label><input class="fi" id="settingsEmail" placeholder="your@email.com" readonly="" style="opacity:0.6;cursor:not-allowed;" type="email"/></div>
 <div class="fg"><label class="fl">Role</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
-<button class="btn btn-primary btn-sm" id="settingsSaveBtn" onclick="saveProfileSettings()" style="align-self:flex-start;">Save Changes</button>
+<button class="btn btn-primary btn-sm" id="settingsSaveBtn" onclick="saveProfileWorkspace Settings()" style="align-self:flex-start;">Save Changes</button>
 </div>
 </div>
 </div>
@@ -758,7 +758,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
 <div class="stat c"><div class="stat-hd"><span class="stat-lbl">Emails Sent</span><span>📧</span></div><div class="stat-val" id="emailMetricSent">0</div><div class="stat-chg nt">Total</div></div>
 <div class="stat g"><div class="stat-hd"><span class="stat-lbl">This Week</span><span>📅</span></div><div class="stat-val" id="emailMetricWeek">0</div><div class="stat-chg up">Last 7 days</div></div>
-<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Contacts Reached</span><span>👥</span></div><div class="stat-val" id="emailMetricContacts">0</div><div class="stat-chg nt">Unique</div></div>
+<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Customers Reached</span><span>👥</span></div><div class="stat-val" id="emailMetricCustomers">0</div><div class="stat-chg nt">Unique</div></div>
 </div>
 <div class="panel">
 <div class="panel-hd">
@@ -915,8 +915,8 @@ const db = createClient(
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let currentUser = null, userRole = 'salesperson', allTeam = [];
-let viewingUserId = null, allContacts = [], allDeals = [];
-let filteredContacts = [], currentPage = 1, pageSize = 15;
+let viewingUserId = null, allCustomers = [], allOpportunities = [];
+let filteredCustomers = [], currentPage = 1, pageSize = 15;
 let currentSortCol = 'name', currentSortDir = 'asc';
 let revenueChart = null, reportsChart = null;
 
@@ -1001,7 +1001,7 @@ function touchActivity() {
   // 3. Valid session within timeout — proceed
   touchActivity(); // record this visit
   currentUser = session.user;
-  await initDashboard();
+  await initCommand Center();
 
   // 4. Handle future sign-outs
   db.auth.onAuthStateChange((event) => {
@@ -1012,7 +1012,7 @@ function touchActivity() {
   });
 })();
 
-async function initDashboard(){
+async function initCommand Center(){
 
   // Get or create profile
   let profile = null;
@@ -1069,7 +1069,7 @@ async function initDashboard(){
     document.getElementById('adminNav')?.style && (document.getElementById('adminNav').style.display='block');
     document.getElementById('adminLink')?.style && (document.getElementById('adminLink').style.display='flex');
     document.getElementById('teamSwitcher')?.style && (document.getElementById('teamSwitcher').style.display='block');
-    document.getElementById('rightPanelTitle') && (document.getElementById('rightPanelTitle').textContent='Team Leaderboard');
+    document.getElementById('rightPanelTitle') && (document.getElementById('rightPanelTitle').textContent='Team Performance');
     loadTeam(name);
   } else if(userRole==='manager'){
     banner.className='role-banner manager';
@@ -1078,7 +1078,7 @@ async function initDashboard(){
     document.getElementById('adminNav')?.style && (document.getElementById('adminNav').style.display='block');
     document.getElementById('adminLink')?.style && (document.getElementById('adminLink').style.display='flex');
     document.getElementById('teamSwitcher')?.style && (document.getElementById('teamSwitcher').style.display='block');
-    document.getElementById('rightPanelTitle') && (document.getElementById('rightPanelTitle').textContent='Team Leaderboard');
+    document.getElementById('rightPanelTitle') && (document.getElementById('rightPanelTitle').textContent='Team Performance');
     loadTeam(name);
   } else {
     banner.className='role-banner salesperson';
@@ -1086,7 +1086,7 @@ async function initDashboard(){
     loadActivityFeed();
   }
 
-  // Settings
+  // Workspace Settings
   const se=document.getElementById('settingsEmail');
   const sr=document.getElementById('settingsRole');
   const sn=document.getElementById('settingsName');
@@ -1104,7 +1104,7 @@ async function initDashboard(){
     // Backup: also listen for auth state change
     db.auth.onAuthStateChange(async(event, sess)=>{
       if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED') && sess){
-        if(allContacts.length===0 && allDeals.length===0){
+        if(allCustomers.length===0 && allOpportunities.length===0){
           _loadDataInFlight=false;
           await loadData();
         }
@@ -1112,7 +1112,7 @@ async function initDashboard(){
     });
     // Final safety net — retry after 3s if still empty
     setTimeout(async()=>{
-      if(allContacts.length===0 && allDeals.length===0){
+      if(allCustomers.length===0 && allOpportunities.length===0){
         console.log('Safety retry: loadData');
         _loadDataInFlight=false;
         await loadData();
@@ -1184,11 +1184,11 @@ async function loadData(){
     notes:c.notes||null
   }));
   cCount = cc||contacts.length;
-  allContacts = contacts;
+  allCustomers = contacts;
 
   // Update metrics
-  document.getElementById('metricContacts').textContent=cCount;
-  const nb=document.getElementById('navContactsBadge');
+  document.getElementById('metricCustomers').textContent=cCount;
+  const nb=document.getElementById('navCustomersBadge');
   if(nb)nb.textContent=cCount;
   document.getElementById('countAll').textContent=cCount;
   // Update per-status counts
@@ -1199,7 +1199,7 @@ async function loadData(){
     if(el) el.textContent=n;
   });
 
-  // Deals — matches dashboard.html exactly
+  // Opportunities — matches dashboard.html exactly
   let deals=[];
   let dq = db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,contact_id,deal_type,created_at,close_date,probability,won_lost_reason,notes').order('created_at',{ascending:false});
   if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
@@ -1215,49 +1215,49 @@ async function loadData(){
     deal_type:d.deal_type||'Ripple',
     stage:d.stage||'lead',
     agent_id:d.agent_id||d.created_by||null,
-    contact_name:(allContacts.find(c=>c.id===d.contact_id)||{}).full_name||null,
+    contact_name:(allCustomers.find(c=>c.id===d.contact_id)||{}).full_name||null,
     close_date:d.close_date||null,
     probability:d.probability||null,
     won_lost_reason:d.won_lost_reason||null,
   }));
-  allDeals = deals;
+  allOpportunities = deals;
 
-  const openDeals=deals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
-  const wonDeals=deals.filter(d=>d.stage==='won');
-  const pipeVal=openDeals.reduce((s,d)=>s+(d.deal_value||0),0);
-  const wonVal=wonDeals.reduce((s,d)=>s+(d.deal_value||0),0);
+  const openOpportunities=deals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+  const wonOpportunities=deals.filter(d=>d.stage==='won');
+  const pipeVal=openOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
+  const wonVal=wonOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
 
-  document.getElementById('metricDeals').textContent=openDeals.length;
+  document.getElementById('metricOpportunities').textContent=openOpportunities.length;
   document.getElementById('metricValue').textContent=fmt(pipeVal);
-  document.getElementById('metricWon').textContent=wonDeals.length;
-  const nd=document.getElementById('navDealsBadge');
+  document.getElementById('metricWon').textContent=wonOpportunities.length;
+  const nd=document.getElementById('navOpportunitiesBadge');
   if(nd)nd.textContent=deals.length;
 
   // Deal view metrics
-  const avgDeal=openDeals.length?Math.round(pipeVal/openDeals.length):0;
-  const winRate=deals.length?Math.round((wonDeals.length/deals.length)*100):0;
+  const avgDeal=openOpportunities.length?Math.round(pipeVal/openOpportunities.length):0;
+  const winRate=deals.length?Math.round((wonOpportunities.length/deals.length)*100):0;
   const dmp=document.getElementById('dealMetricPipeline');if(dmp)dmp.textContent=fmt(pipeVal);
   const dma=document.getElementById('dealMetricAvg');if(dma)dma.textContent=fmt(avgDeal);
-  const dmc=document.getElementById('dealMetricCount');if(dmc)dmc.textContent=openDeals.length+' open deals';
+  const dmc=document.getElementById('dealMetricCount');if(dmc)dmc.textContent=openOpportunities.length+' open deals';
   const dmw=document.getElementById('dealMetricWon');if(dmw)dmw.textContent=fmt(wonVal);
   const dmr=document.getElementById('dealMetricRate');if(dmr)dmr.textContent=winRate+'%';
 
-  // Reports metrics
-  const rl=document.getElementById('rMetricLeads');if(rl)rl.textContent=allContacts.filter(c=>c.status==='Lead'||c.status==='new').length;
+  // Business Insights metrics
+  const rl=document.getElementById('rMetricLeads');if(rl)rl.textContent=allCustomers.filter(c=>c.status==='Lead'||c.status==='new').length;
   const rr=document.getElementById('rMetricRev');if(rr)rr.textContent=fmt(wonVal);
   const rc=document.getElementById('rMetricConv');if(rc)rc.textContent=winRate+'%';
 
   renderPipeline();
-  renderRecentContacts();
-  renderContactsTable();
-  // Refresh leaderboard now that allDeals is populated
+  renderRecentCustomers();
+  renderCustomersTable();
+  // Refresh leaderboard now that allOpportunities is populated
   if(userRole==='manager'||userRole==='admin'){
     loadLeaderboard();
   }
   } catch(e){
     console.error('loadData error:',e);
     // Show visible error so we can diagnose
-    const mc = document.getElementById('metricContacts');
+    const mc = document.getElementById('metricCustomers');
     if(mc && mc.textContent==='—') mc.textContent='!';
     showToast('Data load error: '+e.message+' — tap refresh to retry','');
   }
@@ -1275,15 +1275,15 @@ function renderPipeline(){
   ];
   stageMap.forEach(function(s){
     var stage = s.key;
-    var stageId = s.id; // matches colLead, dealsLead, dColLead, dDealsLead etc.
-    const deals = allDeals.filter(d=>(d.stage||'').toLowerCase()===stage);
+    var stageId = s.id; // matches colLead, dealsLead, dColLead, dOpportunitiesLead etc.
+    const deals = allOpportunities.filter(d=>(d.stage||'').toLowerCase()===stage);
     // Update count badges
     ['col','dCol'].forEach(prefix=>{
       const el=document.getElementById(prefix+stageId);
       if(el) el.textContent=deals.length;
     });
     // Update deal cards
-    ['deals','dDeals'].forEach(prefix=>{
+    ['deals','dOpportunities'].forEach(prefix=>{
       const el=document.getElementById(prefix+stageId);
       if(!el) return;
       el.innerHTML=deals.slice(0,5).map(d=>`
@@ -1299,15 +1299,15 @@ function renderPipeline(){
 }
 
 // ── RECENT CONTACTS ───────────────────────────────────────────────────────────
-function renderRecentContacts(){
-  const tbody=document.getElementById('recentContactsBody');
+function renderRecentCustomers(){
+  const tbody=document.getElementById('recentCustomersBody');
   if(!tbody)return;
-  if(!allContacts.length){
+  if(!allCustomers.length){
     tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">No contacts yet</td></tr>`;
     return;
   }
   const statusBadge={'Lead':'badge-muted','Qualified':'badge-cyan','Proposal':'badge-gold','Won':'badge-success','new':'badge-muted','contacted':'badge-cyan'};
-  tbody.innerHTML=allContacts.slice(0,5).map(c=>{
+  tbody.innerHTML=allCustomers.slice(0,5).map(c=>{
     const name=c.full_name||'—';
     const status=c.pipeline_status||c.status||'Lead';
     const badge=statusBadge[status]||'badge-muted';
@@ -1342,9 +1342,9 @@ async function loadLeaderboard(){
     if(profiles&&profiles.length){
       lb=profiles.map(p=>({
         name:p.full_name||'Agent',
-        deals:allDeals.filter(d=>d.agent_id===p.id).length,
-        won:allDeals.filter(d=>d.agent_id===p.id&&(d.stage||'').toLowerCase()==='won').length,
-        val:allDeals.filter(d=>d.agent_id===p.id).reduce((s,d)=>s+(d.deal_value||d.value||0),0),
+        deals:allOpportunities.filter(d=>d.agent_id===p.id).length,
+        won:allOpportunities.filter(d=>d.agent_id===p.id&&(d.stage||'').toLowerCase()==='won').length,
+        val:allOpportunities.filter(d=>d.agent_id===p.id).reduce((s,d)=>s+(d.deal_value||d.value||0),0),
         color:getColor(p.full_name||p.id)
       })).sort((a,b)=>b.val-a.val);
     }
@@ -1391,12 +1391,12 @@ function loadActivityFeed(){
 }
 
 // ── CONTACTS TABLE (sortable) ─────────────────────────────────────────────────
-function renderContactsTable(){
+function renderCustomersTable(){
   const tbody=document.getElementById('contactsTbody');
   if(!tbody)return;
-  if(!filteredContacts.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3);">No contacts found</td></tr>';const cc=document.getElementById('contactCount');if(cc)cc.textContent='0 contacts';return;}
+  if(!filteredCustomers.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3);">No contacts found</td></tr>';const cc=document.getElementById('contactCount');if(cc)cc.textContent='0 contacts';return;}
   const start=(currentPage-1)*pageSize;
-  const page=filteredContacts.slice(start,start+pageSize);
+  const page=filteredCustomers.slice(start,start+pageSize);
   const statusBadge={'Lead':'badge-muted','Qualified':'badge-cyan','Proposal':'badge-gold','Won':'badge-success','new':'badge-muted','contacted':'badge-cyan','Inactive':'badge-muted'};
   tbody.innerHTML=page.map(c=>{
     const name=c.full_name||'—';
@@ -1431,7 +1431,7 @@ function renderContactsTable(){
       </div></td>
     </tr>`;
   }).join('');
-  const total=filteredContacts.length;
+  const total=filteredCustomers.length;
   const pages=Math.ceil(total/pageSize);
   const cc=document.getElementById('contactCount');
   if(cc)cc.textContent='Showing '+(Math.min(start+pageSize,total))+' of '+total+' contacts';
@@ -1439,18 +1439,18 @@ function renderContactsTable(){
   if(pi)pi.textContent='Page '+currentPage+' of '+Math.max(pages,1);
 }
 
-function sortContacts(){
+function sortCustomers(){
   const field=document.getElementById('contactSortField')?.value||currentSortCol;
   const dir=document.getElementById('contactSortDir')?.value||currentSortDir;
   currentSortCol=field;currentSortDir=dir;
-  filteredContacts.sort((a,b)=>{
+  filteredCustomers.sort((a,b)=>{
     let av=field==='value'?(a.deal_value||0):(a[field==='name'?'full_name':field==='company'?'business_name':field==='lastContact'?'created_at':field]||'').toString().toLowerCase();
     let bv=field==='value'?(b.deal_value||0):(b[field==='name'?'full_name':field==='company'?'business_name':field==='lastContact'?'created_at':field]||'').toString().toLowerCase();
     if(av<bv)return dir==='asc'?-1:1;
     if(av>bv)return dir==='asc'?1:-1;
     return 0;
   });
-  currentPage=1;renderContactsTable();
+  currentPage=1;renderCustomersTable();
 }
 
 function sortByCol(th){
@@ -1462,7 +1462,7 @@ function sortByCol(th){
   const sf=document.getElementById('contactSortField');
   const sd=document.getElementById('contactSortDir');
   if(sf)sf.value=col;if(sd)sd.value=currentSortDir;
-  sortContacts();
+  sortCustomers();
 }
 
 async function updateContactStatus(sel){
@@ -1484,31 +1484,31 @@ async function updateContactStatus(sel){
     const confirmedStatus=data?.status||newStatus;
     sel.value=confirmedStatus;
     sel.setAttribute('data-prev',confirmedStatus);
-    const contact=allContacts.find(c=>c.id===id);
+    const contact=allCustomers.find(c=>c.id===id);
     if(contact) contact.status=confirmedStatus;
-    const fc=filteredContacts.find(c=>c.id===id);
+    const fc=filteredCustomers.find(c=>c.id===id);
     if(fc) fc.status=confirmedStatus;
     if(confirmedStatus!==newStatus){
       showToast('Status was updated by another team member: '+confirmedStatus,'');
     } else {
       showToast('Status updated: '+confirmedStatus+' ✓','success');
     }
-    renderContactsTable();
+    renderCustomersTable();
   } finally {
     sel.dataset.saving='false';
     sel.style.opacity='1';
   }
 }
 
-function filterContacts(){
+function filterCustomers(){
   const q=(document.getElementById('contactSearch')?.value||'').toLowerCase();
   const status=document.getElementById('contactStatusFilter')?.value||'';
-  filteredContacts=allContacts.filter(c=>{
+  filteredCustomers=allCustomers.filter(c=>{
     const matchQ=!q||(c.full_name||'').toLowerCase().includes(q)||(c.business_name||c.business||'').toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q);
     const matchS=!status||(c.status||'Lead')===status;
     return matchQ&&matchS;
   });
-  currentPage=1;sortContacts();
+  currentPage=1;sortCustomers();
 }
 
 function filterByStatus(status){
@@ -1518,11 +1518,11 @@ function filterByStatus(status){
   if(activeBtn) activeBtn.classList.add('active');
   const sf=document.getElementById('contactStatusFilter');
   if(sf)sf.value=status;
-  filterContacts();
+  filterCustomers();
 }
 
-function prevPage(){if(currentPage>1){currentPage--;renderContactsTable();}}
-function nextPage(){const pages=Math.ceil(filteredContacts.length/pageSize);if(currentPage<pages){currentPage++;renderContactsTable();}}
+function prevPage(){if(currentPage>1){currentPage--;renderCustomersTable();}}
+function nextPage(){const pages=Math.ceil(filteredCustomers.length/pageSize);if(currentPage<pages){currentPage++;renderCustomersTable();}}
 function toggleSelectAll(cb){document.querySelectorAll('#contactsTbody input[type=checkbox]').forEach(c=>c.checked=cb.checked);}
 
 // ── CHART ─────────────────────────────────────────────────────────────────────
@@ -1544,7 +1544,7 @@ function initChart(){
               y:{ticks:{color:'#6B7A99',font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
   });
 
-  // Reports chart
+  // Business Insights chart
   const rctx=document.getElementById('reportsChart');
   if(rctx){
     reportsChart=new Chart(rctx.getContext('2d'),{
@@ -1569,13 +1569,13 @@ function globalSearchFn(q){
   const results=document.getElementById('searchResults');
   if(!q||q.length<2){results.style.display='none';return;}
   const ql=q.toLowerCase();
-  const fc=allContacts.filter(c=>
+  const fc=allCustomers.filter(c=>
     (c.full_name||'').toLowerCase().includes(ql)||
     (c.email||'').toLowerCase().includes(ql)||
     (c.business_name||'').toLowerCase().includes(ql)||
     (c.phone||'').toLowerCase().includes(ql)
   );
-  const fd=allDeals.filter(d=>(d.deal_name||d.title||'').toLowerCase().includes(ql));
+  const fd=allOpportunities.filter(d=>(d.deal_name||d.title||'').toLowerCase().includes(ql));
 
   if(!fc.length&&!fd.length){
     results.innerHTML=`<div style="padding:16px 14px;font-size:0.78rem;color:var(--text3);text-align:center;">
@@ -1619,11 +1619,11 @@ function globalSearchFn(q){
 
   const sections=[];
   if(contactRows.length){
-    sections.push(`<div style="padding:6px 14px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;background:var(--navy-deep);">Contacts</div>`);
+    sections.push(`<div style="padding:6px 14px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;background:var(--navy-deep);">Customers</div>`);
     sections.push(...contactRows);
   }
   if(dealRows.length){
-    sections.push(`<div style="padding:6px 14px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;background:var(--navy-deep);">Deals</div>`);
+    sections.push(`<div style="padding:6px 14px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;background:var(--navy-deep);">Opportunities</div>`);
     sections.push(...dealRows);
   }
   results.innerHTML=sections.join('');
@@ -1636,14 +1636,14 @@ let _cpContactId = null;
 let _cpActivities = [];
 
 function openContactProfile(contactId){
-  const contact = allContacts.find(c=>c.id===contactId);
+  const contact = allCustomers.find(c=>c.id===contactId);
   if(!contact){ showToast('Contact not found',''); return; }
   _cpContactId = contactId;
 
-  const contactDeals = allDeals.filter(d=>d.contact_id===contactId);
-  const openDeals = contactDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
-  const wonDeals = contactDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
-  const totalVal = contactDeals.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const contactOpportunities = allOpportunities.filter(d=>d.contact_id===contactId);
+  const openOpportunities = contactOpportunities.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+  const wonOpportunities = contactOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const totalVal = contactOpportunities.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
   const initials=(contact.full_name||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);
   const createdDate = contact.created_at ? new Date(contact.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
 
@@ -1676,13 +1676,13 @@ function openContactProfile(contactId){
   document.getElementById('cpPhone').textContent = contact.phone||contact.whatsapp||'—';
   document.getElementById('cpLocation').textContent = contact.island||'—';
   document.getElementById('cpNotes').textContent = contact.notes||'No notes';
-  document.getElementById('cpOpenDeals').textContent = openDeals.length;
+  document.getElementById('cpOpenOpportunities').textContent = openOpportunities.length;
   document.getElementById('cpTotalValue').textContent = fmt(totalVal);
-  document.getElementById('cpWonDeals').textContent = wonDeals.length;
+  document.getElementById('cpWonOpportunities').textContent = wonOpportunities.length;
 
-  document.getElementById('cpDealsCount').textContent = contactDeals.length;
-  document.getElementById('cpDeals').innerHTML = contactDeals.length
-    ? contactDeals.map(d=>`
+  document.getElementById('cpOpportunitiesCount').textContent = contactOpportunities.length;
+  document.getElementById('cpOpportunities').innerHTML = contactOpportunities.length
+    ? contactOpportunities.map(d=>`
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--navy-light);border-radius:10px;margin-bottom:8px;cursor:pointer;" onclick="openEditDeal('${d.id}')">
           <div>
             <div style="font-size:13px;font-weight:600;color:var(--text);">${d.deal_name||d.title||'Untitled'}</div>
@@ -1805,10 +1805,10 @@ function openModal(id){
   if(id==='addDeal'||id==='editDeal'){
     var selId=id==='addDeal'?'md-contact':'ed-contact';
     var sel=document.getElementById(selId);
-    if(sel&&allContacts.length){
+    if(sel&&allCustomers.length){
       var cur=sel.value;
       sel.innerHTML='<option value="">— Select client —</option>'+
-        allContacts.map(function(ct){return '<option value="'+ct.id+'"'+(ct.id===cur?' selected':'')+'>'+(ct.full_name||'Unknown')+(ct.business_name?' — '+ct.business_name:'')+'</option>';}).join('');
+        allCustomers.map(function(ct){return '<option value="'+ct.id+'"'+(ct.id===cur?' selected':'')+'>'+(ct.full_name||'Unknown')+(ct.business_name?' — '+ct.business_name:'')+'</option>';}).join('');
     } else if(sel){
       db.from('contacts').select('id,full_name,business_name').order('full_name').then(function(r){
         if(r.data&&r.data.length) sel.innerHTML='<option value="">— Select client —</option>'+r.data.map(function(ct){return '<option value="'+ct.id+'">'+(ct.full_name||'Unknown')+(ct.business_name?' — '+ct.business_name:'')+'</option>';}).join('');
@@ -1823,9 +1823,9 @@ function openModal(id){
     if(errEl){errEl.style.display='none';errEl.textContent='';}
     // Populate contact dropdown
     const sel=document.getElementById('md-contact');
-    if(sel&&allContacts.length){
+    if(sel&&allCustomers.length){
       sel.innerHTML='<option value="">No contact linked</option>'+
-        allContacts.map(c=>`<option value="${c.id}">${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
+        allCustomers.map(c=>`<option value="${c.id}">${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
     }
   }
 }
@@ -1867,8 +1867,8 @@ async function saveContact(){
   });
   await loadData();
   // If contacts view is open, refresh it
-  filteredContacts=allContacts.slice();
-  sortContacts();
+  filteredCustomers=allCustomers.slice();
+  sortCustomers();
 }
 
 async function saveDeal(){
@@ -1921,9 +1921,9 @@ function showView(name){
   const nav=document.getElementById('nav-'+name);
   if(nav)nav.classList.add('active');
   if(name==='contacts'){
-    filteredContacts=allContacts.slice();
+    filteredCustomers=allCustomers.slice();
     currentPage=1;
-    sortContacts();
+    sortCustomers();
     const cs=document.getElementById('contactSearch');if(cs)cs.value='';
     const sf=document.getElementById('contactSortField');if(sf)sf.value='name';
     const sd=document.getElementById('contactSortDir');if(sd)sd.value='asc';
@@ -1932,9 +1932,9 @@ function showView(name){
   if(name==='tasks') loadTasks();
   if(name==='whatsapp') initWhatsAppView();
   if(name==='calendar') loadTasks().then(()=>renderCalendar());
-  if(name==='deals' && dealsViewMode==='list') setTimeout(renderDealsList,100);
+  if(name==='deals' && dealsViewMode==='list') setTimeout(renderOpportunitiesList,100);
   if(name==='email') loadEmailLog();
-  if(name==='reports') setTimeout(loadReports,100);
+  if(name==='reports') setTimeout(loadBusiness Insights,100);
 }
 
 function toggleSidebar(){
@@ -2069,7 +2069,7 @@ function signOut(){
 
 // ── EDIT CONTACT ──────────────────────────────────────────────────────────────
 function editContact(id){
-  const c = allContacts.find(x=>x.id===id);
+  const c = allCustomers.find(x=>x.id===id);
   if(!c){showToast('Contact not found','');return;}
   document.getElementById('ec-id').value = c.id;
   const nameParts = (c.full_name||'').split(' ');
@@ -2107,26 +2107,26 @@ async function saveEditContact(){
   showToast('Contact updated ✓','success');
   closeModal('editContact');
   await loadData();
-  filteredContacts=allContacts.slice();
-  sortContacts();
+  filteredCustomers=allCustomers.slice();
+  sortCustomers();
 }
 
 // ── DELETE CONTACT ────────────────────────────────────────────────────────────
 async function deleteContact(id){
-  const c = allContacts.find(x=>x.id===id);
+  const c = allCustomers.find(x=>x.id===id);
   const name = c ? c.full_name : 'this contact';
   if(!confirm('Delete '+name+'? This cannot be undone.')) return;
   const {error} = await db.from('contacts').delete().eq('id',id);
   if(error){showToast('Error: '+error.message,'');return;}
   showToast('Contact deleted','success');
   await loadData();
-  filteredContacts=allContacts.slice();
-  sortContacts();
+  filteredCustomers=allCustomers.slice();
+  sortCustomers();
 }
 
 // ── EMAIL CONTACT ─────────────────────────────────────────────────────────────
 function emailContact(id){
-  const c = allContacts.find(x=>x.id===id);
+  const c = allCustomers.find(x=>x.id===id);
   openModal('sendEmail');
   // Pre-fill the To field if it exists
   setTimeout(()=>{
@@ -2137,7 +2137,7 @@ function emailContact(id){
 
 // ── EDIT DEAL ─────────────────────────────────────────────────────────────────
 function openEditDeal(dealId){
-  const d = allDeals.find(x=>x.id===dealId);
+  const d = allOpportunities.find(x=>x.id===dealId);
   if(!d){showToast('Deal not found','');return;}
   document.getElementById('ed-id').value = d.id;
   document.getElementById('ed-name').value = d.deal_name||d.title||'';
@@ -2151,7 +2151,7 @@ function openEditDeal(dealId){
   const sel = document.getElementById('ed-contact');
   if(sel){
     sel.innerHTML = '<option value="">-- Select existing client --</option>' +
-      allContacts.map(c=>`<option value="${c.id}" ${c.id===d.contact_id?'selected':''}>${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
+      allCustomers.map(c=>`<option value="${c.id}" ${c.id===d.contact_id?'selected':''}>${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
   }
   // Pre-fill new fields
   const closeDateEl = document.getElementById('ed-close-date');
@@ -2397,7 +2397,7 @@ async function sendEmailFromModal(){
   const sendBtn = document.querySelector('#modal-sendEmail .btn-primary');
   if(sendBtn){ sendBtn.disabled=true; sendBtn.textContent='Sending...'; }
 
-  const matchedContact = allContacts.find(ct=>(ct.email||'').toLowerCase()===to.toLowerCase());
+  const matchedContact = allCustomers.find(ct=>(ct.email||'').toLowerCase()===to.toLowerCase());
 
   // Save to email_log
   try {
@@ -2470,7 +2470,7 @@ window.addEventListener('orientationchange',function(){
 
 // ── WHATSAPP CLICK-TO-CHAT ────────────────────────────────────────────────────
 function whatsappContact(id){
-  const c = allContacts.find(x=>x.id===id);
+  const c = allCustomers.find(x=>x.id===id);
   if(!c){showToast('Contact not found','');return;}
 
   // Clean phone — strip all non-numeric except leading +
@@ -2526,7 +2526,7 @@ let dealsListFiltered = [];
 let dealsSortCol = 'deal_name';
 let dealsSortDir = 'asc';
 
-function setDealsView(mode){
+function setOpportunitiesView(mode){
   dealsViewMode = mode;
   const kanbanEl = document.querySelector('#view-deals .panel');
   const listEl = document.getElementById('dealsListView');
@@ -2542,14 +2542,14 @@ function setDealsView(mode){
     if(listEl) listEl.style.display = 'block';
     if(kanbanBtn){ kanbanBtn.style.background='transparent'; kanbanBtn.style.color='var(--text3)'; }
     if(listBtn){ listBtn.style.background='var(--cyan)'; listBtn.style.color='var(--navy-deep)'; }
-    renderDealsList();
+    renderOpportunitiesList();
   }
 }
 
-function renderDealsList(){
+function renderOpportunitiesList(){
   const q = (document.getElementById('dealSearch')?.value||'').toLowerCase();
   const stageF = document.getElementById('dealStageFilter')?.value||'';
-  dealsListFiltered = allDeals.filter(d=>{
+  dealsListFiltered = allOpportunities.filter(d=>{
     const matchQ = !q || (d.deal_name||d.title||'').toLowerCase().includes(q) || (d.contact_name||'').toLowerCase().includes(q);
     const matchS = !stageF || (d.stage||'').toLowerCase() === stageF;
     return matchQ && matchS;
@@ -2594,23 +2594,23 @@ function renderDealsList(){
   if(countEl) countEl.textContent = dealsListFiltered.length + ' deal' + (dealsListFiltered.length!==1?'s':'');
 }
 
-function filterDealsList(){ renderDealsList(); }
+function filterOpportunitiesList(){ renderOpportunitiesList(); }
 
-function sortDealsList(col){
+function sortOpportunitiesList(col){
   if(dealsSortCol===col) dealsSortDir = dealsSortDir==='asc'?'desc':'asc';
   else { dealsSortCol=col; dealsSortDir='asc'; }
-  renderDealsList();
+  renderOpportunitiesList();
 }
 
 async function deleteDeal(id){
-  const d = allDeals.find(x=>x.id===id);
+  const d = allOpportunities.find(x=>x.id===id);
   const name = d ? (d.deal_name||d.title||'this deal') : 'this deal';
   if(!confirm('Delete "'+name+'"? This cannot be undone.')) return;
   const {error} = await db.from('deals').delete().eq('id',id);
   if(error){ showToast('Error: '+error.message,''); return; }
   showToast('Deal deleted','success');
   await loadData();
-  if(dealsViewMode==='list') renderDealsList();
+  if(dealsViewMode==='list') renderOpportunitiesList();
 }
 
 // Patch showView to render list when switching to deals in list mode
@@ -2647,10 +2647,10 @@ function renderEmailLog(){
   // Update metrics
   const weekAgo = new Date(Date.now()-7*24*60*60*1000);
   const thisWeek = allEmailLog.filter(e=>new Date(e.sent_at)>weekAgo).length;
-  const uniqueContacts = new Set(allEmailLog.map(e=>e.to_email).filter(Boolean)).size;
+  const uniqueCustomers = new Set(allEmailLog.map(e=>e.to_email).filter(Boolean)).size;
   const ms = document.getElementById('emailMetricSent'); if(ms) ms.textContent=allEmailLog.length;
   const mw = document.getElementById('emailMetricWeek'); if(mw) mw.textContent=thisWeek;
-  const mc = document.getElementById('emailMetricContacts'); if(mc) mc.textContent=uniqueContacts;
+  const mc = document.getElementById('emailMetricCustomers'); if(mc) mc.textContent=uniqueCustomers;
 
   if(!filtered.length){
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text3);"><div style="font-size:2rem;margin-bottom:10px;">&#x1F4E7;</div><div style="font-weight:600;color:var(--text2);margin-bottom:6px;">No emails sent yet</div><div style="font-size:0.78rem;">Emails you send via the CRM will appear here.</div></td></tr>';
@@ -2700,7 +2700,7 @@ function toggleWonLostReason(stage){
 function getClosingSoon(){
   const today = new Date();
   const in7 = new Date(today.getTime() + 7*24*60*60*1000);
-  return allDeals.filter(d=>{
+  return allOpportunities.filter(d=>{
     if(!d.close_date) return false;
     const cd = new Date(d.close_date);
     return cd >= today && cd <= in7 && !['won','lost'].includes((d.stage||'').toLowerCase());
@@ -2715,9 +2715,9 @@ async function updateLastContacted(contactId){
   try{
     await db.from('contacts').update({last_contacted: now}).eq('id', contactId);
     // Update local cache
-    const c = allContacts.find(x=>x.id===contactId);
+    const c = allCustomers.find(x=>x.id===contactId);
     if(c) c.last_contacted = now;
-    const fc = filteredContacts.find(x=>x.id===contactId);
+    const fc = filteredCustomers.find(x=>x.id===contactId);
     if(fc) fc.last_contacted = now;
   }catch(e){ console.warn('Could not update last_contacted:', e.message); }
 }
@@ -2761,9 +2761,9 @@ async function loadNotifications(){
       });
     }catch(e){}
 
-    // 2. Deals closing within 7 days
+    // 2. Opportunities closing within 7 days
     const in7 = new Date(now.getTime()+7*24*60*60*1000);
-    const closingSoon = allDeals.filter(d=>{
+    const closingSoon = allOpportunities.filter(d=>{
       if(!d.close_date) return false;
       const cd = new Date(d.close_date);
       return cd >= now && cd <= in7 && !['won','lost'].includes((d.stage||'').toLowerCase());
@@ -2788,7 +2788,7 @@ async function loadNotifications(){
       const lastWeek = new Date(now.getTime()-7*24*60*60*1000);
 
       // Recent contacts added by other team members
-      allContacts.filter(c=>{
+      allCustomers.filter(c=>{
         return c.user_id !== userId && c.created_at && new Date(c.created_at) >= yesterday;
       }).slice(0,5).forEach(c=>{
         notifs.push({
@@ -2804,7 +2804,7 @@ async function loadNotifications(){
       });
 
       // Recent deals won by team
-      allDeals.filter(d=>{
+      allOpportunities.filter(d=>{
         return (d.stage||'').toLowerCase()==='won' &&
                d.created_at && new Date(d.created_at) >= lastWeek;
       }).slice(0,3).forEach(d=>{
@@ -2914,35 +2914,35 @@ function setReportRange(months, btn){
   if(btn){ btn.style.background='var(--cyan)'; btn.style.color='var(--navy-deep)'; }
   // Debounce — only fire after 150ms of no clicks
   clearTimeout(_reportDebounce);
-  _reportDebounce = setTimeout(loadReports, 150);
+  _reportDebounce = setTimeout(loadBusiness Insights, 150);
 }
 
-async function loadReports(){
-  // Use already-loaded allDeals + allContacts — no extra DB calls needed
+async function loadBusiness Insights(){
+  // Use already-loaded allOpportunities + allCustomers — no extra DB calls needed
   const now = new Date();
   const cutoff = new Date(now);
   cutoff.setMonth(cutoff.getMonth() - reportMonths);
 
   // Filter to period
-  const periodDeals = allDeals.filter(d=> d.created_at && new Date(d.created_at) >= cutoff);
-  const periodContacts = allContacts.filter(c=> c.created_at && new Date(c.created_at) >= cutoff);
-  const wonDeals = periodDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
-  const lostDeals = periodDeals.filter(d=>(d.stage||'').toLowerCase()==='lost');
-  const openDeals = periodDeals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
+  const periodOpportunities = allOpportunities.filter(d=> d.created_at && new Date(d.created_at) >= cutoff);
+  const periodCustomers = allCustomers.filter(c=> c.created_at && new Date(c.created_at) >= cutoff);
+  const wonOpportunities = periodOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const lostOpportunities = periodOpportunities.filter(d=>(d.stage||'').toLowerCase()==='lost');
+  const openOpportunities = periodOpportunities.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
 
   // KPI metrics
-  const revenue = wonDeals.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
-  const leads = periodContacts.filter(c=>(c.status||'').toLowerCase()==='lead').length;
-  const convRate = periodDeals.length ? Math.round((wonDeals.length/periodDeals.length)*100) : 0;
-  const avgDeal = wonDeals.length ? Math.round(revenue/wonDeals.length) : 0;
+  const revenue = wonOpportunities.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const leads = periodCustomers.filter(c=>(c.status||'').toLowerCase()==='lead').length;
+  const convRate = periodOpportunities.length ? Math.round((wonOpportunities.length/periodOpportunities.length)*100) : 0;
+  const avgDeal = wonOpportunities.length ? Math.round(revenue/wonOpportunities.length) : 0;
 
   // Previous period for comparison
   const prevCutoff = new Date(cutoff);
   prevCutoff.setMonth(prevCutoff.getMonth() - reportMonths);
-  const prevDeals = allDeals.filter(d=> d.created_at && new Date(d.created_at) >= prevCutoff && new Date(d.created_at) < cutoff);
-  const prevWon = prevDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+  const prevOpportunities = allOpportunities.filter(d=> d.created_at && new Date(d.created_at) >= prevCutoff && new Date(d.created_at) < cutoff);
+  const prevWon = prevOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
   const prevRevenue = prevWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
-  const prevConv = prevDeals.length ? Math.round((prevWon.length/prevDeals.length)*100) : 0;
+  const prevConv = prevOpportunities.length ? Math.round((prevWon.length/prevOpportunities.length)*100) : 0;
 
   // Update KPI cards
   const revEl = document.getElementById('rMetricRev'); if(revEl) revEl.textContent = fmt(revenue);
@@ -2960,7 +2960,7 @@ async function loadReports(){
     el.textContent = (up?'↑ ':'↓ ')+Math.abs(val)+suffix+' vs prev period';
   };
   setChg('rMetricRevChg', revDiff);
-  setChg('rMetricLeadsChg', periodContacts.length - allContacts.filter(c=>c.created_at && new Date(c.created_at) < cutoff).length, '');
+  setChg('rMetricLeadsChg', periodCustomers.length - allCustomers.filter(c=>c.created_at && new Date(c.created_at) < cutoff).length, '');
   setChg('rMetricConvChg', convDiff);
   setChg('rMetricAvgChg', 0, '');
 
@@ -2973,13 +2973,13 @@ async function loadReports(){
     const mEnd = new Date(now.getFullYear(), now.getMonth()-i+1, 0);
     const mLabel = mDate.toLocaleDateString('en-US',{month:'short'});
     months.push(mLabel);
-    const mDeals = allDeals.filter(d=>{
+    const mOpportunities = allOpportunities.filter(d=>{
       if(!d.created_at) return false;
       const cd = new Date(d.created_at);
       return cd >= mDate && cd <= mEnd;
     });
-    pipelineData.push(mDeals.reduce((s,d)=>s+(d.deal_value||d.value||0),0));
-    wonData.push(mDeals.filter(d=>(d.stage||'').toLowerCase()==='won').reduce((s,d)=>s+(d.deal_value||d.value||0),0));
+    pipelineData.push(mOpportunities.reduce((s,d)=>s+(d.deal_value||d.value||0),0));
+    wonData.push(mOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won').reduce((s,d)=>s+(d.deal_value||d.value||0),0));
   }
 
   const rctx = document.getElementById('reportsChart');
@@ -3014,7 +3014,7 @@ async function loadReports(){
   // Funnel
   const stages = ['lead','qualified','proposal','won'];
   const stageLabels = ['Lead','Qualified','Proposal','Won'];
-  const stageCounts = stages.map(s=>allDeals.filter(d=>(d.stage||'').toLowerCase()===s).length);
+  const stageCounts = stages.map(s=>allOpportunities.filter(d=>(d.stage||'').toLowerCase()===s).length);
   const maxCount = Math.max(...stageCounts, 1);
   const stageColors = ['var(--text3)','var(--cyan)','var(--gold)','var(--success)'];
   const funnelEl = document.getElementById('funnelBody');
@@ -3042,10 +3042,10 @@ async function loadReports(){
   const agentEl = document.getElementById('agentPerfBody');
   if(agentEl && allTeam && allTeam.length){
     const agentStats = allTeam.map(p=>{
-      const agDeals = allDeals.filter(d=>d.agent_id===p.id);
-      const agWon = agDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+      const agOpportunities = allOpportunities.filter(d=>d.agent_id===p.id);
+      const agWon = agOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
       const agVal = agWon.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
-      return {name:p.full_name||'Agent',deals:agDeals.length,won:agWon.length,val:agVal,color:getColor(p.full_name||p.id)};
+      return {name:p.full_name||'Agent',deals:agOpportunities.length,won:agWon.length,val:agVal,color:getColor(p.full_name||p.id)};
     }).sort((a,b)=>b.val-a.val);
     const maxVal = agentStats[0]?.val||1;
     agentEl.innerHTML = agentStats.map((a,i)=>`
@@ -3069,7 +3069,7 @@ async function loadReports(){
   const reasonsEl = document.getElementById('reasonsBody');
   if(reasonsEl){
     const wonReasons = {}, lostReasons = {};
-    allDeals.forEach(d=>{
+    allOpportunities.forEach(d=>{
       if(!d.won_lost_reason) return;
       const s = (d.stage||'').toLowerCase();
       if(s==='won') wonReasons[d.won_lost_reason] = (wonReasons[d.won_lost_reason]||0)+1;
@@ -3097,9 +3097,9 @@ async function loadReports(){
   }
 }
 
-function exportReportsCSV(){
+function exportBusiness InsightsCSV(){
   const rows = [['Deal Name','Client','Value','Stage','Type','Close Date','Probability','Won/Lost Reason','Created']];
-  allDeals.forEach(d=>{
+  allOpportunities.forEach(d=>{
     rows.push([
       d.deal_name||d.title||'',
       d.contact_name||'',
@@ -3254,7 +3254,7 @@ function parseCSV(text){
   </tr>`).join('');
 }
 
-async function importCSVContacts(){
+async function importCSVCustomers(){
   if(!_csvParsed.length){ showToast('No contacts to import',''); return; }
   const btn = document.getElementById('csvImportBtn');
   if(btn){ btn.disabled=true; btn.textContent='Importing...'; }
@@ -3273,23 +3273,23 @@ async function importCSVContacts(){
     showToast(imported+' contacts imported ✓'+(errors?' ('+errors+' failed)':''),'success');
     closeModal('csvImport');
     await loadData();
-    filteredContacts = allContacts.slice();
-    sortContacts();
+    filteredCustomers = allCustomers.slice();
+    sortCustomers();
     showView('contacts');
   }catch(e){
     const errEl = document.getElementById('csvImportError');
     if(errEl){ errEl.textContent='Import failed: '+e.message; errEl.style.display='block'; }
   }finally{
-    if(btn){ btn.disabled=false; btn.textContent='&#x1F4E5; Import Contacts'; }
+    if(btn){ btn.disabled=false; btn.textContent='&#x1F4E5; Import Customers'; }
   }
 }
 
 // ── EXPORT CONTACTS CSV ───────────────────────────────────────────────────────
-function exportContactsCSV(){
-  if(!allContacts.length){ showToast('No contacts to export',''); return; }
+function exportCustomersCSV(){
+  if(!allCustomers.length){ showToast('No contacts to export',''); return; }
   const headers = ['Name','Email','Phone','Company','Status','Location','Last Contacted','Deal Value','Added Date'];
   const rows = [headers];
-  allContacts.forEach(c=>{
+  allCustomers.forEach(c=>{
     rows.push([
       c.full_name||'',
       c.email||'',
@@ -3310,7 +3310,7 @@ function exportContactsCSV(){
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  showToast(allContacts.length+' contacts exported ✓','success');
+  showToast(allCustomers.length+' contacts exported ✓','success');
 }
 
 
@@ -3326,7 +3326,7 @@ function startRealtime(){
       var evt=payload.eventType, newRow=payload.new, oldRow=payload.old;
 
       if(evt==='INSERT'){
-        if(!allContacts.find(function(c){return c.id===newRow.id;})){
+        if(!allCustomers.find(function(c){return c.id===newRow.id;})){
           var linkedC={
             id:newRow.id, full_name:newRow.full_name||'Unknown',
             email:newRow.email||'', business_name:newRow.business_name||'',
@@ -3335,11 +3335,11 @@ function startRealtime(){
             user_id:newRow.user_id, deal_value:newRow.deal_value||0,
             last_contacted:newRow.last_contacted||null, notes:newRow.notes||null
           };
-          allContacts.unshift(linkedC);
-          filteredContacts=allContacts.slice(); sortContacts();
-          var mc=document.getElementById('metricContacts'); if(mc) mc.textContent=allContacts.length;
-          var nb=document.getElementById('navContactsBadge'); if(nb) nb.textContent=allContacts.length;
-          var ca=document.getElementById('countAll'); if(ca) ca.textContent=allContacts.length;
+          allCustomers.unshift(linkedC);
+          filteredCustomers=allCustomers.slice(); sortCustomers();
+          var mc=document.getElementById('metricCustomers'); if(mc) mc.textContent=allCustomers.length;
+          var nb=document.getElementById('navCustomersBadge'); if(nb) nb.textContent=allCustomers.length;
+          var ca=document.getElementById('countAll'); if(ca) ca.textContent=allCustomers.length;
           if(newRow.user_id!==currentUser?.id){
             showToast('New contact added: '+(newRow.full_name||'Unknown'),'success');
             createNotif('&#x1F464;','var(--cyan)','New contact: '+(newRow.full_name||'Unknown'),'contact_rt');
@@ -3348,22 +3348,22 @@ function startRealtime(){
       }
 
       else if(evt==='UPDATE'){
-        var idx=allContacts.findIndex(function(c){return c.id===newRow.id;});
+        var idx=allCustomers.findIndex(function(c){return c.id===newRow.id;});
         if(idx>-1){
-          var oldStatus=allContacts[idx].status;
-          allContacts[idx]=Object.assign({},allContacts[idx],{
-            full_name:newRow.full_name||allContacts[idx].full_name,
-            email:newRow.email||allContacts[idx].email,
-            business_name:newRow.business_name||allContacts[idx].business_name,
-            phone:newRow.phone||allContacts[idx].phone,
-            status:newRow.status||allContacts[idx].status,
-            island:newRow.island||allContacts[idx].island,
-            last_contacted:newRow.last_contacted||allContacts[idx].last_contacted,
-            notes:newRow.notes||allContacts[idx].notes
+          var oldStatus=allCustomers[idx].status;
+          allCustomers[idx]=Object.assign({},allCustomers[idx],{
+            full_name:newRow.full_name||allCustomers[idx].full_name,
+            email:newRow.email||allCustomers[idx].email,
+            business_name:newRow.business_name||allCustomers[idx].business_name,
+            phone:newRow.phone||allCustomers[idx].phone,
+            status:newRow.status||allCustomers[idx].status,
+            island:newRow.island||allCustomers[idx].island,
+            last_contacted:newRow.last_contacted||allCustomers[idx].last_contacted,
+            notes:newRow.notes||allCustomers[idx].notes
           });
-          var fi=filteredContacts.findIndex(function(c){return c.id===newRow.id;});
-          if(fi>-1) filteredContacts[fi]=allContacts[idx];
-          renderContactsTable(); renderRecentContacts();
+          var fi=filteredCustomers.findIndex(function(c){return c.id===newRow.id;});
+          if(fi>-1) filteredCustomers[fi]=allCustomers[idx];
+          renderCustomersTable(); renderRecentCustomers();
           if(oldStatus!==newRow.status && newRow.user_id!==currentUser?.id){
             showToast((newRow.full_name||'Contact')+' status: '+oldStatus+' → '+newRow.status,'');
           }
@@ -3372,12 +3372,12 @@ function startRealtime(){
 
       else if(evt==='DELETE'){
         var delId=oldRow.id;
-        var delContact=allContacts.find(function(c){return c.id===delId;});
+        var delContact=allCustomers.find(function(c){return c.id===delId;});
         var delName=delContact?delContact.full_name:'A contact';
-        allContacts=allContacts.filter(function(c){return c.id!==delId;});
-        filteredContacts=filteredContacts.filter(function(c){return c.id!==delId;});
-        renderContactsTable(); renderRecentContacts();
-        var mc2=document.getElementById('metricContacts'); if(mc2) mc2.textContent=allContacts.length;
+        allCustomers=allCustomers.filter(function(c){return c.id!==delId;});
+        filteredCustomers=filteredCustomers.filter(function(c){return c.id!==delId;});
+        renderCustomersTable(); renderRecentCustomers();
+        var mc2=document.getElementById('metricCustomers'); if(mc2) mc2.textContent=allCustomers.length;
         if(delContact&&delContact.user_id!==currentUser?.id){
           showToast(delName+' was removed by another team member','');
         }
@@ -3388,9 +3388,9 @@ function startRealtime(){
       var evt=payload.eventType, newRow=payload.new, oldRow=payload.old;
 
       if(evt==='INSERT'){
-        if(!allDeals.find(function(d){return d.id===newRow.id;})){
-          var lc=allContacts.find(function(c){return c.id===newRow.contact_id;});
-          allDeals.unshift(Object.assign({},newRow,{
+        if(!allOpportunities.find(function(d){return d.id===newRow.id;})){
+          var lc=allCustomers.find(function(c){return c.id===newRow.contact_id;});
+          allOpportunities.unshift(Object.assign({},newRow,{
             deal_name:newRow.deal_name||newRow.title||'Untitled Deal',
             deal_value:newRow.deal_value||newRow.value||0,
             deal_type:newRow.deal_type||'Ripple',
@@ -3401,9 +3401,9 @@ function startRealtime(){
             won_lost_reason:newRow.won_lost_reason||null
           }));
           renderPipeline();
-          var openD=allDeals.filter(function(d){return !['won','lost'].includes((d.stage||'').toLowerCase());});
-          var md=document.getElementById('metricDeals'); if(md) md.textContent=openD.length;
-          var nd=document.getElementById('navDealsBadge'); if(nd) nd.textContent=allDeals.length;
+          var openD=allOpportunities.filter(function(d){return !['won','lost'].includes((d.stage||'').toLowerCase());});
+          var md=document.getElementById('metricOpportunities'); if(md) md.textContent=openD.length;
+          var nd=document.getElementById('navOpportunitiesBadge'); if(nd) nd.textContent=allOpportunities.length;
           if(newRow.agent_id!==currentUser?.id){
             showToast('New deal: '+(newRow.deal_name||newRow.title||'Untitled'),'success');
             createNotif('&#x1F4BC;','var(--gold)','New deal: '+(newRow.deal_name||newRow.title||'Untitled'),'deal_rt');
@@ -3412,27 +3412,27 @@ function startRealtime(){
       }
 
       else if(evt==='UPDATE'){
-        var idx2=allDeals.findIndex(function(d){return d.id===newRow.id;});
+        var idx2=allOpportunities.findIndex(function(d){return d.id===newRow.id;});
         if(idx2>-1){
-          var oldStage=allDeals[idx2].stage;
-          var lc2=allContacts.find(function(c){return c.id===newRow.contact_id;});
-          allDeals[idx2]=Object.assign({},allDeals[idx2],newRow,{
-            deal_name:newRow.deal_name||newRow.title||allDeals[idx2].deal_name,
-            deal_value:newRow.deal_value||newRow.value||allDeals[idx2].deal_value,
-            contact_name:lc2?lc2.full_name:allDeals[idx2].contact_name,
+          var oldStage=allOpportunities[idx2].stage;
+          var lc2=allCustomers.find(function(c){return c.id===newRow.contact_id;});
+          allOpportunities[idx2]=Object.assign({},allOpportunities[idx2],newRow,{
+            deal_name:newRow.deal_name||newRow.title||allOpportunities[idx2].deal_name,
+            deal_value:newRow.deal_value||newRow.value||allOpportunities[idx2].deal_value,
+            contact_name:lc2?lc2.full_name:allOpportunities[idx2].contact_name,
             close_date:newRow.close_date||null,
             probability:newRow.probability||null,
             won_lost_reason:newRow.won_lost_reason||null
           });
           renderPipeline();
-          var openD2=allDeals.filter(function(d){return !['won','lost'].includes((d.stage||'').toLowerCase());});
-          var wonD=allDeals.filter(function(d){return d.stage==='won';});
+          var openD2=allOpportunities.filter(function(d){return !['won','lost'].includes((d.stage||'').toLowerCase());});
+          var wonD=allOpportunities.filter(function(d){return d.stage==='won';});
           var pipeV=openD2.reduce(function(s,d){return s+(d.deal_value||0);},0);
-          var md2=document.getElementById('metricDeals'); if(md2) md2.textContent=openD2.length;
+          var md2=document.getElementById('metricOpportunities'); if(md2) md2.textContent=openD2.length;
           var mv=document.getElementById('metricValue'); if(mv) mv.textContent=fmt(pipeV);
           var mw=document.getElementById('metricWon'); if(mw) mw.textContent=wonD.length;
           if(oldStage!==newRow.stage && newRow.agent_id!==currentUser?.id){
-            var dn=allDeals[idx2].deal_name||'Deal';
+            var dn=allOpportunities[idx2].deal_name||'Deal';
             showToast(dn+': '+oldStage+' → '+newRow.stage+' (updated by team)','');
             if(newRow.stage==='won') createNotif('&#x1F3C6;','var(--success)',dn+' marked Won by team!','deal_won_rt');
           }
@@ -3447,8 +3447,8 @@ function startRealtime(){
 
       else if(evt==='DELETE'){
         var delDId=oldRow.id;
-        var delDeal=allDeals.find(function(d){return d.id===delDId;});
-        allDeals=allDeals.filter(function(d){return d.id!==delDId;});
+        var delDeal=allOpportunities.find(function(d){return d.id===delDId;});
+        allOpportunities=allOpportunities.filter(function(d){return d.id!==delDId;});
         renderPipeline();
         var editId2=document.getElementById('ed-id')?.value;
         if(editId2===delDId && document.getElementById('modal-editDeal')?.classList.contains('open')){
@@ -3497,8 +3497,8 @@ window.addEventListener('beforeunload',stopRealtime);
   var dateEl = document.getElementById('task-due-date');
   if(dateEl) dateEl.value = '';
 
-// ── FIX 4: Settings — save profile to Supabase ────────────────────────────────
-async function saveProfileSettings(){
+// ── FIX 4: Workspace Settings — save profile to Supabase ────────────────────────────────
+async function saveProfileWorkspace Settings(){
   const nameEl = document.getElementById('settingsName');
   const btn = document.getElementById('settingsSaveBtn');
   const name = nameEl ? nameEl.value.trim() : '';
@@ -3513,7 +3513,7 @@ async function saveProfileSettings(){
     ['sidebarAvatar','topAvatar'].forEach(function(id){
       var el=document.getElementById(id); if(el) el.textContent=ini(name);
     });
-    showToast('Settings saved \u2713','success');
+    showToast('Workspace Settings saved \u2713','success');
   } catch(e){
     showToast('Error: '+e.message,'');
   } finally {
@@ -3545,7 +3545,7 @@ async function saveProfileSettings(){
 </div>
 <div style="display:flex;gap:2px;padding:12px 28px 0;border-bottom:1px solid var(--navy-border);flex-shrink:0;">
 <button class="cp-tab active" data-tab="overview" onclick="switchCpTab('overview',this)" style="padding:8px 16px;border:none;background:none;color:var(--cyan);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid var(--cyan);font-family:inherit;">Overview</button>
-<button class="cp-tab" data-tab="deals" onclick="switchCpTab('deals',this)" style="padding:8px 16px;border:none;background:none;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;">Deals <span id="cpDealsCount" style="font-size:11px;background:var(--navy-light);padding:1px 6px;border-radius:100px;margin-left:3px;">0</span></button>
+<button class="cp-tab" data-tab="deals" onclick="switchCpTab('deals',this)" style="padding:8px 16px;border:none;background:none;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;">Opportunities <span id="cpOpportunitiesCount" style="font-size:11px;background:var(--navy-light);padding:1px 6px;border-radius:100px;margin-left:3px;">0</span></button>
 <button class="cp-tab" data-tab="activity" onclick="switchCpTab('activity',this)" style="padding:8px 16px;border:none;background:none;color:var(--text3);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;">Activity <span id="cpActivityCount" style="font-size:11px;background:var(--navy-light);padding:1px 6px;border-radius:100px;margin-left:3px;">0</span></button>
 </div>
 <div style="padding:20px 28px;flex:1;overflow-y:auto;">
@@ -3559,9 +3559,9 @@ async function saveProfileSettings(){
 </div>
 <div style="background:var(--navy-light);border-radius:10px;padding:14px;">
 <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Deal Summary</div>
-<div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Open Deals: </span><span id="cpOpenDeals" style="font-weight:700;color:var(--orange);">0</span></div>
+<div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Active Opportunities: </span><span id="cpOpenOpportunities" style="font-weight:700;color:var(--orange);">0</span></div>
 <div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Total Value: </span><span id="cpTotalValue" style="font-weight:700;color:var(--success);">$0</span></div>
-<div style="font-size:13px;color:var(--text2);"><span style="color:var(--text3);">Won: </span><span id="cpWonDeals" style="font-weight:700;color:var(--cyan);">0</span></div>
+<div style="font-size:13px;color:var(--text2);"><span style="color:var(--text3);">Won: </span><span id="cpWonOpportunities" style="font-weight:700;color:var(--cyan);">0</span></div>
 </div>
 </div>
 <div style="background:var(--navy-light);border-radius:10px;padding:14px;">
@@ -3569,7 +3569,7 @@ async function saveProfileSettings(){
 <div id="cpNotes" style="font-size:13px;color:var(--text2);line-height:1.6;">No notes</div>
 </div>
 </div>
-<div id="cpTab-deals" style="display:none;"><div id="cpDeals"></div></div>
+<div id="cpTab-deals" style="display:none;"><div id="cpOpportunities"></div></div>
 <div id="cpTab-activity" style="display:none;">
 <div id="cpActivity"><div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;">No activity logged yet</div></div>
 <div style="margin-top:16px;background:var(--navy-light);border-radius:10px;padding:14px;">
@@ -3688,7 +3688,7 @@ async function saveProfileSettings(){
 <!-- CSV IMPORT MODAL -->
 <div class="modal-overlay" id="modal-csvImport">
 <div class="modal" style="max-width:600px;">
-<div class="modal-hd"><h3>📥 Import Contacts from CSV</h3><button class="modal-close" onclick="closeModal('csvImport')">✕</button></div>
+<div class="modal-hd"><h3>📥 Import Customers from CSV</h3><button class="modal-close" onclick="closeModal('csvImport')">✕</button></div>
 <div class="modal-body">
 <!-- Step 1: Upload -->
 <div id="csvStep1">
@@ -3730,7 +3730,7 @@ async function saveProfileSettings(){
 <div class="modal-footer">
 <div id="csvImportError" style="display:none;color:#ef4444;font-size:12px;font-weight:700;padding:8px 0;"></div>
 <button class="btn btn-ghost" onclick="closeModal('csvImport')">Cancel</button>
-<button class="btn btn-primary" id="csvImportBtn" onclick="importCSVContacts()" style="display:none;">📥 Import Contacts</button>
+<button class="btn btn-primary" id="csvImportBtn" onclick="importCSVCustomers()" style="display:none;">📥 Import Customers</button>
 </div>
 </div>
 </div>
@@ -3795,7 +3795,7 @@ function openAddEvent(dateStr){
 
 // ── DEAL EDIT ──────────────────────────────────────────────────
 function openDeal(dealId){
-  var d=allDeals.find(function(x){return x.id===dealId;});
+  var d=allOpportunities.find(function(x){return x.id===dealId;});
   if(!d)return;
   var idEl=document.getElementById('ed-id');
   var nameEl=document.getElementById('ed-name');
@@ -3808,9 +3808,9 @@ function openDeal(dealId){
   if(valEl)valEl.value=d.deal_value||d.value||0;
   if(stageEl)stageEl.value=(d.stage||'lead').toLowerCase();
   if(notesEl)notesEl.value=d.notes||'';
-  if(contEl&&allContacts.length){
+  if(contEl&&allCustomers.length){
     contEl.innerHTML='<option value="">No contact</option>'+
-      allContacts.map(function(ct){return '<option value="'+ct.id+'"'+(ct.id===d.contact_id?' selected':'')+'>'+
+      allCustomers.map(function(ct){return '<option value="'+ct.id+'"'+(ct.id===d.contact_id?' selected':'')+'>'+
         (ct.full_name||'Unknown')+'</option>';}).join('');
   }
   openModal('editDeal');
@@ -3820,14 +3820,14 @@ function openDeal(dealId){
 function initWhatsAppView(){
   var sel=document.getElementById('wa-contact-select');
   if(sel){
-    var wac=allContacts.filter(function(ct){return ct.phone||ct.whatsapp;});
+    var wac=allCustomers.filter(function(ct){return ct.phone||ct.whatsapp;});
     sel.innerHTML='<option value="">— Select contact —</option>'+
       wac.map(function(ct){return '<option value="'+ct.id+'">'+
         (ct.full_name||'Unknown')+' — '+(ct.phone||ct.whatsapp||'')+'</option>';}).join('');
   }
   var list=document.getElementById('wa-contacts-list');
   if(list){
-    var wac2=allContacts.filter(function(ct){return ct.phone||ct.whatsapp;});
+    var wac2=allCustomers.filter(function(ct){return ct.phone||ct.whatsapp;});
     if(wac2.length){
       var html2='';
       wac2.forEach(function(ct){
@@ -3844,7 +3844,7 @@ function initWhatsAppView(){
   }
 }
 function waFillPhone(id){
-  var ct=allContacts.find(function(c){return c.id===id;});
+  var ct=allCustomers.find(function(c){return c.id===id;});
   if(ct){var el=document.getElementById('wa-phone-input');if(el)el.value=ct.phone||ct.whatsapp||'';}
 }
 function sendWhatsAppFromView(){
@@ -3855,7 +3855,7 @@ function sendWhatsAppFromView(){
   showToast('✅ WhatsApp opened in new tab — close that tab to return to CRM','success');
 }
 function quickWA(id){
-  var ct=allContacts.find(function(c){return c.id===id;});
+  var ct=allCustomers.find(function(c){return c.id===id;});
   if(!ct)return;
   var ph=(ct.phone||ct.whatsapp||'').replace(/[^0-9+]/g,'');
   if(!ph){showToast('No phone number for this contact','');return;}

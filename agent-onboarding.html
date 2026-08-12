@@ -155,9 +155,9 @@
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Main</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Dashboard</span></a>
-<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Contacts</span></a>
-<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
+<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
+<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Communicate</div>
@@ -165,12 +165,12 @@
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
 <div class="ns">Performance</div>
-<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Dashboard</span></a>
+<a class="nav-item" href="agent-dashboard.html"><span class="nav-icon">📈</span><span class="nav-text"> Agent Command Center</span></a>
 <a class="nav-item" href="commission-calculator.html"><span class="nav-icon">💰</span><span class="nav-text"> Commission Calc</span></a>
 <a class="nav-item" href="agent-onboarding.html" class="active"><span class="nav-icon">🚀</span><span class="nav-text"> Onboarding</span></a>
 <div class="ns">Insights</div>
-<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Reports</span></a>
-<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
+<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
+<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Workspace Settings</span></a>
 <a class="nav-item" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
 </nav>
 <div class="sidebar-bottom">
@@ -181,7 +181,7 @@
 </aside>
 <div class="main" id="mainContent">
 <header class="topbar">
-<div class="topbar-left"><h1 id="pageTitle">Agent Onboarding</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Onboarding</div></div>
+<div class="topbar-left"><h1 id="pageTitle">Agent Onboarding</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Command Center</a> / Onboarding</div></div>
 <div class="topbar-right">
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
@@ -434,7 +434,7 @@ function renderStepTraining(){
   const modules=[
     {id:'t1',icon:'🌊',title:'BluWav Growth Products & Pricing',sub:'Learn Ripple, Current, Surge + CRM packages',time:'15 mins'},
     {id:'t2',icon:'💬',title:'Sales Script & Pitch Techniques',sub:'Opening, discovery, pitch, objection handling',time:'20 mins'},
-    {id:'t3',icon:'📋',title:'Using BluWav CRM',sub:'Contacts, deals, pipeline, activities',time:'15 mins'},
+    {id:'t3',icon:'📋',title:'Using BluWav CRM',sub:'Customers, deals, pipeline, activities',time:'15 mins'},
     {id:'t4',icon:'🎯',title:'Lead Submission Process',sub:'How to submit leads and track commissions',time:'10 mins'},
     {id:'t5',icon:'📜',title:'Partner Code of Conduct',sub:'Brand standards, dos and don\'ts',time:'10 mins'},
   ];
@@ -490,7 +490,7 @@ function renderStepActivation(){
       </div>
 
       <div style="display:flex;gap:12px;justify-content:center;">
-        <button class="btn btn-primary" onclick="window.location.href='agent-dashboard.html'" style="font-size:15px;padding:14px 28px;">🚀 Go to My Dashboard</button>
+        <button class="btn btn-primary" onclick="window.location.href='agent-dashboard.html'" style="font-size:15px;padding:14px 28px;">🚀 Go to My Command Center</button>
         <button class="btn btn-ghost" onclick="window.location.href='deals.html'" style="font-size:15px;padding:14px 28px;">💼 Log First Deal</button>
       </div>
     </div>`;
@@ -509,7 +509,7 @@ function renderManagerView(){
 
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px;">
       <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
-        <div style="font-size:14px;font-weight:700;">Team Members</div>
+        <div style="font-size:14px;font-weight:700;">Team</div>
       </div>
       <div style="padding:0;" id="agentsTable">
         <div style="text-align:center;padding:40px;color:var(--text3);">Loading agents...</div>
