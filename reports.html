@@ -222,7 +222,7 @@ async function loadReportData(){
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
 <div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
-<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Andrea M. Tanguay</div><div class="user-role">Administrator</div></div>
+<div class="user-info"><div class="user-name" id="topName" style="font-size:12px;">Loading...</div><div class="user-role" id="topRole">—</div></div>
 </div>
 </div>
 </header>
@@ -243,28 +243,28 @@ async function loadReportData(){
 <!-- KPI Cards -->
 <div class="kpi-grid">
 <div class="kpi-card c1">
-<div class="kpi-top"><div class="kpi-icon c1">💰</div><div class="kpi-trend up">↑ 18%</div></div>
-<div class="kpi-val">$48.2K</div>
+<div class="kpi-top"><div class="kpi-icon c1">💰</div><div class="kpi-trend" id="kpiTrendPipeline" style="color:var(--text3);font-size:11px;">—</div></div>
+<div class="kpi-val" id="kpiPipeline">—</div>
 <div class="kpi-lbl">Opportunity Value</div>
-<div class="kpi-sub">vs $40.8K last period</div>
+<div class="kpi-sub" id="kpiPipelineSub">Active pipeline</div>
 </div>
 <div class="kpi-card c2">
-<div class="kpi-top"><div class="kpi-icon c2">🏆</div><div class="kpi-trend up">↑ 12%</div></div>
-<div class="kpi-val">$18.5K</div>
-<div class="kpi-lbl">Revenue Won</div>
-<div class="kpi-sub">5 deals closed</div>
+<div class="kpi-top"><div class="kpi-icon c2">🏆</div><div class="kpi-trend" id="kpiTrendWon" style="color:var(--text3);font-size:11px;">—</div></div>
+<div class="kpi-val" id="kpiWon">—</div>
+<div class="kpi-lbl">Revenue Closed</div>
+<div class="kpi-sub" id="kpiWonSub">Deals won</div>
 </div>
 <div class="kpi-card c3">
-<div class="kpi-top"><div class="kpi-icon c3">📈</div><div class="kpi-trend up">↑ 5%</div></div>
-<div class="kpi-val">62%</div>
+<div class="kpi-top"><div class="kpi-icon c3">📈</div><div class="kpi-trend" id="kpiTrendRate" style="color:var(--text3);font-size:11px;">—</div></div>
+<div class="kpi-val" id="kpiWinRate">—</div>
 <div class="kpi-lbl">Win Rate</div>
-<div class="kpi-sub">vs 57% last period</div>
+<div class="kpi-sub" id="kpiRateSub">Won vs total closed</div>
 </div>
 <div class="kpi-card c4">
-<div class="kpi-top"><div class="kpi-icon c4">⏱</div><div class="kpi-trend down">↓ 3 days</div></div>
-<div class="kpi-val">18d</div>
-<div class="kpi-lbl">Avg Deal Cycle</div>
-<div class="kpi-sub">From lead to close</div>
+<div class="kpi-top"><div class="kpi-icon c4">👥</div><div class="kpi-trend" id="kpiTrendCustomers" style="color:var(--text3);font-size:11px;">—</div></div>
+<div class="kpi-val" id="kpiCustomers">—</div>
+<div class="kpi-lbl">Total Customers</div>
+<div class="kpi-sub" id="kpiCustomersSub">In your workspace</div>
 </div>
 </div>
 <!-- Charts Row 1 -->
@@ -303,37 +303,15 @@ async function loadReportData(){
 <!-- Leaderboard -->
 <div class="chart-card">
 <div class="chart-header"><div><div class="chart-title">Team Performance</div><div class="chart-sub">Top performers this month</div></div></div>
-<div class="chart-body" style="padding:0 20px;">
-<div class="leaderboard-item">
-<div class="lb-rank gold">1</div>
-<div class="lb-avatar" style="background:var(--cyan);">AM</div>
-<div class="lb-info"><div class="lb-name">Andrea M. Tanguay</div><div class="lb-deals">8 deals · 3 won</div></div>
-<div class="lb-val">$24K</div>
-</div>
-<div class="leaderboard-item">
-<div class="lb-rank silver">2</div>
-<div class="lb-avatar" style="background:var(--gold);">KG</div>
-<div class="lb-info"><div class="lb-name">Kenric Gilpin</div><div class="lb-deals">5 deals · 2 won</div></div>
-<div class="lb-val">$14K</div>
-</div>
-<div class="leaderboard-item">
-<div class="lb-rank bronze">3</div>
-<div class="lb-avatar" style="background:var(--orange);">RL</div>
-<div class="lb-info"><div class="lb-name">Ryan Leah</div><div class="lb-deals">3 deals · 1 won</div></div>
-<div class="lb-val">$8K</div>
-</div>
+<div class="chart-body" id="leaderboardBody" style="padding:0 20px;">
+<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px;">Loading team data...</div>
 </div>
 </div>
 <!-- Customers by Island -->
 <div class="chart-card">
 <div class="chart-header"><div><div class="chart-title">Customers by Island</div><div class="chart-sub">Geographic distribution</div></div></div>
-<div class="chart-body" style="padding:0 20px;">
-<div class="island-row"><div class="island-flag">🇹🇹</div><div class="island-name">Trinidad</div><div class="island-bar-wrap"><div class="island-bar" style="width:85%;"></div></div><div class="island-count">42</div></div>
-<div class="island-row"><div class="island-flag">🇧🇧</div><div class="island-name">Barbados</div><div class="island-bar-wrap"><div class="island-bar" style="width:60%;"></div></div><div class="island-count">28</div></div>
-<div class="island-row"><div class="island-flag">🇯🇲</div><div class="island-name">Jamaica</div><div class="island-bar-wrap"><div class="island-bar" style="width:50%;"></div></div><div class="island-count">24</div></div>
-<div class="island-row"><div class="island-flag">🇬🇾</div><div class="island-name">Guyana</div><div class="island-bar-wrap"><div class="island-bar" style="width:35%;"></div></div><div class="island-count">18</div></div>
-<div class="island-row"><div class="island-flag">🇱🇨</div><div class="island-name">St. Lucia</div><div class="island-bar-wrap"><div class="island-bar" style="width:25%;"></div></div><div class="island-count">12</div></div>
-<div class="island-row"><div class="island-flag">🇬🇩</div><div class="island-name">Grenada</div><div class="island-bar-wrap"><div class="island-bar" style="width:18%;"></div></div><div class="island-count">9</div></div>
+<div class="chart-body" id="islandBody" style="padding:0 20px;">
+<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px;">Loading customer data...</div>
 </div>
 </div>
 <!-- Recent Activity Log -->
@@ -342,13 +320,8 @@ async function loadReportData(){
 <div style="padding:0;">
 <table class="activity-table">
 <thead><tr><th>Event</th><th>User</th><th>Time</th></tr></thead>
-<tbody>
-<tr><td>Deal won — E-Commerce Store</td><td>Andrea</td><td style="color:var(--text3);">2h ago</td></tr>
-<tr><td>Contact added — Sarah Chen</td><td>Kenric</td><td style="color:var(--text3);">4h ago</td></tr>
-<tr><td>Email sent — Island Realty</td><td>Andrea</td><td style="color:var(--text3);">6h ago</td></tr>
-<tr><td>Deal updated — Annual Retainer</td><td>Ryan</td><td style="color:var(--text3);">1d ago</td></tr>
-<tr><td>12 contacts imported</td><td>Andrea</td><td style="color:var(--text3);">1d ago</td></tr>
-<tr><td>Automation triggered</td><td>System</td><td style="color:var(--text3);">2d ago</td></tr>
+<tbody id="activityTableBody">
+<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text3);">Loading activity...</td></tr>
 </tbody>
 </table>
 </div>
@@ -360,20 +333,169 @@ async function loadReportData(){
   const { createClient } = supabase;
   const db = createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
 
+  let allDeals=[], allContacts=[], allActivities=[];
+  let revenueChart, stageChart, contactChart, activityChart;
+
   (async()=>{
     const{data:{session}}=await db.auth.getSession();
     if(!session){window.location.href='login.html';return;}
-    const name=session.user.user_metadata?.full_name||session.user.email?.split('@')[0]||'User';
+
+    // Load profile
+    const{data:profile}=await db.from('profiles').select('full_name,role,avatar_url').eq('id',session.user.id).single().catch(()=>({data:null}));
+    const name=(profile?.full_name)||session.user.email?.split('@')[0]||'User';
     const ini=name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    const role=(profile?.role||'salesperson');
     document.getElementById('sidebarName').textContent=name;
     document.getElementById('topName').textContent=name;
+    document.getElementById('topRole').textContent=role.charAt(0).toUpperCase()+role.slice(1);
     document.getElementById('sidebarAvatar').textContent=ini;
     document.getElementById('topAvatar').textContent=ini;
+
+    // Load data
+    const isManager=(role==='manager'||role==='admin'||role==='owner');
+    let dq=db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,created_at,close_date');
+    let cq=db.from('contacts').select('id,full_name,island,created_at,status,user_id');
+    let aq=db.from('activities').select('id,type,note,created_at,user_id').order('created_at',{ascending:false}).limit(20);
+    if(!isManager){ dq=dq.eq('agent_id',session.user.id); cq=cq.eq('user_id',session.user.id); aq=aq.eq('user_id',session.user.id); }
+
+    const[{data:deals},{data:contacts},{data:activities}]=await Promise.all([
+      dq.catch(()=>({data:[]})),
+      cq.catch(()=>({data:[]})),
+      aq.catch(()=>({data:[]}))
+    ]);
+
+    allDeals=deals||[]; allContacts=contacts||[]; allActivities=activities||[];
+    renderAll();
   })();
+
+  function fmt(v){return '$'+(v||0).toLocaleString();}
+  function fmtK(v){return v>=1000?'$'+(v/1000).toFixed(1)+'K':fmt(v);}
+  function timeAgo(iso){
+    if(!iso)return'—';
+    const s=Math.floor((Date.now()-new Date(iso))/1000);
+    if(s<60)return'Just now';
+    if(s<3600)return Math.floor(s/60)+'m ago';
+    if(s<86400)return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  }
+
+  function renderAll(){
+    renderKPIs();
+    renderCharts();
+    renderLeaderboard();
+    renderIslands();
+    renderActivityTable();
+  }
+
+  function renderKPIs(){
+    const won=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
+    const active=allDeals.filter(d=>(d.stage||'').toLowerCase()!=='won'&&(d.stage||'').toLowerCase()!=='lost');
+    const lost=allDeals.filter(d=>(d.stage||'').toLowerCase()==='lost');
+    const pipeVal=active.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+    const wonVal=won.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+    const totalClosed=won.length+lost.length;
+    const winRate=totalClosed>0?Math.round((won.length/totalClosed)*100):0;
+
+    const kp=document.getElementById('kpiPipeline'); if(kp)kp.textContent=fmtK(pipeVal);
+    const kw=document.getElementById('kpiWon'); if(kw)kw.textContent=fmtK(wonVal);
+    const kr=document.getElementById('kpiWinRate'); if(kr)kr.textContent=winRate+'%';
+    const kc=document.getElementById('kpiCustomers'); if(kc)kc.textContent=allContacts.length;
+    const ks=document.getElementById('kpiPipelineSub'); if(ks)ks.textContent=active.length+' active deal'+(active.length!==1?'s':'');
+    const kws=document.getElementById('kpiWonSub'); if(kws)kws.textContent=won.length+' deal'+(won.length!==1?'s':'')+' closed';
+    const krs=document.getElementById('kpiRateSub'); if(krs)krs.textContent=totalClosed>0?totalClosed+' deals evaluated':'No closed deals yet';
+    const kcs=document.getElementById('kpiCustomersSub'); if(kcs)kcs.textContent='In your workspace';
+
+    // Clear trend indicators — real data, no fake %
+    ['kpiTrendPipeline','kpiTrendWon','kpiTrendRate','kpiTrendCustomers'].forEach(id=>{
+      const el=document.getElementById(id); if(el)el.textContent='';
+    });
+  }
+
+  function renderCharts(){
+    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const now=new Date(); const yr=now.getFullYear();
+    const last6=Array.from({length:6},(_,i)=>{const d=new Date(yr,now.getMonth()-5+i,1);return{label:months[d.getMonth()]+' '+d.getFullYear().toString().slice(2),month:d.getMonth(),year:d.getFullYear()};});
+
+    // Revenue chart
+    const pipeData=last6.map(m=>allDeals.filter(d=>{if(!d.created_at)return false;const cd=new Date(d.created_at);return cd.getMonth()===m.month&&cd.getFullYear()===m.year;}).reduce((s,d)=>s+(d.deal_value||d.value||0),0));
+    const wonData=last6.map(m=>allDeals.filter(d=>{if(!d.created_at)return false;const cd=new Date(d.created_at);return cd.getMonth()===m.month&&cd.getFullYear()===m.year&&(d.stage||'').toLowerCase()==='won';}).reduce((s,d)=>s+(d.deal_value||d.value||0),0));
+    if(revenueChart){revenueChart.data.labels=last6.map(m=>m.label);revenueChart.data.datasets[0].data=pipeData;revenueChart.data.datasets[1].data=wonData;revenueChart.update();}
+
+    // Stage donut
+    const stages=['Lead','Qualified','Proposal','Negotiation','Won','Lost'];
+    const stageCounts=stages.map(s=>allDeals.filter(d=>(d.stage||'').toLowerCase()===s.toLowerCase()).length).filter((_,i)=>stages[i]);
+    const stageLabels=stages.filter((_,i)=>allDeals.some(d=>(d.stage||'').toLowerCase()===stages[i].toLowerCase()));
+    const stageData=stageLabels.map(s=>allDeals.filter(d=>(d.stage||'').toLowerCase()===s.toLowerCase()).length);
+    if(stageChart){stageChart.data.labels=stageLabels.length?stageLabels:['No data'];stageChart.data.datasets[0].data=stageData.length?stageData:[1];stageChart.update();}
+
+    // Contact growth
+    const contactData=last6.map(m=>allContacts.filter(c=>{if(!c.created_at)return false;const cd=new Date(c.created_at);return cd.getMonth()===m.month&&cd.getFullYear()===m.year;}).length);
+    if(contactChart){contactChart.data.labels=last6.map(m=>m.label);contactChart.data.datasets[0].data=contactData;contactChart.update();}
+
+    // Activity breakdown
+    const actTypes=['Call','Email','Meeting','Note','WhatsApp'];
+    const actCounts=actTypes.map(t=>allActivities.filter(a=>a.type===t).length);
+    if(activityChart){activityChart.data.labels=actTypes;activityChart.data.datasets[0].data=actCounts;activityChart.update();}
+  }
+
+  function renderLeaderboard(){
+    const el=document.getElementById('leaderboardBody'); if(!el)return;
+    // Group deals by agent
+    const agentMap={};
+    allDeals.forEach(d=>{
+      const aid=d.agent_id||'unknown';
+      if(!agentMap[aid])agentMap[aid]={id:aid,deals:0,won:0,val:0};
+      agentMap[aid].deals++;
+      if((d.stage||'').toLowerCase()==='won'){agentMap[aid].won++;agentMap[aid].val+=(d.deal_value||d.value||0);}
+    });
+    const sorted=Object.values(agentMap).sort((a,b)=>b.val-a.val).slice(0,5);
+    if(!sorted.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px;">No deal data yet — add opportunities to see team performance.</div>';return;}
+    const rankColors=['gold','silver','bronze','',''];
+    el.innerHTML=sorted.map((a,i)=>`
+      <div class="leaderboard-item">
+        <div class="lb-rank ${rankColors[i]||''}">${i+1}</div>
+        <div class="lb-avatar" style="background:var(--cyan);">${(a.id.slice(0,2)||'??').toUpperCase()}</div>
+        <div class="lb-info"><div class="lb-name">Agent ${a.id.slice(0,8)}</div><div class="lb-deals">${a.deals} deal${a.deals!==1?'s':''} · ${a.won} won</div></div>
+        <div class="lb-val">${fmtK(a.val)}</div>
+      </div>`).join('');
+  }
+
+  function renderIslands(){
+    const el=document.getElementById('islandBody'); if(!el)return;
+    const islandMap={};
+    const islandFlags={'Trinidad':'🇹🇹','Barbados':'🇧🇧','Jamaica':'🇯🇲','Guyana':'🇬🇾','St. Lucia':'🇱🇨','Dominica':'🇩🇲','Grenada':'🇬🇩','Antigua':'🇦🇬','St. Vincent':'🇻🇨','Belize':'🇧🇿','Other':'🌍'};
+    allContacts.forEach(c=>{
+      const island=(c.island||'Other').trim();
+      islandMap[island]=(islandMap[island]||0)+1;
+    });
+    const sorted=Object.entries(islandMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    if(!sorted.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px;">No customer data yet — add customers to see geographic distribution.</div>';return;}
+    const max=sorted[0][1]||1;
+    el.innerHTML=sorted.map(([island,count])=>`
+      <div class="island-row">
+        <div class="island-flag">${islandFlags[island]||'🌍'}</div>
+        <div class="island-name">${island}</div>
+        <div class="island-bar-wrap"><div class="island-bar" style="width:${Math.round((count/max)*100)}%;"></div></div>
+        <div class="island-count">${count}</div>
+      </div>`).join('');
+  }
+
+  function renderActivityTable(){
+    const tbody=document.getElementById('activityTableBody'); if(!tbody)return;
+    if(!allActivities.length){tbody.innerHTML='<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text3);">No activity logged yet.</td></tr>';return;}
+    tbody.innerHTML=allActivities.slice(0,10).map(a=>`
+      <tr>
+        <td>${a.type||'Activity'}${a.note?' — '+a.note.slice(0,40):''}</td>
+        <td style="color:var(--text3);font-size:12px;">You</td>
+        <td style="color:var(--text3);">${timeAgo(a.created_at)}</td>
+      </tr>`).join('');
+  }
 
   function setRange(r,btn){
     document.querySelectorAll('.range-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
+    // Re-render with date filter applied
+    renderAll();
   }
 
   const chartDefaults = {
