@@ -2138,7 +2138,7 @@ function emailContact(id){
   openModal('sendEmail');
   // Pre-fill the To field if it exists
   setTimeout(()=>{
-    const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
+  const toField = document.getElementById('email-to') || document.querySelector('#modal-sendEmail input[type="email"]') || document.querySelector('#modal-sendEmail .fi');
     if(toField && c) toField.value = c.email||'';
   },50);
 }
@@ -2288,7 +2288,7 @@ async function deleteTask(id){
 
 // Override addTask modal save to actually persist
 async function saveTask(){
-  const titleEl = document.querySelector('#modal-addTask .fi[placeholder="Task description"]');
+  const titleEl = document.getElementById('task-title-input') || document.querySelector('#modal-addTask input[type="text"]') || document.querySelector('#modal-addTask .fi');
   const dateEl = document.querySelector('#modal-addTask input[type="date"]');
   const priEl = document.querySelector('#modal-addTask .fs');
   const title = titleEl ? titleEl.value.trim() : '';
@@ -2372,8 +2372,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 // ── SEND EMAIL FROM MODAL ─────────────────────────────────────────────────────
 async function sendEmailFromModal(){
-  const toField = document.querySelector('#modal-sendEmail .fi[placeholder="recipient@email.com"]');
-  const subjectField = document.querySelector('#modal-sendEmail .fi[placeholder="Email subject"]');
+  const toField = document.getElementById('email-to') || document.querySelector('#modal-sendEmail input[type="email"]') || document.querySelector('#modal-sendEmail .fi');
+  const subjectField = document.getElementById('email-subject') || document.querySelector('#modal-sendEmail input[type="text"]');
   const msgField = document.querySelector('#modal-sendEmail .fta');
   const to = toField ? toField.value.trim() : '';
   const subject = subjectField ? subjectField.value.trim() : '';
