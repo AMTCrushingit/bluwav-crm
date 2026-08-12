@@ -1987,13 +1987,12 @@ function startPresence() {
 }
 
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
-async function signOut(){
-  try {
-    sessionStorage.removeItem('bw_gate_ok');
-    sessionStorage.removeItem('bw_last_active');
-    await db.auth.signOut();
-  } catch(e){ console.warn('signOut:',e.message); }
-  window.location.href='login.html';
+function signOut(){
+  sessionStorage.removeItem('bw_gate_ok');
+  sessionStorage.removeItem('bw_last_active');
+  db.auth.signOut().catch(()=>{}).finally(()=>{
+    window.location.href='login.html';
+  });
 }
 
 // ── SESSION TIMEOUT (10 min) ───────────────────────────────────────────────────
@@ -2258,7 +2257,7 @@ async function toggleTask(id, completed){
 function editTask(taskId){
   const task = allTasks.find(t=>t.id===taskId);
   if(!task) return;
-  const titleEl = document.getElementById('task-title') || document.querySelector('#modal-addTask .fi');
+  const titleEl = document.getElementById('task-title-input') || document.getElementById('task-title') || document.querySelector('#modal-addTask input[type="text"]') || document.querySelector('#modal-addTask .fi');
   const dateEl  = document.getElementById('task-due-date') || document.querySelector('#modal-addTask input[type="date"]');
   const priEl   = document.getElementById('task-priority') || document.querySelector('#modal-addTask .fs');
   if(titleEl) titleEl.value = task.title||'';

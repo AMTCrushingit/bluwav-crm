@@ -508,6 +508,13 @@ function openDeleteMemberBtn(btn){
   let teamMembers = [];
 
   async function loadTeamMembers() {
+    // Ensure currentUser is available
+    if(typeof currentUser === 'undefined' || !currentUser){
+      try {
+        const {data:{session}} = await db.auth.getSession();
+        if(session) window.currentUser = session.user;
+      } catch(e){ console.warn('session:', e.message); }
+    }
     const tbody = document.getElementById('teamTableBody');
     if (!tbody) return;
     try {
@@ -562,7 +569,7 @@ function openDeleteMemberBtn(btn){
       const statusDot = isOnline
         ? '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:5px;"></span>Active'
         : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--text3);margin-right:5px;"></span>Offline';
-      const isCurrentUser = p.id === (currentUser && currentUser.id);
+      const isCurrentUser = p.id === (window.currentUser && window.currentUser.id);
       const canEdit = !isCurrentUser && canActOn(role);
       let actionCell;
       if (isCurrentUser) {
