@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Agent Command Center</title>
+<title>BluWav Business OS — Agent Command Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -158,13 +158,13 @@
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
-<div class="ns">Main</div>
+<div class="ns">Operations</div>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
 <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
 <a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
-<div class="ns">Communicate</div>
+<div class="ns">Growth</div>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
@@ -579,7 +579,7 @@ async function quickDeal(type,value){
   const newDeal={...data[0],deal_name:data[0].deal_name||data[0].title,deal_value:data[0].deal_value||data[0].value||value,deal_type:data[0].deal_type||type,stage:data[0].stage||'Lead',agent_id:data[0].agent_id||data[0].created_by};
   allOpportunities.unshift(newDeal);
   showToast(`✅ ${type} deal logged for ${name}`,'success');
-  notifyAdmin('💼 New Deal Logged — BluWav CRM Agent Command Center',
+  notifyAdmin('💼 New Deal Logged — BluWav Business OS Agent Command Center',
     'Agent: '+currentUser?.email+'\nContact: '+name+'\nType: '+type+'\nValue: $'+value+'\nTime: '+new Date().toLocaleString());
   loadAgentData();
   renderLeaderboard();

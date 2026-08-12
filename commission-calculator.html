@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Commission Calculator</title>
+<title>BluWav Business OS — Commission Calculator</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -156,13 +156,13 @@
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
-<div class="ns">Main</div>
+<div class="ns">Operations</div>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
 <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
 <a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
-<div class="ns">Communicate</div>
+<div class="ns">Growth</div>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
 <a class="nav-item" href="automations.html"><span class="nav-icon">⚡</span><span class="nav-text"> Automations</span></a>
@@ -756,7 +756,7 @@ async function submitPayout(){
       console.warn('payout_requests table not ready, using email fallback:', error.message);
       var fd=new FormData();
       fd.append('email','hello@bluwavgrowth.com');
-      fd.append('_subject','Payout Request - BluWav CRM');
+      fd.append('_subject','Payout Request - BluWav Business OS');
       fd.append('message','Agent: '+name+'\nEmail: '+email+'\nAmount: $'+parseFloat(amount).toFixed(2)+'\nPeriod: '+period+'\nBank: '+bank+'\nSummary:\n'+summary);
       fd.append('_template','table');
       const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
