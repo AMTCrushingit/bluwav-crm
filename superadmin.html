@@ -395,18 +395,52 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
 </div>
 <!-- ══ TENANT HEALTH ══ -->
 <div class="view" id="view-tenants">
+<!-- Aggregate stats row -->
+<div id="tenantStatsRow" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;"></div>
+<!-- Beta Tester Invitation -->
+<div class="card" style="margin-bottom:16px;">
+<div class="card-header">
+<div><div class="card-title">📨 Invite Beta Tester</div><div class="card-sub">Send access to a new tester — they'll receive the access code and signup link</div></div>
+</div>
+<div class="card-body" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+<div style="flex:1;min-width:200px;"><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Full Name</label><input id="betaName" placeholder="e.g. John Smith" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;" type="text"/></div>
+<div style="flex:1;min-width:200px;"><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Email Address</label><input id="betaEmail" placeholder="tester@company.com" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;" type="email"/></div>
+<div style="flex:1;min-width:160px;"><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Role</label>
+<select id="betaRole" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;">
+<option value="salesperson">Salesperson</option>
+<option value="manager">Manager</option>
+<option value="admin">Admin</option>
+</select>
+</div>
+<button onclick="inviteBetaTester()" style="background:linear-gradient(135deg,var(--cyan),#0099a8);color:#0a0e1a;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">📨 Send Invite</button>
+</div>
+<div id="betaInviteResult" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px;"></div>
+</div>
+<!-- Tenant Health Board -->
 <div class="card">
 <div class="card-header">
-<div><div class="card-title">🏢 Tenant Health Board</div><div class="card-sub" id="tenantCountLabel">All users</div></div>
+<div><div class="card-title">🏢 All Tenants</div><div class="card-sub" id="tenantCountLabel">All users</div></div>
 <div style="display:flex;gap:8px;">
-<input class="search-bar" oninput="filterTenants(this.value)" placeholder="🔍 Search..."/>
+<input class="search-bar" oninput="filterTenants(this.value)" placeholder="🔍 Search tenants..."/>
 <button class="btn btn-primary btn-sm" onclick="openModal('addUser')">+ New User</button>
 </div>
 </div>
 <div class="tbl-wrap">
 <table class="tbl">
-<thead><tr><th>User</th><th>Role</th><th>Trial Status</th><th>Last Active</th><th>Customers</th><th>Opportunities</th><th>Health</th><th>Actions</th></tr></thead>
-<tbody id="tenantHealthBody"><tr><td class="empty" colspan="8">Loading...</td></tr></tbody>
+<thead><tr>
+<th>Tenant</th>
+<th>Email</th>
+<th>Role</th>
+<th>Plan</th>
+<th>Trial</th>
+<th>Last Active</th>
+<th>Customers</th>
+<th>Opportunities</th>
+<th>Revenue</th>
+<th>Health</th>
+<th>Actions</th>
+</tr></thead>
+<tbody id="tenantHealthBody"><tr><td class="empty" colspan="11">Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -833,9 +867,30 @@ function renderCashFlow(){
 
 // ── TENANT HEALTH ─────────────────────────────────────────────────────────────
 function renderTenantHealth(){
-  setText('tenantCountLabel',allProfiles.length+' users');
+  setText('tenantCountLabel',allProfiles.length+' tenants');
   const tbody=document.getElementById('tenantHealthBody');
   if(!tbody)return;
+
+  // Aggregate stats
+  const totalCustomers=allCustomers.length;
+  const totalOpportunities=allOpportunities.length;
+  const totalRevenue=allOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won').reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+  const activeTrials=allProfiles.filter(p=>trialDaysLeft(p)>0).length;
+  const statsEl=document.getElementById('tenantStatsRow');
+  if(statsEl){
+    const stats=[
+      {icon:'🏢',label:'Total Tenants',val:allProfiles.length,color:'var(--cyan)'},
+      {icon:'👥',label:'Total Customers',val:totalCustomers,color:'var(--green)'},
+      {icon:'💼',label:'Total Opportunities',val:totalOpportunities,color:'var(--gold)'},
+      {icon:'💰',label:'Total Revenue',val:fmt(totalRevenue),color:'var(--green)'},
+      {icon:'⏱',label:'Active Trials',val:activeTrials,color:'var(--cyan)'},
+    ];
+    statsEl.innerHTML=stats.map(s=>`<div class="card" style="padding:14px 16px;text-align:center;">
+      <div style="font-size:22px;margin-bottom:4px;">${s.icon}</div>
+      <div style="font-size:22px;font-weight:800;color:${s.color};">${s.val}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px;">${s.label}</div>
+    </div>`).join('');
+  }
 
   tbody.innerHTML=allProfiles.map(p=>{
     const daysLeft=trialDaysLeft(p);
@@ -843,15 +898,15 @@ function renderTenantHealth(){
     const contactCount=allCustomers.filter(c=>c.user_id===p.id).length;
     const dealCount=allOpportunities.filter(d=>d.agent_id===p.id).length;
     const dealVal=allOpportunities.filter(d=>d.agent_id===p.id&&(d.stage||'').toLowerCase()==='won').reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+    const email=p.email||'—';
+    const plan=p.subscription_status||'Trial';
 
-    // Health score
-    let health='green', healthLabel='Healthy';
+    let health='green', healthLabel='Active';
     if(daysLeft===0&&!online){health='grey';healthLabel='Inactive';}
     else if(daysLeft<=3&&daysLeft>0){health='red';healthLabel='Expiring';}
     else if(daysLeft<=7&&daysLeft>0){health='amber';healthLabel='At Risk';}
     else if(!online&&contactCount===0){health='amber';healthLabel='No Activity';}
 
-    // Trial badge
     let trialBadge='';
     if(daysLeft>0){
       const bc=daysLeft<=3?'badge-red':daysLeft<=7?'badge-gold':'badge-cyan';
@@ -861,25 +916,48 @@ function renderTenantHealth(){
     }
 
     const roleBadge={manager:'badge-gold',admin:'badge-purple',salesperson:'badge-cyan',owner:'badge-red'};
+    const planBadge=plan==='active'?'badge-green':plan==='Trial'?'badge-cyan':'badge-muted';
 
     return `<tr>
       <td><div style="display:flex;align-items:center;gap:8px;">
         <div class="health-dot health-${health}"></div>
         <div class="av" style="background:${getColor(p.full_name)};">${ini(p.full_name)}</div>
-        <div><div style="font-size:13px;font-weight:600;">${p.full_name||'—'}</div></div>
+        <div style="font-size:13px;font-weight:600;">${p.full_name||'—'}</div>
       </div></td>
+      <td style="font-size:12px;color:var(--text3);">${email}</td>
       <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
+      <td><span class="badge ${planBadge}">${plan}</span></td>
       <td>${trialBadge}</td>
       <td style="color:var(--text3);font-size:11px;">${timeAgo(p.last_seen)}</td>
-      <td style="color:var(--text2);">${contactCount}</td>
-      <td style="color:var(--text2);">${dealCount} <span style="color:var(--text3);font-size:10px;">(${fmt(dealVal)} won)</span></td>
+      <td style="color:var(--text2);text-align:center;">${contactCount}</td>
+      <td style="color:var(--text2);text-align:center;">${dealCount}</td>
+      <td style="color:var(--green);font-size:12px;font-weight:600;">${fmt(dealVal)}</td>
       <td><span class="badge badge-${health==='green'?'green':health==='amber'?'gold':health==='red'?'red':'muted'}">${healthLabel}</span></td>
       <td><div style="display:flex;gap:4px;">
-        <button class="btn btn-ghost btn-sm" onclick="editUser('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}','${p.role||'salesperson'}')">&#x270F;&#xFE0F;</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}')">&#x1F5D1;</button>
+        <button class="btn btn-ghost btn-sm" onclick="editUser('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}','${p.role||'salesperson'}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}')">🗑</button>
       </div></td>
     </tr>`;
-  }).join('')||'<tr><td colspan="8" class="empty">No users found</td></tr>';
+  }).join('')||'<tr><td colspan="11" class="empty">No tenants found</td></tr>';
+}
+
+async function inviteBetaTester(){
+  const name=document.getElementById('betaName')?.value.trim();
+  const email=document.getElementById('betaEmail')?.value.trim();
+  const role=document.getElementById('betaRole')?.value||'salesperson';
+  const resultEl=document.getElementById('betaInviteResult');
+  if(!name||!email){showToast('Please enter name and email','');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Please enter a valid email','');return;}
+  if(resultEl){resultEl.style.display='block';resultEl.style.background='rgba(0,194,209,0.08)';resultEl.style.border='1px solid rgba(0,194,209,0.2)';resultEl.style.color='var(--text2)';resultEl.textContent='⏳ Preparing invitation...';}
+  const accessCodes=['BW2026','BLUWAV','BWCRM26'];
+  const code=accessCodes[Math.floor(Math.random()*accessCodes.length)];
+  const subject=encodeURIComponent("You're invited to BluWav CRM Beta");
+  const body=encodeURIComponent("Hi "+name+",\n\nYou've been invited to test BluWav CRM!\n\n🔗 Access: https://www.bluwavcrm.com\n🔑 Access Code: "+code+"\n\nSign up with this email address ("+email+") to get started.\nYour 14-day free trial begins automatically.\n\nQuestions? Reply to this email.\n\n— Andrea M. Tanguay\nFounder, BluWav");
+  window.open("mailto:"+email+"?subject="+subject+"&body="+body);
+  if(resultEl){resultEl.style.background='rgba(34,197,94,0.08)';resultEl.style.border='1px solid rgba(34,197,94,0.2)';resultEl.style.color='var(--green)';resultEl.textContent='✅ Email client opened for '+name+' ('+email+'). Access code: '+code;}
+  showToast('✅ Invite prepared for '+name,'success');
+  document.getElementById('betaName').value='';
+  document.getElementById('betaEmail').value='';
 }
 
 function filterTenants(q){
