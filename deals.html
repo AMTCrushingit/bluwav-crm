@@ -219,7 +219,7 @@
 <button class="view-btn" onclick="setView('list',this)">☰ List</button>
 </div>
 <button class="btn btn-ghost" onclick="exportOpportunities()">⬇ Export</button>
-<button class="btn btn-primary" onclick="openModal()">+ New Deal</button>
+<button class="btn btn-primary" onclick="openModal()">+ New Opportunity</button>
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
 <div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
@@ -489,7 +489,7 @@ function renderKanban(){
             </div>
           </div>`;
         }).join('')}
-        ${!deals.length?`<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px;">No deals</div>`:''}
+        ${!deals.length?`<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px;">No opportunities</div>`:''}
       </div>
     </div>`;
   }).join('');

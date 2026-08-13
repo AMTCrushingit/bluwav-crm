@@ -541,13 +541,13 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <!-- ══ DEALS VIEW ══ -->
 <div class="view" id="view-deals">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
-<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Sales Pipeline</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Opportunity Pipeline</h1></div>
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Opportunity Pipeline</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Opportunity Pipeline</h1></div>
 <div style="display:flex;gap:8px;align-items:center;">
 <div style="display:flex;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);padding:3px;gap:2px;">
 <button id="dealViewKanban" onclick="setOpportunitiesView('kanban')" style="padding:5px 12px;border-radius:6px;border:none;background:var(--cyan);color:var(--navy-deep);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;">Kanban</button>
 <button id="dealViewList" onclick="setOpportunitiesView('list')" style="padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:0.73rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.15s;">List</button>
 </div>
-<button class="btn btn-primary btn-sm" onclick="openModal('addDeal')">+ New Deal</button>
+<button class="btn btn-primary btn-sm" onclick="openModal('addDeal')">+ New Opportunity</button>
 </div>
 </div>
 <div class="stats-grid">
@@ -560,9 +560,9 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel-hd"><div class="panel-title">💼 All Opportunities — Kanban View</div></div>
 <div class="panel-body">
 <div class="pipe-cols" style="grid-template-columns:repeat(4,1fr);">
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--text3);">Lead</span><span class="pipe-cnt" id="dColLead">0</span></div><div id="dOpportunitiesLead"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--cyan);">Qualified</span><span class="pipe-cnt" id="dColQualified">0</span></div><div id="dOpportunitiesQualified"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--gold);">Proposal</span><span class="pipe-cnt" id="dColProposal">0</span></div><div id="dOpportunitiesProposal"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Deal</button></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--text3);">Lead</span><span class="pipe-cnt" id="dColLead">0</span></div><div id="dOpportunitiesLead"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Opportunity</button></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--cyan);">Qualified</span><span class="pipe-cnt" id="dColQualified">0</span></div><div id="dOpportunitiesQualified"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Opportunity</button></div>
+<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--gold);">Proposal</span><span class="pipe-cnt" id="dColProposal">0</span></div><div id="dOpportunitiesProposal"></div><button class="btn btn-ghost btn-sm" onclick="openModal('addDeal')" style="width:100%;margin-top:4px;">+ Add Opportunity</button></div>
 <div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--success);">Won ✓</span><span class="pipe-cnt" id="dColWon">0</span></div><div id="dOpportunitiesWon"></div></div>
 </div>
 </div>
@@ -809,7 +809,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <div class="modal-overlay" id="modal-addDeal">
 <div class="modal">
-<div class="modal-hd"><h3>💼 Add New Deal</h3><button class="modal-close" onclick="closeModal('addDeal')">✕</button></div>
+<div class="modal-hd"><h3>💼 Add New Opportunity</h3><button class="modal-close" onclick="closeModal('addDeal')">✕</button></div>
 <div class="modal-body">
 <div class="fg">
 <label class="fl">Client <span class="req">*</span></label>
@@ -966,15 +966,9 @@ function updateTrialWidget(signupDateStr){
 // ── ADMIN NOTIFICATION ────────────────────────────────────────────────────────
 // Sends email to BluWav admin when key events happen (new contact, deal, payment)
 function notifyAdmin(subject, body) {
-  var fd = new FormData();
-  fd.append('_replyto', 'hello@bluwavgrowth.com');
-  fd.append('email', 'hello@bluwavgrowth.com');
-  fd.append('_subject', subject);
-  fd.append('message', body);
-  fd.append('_template', 'table');
-  fetch('https://formspree.io/f/xpwzgvkd', {
-    method: 'POST', body: fd, headers: {'Accept': 'application/json'}
-  }).catch(function(e){ console.warn('Admin notify failed:', e); });
+  // Silent notification log — Formspree not configured
+  // To enable: replace with your Formspree form ID or SendGrid API
+  console.log('Admin notify:', subject);
 }
 
 function showToast(msg,type=''){
@@ -1332,7 +1326,7 @@ function renderPipeline(){
           <div class="deal-co">${d.contact_name||'—'}</div>
           <div class="deal-val">${fmt(d.deal_value||d.value||0)}</div>
           <div class="deal-date">${stage==='won'?'✓ Won':'Active'}</div>
-        </div>`).join('')||`<div style="text-align:center;padding:12px;color:var(--text3);font-size:0.75rem;">No deals</div>`;
+        </div>`).join('')||`<div style="text-align:center;padding:12px;color:var(--text3);font-size:0.75rem;">No opportunities</div>`;
     });
   });
 }
@@ -1415,7 +1409,7 @@ async function loadLeaderboard(){
 function loadActivityFeed(){
   const body=document.getElementById('rightPanelBody');
   const activities=[
-    {icon:'🏆',cls:'s',text:'Deal won — <strong>E-Commerce Store</strong> $7,100',time:'2h ago'},
+    {icon:'🏆',cls:'s',text:'Opportunity won — <strong>E-Commerce Store</strong> $7,100',time:'2h ago'},
     {icon:'📧',cls:'c',text:'Email sent to <strong>Sarah Chen</strong>',time:'4h ago'},
     {icon:'💼',cls:'g',text:'New deal — <strong>Annual Retainer</strong> $24,000',time:'Yesterday'},
     {icon:'👤',cls:'o',text:'<strong>3 contacts</strong> added this week',time:'2d ago'},
@@ -1732,7 +1726,7 @@ function openContactProfile(contactId){
             <div style="font-size:10px;color:var(--text3);margin-top:2px;">click to edit</div>
           </div>
         </div>`).join('')
-    : '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;">No deals yet</div>';
+    : '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;">No opportunities yet</div>';
 
   document.getElementById('cpActivityCount').textContent = '...';
   loadContactActivities(contactId);
@@ -1943,7 +1937,7 @@ async function saveDeal(){
     return;
   }
   showToast('Deal saved ✓','success');
-  notifyAdmin('💼 New Deal Added — BluWav Business OS (14-Day Trial)',
+  notifyAdmin('💼 New Opportunity Added — BluWav Business OS (14-Day Trial)',
     'Deal: '+name+'\nValue: $'+val+'\nStage: '+stage+'\nType: '+dealType+'\nAgent: '+currentUser?.email+'\nTime: '+new Date().toLocaleString());
   closeModal('addDeal');
   ['md-name','md-value','md-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -2384,8 +2378,8 @@ function renderCalendar(){
     const isToday = isCurrentMonth && d===today.getDate();
     const dayTasks = allTasks.filter(t=>{
       if(!t.due_date) return false;
-      const td = new Date(t.due_date);
-      return td.getFullYear()===calYear && td.getMonth()===calMonth && td.getDate()===d;
+      const tdParts = t.due_date.split('-');
+      return parseInt(tdParts[0])===calYear && parseInt(tdParts[1])-1===calMonth && parseInt(tdParts[2])===d;
     });
     const dateNum = isToday
       ? '<div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--cyan);color:var(--navy-deep);font-size:0.75rem;font-weight:800;margin-bottom:4px;">'+d+'</div>'
@@ -2813,7 +2807,7 @@ async function loadNotifications(){
         id:'deal_'+d.id,
         icon:'&#x1F4BC;',
         color:'var(--gold)',
-        title: 'Deal closing in '+daysLeft+' day'+(daysLeft!==1?'s':'')+': '+(d.deal_name||d.title),
+        title: 'Opportunity closing in '+daysLeft+' day'+(daysLeft!==1?'s':'')+': '+(d.deal_name||d.title),
         time: d.close_date,
         type:'deal',
         read: false,
@@ -3629,14 +3623,14 @@ async function saveProfileSettings(){
 </div>
 <div style="padding:14px 28px;border-top:1px solid var(--navy-border);display:flex;gap:8px;flex-shrink:0;">
 <button id="cpEditBtn" style="flex:1;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:10px;padding:10px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">✏️ Edit Contact</button>
-<button onclick="cpAddDeal()" style="flex:1;background:var(--cyan);border:none;border-radius:10px;padding:10px;color:var(--navy-deep);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">+ Add Deal</button>
+<button onclick="cpAddDeal()" style="flex:1;background:var(--cyan);border:none;border-radius:10px;padding:10px;color:var(--navy-deep);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">+ Add Opportunity</button>
 </div>
 </div>
 </div>
 <!-- EDIT DEAL MODAL -->
 <div class="modal-overlay" id="modal-editDeal">
 <div class="modal">
-<div class="modal-hd"><h3>✏️ Edit Deal</h3><button class="modal-close" onclick="closeModal('editDeal')">✕</button></div>
+<div class="modal-hd"><h3>✏️ Edit Opportunity</h3><button class="modal-close" onclick="closeModal('editDeal')">✕</button></div>
 <div class="modal-body">
 <input id="ed-id" type="hidden"/>
 <div class="fg">
