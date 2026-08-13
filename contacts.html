@@ -119,6 +119,10 @@
 <option value="created_at-asc">Oldest First</option>
 <option value="full_name-asc">Name A–Z</option>
 <option value="full_name-desc">Name Z–A</option>
+<option value="deal_value-desc">Opportunity Value ↓</option>
+<option value="deal_value-asc">Opportunity Value ↑</option>
+<option value="last_contacted-desc">Last Contacted (Recent)</option>
+<option value="last_contacted-asc">Last Contacted (Oldest)</option>
 </select>
 </div>
 <div class="bulk-bar" id="bulkBar">
@@ -373,7 +377,21 @@ function applyFilters(){
     const mo=!ownerFilter||c.user_id===ownerFilter;
     return mq&&mi&&ms&&mo;
   });
-  filtered.sort((a,b)=>{const av=(a[sortField]||'').toString().toLowerCase(),bv=(b[sortField]||'').toString().toLowerCase();return sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av);});
+  filtered.sort((a,b)=>{
+    const numFields=['deal_value'];
+    const dateFields=['created_at','last_contacted'];
+    if(numFields.includes(sortField)){
+      const av=parseFloat(a[sortField])||0, bv=parseFloat(b[sortField])||0;
+      return sortDir==='asc'?av-bv:bv-av;
+    } else if(dateFields.includes(sortField)){
+      const av=a[sortField]?new Date(a[sortField]).getTime():0;
+      const bv=b[sortField]?new Date(b[sortField]).getTime():0;
+      return sortDir==='asc'?av-bv:bv-av;
+    } else {
+      const av=(a[sortField]||'').toString().toLowerCase(), bv=(b[sortField]||'').toString().toLowerCase();
+      return sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
+    }
+  });
   currentPage=1;renderTable();
 }
 
