@@ -263,8 +263,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
    Mobile   ≤768px  : drawer mode, hamburger visible, full-width drawer
 */
 
-/* Drawer mode — tablet + mobile (≤1024px) */
-@media(max-width:1024px){
+/* Drawer mode — mobile only (≤768px) */
+@media(max-width:768px){
   .sidebar{
     transform:translateX(-100%);
     transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -275,7 +275,6 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
     box-shadow:4px 0 24px rgba(0,0,0,0.4);
   }
   .sidebar.mobile-open{transform:translateX(0);}
-  /* Hide desktop collapse button in drawer mode */
   .collapse-btn{display:none!important;}
   .main{margin-left:0!important;}
   .two-col{grid-template-columns:1fr!important;}
@@ -325,7 +324,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
   flex-shrink:0;
 }
 .hamburger-btn:hover{background:var(--navy-light);border-color:var(--navy-border);color:var(--text);}
-@media(max-width:1024px){.hamburger-btn{display:flex;}}
+@media(max-width:768px){.hamburger-btn{display:flex;}}
 /* ── DATE PICKER ── */
 .dp-wrap{position:relative;display:block;}
 .dp-input{width:100%;padding:10px 14px;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.85rem;font-family:var(--font-body);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;}
@@ -1756,11 +1755,19 @@ function openContactProfile(contactId){
   loadContactActivities(contactId);
   document.getElementById('cpEditBtn').onclick = ()=>{ closeContactProfile(); editContact(contactId); };
   switchCpTab('overview', document.querySelector('.cp-tab[data-tab="overview"]'));
-  document.getElementById('contactProfileModal').style.display='flex';
+  const modal=document.getElementById('contactProfileModal');
+  const backdrop=document.getElementById('contactProfileBackdrop');
+  if(modal){ modal.style.transform='translateX(0)'; }
+  if(backdrop){ backdrop.style.display='block'; }
+  document.body.style.overflow='hidden';
 }
 
 function closeContactProfile(){
-  document.getElementById('contactProfileModal').style.display='none';
+  const modal=document.getElementById('contactProfileModal');
+  const backdrop=document.getElementById('contactProfileBackdrop');
+  if(modal){ modal.style.transform='translateX(100%)'; }
+  if(backdrop){ backdrop.style.display='none'; }
+  document.body.style.overflow='';
   _cpContactId = null;
 }
 
@@ -1852,8 +1859,7 @@ function cpAddDeal(){
 document.addEventListener('click',e=>{
   if(!e.target.closest('#globalSearch')&&!e.target.closest('#searchResults'))
     document.getElementById('searchResults').style.display='none';
-  if(e.target.id==='contactProfileModal')
-    closeContactProfile();
+  // Backdrop click handled by backdrop element directly
 });
 
 // ── MODALS ────────────────────────────────────────────────────────────────────
@@ -3767,9 +3773,10 @@ async function saveProfileSettings(){
 
 </script>
 <!-- CONTACT PROFILE MODAL — Rich tabbed detail view -->
-<div id="contactProfileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;align-items:center;justify-content:center;padding:20px;">
-<div style="background:#0F1628;border:1px solid var(--navy-border);border-radius:20px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6);display:flex;flex-direction:column;">
-<div style="background:linear-gradient(135deg,#0a0e1a,#0d1526);padding:24px 28px 18px;border-radius:20px 20px 0 0;position:relative;flex-shrink:0;">
+<!-- Right slide-out drawer backdrop -->
+<div id="contactProfileBackdrop" onclick="closeContactProfile()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1999;backdrop-filter:blur(2px);"></div>
+<div id="contactProfileModal" style="position:fixed;top:0;right:0;bottom:0;width:480px;max-width:95vw;background:#0F1628;border-left:1px solid var(--navy-border);z-index:2000;overflow-y:auto;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);box-shadow:-8px 0 40px rgba(0,0,0,0.5);">
+<div style="background:linear-gradient(135deg,#0a0e1a,#0d1526);padding:24px 28px 18px;position:relative;flex-shrink:0;border-bottom:1px solid var(--navy-border);">
 <button onclick="closeContactProfile()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;">✕</button>
 <div style="display:flex;align-items:center;gap:16px;">
 <div id="cpInitials" style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#0099B0);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#0a0e1a;flex-shrink:0;">—</div>
@@ -3835,7 +3842,6 @@ async function saveProfileSettings(){
 <div style="padding:14px 28px;border-top:1px solid var(--navy-border);display:flex;gap:8px;flex-shrink:0;">
 <button id="cpEditBtn" style="flex:1;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:10px;padding:10px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">✏️ Edit Contact</button>
 <button onclick="cpAddDeal()" style="flex:1;background:var(--cyan);border:none;border-radius:10px;padding:10px;color:var(--navy-deep);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">+ Add Opportunity</button>
-</div>
 </div>
 </div>
 <!-- EDIT DEAL MODAL -->
