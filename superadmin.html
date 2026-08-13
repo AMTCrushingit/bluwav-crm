@@ -2043,42 +2043,93 @@ function corexGenerateDigest(){
   const btn=document.getElementById('corex-gen-digest-btn');
   const out=document.getElementById('corex-digest-output');
   if(btn){btn.disabled=true;btn.textContent='⏳ Generating...';}
+
   // Update date to today
   const todayStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const dateEl=document.getElementById('corex-digest-date'); if(dateEl)dateEl.textContent=todayStr;
   const titleDateEl=document.getElementById('corex-digest-title-date'); if(titleDateEl)titleDateEl.textContent=todayStr;
-  if(out)out.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3);"><div style="font-size:28px;margin-bottom:10px;animation:corex-pulse 1s ease-in-out infinite;">🧠</div><div style="font-size:13px;">Analysing '+corexLeads.length+' opportunities and generating COREX intelligence digest...</div></div>';
+
+  // Get last digest timestamp — only report NEW leads since then
+  const lastDigestTs=localStorage.getItem('corex_last_digest_ts');
+  const lastDigestDate=lastDigestTs?new Date(parseInt(lastDigestTs)):null;
+
+  // Filter to new leads since last digest (or all if first time)
+  const newLeads=lastDigestDate
+    ? corexLeads.filter(l=>l.foundAt&&new Date(l.foundAt)>lastDigestDate)
+    : corexLeads;
+
+  const sinceLabel=lastDigestDate
+    ? 'since '+lastDigestDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})
+    : 'all time (first digest)';
+
+  if(out)out.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3);"><div style="font-size:28px;margin-bottom:10px;animation:corex-pulse 1s ease-in-out infinite;">🧠</div><div style="font-size:13px;">Analysing '+newLeads.length+' new opportunities '+sinceLabel+'...</div></div>';
+
   setTimeout(()=>{
-    const top5=corexLeads.slice().sort((a,b)=>b.score-a.score).slice(0,5);
-    const hotCount=corexLeads.filter(l=>l.score>=75).length;
-    const pushedCount=corexLeads.filter(l=>l.pushedToCRM).length;
+    if(!newLeads.length){
+      if(out)out.innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--text3);">
+        <div style="font-size:36px;margin-bottom:12px;">✅</div>
+        <div style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:8px;">No new opportunities since last digest</div>
+        <div style="font-size:13px;">Last digest: ${lastDigestDate?lastDigestDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'Never'}</div>
+        <div style="font-size:12px;margin-top:8px;color:var(--text3);">Run an intelligence cycle to discover new opportunities, then generate the digest.</div>
+      </div>`;
+      if(btn){btn.disabled=false;btn.textContent='✨ Generate Digest';}
+      return;
+    }
+
+    const top5=newLeads.slice().sort((a,b)=>b.score-a.score).slice(0,5);
+    const hotCount=newLeads.filter(l=>l.score>=75).length;
+    const pushedCount=newLeads.filter(l=>l.pushedToCRM).length;
+    const urgentCount=newLeads.filter(l=>l.tags&&l.tags.includes('Urgent')).length;
+
+    // Agent breakdown from new leads only
+    const agentCounts={};
+    newLeads.forEach(l=>{if(l.assignedAgent)agentCounts[l.assignedAgent]=(agentCounts[l.assignedAgent]||0)+1;});
+    const agentSummary=Object.entries(agentCounts).map(([a,c])=>`${a}: ${c} lead${c!==1?'s':''}`).join(' · ')||'No assignments yet';
+
+    // Source breakdown
+    const sourceCounts={};
+    newLeads.forEach(l=>{const s=l.source||'Unknown';sourceCounts[s]=(sourceCounts[s]||0)+1;});
+    const topSource=Object.entries(sourceCounts).sort((a,b)=>b[1]-a[1])[0];
+
     const digestHtml=`<div style="color:var(--text2);line-height:1.7;">
-      <h2 style="font-size:16px;font-weight:700;color:#c4b5fd;margin:0 0 12px;">
+      <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(167,139,250,0.15);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:20px;">📅</span>
+        <div style="font-size:12px;color:var(--text3);">Reporting on <strong style="color:var(--text);">${newLeads.length} new opportunit${newLeads.length!==1?'ies':'y'}</strong> discovered ${sinceLabel}</div>
+      </div>
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Executive Summary</h3>
-      <p style="font-size:13px;color:var(--text3);">COREX identified "+(corexLeads.length)+" high-value opportunities across 6 Caribbean territories. "+(hotCount)+" opportunities score ≥75 (Hot). Total addressable budget across active opportunities exceeds USD 220M. Priority focus: OECS Digital Transformation (USD 94M), Caribbean Resilient Renewable Energy (USD 90M), and Caribbean Fintech Founders Network (Score: 94).</p>
-      <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Top 5 Opportunities to Prioritise</h3>
+      <p style="font-size:13px;color:var(--text3);">COREX identified <strong style="color:var(--text);">${newLeads.length}</strong> new opportunities since the last digest. <strong style="color:var(--text);">${hotCount}</strong> score ≥75 (Hot). <strong style="color:var(--text);">${urgentCount}</strong> flagged as Urgent. ${pushedCount>0?pushedCount+' already synced to CRM.':''} Top source: ${topSource?topSource[0]+' ('+topSource[1]+' leads)':'—'}.</p>
+      <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">New Opportunities — Ranked by COREX Fit Index</h3>
       ${top5.map((l,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(139,92,246,.06);border-radius:8px;margin-bottom:6px;border-left:3px solid #8b5cf6;">
         <span style="font-size:14px;font-weight:800;color:#a78bfa;">#${i+1}</span>
-        <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--text);">${l.name}</div><div style="font-size:13px;color:var(--text3);">${l.org} · ${l.country} · ${l.budget}</div></div>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--text);">${l.name}</div><div style="font-size:12px;color:var(--text3);">${l.org} · ${l.country} · ${l.budget}${l.deadline?' · Due: '+l.deadline:''}</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">Assigned: ${l.assignedAgent||'Unassigned'}</div></div>
         <span style="background:rgba(139,92,246,.2);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;">${l.score}</span>
       </div>`).join('')}
+      ${newLeads.length>5?`<div style="font-size:12px;color:var(--text3);text-align:center;padding:8px;">+ ${newLeads.length-5} more new opportunities in the pipeline</div>`:''}
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Recommended Actions</h3>
       <ul style="font-size:13px;color:var(--text3);margin-left:16px;line-height:1.8;">
-        <li>Devon: Submit expression of interest for OECS Digital Transformation Project (deadline Aug 26)</li>
-        <li>Aaliya: Initiate outreach to Caribbean Heart Foundation — CRM implementation contract</li>
-        <li>Marcus: Follow up IDB Lab Accelerator — already pushed to CRM</li>
-        <li>Simone: Engage Caribbean Fintech Founders Network — 120+ founders, highest urgency score</li>
-        <li>All: Monitor BIDC Export Ready Program deadline (Aug 31)</li>
+        ${top5.filter(l=>l.deadline).map(l=>`<li>${l.assignedAgent||'Team'}: Follow up on <strong style="color:var(--text);">${l.name}</strong> — deadline ${l.deadline}</li>`).join('')}
+        ${hotCount>0?`<li>Review all ${hotCount} hot opportunities (score ≥75) for immediate outreach</li>`:''}
+        ${urgentCount>0?`<li>${urgentCount} urgent opportunit${urgentCount!==1?'ies':'y'} require immediate attention</li>`:''}
       </ul>
-      <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Agent Assignment Summary</h3>
-      <p style="font-size:13px;color:var(--text3);">Devon: 5 leads (Gov/RFP) · Aaliya: 7 leads (NGO/Donor) · Marcus: 3 leads (UN/Tech) · Simone: 5 leads (Startup)</p>
+      <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Agent Routing Summary</h3>
+      <p style="font-size:13px;color:var(--text3);">${agentSummary}</p>
+      <div style="margin-top:16px;padding:10px 14px;background:rgba(16,185,129,0.06);border-radius:8px;border-left:3px solid #10b981;font-size:12px;color:var(--text3);">
+        ✅ Digest generated: ${todayStr} · Next digest will only include opportunities discovered after this timestamp.
+      </div>
     </div>`;
+
     if(out)out.innerHTML=digestHtml;
     if(btn){btn.disabled=false;btn.textContent='✨ Regenerate Digest';}
     const copyBtn=document.getElementById('corex-copy-digest-btn');
     if(copyBtn)copyBtn.style.display='inline-block';
-    corexToast('✅ COREX Intelligence Digest generated');
-  },2500);
+
+    // Save timestamp so next digest only shows NEW leads
+    localStorage.setItem('corex_last_digest_ts', Date.now().toString());
+    // Also persist to Supabase
+    db.from('profiles').update({corex_last_digest: new Date().toISOString()}).eq('id', (window._saCurrentUser||{}).id||'').then(()=>{}).catch(()=>{});
+
+    corexToast('✅ COREX Intelligence Digest generated — '+newLeads.length+' new opportunities');
+  },2000);
 }
 
 function corexCopyDigest(){
