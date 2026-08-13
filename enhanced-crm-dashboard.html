@@ -234,6 +234,14 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 .modal{background:#0F1628;border:1px solid var(--navy-border);border-radius:var(--radius-xl);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;position:relative;}
 .modal-hd{padding:22px 26px 18px;border-bottom:1px solid var(--navy-border);display:flex;align-items:center;justify-content:space-between;}
 .modal-hd h3{font-family:var(--font-display);font-size:1.1rem;color:var(--text);}
+/* ── RIGHT SLIDE-OUT DRAWER ── */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:499;display:none;backdrop-filter:blur(2px);}
+.drawer-overlay.open{display:block;}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:500px;max-width:95vw;background:#0F1628;border-left:1px solid var(--navy-border);z-index:500;overflow-y:auto;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);box-shadow:-8px 0 40px rgba(0,0,0,0.5);}
+.drawer.open{transform:translateX(0);}
+.drawer .modal-hd{border-radius:0;position:sticky;top:0;background:#0F1628;z-index:1;}
+.drawer .modal-body{flex:1;overflow-y:auto;}
+.drawer .modal-ft{position:sticky;bottom:0;background:#0F1628;border-top:1px solid var(--navy-border);padding:16px 24px;display:flex;gap:10px;}
 .modal-close{background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;transition:var(--transition);}
 .modal-close:hover{color:var(--text);}
 .modal-body{padding:22px 26px;}
@@ -324,7 +332,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
   flex-shrink:0;
 }
 .hamburger-btn:hover{background:var(--navy-light);border-color:var(--navy-border);color:var(--text);}
-@media(max-width:768px){.hamburger-btn{display:flex;}}
+@media(max-width:768px){.hamburger-btn{display:flex!important;}}
 /* ── DATE PICKER ── */
 .dp-wrap{position:relative;display:block;}
 .dp-input{width:100%;padding:10px 14px;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.85rem;font-family:var(--font-body);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;}
@@ -406,7 +414,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <h1 id="dashGreeting">Loading...</h1>
 </div>
 <div class="tb-actions">
-<button aria-label="Toggle menu" class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileSidebar()" title="Menu">☰</button>
+<button aria-label="Toggle menu" class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileSidebar()" style="display:none;" title="Menu">☰</button>
 <div style="position:relative;">
 <input id="globalSearch" onblur="this.style.borderColor='var(--navy-border)';this.style.width='220px'" onfocus="this.style.borderColor='var(--cyan)';this.style.width='280px'" oninput="globalSearchFn(this.value)" placeholder="🔍 Search contacts, deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.8rem;padding:7px 14px;outline:none;width:220px;transition:var(--transition);font-family:var(--font-body);"/>
 <div id="searchResults" style="position:absolute;top:100%;left:0;right:0;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-md);margin-top:4px;display:none;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
@@ -810,7 +818,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div><!-- /content -->
 </div><!-- /main -->
 <!-- ══ MODALS ══ -->
-<div class="modal-overlay" id="modal-addContact">
+<div class="drawer-overlay" id="addContactBackdrop" onclick="closeDrawer('modal-addContact')"></div>
+<div class="modal-overlay drawer" id="modal-addContact">
 <div class="modal">
 <div class="modal-hd"><h3>👥 Add New Contact</h3><button class="modal-close" onclick="closeModal('addContact')">✕</button></div>
 <div class="modal-body">
@@ -830,7 +839,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 </div>
-<div class="modal-overlay" id="modal-addDeal">
+<div class="drawer-overlay" id="addDealBackdrop" onclick="closeDrawer('modal-addDeal')"></div>
+<div class="modal-overlay drawer" id="modal-addDeal">
 <div class="modal">
 <div class="modal-hd"><h3>💼 Add New Opportunity</h3><button class="modal-close" onclick="closeModal('addDeal')">✕</button></div>
 <div class="modal-body">
@@ -1878,6 +1888,8 @@ function openModal(id){
       });
     }
   }
+  const drawerIds=['addContact','editContact','addDeal','editDeal'];
+  if(drawerIds.includes(id)){ openDrawer('modal-'+id); return; }
   document.getElementById('modal-'+id)?.classList.add('open');
   // Populate contact dropdown for deal modal
   if(id==='addDeal'){
@@ -1892,7 +1904,11 @@ function openModal(id){
     }
   }
 }
-function closeModal(id){document.getElementById('modal-'+id)?.classList.remove('open');}
+function closeModal(id){
+  const drawerIds=['addContact','editContact','addDeal','editDeal'];
+  if(drawerIds.includes(id)){ closeDrawer('modal-'+id); return; }
+  document.getElementById('modal-'+id)?.classList.remove('open');
+}
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('open');});
 
 async function saveContact(){
@@ -1900,6 +1916,15 @@ async function saveContact(){
   const last=document.getElementById('mc-last')?.value.trim();
   const email=document.getElementById('mc-email')?.value.trim();
   if(!first||!email){showToast('Please fill in required fields','');return;}
+  // Validate email format
+  const emailEl=document.getElementById('mc-email');
+  if(email && !validateEmail(email)){showFieldError(emailEl,'Please enter a valid email (e.g. name@company.com)');return;}
+  else if(emailEl) clearFieldError(emailEl);
+  // Validate phone format
+  const phoneEl=document.getElementById('mc-phone');
+  const phone=phoneEl?.value.trim();
+  if(phone && !validatePhone(phone)){showFieldError(phoneEl,'Please enter a valid phone (e.g. +1 868 555 0000)');return;}
+  else if(phoneEl) clearFieldError(phoneEl);
   // Build contact with only columns that exist in the contacts table
   const contact={
     full_name:(first+' '+last).trim(),
@@ -1936,7 +1961,17 @@ async function saveContact(){
 
 async function saveDeal(){
   const name=document.getElementById('md-name')?.value.trim();
-  if(!name){showToast('Please enter a deal name','');return;}
+  if(!name){showToast('Please enter an opportunity name','');return;}
+  // Validate close date format
+  const closeDateEl=document.getElementById('md-close-date');
+  const closeDate=closeDateEl?.value;
+  if(closeDate && !validateDate(closeDate)){showFieldError(closeDateEl,'Please select a valid date');return;}
+  else if(closeDateEl) clearFieldError(closeDateEl);
+  // Validate value is positive
+  const valEl=document.getElementById('md-value');
+  const valRaw=parseFloat(valEl?.value)||0;
+  if(valEl && valEl.value && valRaw<0){showFieldError(valEl,'Value must be a positive number');return;}
+  else if(valEl) clearFieldError(valEl);
   const val=parseFloat(document.getElementById('md-value')?.value)||0;
   const stage=(document.getElementById('md-stage')?.value||'lead').toLowerCase();
   const contactId=document.getElementById('md-contact')?.value||null;
@@ -1953,8 +1988,8 @@ async function saveDeal(){
   if(contactId) dealObj.contact_id = contactId;
   var notes = document.getElementById('md-notes')?.value.trim();
   if(notes) dealObj.notes = notes;
-  var closeDate = document.getElementById('md-close-date')?.value||null;
-  if(closeDate) dealObj.close_date = closeDate;
+  var closeDateVal = document.getElementById('md-close-date')?.value||null;
+  if(closeDateVal) dealObj.close_date = closeDateVal;
   var probability = document.getElementById('md-probability')?.value;
   if(probability) dealObj.probability = parseInt(probability);
 
@@ -2171,6 +2206,64 @@ function initDatePickers(){
   createDatePicker('task-due-date','Select due date');
   createDatePicker('ed-close-date','Select close date');
   createDatePicker('ev-date','Select event date');
+}
+
+
+
+// ── DRAWER OPEN/CLOSE ────────────────────────────────────────────
+function openDrawer(id){
+  const drawer=document.getElementById(id);
+  const backdropId=id.replace('modal-','')+'Backdrop';
+  const backdrop=document.getElementById(backdropId);
+  if(drawer){drawer.classList.add('open');}
+  if(backdrop){backdrop.classList.add('open');}
+  document.body.style.overflow='hidden';
+}
+function closeDrawer(id){
+  const drawer=document.getElementById(id);
+  const backdropId=id.replace('modal-','')+'Backdrop';
+  const backdrop=document.getElementById(backdropId);
+  if(drawer){drawer.classList.remove('open');}
+  if(backdrop){backdrop.classList.remove('open');}
+  document.body.style.overflow='';
+}
+
+// ── VALIDATION HELPERS ──────────────────────────────────────────
+function validateEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+function validatePhone(phone){
+  const cleaned = phone.replace(/[\s\-\(\)\.]/g,'');
+  return /^\+?[0-9]{7,15}$/.test(cleaned);
+}
+function validateDate(dateStr){
+  if(!dateStr) return true; // optional
+  return /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+}
+function showFieldError(inputEl, msg){
+  inputEl.style.borderColor='var(--error)';
+  let err=inputEl.parentNode.querySelector('.field-err');
+  if(!err){err=document.createElement('div');err.className='field-err';err.style.cssText='color:var(--error);font-size:11px;margin-top:3px;';inputEl.parentNode.appendChild(err);}
+  err.textContent=msg;
+}
+function clearFieldError(inputEl){
+  inputEl.style.borderColor='';
+  const err=inputEl.parentNode.querySelector('.field-err');
+  if(err)err.remove();
+}
+function validateContactForm(prefix){
+  let valid=true;
+  const emailEl=document.getElementById(prefix+'-email')||document.getElementById(prefix+'email');
+  const phoneEl=document.getElementById(prefix+'-phone')||document.getElementById(prefix+'phone');
+  if(emailEl&&emailEl.value.trim()){
+    if(!validateEmail(emailEl.value)){showFieldError(emailEl,'Please enter a valid email address');valid=false;}
+    else clearFieldError(emailEl);
+  }
+  if(phoneEl&&phoneEl.value.trim()){
+    if(!validatePhone(phoneEl.value)){showFieldError(phoneEl,'Please enter a valid phone number (e.g. +1 868 555 0000)');valid=false;}
+    else clearFieldError(phoneEl);
+  }
+  return valid;
 }
 
 // ── TASK & CALENDAR ALERTS ──────────────────────────────────────
@@ -3845,7 +3938,8 @@ async function saveProfileSettings(){
 </div>
 </div>
 <!-- EDIT DEAL MODAL -->
-<div class="modal-overlay" id="modal-editDeal">
+<div class="drawer-overlay" id="editDealBackdrop" onclick="closeDrawer('modal-editDeal')"></div>
+<div class="modal-overlay drawer" id="modal-editDeal">
 <div class="modal">
 <div class="modal-hd"><h3>✏️ Edit Opportunity</h3><button class="modal-close" onclick="closeModal('editDeal')">✕</button></div>
 <div class="modal-body">
@@ -3913,7 +4007,8 @@ async function saveProfileSettings(){
 </div>
 </div>
 <!-- EDIT CONTACT MODAL -->
-<div class="modal-overlay" id="modal-editContact">
+<div class="drawer-overlay" id="editContactBackdrop" onclick="closeDrawer('modal-editContact')"></div>
+<div class="modal-overlay drawer" id="modal-editContact">
 <div class="modal">
 <div class="modal-hd"><h3>✏️ Edit Contact</h3><button class="modal-close" onclick="closeModal('editContact')">✕</button></div>
 <div class="modal-body">
