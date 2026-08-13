@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav Business OS — Command Center</title>
+<title>BluWav CRM — Command Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -34,6 +34,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 .sidebar.collapsed .nav-label,.sidebar.collapsed .nav-text,.sidebar.collapsed .nb,.sidebar.collapsed .user-info,.sidebar.collapsed .trial-w,.sidebar.collapsed .logo-sub{display:none;}
 .sidebar.collapsed .logo-wm{font-size:16px;}
 .sidebar.collapsed .ni{justify-content:center;padding:10px;}
+/* Always show collapse button so user can re-expand */
+.sidebar.collapsed .collapse-btn{display:flex!important;margin:0 auto;}
 .sidebar-logo{padding:18px 14px;border-bottom:1px solid var(--navy-border);display:flex;align-items:center;justify-content:space-between;}
 .logo{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-decoration:none;}
 .logo-wm{font-family:var(--font-display);font-size:1.35rem;font-weight:700;line-height:1;}
@@ -45,6 +47,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 .sidebar-nav{flex:1;padding:12px 0;}
 .ns{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);padding:10px 14px 4px;}
 .ni{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:var(--radius-md);cursor:pointer;transition:var(--transition);color:var(--text3);font-size:0.88rem;font-weight:500;text-decoration:none;position:relative;border:1px solid transparent;margin:1px 8px;}
+.ni:visited{color:var(--text3);}
+.ni:visited:hover{color:var(--text);}
 .ni:hover{background:var(--navy-light);color:var(--text);}
 .ni.active{background:var(--cyan-glow);color:var(--cyan);font-weight:600;border-color:rgba(0,200,224,0.15);}
 .ni.active::before{content:'';position:absolute;left:0;top:20%;height:60%;width:2px;background:var(--cyan);border-radius:0 2px 2px 0;}
@@ -330,7 +334,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="sidebar-logo">
 <a class="logo" href="#">
 <span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
-<span class="logo-sub">Business OS</span>
+<span class="logo-sub">CRM</span>
 </a>
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
@@ -1937,7 +1941,7 @@ async function saveDeal(){
     return;
   }
   showToast('Deal saved ✓','success');
-  notifyAdmin('💼 New Opportunity Added — BluWav Business OS (14-Day Trial)',
+  notifyAdmin('💼 New Opportunity Added — BluWav CRM (14-Day Trial)',
     'Deal: '+name+'\nValue: $'+val+'\nStage: '+stage+'\nType: '+dealType+'\nAgent: '+currentUser?.email+'\nTime: '+new Date().toLocaleString());
   closeModal('addDeal');
   ['md-name','md-value','md-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -3509,9 +3513,9 @@ function startRealtime(){
 
     .subscribe(function(status){
       if(status==='SUBSCRIBED'){
-        console.log('BluWav Business OS: Real-time sync active ✓');
+        console.log('BluWav CRM: Real-time sync active ✓');
       } else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){
-        console.warn('BluWav Business OS: Real-time reconnecting...');
+        console.warn('BluWav CRM: Real-time reconnecting...');
         setTimeout(function(){
           if(_realtimeChannel){db.removeChannel(_realtimeChannel);_realtimeChannel=null;startRealtime();}
         },5000);

@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav Business OS — Commission Calculator</title>
+<title>BluWav CRM — Commission Calculator</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -756,7 +756,7 @@ async function submitPayout(){
       console.warn('payout_requests table not ready, using email fallback:', error.message);
       var fd=new FormData();
       fd.append('email','hello@bluwavgrowth.com');
-      fd.append('_subject','Payout Request - BluWav Business OS');
+      fd.append('_subject','Payout Request - BluWav CRM');
       fd.append('message','Agent: '+name+'\nEmail: '+email+'\nAmount: $'+parseFloat(amount).toFixed(2)+'\nPeriod: '+period+'\nBank: '+bank+'\nSummary:\n'+summary);
       fd.append('_template','table');
       const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
