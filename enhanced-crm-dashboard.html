@@ -47,8 +47,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 .sidebar-nav{flex:1;padding:12px 0;}
 .ns{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);padding:10px 14px 4px;}
 .ni{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:var(--radius-md);cursor:pointer;transition:var(--transition);color:var(--text3);font-size:0.88rem;font-weight:500;text-decoration:none;position:relative;border:1px solid transparent;margin:1px 8px;}
-.ni:visited{color:var(--text3);}
-.ni:visited:hover{color:var(--text);}
+.ni:visited,.ni:link{color:var(--text3)!important;}
+.ni:visited:hover{color:var(--text)!important;}
 .ni:hover{background:var(--navy-light);color:var(--text);}
 .ni.active{background:var(--cyan-glow);color:var(--cyan);font-weight:600;border-color:rgba(0,200,224,0.15);}
 .ni.active::before{content:'';position:absolute;left:0;top:20%;height:60%;width:2px;background:var(--cyan);border-radius:0 2px 2px 0;}
@@ -326,6 +326,26 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 }
 .hamburger-btn:hover{background:var(--navy-light);border-color:var(--navy-border);color:var(--text);}
 @media(max-width:1024px){.hamburger-btn{display:flex;}}
+/* ── DATE PICKER ── */
+.dp-wrap{position:relative;display:block;}
+.dp-input{width:100%;padding:10px 14px;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.85rem;font-family:var(--font-body);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;}
+.dp-input:after{content:'📅';font-size:0.9rem;}
+.dp-cal{position:absolute;top:calc(100% + 4px);left:0;z-index:9999;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-md);box-shadow:0 8px 32px rgba(0,0,0,0.4);padding:12px;width:260px;display:none;}
+.dp-cal.open{display:block;}
+.dp-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.dp-nav button{background:none;border:none;color:var(--text2);cursor:pointer;font-size:1rem;padding:4px 8px;border-radius:6px;}
+.dp-nav button:hover{background:var(--navy-light);color:var(--text);}
+.dp-nav span{font-size:0.85rem;font-weight:700;color:var(--text);}
+.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.dp-day-hd{font-size:0.65rem;font-weight:700;color:var(--text3);text-align:center;padding:3px 0;}
+.dp-day{font-size:0.78rem;text-align:center;padding:5px 2px;border-radius:6px;cursor:pointer;color:var(--text2);}
+.dp-day:hover{background:var(--navy-light);color:var(--text);}
+.dp-day.today{color:var(--cyan);font-weight:700;}
+.dp-day.selected{background:var(--cyan);color:var(--navy-deep);font-weight:700;}
+.dp-day.other-month{color:var(--text3);opacity:0.4;}
+.dp-clear{margin-top:8px;text-align:right;}
+.dp-clear button{background:none;border:none;color:var(--text3);font-size:0.75rem;cursor:pointer;font-family:var(--font-body);}
+.dp-clear button:hover{color:var(--error);}
 </style>
 </head>
 <body>
@@ -2023,6 +2043,190 @@ function startPresence() {
 }
 
 // ── SIGN OUT ──────────────────────────────────────────────────────────────────
+// ── DATE PICKER ──────────────────────────────────────────────────
+const DP_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DP_DAYS=['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+function createDatePicker(inputId, label){
+  const hidden = document.getElementById(inputId);
+  if(!hidden) return;
+  hidden.style.display='none';
+
+  const wrap = document.createElement('div');
+  wrap.className='dp-wrap';
+  hidden.parentNode.insertBefore(wrap, hidden);
+  wrap.appendChild(hidden);
+
+  const btn = document.createElement('button');
+  btn.type='button';
+  btn.className='dp-input fi';
+  btn.setAttribute('data-dp', inputId);
+  const now = new Date();
+  btn.textContent = hidden.value ? formatDpDate(hidden.value) : (label||'Select date');
+  wrap.insertBefore(btn, hidden);
+
+  const cal = document.createElement('div');
+  cal.className='dp-cal';
+  cal.setAttribute('data-dp-cal', inputId);
+  wrap.appendChild(cal);
+
+  let dpYear = now.getFullYear();
+  let dpMonth = now.getMonth();
+
+  function renderCal(){
+    const today = new Date();
+    const selected = hidden.value;
+    const firstDay = new Date(dpYear, dpMonth, 1).getDay();
+    const daysInMonth = new Date(dpYear, dpMonth+1, 0).getDate();
+    const prevDays = new Date(dpYear, dpMonth, 0).getDate();
+
+    let html = `<div class="dp-nav">
+      <button onclick="dpPrev('${inputId}')">&#8249;</button>
+      <span>${DP_MONTHS[dpMonth]} ${dpYear}</span>
+      <button onclick="dpNext('${inputId}')">&#8250;</button>
+    </div><div class="dp-grid">`;
+    DP_DAYS.forEach(d=>{ html+=`<div class="dp-day-hd">${d}</div>`; });
+
+    for(let i=0;i<firstDay;i++){
+      const d=prevDays-firstDay+1+i;
+      html+=`<div class="dp-day other-month">${d}</div>`;
+    }
+    for(let d=1;d<=daysInMonth;d++){
+      const mm=String(dpMonth+1).padStart(2,'0');
+      const dd=String(d).padStart(2,'0');
+      const val=`${dpYear}-${mm}-${dd}`;
+      const isToday=d===today.getDate()&&dpMonth===today.getMonth()&&dpYear===today.getFullYear();
+      const isSel=val===selected;
+      html+=`<div class="dp-day${isToday?' today':''}${isSel?' selected':''}" onclick="dpSelect('${inputId}','${val}')">${d}</div>`;
+    }
+    const remaining=(7-(firstDay+daysInMonth)%7)%7;
+    for(let i=1;i<=remaining;i++) html+=`<div class="dp-day other-month">${i}</div>`;
+    html+=`</div><div class="dp-clear"><button onclick="dpClear('${inputId}')">✕ Clear</button></div>`;
+    cal.innerHTML=html;
+  }
+
+  window['_dp_'+inputId]={year:()=>dpYear,month:()=>dpMonth,setYear:(y)=>{dpYear=y;renderCal();},setMonth:(m)=>{dpMonth=m;renderCal();}};
+
+  btn.addEventListener('click',function(e){
+    e.stopPropagation();
+    document.querySelectorAll('.dp-cal.open').forEach(c=>{if(c!==cal)c.classList.remove('open');});
+    cal.classList.toggle('open');
+    if(cal.classList.contains('open')) renderCal();
+  });
+
+  document.addEventListener('click',function(e){
+    if(!wrap.contains(e.target)) cal.classList.remove('open');
+  });
+}
+
+function formatDpDate(val){
+  if(!val) return '';
+  const p=val.split('-');
+  return DP_MONTHS[parseInt(p[1])-1]+' '+parseInt(p[2])+', '+p[0];
+}
+
+function dpSelect(inputId, val){
+  const hidden=document.getElementById(inputId);
+  if(hidden){ hidden.value=val; hidden.dispatchEvent(new Event('change')); }
+  const btn=document.querySelector(`[data-dp="${inputId}"]`);
+  if(btn) btn.textContent=formatDpDate(val);
+  const cal=document.querySelector(`[data-dp-cal="${inputId}"]`);
+  if(cal) cal.classList.remove('open');
+}
+
+function dpClear(inputId){
+  const hidden=document.getElementById(inputId);
+  if(hidden){ hidden.value=''; hidden.dispatchEvent(new Event('change')); }
+  const btn=document.querySelector(`[data-dp="${inputId}"]`);
+  if(btn) btn.textContent='Select date';
+  const cal=document.querySelector(`[data-dp-cal="${inputId}"]`);
+  if(cal) cal.classList.remove('open');
+}
+
+function dpPrev(inputId){
+  const dp=window['_dp_'+inputId];
+  if(!dp) return;
+  let m=dp.month()-1, y=dp.year();
+  if(m<0){m=11;y--;}
+  dp.setYear(y); dp.setMonth(m);
+}
+
+function dpNext(inputId){
+  const dp=window['_dp_'+inputId];
+  if(!dp) return;
+  let m=dp.month()+1, y=dp.year();
+  if(m>11){m=0;y++;}
+  dp.setYear(y); dp.setMonth(m);
+}
+
+// Init all date pickers after DOM ready
+function initDatePickers(){
+  createDatePicker('md-close-date','Select close date');
+  createDatePicker('task-due-date','Select due date');
+  createDatePicker('ed-close-date','Select close date');
+  createDatePicker('ev-date','Select event date');
+}
+
+// ── TASK & CALENDAR ALERTS ──────────────────────────────────────
+function initTaskAlerts(){
+  // Request browser notification permission
+  if('Notification' in window && Notification.permission === 'default'){
+    Notification.requestPermission();
+  }
+  // Check every 5 minutes
+  checkTaskAlerts();
+  setInterval(checkTaskAlerts, 5 * 60 * 1000);
+}
+
+function checkTaskAlerts(){
+  if(!allTasks || !allTasks.length) return;
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+
+  allTasks.forEach(t => {
+    if(t.completed || !t.due_date) return;
+    const alertKey = 'bw_alert_' + t.id;
+    if(localStorage.getItem(alertKey)) return; // already alerted
+
+    const parts = t.due_date.split('-');
+    const dueDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+
+    let shouldAlert = false;
+    let alertMsg = '';
+
+    if(t.due_time){
+      // Has time — alert 1 hour before
+      const [h,m] = t.due_time.split(':').map(Number);
+      const dueDateTime = new Date(dueDate);
+      dueDateTime.setHours(h, m, 0, 0);
+      const diffMs = dueDateTime - now;
+      if(diffMs > 0 && diffMs <= 60 * 60 * 1000){
+        shouldAlert = true;
+        alertMsg = `⏰ Due in ${Math.round(diffMs/60000)} min: ${t.title}`;
+      }
+    } else {
+      // No time — alert on day of
+      if(t.due_date === todayStr){
+        shouldAlert = true;
+        alertMsg = `📅 Due today: ${t.title}`;
+      }
+    }
+
+    if(shouldAlert){
+      localStorage.setItem(alertKey, '1');
+      // In-app toast
+      showToast(alertMsg, 'warning');
+      // Browser notification
+      if('Notification' in window && Notification.permission === 'granted'){
+        new Notification('BluWav CRM', {
+          body: alertMsg,
+          icon: '/favicon.ico'
+        });
+      }
+    }
+  });
+}
+
 function signOut(){
   sessionStorage.removeItem('bw_gate_ok');
   sessionStorage.removeItem('bw_last_active');
@@ -2258,6 +2462,7 @@ async function loadTasks(){
   } catch(e){ console.warn('loadTasks:', e.message); }
   allTasks = tasksData;
   renderTasks();
+  initTaskAlerts();
 }
 
 function renderTasks(){
@@ -2412,6 +2617,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(addTaskBtn){
     addTaskBtn.onclick = saveTask;
   }
+  // Init calendar date pickers
+  initDatePickers();
 });
 
 // ── ADD EDIT BUTTON TO DEAL CARDS in renderPipeline ──────────────────────────
