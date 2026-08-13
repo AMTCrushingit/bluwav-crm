@@ -1567,11 +1567,27 @@ function corexShowModule(name){
 
 // ---- Init COREX content ----
 let _corexModuleSet=false;
-function corexInitContent(){
-  // Always reload from localStorage so new leads/pushes are reflected
-  const stored=localStorage.getItem('corex_leads');
-  if(stored){try{corexLeads=JSON.parse(stored);}catch(e){corexLeads=[...SEED_LEADS];localStorage.setItem('corex_leads',JSON.stringify(corexLeads));}}
-  else{corexLeads=[...SEED_LEADS];localStorage.setItem('corex_leads',JSON.stringify(corexLeads));}
+async function corexInitContent(){
+  // Load from Supabase first, fall back to localStorage, then seed data
+  try{
+    const {data,error}=await db.from('corex_leads').select('*').order('created_at',{ascending:false}).limit(200);
+    if(!error && data && data.length){
+      corexLeads=data;
+    } else {
+      // Fall back to localStorage
+      const stored=localStorage.getItem('corex_leads');
+      if(stored){try{corexLeads=JSON.parse(stored);}catch(e){corexLeads=[...SEED_LEADS];}}
+      else{corexLeads=[...SEED_LEADS];}
+      // Try to save seed data to Supabase
+      if(corexLeads.length && (!data||!data.length)){
+        try{ await db.from('corex_leads').upsert(corexLeads.map(l=>({...l,id:l.id}))); }catch(e){}
+      }
+    }
+  }catch(e){
+    const stored=localStorage.getItem('corex_leads');
+    if(stored){try{corexLeads=JSON.parse(stored);}catch(e2){corexLeads=[...SEED_LEADS];}}
+    else{corexLeads=[...SEED_LEADS];}
+  }
   // Always re-render stats and table so counts are live
   corexRenderStats();
   corexRenderLeads();
@@ -1884,6 +1900,8 @@ async function corexPushCRM(id){
 
   lead.pushedToCRM=true;lead.status='Pushed';
   localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
+  // Persist to Supabase
+  try{ await db.from('corex_leads').upsert({...lead}); }catch(e){}
   corexRenderStats();
   corexRenderLeads();
   if(document.getElementById('corex-module-opportunities')?.style.display==='block') corexRenderPipeline();
@@ -1898,7 +1916,7 @@ function corexOpenLead(id){
 }
 
 // ---- Run cycle ----
-function corexRunCycle(){
+async function corexRunCycle(){
   corexToast('⚡ COREX intelligence cycle running...');
   const btn=document.getElementById('corex-run-btn');
   if(btn){btn.disabled=true;btn.innerHTML='⏳ Scanning...';}
@@ -1923,6 +1941,8 @@ function corexRunCycle(){
     ];
     corexLeads.unshift(...newLeads);
     localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
+    // Persist new leads to Supabase (async, non-blocking)
+    db.from('corex_leads').upsert(newLeads).then(()=>{}).catch(e=>console.warn('COREX save:',e.message));
     // Update all views
     corexRenderStats();
     corexRenderLeads();
@@ -1945,13 +1965,17 @@ function corexGenerateDigest(){
   const btn=document.getElementById('corex-gen-digest-btn');
   const out=document.getElementById('corex-digest-output');
   if(btn){btn.disabled=true;btn.textContent='⏳ Generating...';}
-  if(out)out.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3);"><div style="font-size:28px;margin-bottom:10px;animation:corex-pulse 1s ease-in-out infinite;">🧠</div><div style="font-size:13px;">Analysing 20 opportunities and generating COREX intelligence digest...</div></div>';
+  // Update date to today
+  const todayStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const dateEl=document.getElementById('corex-digest-date'); if(dateEl)dateEl.textContent=todayStr;
+  const titleDateEl=document.getElementById('corex-digest-title-date'); if(titleDateEl)titleDateEl.textContent=todayStr;
+  if(out)out.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3);"><div style="font-size:28px;margin-bottom:10px;animation:corex-pulse 1s ease-in-out infinite;">🧠</div><div style="font-size:13px;">Analysing '+corexLeads.length+' opportunities and generating COREX intelligence digest...</div></div>';
   setTimeout(()=>{
     const top5=corexLeads.slice().sort((a,b)=>b.score-a.score).slice(0,5);
     const hotCount=corexLeads.filter(l=>l.score>=75).length;
     const pushedCount=corexLeads.filter(l=>l.pushedToCRM).length;
     const digestHtml=`<div style="color:var(--text2);line-height:1.7;">
-      <h2 style="font-size:16px;font-weight:700;color:#c4b5fd;margin:0 0 12px;">&#x1F9E0; COREX Intelligence Digest — August 6, 2026</h2>
+      <h2 style="font-size:16px;font-weight:700;color:#c4b5fd;margin:0 0 12px;">
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Executive Summary</h3>
       <p style="font-size:13px;color:var(--text3);">COREX identified "+(corexLeads.length)+" high-value opportunities across 6 Caribbean territories. "+(hotCount)+" opportunities score ≥75 (Hot). Total addressable budget across active opportunities exceeds USD 220M. Priority focus: OECS Digital Transformation (USD 94M), Caribbean Resilient Renewable Energy (USD 90M), and Caribbean Fintech Founders Network (Score: 94).</p>
       <h3 style="font-size:13px;font-weight:700;color:#a78bfa;margin:14px 0 6px;">Top 5 Opportunities to Prioritise</h3>
