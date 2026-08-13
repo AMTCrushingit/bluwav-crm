@@ -1067,17 +1067,7 @@ function touchActivity() {
 
 // Main auth init — runs immediately
 (async function() {
-  // 1. Check if we have a session at all
-  // Wait for session to establish after login redirect
-  await new Promise(r => setTimeout(r, 800));
-
-  const { data: { session } } = await db.auth.getSession();
-
-  if (!session) {
-    // No session — go to login
-    window.location.href = 'login.html';
-    return;
-  }
+  
 
   // 2. Check 5-minute inactivity timeout
   const lastActive = parseInt(sessionStorage.getItem('bw_last_active') || '0');

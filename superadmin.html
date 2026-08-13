@@ -1076,6 +1076,12 @@ function openGmailInvite(){
   const body=encodeURIComponent(bodyEl?bodyEl.textContent:'');
   const url='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(d.email)+'&su='+subject+'&body='+body;
   window.open(url,'_blank');
+  // Show attachment alert if file was selected, then reset form
+  const attachEl=document.getElementById('betaAttachment');
+  if(attachEl&&attachEl.files&&attachEl.files[0]){
+    alert('⚠️ IMPORTANT: Gmail has opened. Please attach "'+attachEl.files[0].name+'" before sending the email.');
+  }
+  setTimeout(resetBetaInviteForm, 1500);
 }
 
 function openOutlookInvite(){
@@ -1087,6 +1093,23 @@ function openOutlookInvite(){
   const body=encodeURIComponent(bodyEl?bodyEl.textContent:'');
   const url='https://outlook.live.com/mail/0/deeplink/compose?to='+encodeURIComponent(d.email)+'&subject='+subject+'&body='+body;
   window.open(url,'_blank');
+  // Show attachment alert if file was selected, then reset form
+  const attachEl=document.getElementById('betaAttachment');
+  if(attachEl&&attachEl.files&&attachEl.files[0]){
+    alert('⚠️ IMPORTANT: Outlook has opened. Please attach "'+attachEl.files[0].name+'" before sending the email.');
+  }
+  setTimeout(resetBetaInviteForm, 1500);
+}
+
+function resetBetaInviteForm(){
+  const panel=document.getElementById('betaInvitePanel');
+  if(panel) panel.style.display='none';
+  const nameEl=document.getElementById('betaName'); if(nameEl) nameEl.value='';
+  const emailEl=document.getElementById('betaEmail'); if(emailEl) emailEl.value='';
+  const attachEl=document.getElementById('betaAttachment'); if(attachEl) attachEl.value='';
+  const reminderEl=document.getElementById('betaAttachReminder'); if(reminderEl) reminderEl.style.display='none';
+  window._betaInviteData=null;
+  showToast('✅ Invite sent — form cleared for next tester','success');
 }
 
 function filterTenants(q){
