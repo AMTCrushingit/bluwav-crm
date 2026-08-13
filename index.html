@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- BW-CRM-VERSION:v2026-08-13 -->
 <html>
 <head>
   <meta charset="UTF-8">
@@ -8,40 +7,5 @@
 </head>
 <body>
   <script>window.location.href = 'login.html';</script>
-
-<script>
-// BluWav CRM: Mobile sidebar toggle
-(function(){
-  function toggleSidebarMobile(){
-    var s = document.getElementById('sidebar');
-    var o = document.getElementById('mobOverlay');
-    if(!s) return;
-    s.classList.toggle('mobile-open');
-    if(o) o.classList.toggle('active');
-  }
-  // Create overlay if not exists
-  document.addEventListener('DOMContentLoaded', function(){
-    if(!document.getElementById('mobOverlay')){
-      var ov = document.createElement('div');
-      ov.id = 'mobOverlay';
-      ov.className = 'mob-overlay';
-      ov.onclick = function(){ 
-        var s = document.getElementById('sidebar');
-        if(s) s.classList.remove('mobile-open');
-        ov.classList.remove('active');
-      };
-      document.body.appendChild(ov);
-    }
-    // Wire collapse-btn to mobile toggle on mobile
-    var btn = document.querySelector('.collapse-btn');
-    if(btn){
-      btn.addEventListener('click', function(e){
-        if(window.innerWidth <= 768){ e.stopPropagation(); toggleSidebarMobile(); }
-      });
-    }
-  });
-})();
-</script>
-
 </body>
 </html>

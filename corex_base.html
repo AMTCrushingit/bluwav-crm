@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- BW-CRM-VERSION:v2026-08-13 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -90,20 +89,7 @@
     .digest-content table { margin: 10px 0; }
     .digest-content table th { font-size: 12px; background: #f0f9ff; }
     .digest-content table td { font-size: 13px; }
-  
-    /* ── BluWav CRM: Collapse btn desktop-only, mobile sidebar fix ── */
-    .collapse-btn { display: none !important; }
-    @media (max-width: 768px) {
-      .collapse-btn { display: flex !important; align-items: center; justify-content: center; }
-      .sidebar { position: fixed; left: -240px; top: 0; bottom: 0; z-index: 1000; transition: left 0.3s ease; width: 220px !important; }
-      .sidebar.mobile-open { left: 0 !important; }
-      .sidebar.collapsed { left: -240px !important; }
-      #mainContent, .main { margin-left: 0 !important; }
-      .mob-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
-      .mob-overlay.active { display: block; }
-    }
-
-    </style>
+  </style>
 </head>
 <body data-id="0">
 <app-icon data-id="1" hidden data-icon="radar" data-palette="Blue"></app-icon>
@@ -1090,40 +1076,5 @@ renderAgents();
 renderWeights();
 refreshIcons();
 </script>
-
-<script>
-// BluWav CRM: Mobile sidebar toggle
-(function(){
-  function toggleSidebarMobile(){
-    var s = document.getElementById('sidebar');
-    var o = document.getElementById('mobOverlay');
-    if(!s) return;
-    s.classList.toggle('mobile-open');
-    if(o) o.classList.toggle('active');
-  }
-  // Create overlay if not exists
-  document.addEventListener('DOMContentLoaded', function(){
-    if(!document.getElementById('mobOverlay')){
-      var ov = document.createElement('div');
-      ov.id = 'mobOverlay';
-      ov.className = 'mob-overlay';
-      ov.onclick = function(){ 
-        var s = document.getElementById('sidebar');
-        if(s) s.classList.remove('mobile-open');
-        ov.classList.remove('active');
-      };
-      document.body.appendChild(ov);
-    }
-    // Wire collapse-btn to mobile toggle on mobile
-    var btn = document.querySelector('.collapse-btn');
-    if(btn){
-      btn.addEventListener('click', function(e){
-        if(window.innerWidth <= 768){ e.stopPropagation(); toggleSidebarMobile(); }
-      });
-    }
-  });
-})();
-</script>
-
 </body>
 </html>

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<!-- BW-CRM-VERSION:v2026-08-13 -->
 
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Agent Command Center</title>
+<title>BluWav Business OS — Agent Command Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -150,20 +149,7 @@
     .toast.error{border-color:rgba(239,68,68,0.3);}
     ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:5px;}
     @media(max-width:768px){.sidebar{display:none;}.main{margin-left:0!important;}.kpi-grid{grid-template-columns:repeat(2,1fr);}.main-grid{grid-template-columns:1fr;}.pipeline-mini{grid-template-columns:repeat(3,1fr);}}
-  
-    /* ── BluWav CRM: Collapse btn desktop-only, mobile sidebar fix ── */
-    .collapse-btn { display: none !important; }
-    @media (max-width: 768px) {
-      .collapse-btn { display: flex !important; align-items: center; justify-content: center; }
-      .sidebar { position: fixed; left: -240px; top: 0; bottom: 0; z-index: 1000; transition: left 0.3s ease; width: 220px !important; }
-      .sidebar.mobile-open { left: 0 !important; }
-      .sidebar.collapsed { left: -240px !important; }
-      #mainContent, .main { margin-left: 0 !important; }
-      .mob-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
-      .mob-overlay.active { display: block; }
-    }
-
-    </style>
+  </style>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -593,7 +579,7 @@ async function quickDeal(type,value){
   const newDeal={...data[0],deal_name:data[0].deal_name||data[0].title,deal_value:data[0].deal_value||data[0].value||value,deal_type:data[0].deal_type||type,stage:data[0].stage||'Lead',agent_id:data[0].agent_id||data[0].created_by};
   allOpportunities.unshift(newDeal);
   showToast(`✅ ${type} deal logged for ${name}`,'success');
-  notifyAdmin('💼 New Deal Logged — BluWav CRM Agent Command Center',
+  notifyAdmin('💼 New Deal Logged — BluWav Business OS Agent Command Center',
     'Agent: '+currentUser?.email+'\nContact: '+name+'\nType: '+type+'\nValue: $'+value+'\nTime: '+new Date().toLocaleString());
   loadAgentData();
   renderLeaderboard();
@@ -606,40 +592,5 @@ async function quickDeal(type,value){
   resetTimer();
 })();
 </script>
-
-<script>
-// BluWav CRM: Mobile sidebar toggle
-(function(){
-  function toggleSidebarMobile(){
-    var s = document.getElementById('sidebar');
-    var o = document.getElementById('mobOverlay');
-    if(!s) return;
-    s.classList.toggle('mobile-open');
-    if(o) o.classList.toggle('active');
-  }
-  // Create overlay if not exists
-  document.addEventListener('DOMContentLoaded', function(){
-    if(!document.getElementById('mobOverlay')){
-      var ov = document.createElement('div');
-      ov.id = 'mobOverlay';
-      ov.className = 'mob-overlay';
-      ov.onclick = function(){ 
-        var s = document.getElementById('sidebar');
-        if(s) s.classList.remove('mobile-open');
-        ov.classList.remove('active');
-      };
-      document.body.appendChild(ov);
-    }
-    // Wire collapse-btn to mobile toggle on mobile
-    var btn = document.querySelector('.collapse-btn');
-    if(btn){
-      btn.addEventListener('click', function(e){
-        if(window.innerWidth <= 768){ e.stopPropagation(); toggleSidebarMobile(); }
-      });
-    }
-  });
-})();
-</script>
-
 </body>
 </html>

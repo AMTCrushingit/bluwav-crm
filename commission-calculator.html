@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<!-- BW-CRM-VERSION:v2026-08-13 -->
 
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Commission Calculator</title>
+<title>BluWav Business OS — Commission Calculator</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
@@ -148,20 +147,7 @@
     .toast.error{border-color:rgba(239,68,68,0.3);}
     ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:5px;}
     @media(max-width:900px){.calc-layout{grid-template-columns:1fr;}.scenarios-grid{grid-template-columns:1fr;}.sidebar{display:none;}.main{margin-left:0!important;}}
-  
-    /* ── BluWav CRM: Collapse btn desktop-only, mobile sidebar fix ── */
-    .collapse-btn { display: none !important; }
-    @media (max-width: 768px) {
-      .collapse-btn { display: flex !important; align-items: center; justify-content: center; }
-      .sidebar { position: fixed; left: -240px; top: 0; bottom: 0; z-index: 1000; transition: left 0.3s ease; width: 220px !important; }
-      .sidebar.mobile-open { left: 0 !important; }
-      .sidebar.collapsed { left: -240px !important; }
-      #mainContent, .main { margin-left: 0 !important; }
-      .mob-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
-      .mob-overlay.active { display: block; }
-    }
-
-    </style>
+  </style>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -770,7 +756,7 @@ async function submitPayout(){
       console.warn('payout_requests table not ready, using email fallback:', error.message);
       var fd=new FormData();
       fd.append('email','hello@bluwavgrowth.com');
-      fd.append('_subject','Payout Request - BluWav CRM');
+      fd.append('_subject','Payout Request - BluWav Business OS');
       fd.append('message','Agent: '+name+'\nEmail: '+email+'\nAmount: $'+parseFloat(amount).toFixed(2)+'\nPeriod: '+period+'\nBank: '+bank+'\nSummary:\n'+summary);
       fd.append('_template','table');
       const res = await fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:fd,headers:{'Accept':'application/json'}});
@@ -953,40 +939,5 @@ function switchTab(tab){
 }
 
 </script>
-
-<script>
-// BluWav CRM: Mobile sidebar toggle
-(function(){
-  function toggleSidebarMobile(){
-    var s = document.getElementById('sidebar');
-    var o = document.getElementById('mobOverlay');
-    if(!s) return;
-    s.classList.toggle('mobile-open');
-    if(o) o.classList.toggle('active');
-  }
-  // Create overlay if not exists
-  document.addEventListener('DOMContentLoaded', function(){
-    if(!document.getElementById('mobOverlay')){
-      var ov = document.createElement('div');
-      ov.id = 'mobOverlay';
-      ov.className = 'mob-overlay';
-      ov.onclick = function(){ 
-        var s = document.getElementById('sidebar');
-        if(s) s.classList.remove('mobile-open');
-        ov.classList.remove('active');
-      };
-      document.body.appendChild(ov);
-    }
-    // Wire collapse-btn to mobile toggle on mobile
-    var btn = document.querySelector('.collapse-btn');
-    if(btn){
-      btn.addEventListener('click', function(e){
-        if(window.innerWidth <= 768){ e.stopPropagation(); toggleSidebarMobile(); }
-      });
-    }
-  });
-})();
-</script>
-
 </body>
 </html>
