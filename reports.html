@@ -305,30 +305,37 @@
     if(!session){window.location.href='login.html';return;}
 
     // Load profile
-    const{data:profile}=await db.from('profiles').select('full_name,role,avatar_url').eq('id',session.user.id).single().catch(()=>({data:null}));
+    let profile=null;
+    try{ const r=await db.from('profiles').select('full_name,role,avatar_url').eq('id',session.user.id).single(); profile=r.data; }catch(e){}
     const name=(profile?.full_name)||session.user.email?.split('@')[0]||'User';
     const ini=name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
     const role=(profile?.role||'salesperson');
-    document.getElementById('sidebarName').textContent=name;
-    document.getElementById('topName').textContent=name;
-    document.getElementById('topRole').textContent=role.charAt(0).toUpperCase()+role.slice(1);
-    document.getElementById('sidebarAvatar').textContent=ini;
-    document.getElementById('topAvatar').textContent=ini;
+    const sn=document.getElementById('sidebarName'); if(sn)sn.textContent=name;
+    const tn=document.getElementById('topName'); if(tn)tn.textContent=name;
+    const tr=document.getElementById('topRole'); if(tr)tr.textContent=role.charAt(0).toUpperCase()+role.slice(1);
+    const sa=document.getElementById('sidebarAvatar'); if(sa)sa.textContent=ini;
+    const ta=document.getElementById('topAvatar'); if(ta)ta.textContent=ini;
 
-    // Load data
+    // Load data — manager sees all, salesperson sees own
     const isManager=(role==='manager'||role==='admin'||role==='owner');
-    let dq=db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,created_at,close_date');
-    let cq=db.from('contacts').select('id,full_name,island,created_at,status,user_id');
-    let aq=db.from('activities').select('id,type,note,created_at,user_id').order('created_at',{ascending:false}).limit(20);
-    if(!isManager){ dq=dq.eq('agent_id',session.user.id); cq=cq.eq('user_id',session.user.id); aq=aq.eq('user_id',session.user.id); }
+    let deals=[], contacts=[], activities=[];
+    try{
+      let dq=db.from('deals').select('id,title,deal_name,value,deal_value,stage,agent_id,created_at,close_date');
+      if(!isManager) dq=dq.eq('agent_id',session.user.id);
+      const dr=await dq; deals=dr.data||[];
+    }catch(e){ console.warn('deals load:',e.message); }
+    try{
+      let cq=db.from('contacts').select('id,full_name,island,created_at,status,user_id');
+      if(!isManager) cq=cq.eq('user_id',session.user.id);
+      const cr=await cq; contacts=cr.data||[];
+    }catch(e){ console.warn('contacts load:',e.message); }
+    try{
+      let aq=db.from('activities').select('id,type,note,created_at,user_id').order('created_at',{ascending:false}).limit(20);
+      if(!isManager) aq=aq.eq('user_id',session.user.id);
+      const ar=await aq; activities=ar.data||[];
+    }catch(e){ console.warn('activities load:',e.message); }
 
-    const[{data:deals},{data:contacts},{data:activities}]=await Promise.all([
-      dq.catch(()=>({data:[]})),
-      cq.catch(()=>({data:[]})),
-      aq.catch(()=>({data:[]}))
-    ]);
-
-    allDeals=deals||[]; allContacts=contacts||[]; allActivities=activities||[];
+    allDeals=deals; allContacts=contacts; allActivities=activities;
     renderAll();
   })();
 

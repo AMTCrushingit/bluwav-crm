@@ -2267,7 +2267,7 @@ function renderTasks(){
   }
   if(noTasks) noTasks.style.display='none';
   list.innerHTML = allTasks.map(t=>{
-    const due = t.due_date ? new Date(t.due_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+    const due = t.due_date ? (()=>{ const p=t.due_date.split('-'); return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); })() : '—';
     const done = t.completed||false;
     const priColor = t.priority==='High'?'var(--error)':t.priority==='Medium'?'var(--warning)':'var(--success)';
     return `<div style="display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--navy-border);${done?'opacity:0.5':''}">
@@ -2779,7 +2779,7 @@ async function loadNotifications(){
         .select('*').eq('user_id',userId).eq('completed',false)
         .lte('due_date', now.toISOString().split('T')[0]);
       (tasks||[]).forEach(t=>{
-        const due = new Date(t.due_date);
+        const dp=t.due_date.split('-'); const due=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
         const overdue = due < now;
         notifs.push({
           id:'task_'+t.id,
