@@ -416,15 +416,15 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <!-- Stats -->
 <div class="stats-grid">
-<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Total Customers</span><span>👥</span></div><div class="stat-val" id="metricCustomers">—</div><div class="stat-chg up" id="contactTrend"></div></div>
-<div class="stat g"><div class="stat-hd"><span class="stat-lbl">Active Opportunities</span><span>💼</span></div><div class="stat-val" id="metricOpportunities">—</div><div class="stat-chg up">↑ active</div></div>
-<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Opportunity Value</span><span>💰</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">↑ pipeline</div></div>
-<div class="stat s"><div class="stat-hd"><span class="stat-lbl">Revenue Closed</span><span>🏆</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">This month</div></div>
+<div class="stat c" onclick="showView('contacts')" style="cursor:pointer;" title="View all customers"><div class="stat-hd"><span class="stat-lbl">Total Customers</span><span>👥</span></div><div class="stat-val" id="metricCustomers">—</div><div class="stat-chg up" id="contactTrend">Click to view →</div></div>
+<div class="stat g" onclick="showView('deals')" style="cursor:pointer;" title="View all opportunities"><div class="stat-hd"><span class="stat-lbl">Active Opportunities</span><span>💼</span></div><div class="stat-val" id="metricOpportunities">—</div><div class="stat-chg up">Click to view →</div></div>
+<div class="stat o" onclick="showView('deals')" style="cursor:pointer;" title="View pipeline value"><div class="stat-hd"><span class="stat-lbl">Opportunity Value</span><span>💰</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">Click to view →</div></div>
+<div class="stat s" onclick="showView('deals')" style="cursor:pointer;" title="View won deals"><div class="stat-hd"><span class="stat-lbl">Revenue Closed</span><span>🏆</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">Click to view →</div></div>
 </div>
 <!-- Quick Actions -->
 <div class="qa-grid">
 <div class="qa" onclick="openModal('addContact')"><div class="qa-icon">➕</div><div class="qa-lbl">New Contact</div></div>
-<div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">💼</div><div class="qa-lbl">New Deal</div></div>
+<div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">💼</div><div class="qa-lbl">New Opportunity</div></div>
 <div class="qa" style="opacity:0.35;pointer-events:none;cursor:not-allowed;" title="Email coming soon"><div class="qa-icon">📧</div><div class="qa-lbl">Send Email</div></div>
 <div class="qa" onclick="openModal('addTask')"><div class="qa-icon">✅</div><div class="qa-lbl">Add Task</div></div>
 </div>
@@ -922,6 +922,8 @@ let revenueChart = null, reportsChart = null;
 const COLORS = ['#00C8E0','#C9A84C','#22C55E','#FF6B2B','#a78bfa','#2980B9','#E74C3C','#27AE60'];
 function ini(n){return(n||'?').split(' ').map(x=>x[0]||'').join('').toUpperCase().slice(0,2);}
 function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
+function fmt(v){return '$'+(v||0).toLocaleString();}
+function fmtK(v){return (v||0)>=1000?'$'+((v||0)/1000).toFixed(1)+'K':fmt(v);}
 
 // -- TRIAL COUNTDOWN --
 function updateTrialWidget(signupDateStr){
