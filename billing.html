@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+<!-- BW-CRM-VERSION:v2026-08-13 -->
 
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav Business OS — Billing &amp; Plan</title>
+<title>BluWav CRM — Billing &amp; Plan</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 // Update banner when plan is activated
 function updatePlanBanner(planName){
@@ -265,7 +266,20 @@ async function processPayment(planName, amount){
     .readonly-banner{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:none;text-align:center;}
     .readonly-banner.show{display:block;}
 
-</style>
+
+    /* ── BluWav CRM: Collapse btn desktop-only, mobile sidebar fix ── */
+    .collapse-btn { display: none !important; }
+    @media (max-width: 768px) {
+      .collapse-btn { display: flex !important; align-items: center; justify-content: center; }
+      .sidebar { position: fixed; left: -240px; top: 0; bottom: 0; z-index: 1000; transition: left 0.3s ease; width: 220px !important; }
+      .sidebar.mobile-open { left: 0 !important; }
+      .sidebar.collapsed { left: -240px !important; }
+      #mainContent, .main { margin-left: 0 !important; }
+      .mob-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+      .mob-overlay.active { display: block; }
+    }
+
+    </style>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -277,7 +291,7 @@ async function processPayment(planName, amount){
 <div class="ns">Operations</div>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
 <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
-<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Growth</div>
@@ -346,7 +360,7 @@ async function processPayment(planName, amount){
 <h3 id="trialHeading" style="margin:0;">🎉 Your 14-Day Free Trial is Active</h3>
 <span id="trialUrgencyBadge" style="display:none;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);animation:pulse 1.5s infinite;">⚠️ EXPIRING SOON</span>
 </div>
-<p id="trialSubtext">Full access to all BluWav Business OS features — setup fee applies at signup</p>
+<p id="trialSubtext">Full access to all BluWav CRM features — setup fee applies at signup</p>
 <div class="trial-progress">
 <div class="trial-bar"><div class="trial-fill" id="trialFill" style="width:100%;"></div></div>
 <div class="trial-dates">
@@ -369,7 +383,7 @@ async function processPayment(planName, amount){
 <div class="plan-info-grid">
 <div class="info-card">
 <div class="info-card-title">Current Plan</div>
-<div class="info-row"><span class="info-label">Plan</span><span class="info-value" style="color:var(--gold);">BluWav Business OS Premium (Trial)</span></div>
+<div class="info-row"><span class="info-label">Plan</span><span class="info-value" style="color:var(--gold);">BluWav CRM Premium (Trial)</span></div>
 <div class="info-row"><span class="info-label">Trial Ends</span><span class="info-value" id="trialEndDate">—</span></div>
 <div class="info-row"><span class="info-label">Post-Trial Price</span><span class="info-value">$179/mo <span style="color:var(--green);font-size:11px;">✅ $299 Onboarding &amp; Setup</span></span></div>
 <div class="info-row"><span class="info-label">Setup Fee</span><span class="info-value">Charged at signup · One-time</span></div>
@@ -559,7 +573,7 @@ async function processPayment(planName, amount){
 <div class="plan-badge" style="background:var(--purple);color:#fff;">🏚 Agency Partner</div>
 <div class="plan-icon">🏚</div>
 <div class="plan-name">White-Label CRM</div>
-<div class="plan-tagline">Resell BluWav Business OS under your own brand. Unlimited clients. Annual contract.</div>
+<div class="plan-tagline">Resell BluWav CRM under your own brand. Unlimited clients. Annual contract.</div>
 <div class="plan-price-block">
 <div class="plan-setup">$499 Onboarding &amp; Setup · Annual contract</div>
 <div class="plan-price-main" style="color:var(--purple);">$697 <span>/month</span></div>
@@ -758,7 +772,7 @@ async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');s
       if(circle) circle.className='trial-days-circle urgent';
       if(badge){badge.style.display='inline-block';badge.textContent='\u274c TRIAL EXPIRED';}
       if(heading) heading.textContent='\u26a0\ufe0f Your Trial Has Expired';
-      if(subtext) subtext.textContent='Activate a plan now to keep your data and continue using BluWav Business OS.';
+      if(subtext) subtext.textContent='Activate a plan now to keep your data and continue using BluWav CRM.';
       if(endEl){endEl.textContent='Trial ended \u2014 activate now';endEl.style.color='#ef4444';}
       if(ctaEl) ctaEl.textContent='Your data is safe for 7 days after expiry';
       if(fillEl) fillEl.style.background='#ef4444';
@@ -777,14 +791,14 @@ async function signOut(){await db.auth.sessionStorage.removeItem('bw_gate_ok');s
     } else if(daysLeft<=7){
       if(circle) circle.className='trial-days-circle warning';
       if(heading) heading.textContent='\u23f1 '+daysLeft+' Days Remaining in Your Trial';
-      if(subtext) subtext.textContent='Full access to all BluWav Business OS features \u2014 activate before your trial ends.';
+      if(subtext) subtext.textContent='Full access to all BluWav CRM features \u2014 activate before your trial ends.';
       if(endEl){endEl.textContent='Expires '+new Date(trialEnd).toLocaleDateString('en-US',{month:'short',day:'numeric'});endEl.style.color='var(--gold)';}
       if(ctaEl) ctaEl.textContent='Activate now and keep everything you\'ve built';
       if(fillEl) fillEl.style.background='linear-gradient(90deg,var(--orange),var(--gold))';
     } else {
       if(circle) circle.className='trial-days-circle';
       if(heading) heading.textContent='\U0001f389 Your 14-Day Free Trial is Active';
-      if(subtext) subtext.textContent='Full access to all BluWav Business OS features — setup fee applies at signup';
+      if(subtext) subtext.textContent='Full access to all BluWav CRM features — setup fee applies at signup';
       if(endEl){endEl.textContent='Ends in '+daysLeft+' days \u2014 no card needed';endEl.style.color='';}
       if(ctaEl) ctaEl.textContent='';
     }
@@ -886,15 +900,15 @@ async function processPayment(){
   // For test mode: accept 4242 4242 4242 4242 as success
   if(cardNum==='4242424242424242'||cardNum.startsWith('4')){
     closePaymentModal();
-    showToast('✅ Plan activated! Welcome to BluWav Business OS.','success');
+    showToast('✅ Plan activated! Welcome to BluWav CRM.','success');
     // Notify admin of new plan activation
-    notifyAdmin('🎉 New Plan Activated — BluWav Business OS',
+    notifyAdmin('🎉 New Plan Activated — BluWav CRM',
       'Plan: '+selectedPlan+'\nBilling: '+selectedBilling+'\nName: '+name+'\nEmail: '+email+'\nTime: '+new Date().toLocaleString());
     // Send confirmation to client
     var cfd=new FormData();
     cfd.append('_replyto',email);cfd.append('email',email);
-    cfd.append('_subject','✅ BluWav Business OS — Your Plan is Active!');
-    cfd.append('message','Hi '+name+',\n\nYour BluWav Business OS plan has been activated successfully!\n\nPlan: '+selectedPlan+'\nBilling: '+selectedBilling+'\n\nYou now have full access to your CRM dashboard at bluwavcrm.com\n\nQuestions? Email us at hello@bluwavgrowth.com\n\n— The BluWav Growth Team');
+    cfd.append('_subject','✅ BluWav CRM — Your Plan is Active!');
+    cfd.append('message','Hi '+name+',\n\nYour BluWav CRM plan has been activated successfully!\n\nPlan: '+selectedPlan+'\nBilling: '+selectedBilling+'\n\nYou now have full access to your CRM dashboard at bluwavcrm.com\n\nQuestions? Email us at hello@bluwavgrowth.com\n\n— The BluWav Growth Team');
     cfd.append('_template','table');
     fetch('https://formspree.io/f/xpwzgvkd',{method:'POST',body:cfd,headers:{'Accept':'application/json'}});
     // Update UI to show active plan
@@ -967,5 +981,40 @@ async function checkSubscriptionStatus(){
 setTimeout(checkSubscriptionStatus, 1500);
 
 </script>
+
+<script>
+// BluWav CRM: Mobile sidebar toggle
+(function(){
+  function toggleSidebarMobile(){
+    var s = document.getElementById('sidebar');
+    var o = document.getElementById('mobOverlay');
+    if(!s) return;
+    s.classList.toggle('mobile-open');
+    if(o) o.classList.toggle('active');
+  }
+  // Create overlay if not exists
+  document.addEventListener('DOMContentLoaded', function(){
+    if(!document.getElementById('mobOverlay')){
+      var ov = document.createElement('div');
+      ov.id = 'mobOverlay';
+      ov.className = 'mob-overlay';
+      ov.onclick = function(){ 
+        var s = document.getElementById('sidebar');
+        if(s) s.classList.remove('mobile-open');
+        ov.classList.remove('active');
+      };
+      document.body.appendChild(ov);
+    }
+    // Wire collapse-btn to mobile toggle on mobile
+    var btn = document.querySelector('.collapse-btn');
+    if(btn){
+      btn.addEventListener('click', function(e){
+        if(window.innerWidth <= 768){ e.stopPropagation(); toggleSidebarMobile(); }
+      });
+    }
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+<!-- BW-CRM-VERSION:v2026-08-13 -->
 
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav Business OS — Workspace Settings</title>
+<title>BluWav CRM — Workspace Settings</title>
 <link href="bluwav.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -227,19 +228,32 @@ async function handlePhotoUpload(input){
     .toast.success{border-color:rgba(34,197,94,0.3);}
 
     ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:5px;}
-  </style>
+  
+    /* ── BluWav CRM: Collapse btn desktop-only, mobile sidebar fix ── */
+    .collapse-btn { display: none !important; }
+    @media (max-width: 768px) {
+      .collapse-btn { display: flex !important; align-items: center; justify-content: center; }
+      .sidebar { position: fixed; left: -240px; top: 0; bottom: 0; z-index: 1000; transition: left 0.3s ease; width: 220px !important; }
+      .sidebar.mobile-open { left: 0 !important; }
+      .sidebar.collapsed { left: -240px !important; }
+      #mainContent, .main { margin-left: 0 !important; }
+      .mob-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+      .mob-overlay.active { display: block; }
+    }
+
+    </style>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-logo">
-<div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">Business OS</span></div>
+<div class="logo-text"><span class="blu">Blu</span><span class="wav">Wav</span><span class="logo-badge">CRM</span></div>
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Operations</div>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
 <a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
-<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
+<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Deals</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
 <a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
 <div class="ns">Growth</div>
@@ -444,7 +458,7 @@ async function handlePhotoUpload(input){
 <!-- INTEGRATIONS -->
 <div class="settings-section" id="section-integrations">
 <div class="section-title">Integrations</div>
-<div class="section-sub">Connect BluWav Business OS with your favourite tools</div>
+<div class="section-sub">Connect BluWav CRM with your favourite tools</div>
 <div class="settings-card">
 <div class="card-body" style="display:flex;flex-direction:column;gap:16px;">
             ${[
@@ -871,5 +885,40 @@ async function handlePhotoUpload(input){
 </div>
 </div>
 </div>
+
+<script>
+// BluWav CRM: Mobile sidebar toggle
+(function(){
+  function toggleSidebarMobile(){
+    var s = document.getElementById('sidebar');
+    var o = document.getElementById('mobOverlay');
+    if(!s) return;
+    s.classList.toggle('mobile-open');
+    if(o) o.classList.toggle('active');
+  }
+  // Create overlay if not exists
+  document.addEventListener('DOMContentLoaded', function(){
+    if(!document.getElementById('mobOverlay')){
+      var ov = document.createElement('div');
+      ov.id = 'mobOverlay';
+      ov.className = 'mob-overlay';
+      ov.onclick = function(){ 
+        var s = document.getElementById('sidebar');
+        if(s) s.classList.remove('mobile-open');
+        ov.classList.remove('active');
+      };
+      document.body.appendChild(ov);
+    }
+    // Wire collapse-btn to mobile toggle on mobile
+    var btn = document.querySelector('.collapse-btn');
+    if(btn){
+      btn.addEventListener('click', function(e){
+        if(window.innerWidth <= 768){ e.stopPropagation(); toggleSidebarMobile(); }
+      });
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
