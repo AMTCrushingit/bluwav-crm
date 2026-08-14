@@ -728,7 +728,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 
 <script id="bw-canonical-js">
 (function(){
-  // Restore sidebar collapsed state
+  // Restore sidebar collapsed state immediately
   if(localStorage.getItem('bw_sidebar_collapsed')==='1'){
     const s=document.getElementById('sidebar');
     const m=document.querySelector('.main');
@@ -736,49 +736,83 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
     if(m)m.style.marginLeft='56px';
   }
 
-  async function initPage(){
-    if(typeof supabase==='undefined'){setTimeout(initPage,200);return;}
-    const db=supabase.createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
-    let session=null;
-    try{const r=await db.auth.getSession();session=r.data?.session;}catch(e){}
-    if(!session){window.location.href='login.html';return;}
-    let profile=null;
-    for(let i=0;i<2;i++){
-      try{const r=await db.from('profiles').select('full_name,role,avatar_url,created_at').eq('id',session.user.id).single();if(r.data){profile=r.data;break;}}catch(e){}
-      if(i===0)await new Promise(r=>setTimeout(r,500));
-    }
-    const name=(profile?.full_name)||session.user.user_metadata?.full_name||session.user.email?.split('@')[0]||'User';
-    const role=(profile?.role||session.user.user_metadata?.role||'salesperson');
-    const ini=name.split(' ').map(n=>n[0]||'').join('').toUpperCase().slice(0,2)||'?';
-    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-    set('sidebarName',name);set('sidebarRole',role.charAt(0).toUpperCase()+role.slice(1));
-    set('sidebarAvatar',ini);set('topName',name);set('topAvatar',ini);set('topRole',role.charAt(0).toUpperCase()+role.slice(1));
-    const rb=document.getElementById('roleBadge');
-    if(rb){const bc={manager:'background:rgba(201,168,76,0.15);color:#D4AF37;',admin:'background:rgba(167,139,250,0.15);color:#a78bfa;',salesperson:'background:rgba(0,212,238,0.12);color:#00D4EE;',owner:'background:rgba(239,68,68,0.12);color:#ef4444;'};rb.style.cssText=bc[role]||bc.salesperson;rb.textContent={manager:'👑 Manager',admin:'🛡️ Admin',salesperson:'💼 Salesperson',owner:'⭐ Owner'}[role]||'💼 Salesperson';}
-    if(['manager','admin','owner'].includes(role)){const an=document.getElementById('adminNav');if(an)an.style.display='';const al=document.getElementById('adminLink');if(al)al.style.display='';}
-    // Trial banner
-    const ts=profile?.created_at||localStorage.getItem('bw_trial_start');
-    if(ts){
-      const elapsed=Math.floor((Date.now()-new Date(ts))/(864e5));
-      const rem=Math.max(0,14-elapsed);
-      const pct=Math.max(0,(rem/14)*100);
-      if(!localStorage.getItem('bw_trial_start'))localStorage.setItem('bw_trial_start',new Date(ts).toISOString());
-      const banner=document.getElementById('trialBanner');
-      const bText=document.getElementById('trialBannerText');
-      const bBar=document.getElementById('trialBannerBar');
-      const dismissed=sessionStorage.getItem('trial_banner_dismissed');
-      if(banner&&!dismissed){
-        banner.style.display='flex';
-        if(rem===0){banner.classList.add('urgent');if(bText)bText.textContent='Your trial has expired — upgrade to continue';if(bBar){bBar.style.width='0%';bBar.style.background='#ef4444';}}
-        else if(rem<=7){banner.classList.add('urgent');if(bText)bText.textContent=rem+' days left in your trial — no card needed';if(bBar){bBar.style.width=pct+'%';bBar.style.background='var(--warning)';}}
-        else{if(bText)bText.textContent=rem+' days remaining in your free trial · No card needed';if(bBar){bBar.style.width=pct+'%';bBar.style.background='var(--gold)';}}
-      }
-    }
-    window.signOut=function(){sessionStorage.removeItem('bw_last_active');db.auth.signOut().then(()=>window.location.href='login.html').catch(()=>window.location.href='login.html');};
-    window.toggleSidebar=function(){const s=document.getElementById('sidebar');const m=document.querySelector('.main');if(!s)return;s.classList.toggle('collapsed');const c=s.classList.contains('collapsed');if(m)m.style.marginLeft=c?'56px':'var(--sidebar)';const b=s.querySelector('.collapse-btn');if(b)b.textContent=c?'▶':'☰';localStorage.setItem('bw_sidebar_collapsed',c?'1':'0');};
+  // Use existing db variable (already created by page) — no new client
+  function initSidebarProfile(){
+    // Wait for db to be available from the page's own script
+    if(typeof db === 'undefined'){ setTimeout(initSidebarProfile, 200); return; }
+    
+    db.auth.getSession().then(function(r){
+      const session = r.data?.session;
+      if(!session){ window.location.href='login.html'; return; }
+      
+      db.from('profiles').select('full_name,role,avatar_url,created_at').eq('id',session.user.id).single().then(function(r2){
+        const profile = r2.data;
+        const name=(profile?.full_name)||session.user.user_metadata?.full_name||session.user.email?.split('@')[0]||'User';
+        const role=(profile?.role||session.user.user_metadata?.role||'salesperson');
+        const ini=name.split(' ').map(function(n){return n[0]||''}).join('').toUpperCase().slice(0,2)||'?';
+        
+        const set=function(id,v){const el=document.getElementById(id);if(el)el.textContent=v;};
+        set('sidebarName',name);set('sidebarRole',role.charAt(0).toUpperCase()+role.slice(1));
+        set('sidebarAvatar',ini);set('topName',name);set('topAvatar',ini);set('topRole',role.charAt(0).toUpperCase()+role.slice(1));
+        
+        const rb=document.getElementById('roleBadge');
+        if(rb){
+          const bc={manager:'background:rgba(201,168,76,0.15);color:#C9A84C;',admin:'background:rgba(167,139,250,0.15);color:#a78bfa;',salesperson:'background:rgba(0,200,224,0.12);color:#00C8E0;',owner:'background:rgba(239,68,68,0.12);color:#ef4444;'};
+          rb.style.cssText=bc[role]||bc.salesperson;
+          rb.textContent={manager:'👑 Manager',admin:'🛡️ Admin',salesperson:'💼 Salesperson',owner:'⭐ Owner'}[role]||'💼 Salesperson';
+        }
+        
+        if(['manager','admin','owner'].includes(role)){
+          const an=document.getElementById('adminNav');if(an)an.style.display='';
+          const al=document.getElementById('adminLink');if(al)al.style.display='';
+        }
+        
+        // Trial banner
+        const ts=profile?.created_at||localStorage.getItem('bw_trial_start');
+        if(ts){
+          const elapsed=Math.floor((Date.now()-new Date(ts))/(864e5));
+          const rem=Math.max(0,14-elapsed);
+          const pct=Math.max(0,(rem/14)*100);
+          if(!localStorage.getItem('bw_trial_start'))localStorage.setItem('bw_trial_start',new Date(ts).toISOString());
+          const banner=document.getElementById('trialBanner');
+          const bText=document.getElementById('trialBannerText');
+          const bBar=document.getElementById('trialBannerBar');
+          const dismissed=sessionStorage.getItem('trial_banner_dismissed');
+          if(banner&&!dismissed){
+            banner.style.display='flex';
+            if(rem===0){banner.classList.add('urgent');if(bText)bText.textContent='Your trial has expired — upgrade to continue';if(bBar){bBar.style.width='0%';bBar.style.background='#ef4444';}}
+            else if(rem<=7){banner.classList.add('urgent');if(bText)bText.textContent=rem+' days left in your trial — no card needed';if(bBar){bBar.style.width=pct+'%';bBar.style.background='var(--warning)';}}
+            else{if(bText)bText.textContent=rem+' days remaining in your free trial · No card needed';if(bBar){bBar.style.width=pct+'%';bBar.style.background='var(--gold)';}}
+          }
+        }
+      }).catch(function(){});
+    }).catch(function(){ window.location.href='login.html'; });
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initPage);
-  else setTimeout(initPage,100);
+
+  window.signOut=function(){
+    sessionStorage.removeItem('bw_last_active');
+    if(typeof db!=='undefined')db.auth.signOut().then(function(){window.location.href='login.html';}).catch(function(){window.location.href='login.html';});
+    else window.location.href='login.html';
+  };
+  
+  window.toggleSidebar=function(){
+    const s=document.getElementById('sidebar');
+    const m=document.querySelector('.main');
+    if(!s)return;
+    s.classList.toggle('collapsed');
+    const c=s.classList.contains('collapsed');
+    if(m)m.style.marginLeft=c?'56px':'var(--sidebar)';
+    const b=s.querySelector('.collapse-btn');
+    if(b)b.textContent=c?'▶':'☰';
+    localStorage.setItem('bw_sidebar_collapsed',c?'1':'0');
+  };
+
+  // Run after page scripts have loaded
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){setTimeout(initSidebarProfile,300);});
+  } else {
+    setTimeout(initSidebarProfile,300);
+  }
 })();
 </script>
 </body>
