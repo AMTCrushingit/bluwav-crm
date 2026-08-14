@@ -1223,7 +1223,17 @@ const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
     return;
   }
 
-  
+  // 2. Get session — retry up to 3x to handle post-login redirect timing
+  // First attempt immediate, then increasing delays
+  let session = null;
+  for(let attempt = 0; attempt < 3; attempt++){
+    if(attempt > 0) await new Promise(r => setTimeout(r, attempt === 1 ? 800 : 1200));
+    try{
+      const {data} = await db.auth.getSession();
+      session = data?.session;
+      if(session) break;
+    }catch(e){}
+  }
 
   if(!session){
     window.location.href = 'login.html';
