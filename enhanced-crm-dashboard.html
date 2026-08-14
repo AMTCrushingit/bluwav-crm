@@ -77,6 +77,18 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 .main.expanded{margin-left:60px;}
 
 /* ══ TOPBAR ══ */
+/* Trial expiry banner */
+.trial-banner{
+  background:linear-gradient(90deg,rgba(239,68,68,0.12),rgba(245,158,11,0.08));
+  border-bottom:1px solid rgba(239,68,68,0.25);
+  padding:8px 24px;display:none;align-items:center;justify-content:space-between;
+  font-size:0.78rem;color:#fca5a5;flex-shrink:0;
+}
+.trial-banner.visible{display:flex;}
+.trial-banner a{color:var(--gold);font-weight:700;text-decoration:none;margin-left:8px;}
+.trial-banner a:hover{text-decoration:underline;}
+.trial-banner-close{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:14px;padding:0 4px;opacity:0.7;}
+.trial-banner-close:hover{opacity:1;}
 .topbar{background:rgba(10,14,26,0.98);border-bottom:1px solid var(--navy-border);padding:0 24px;height:56px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);}
 .topbar-left .greeting{font-size:0.85rem;color:var(--text3);}
 .topbar-left h1{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--text);}
@@ -330,7 +342,19 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
   .qa-grid{grid-template-columns:repeat(2,1fr);}
   .pipe-cols{grid-template-columns:repeat(2,1fr);}
   .content{padding:14px;}
-  .topbar{padding:0 12px;}
+  /* Trial expiry banner */
+.trial-banner{
+  background:linear-gradient(90deg,rgba(239,68,68,0.12),rgba(245,158,11,0.08));
+  border-bottom:1px solid rgba(239,68,68,0.25);
+  padding:8px 24px;display:none;align-items:center;justify-content:space-between;
+  font-size:0.78rem;color:#fca5a5;flex-shrink:0;
+}
+.trial-banner.visible{display:flex;}
+.trial-banner a{color:var(--gold);font-weight:700;text-decoration:none;margin-left:8px;}
+.trial-banner a:hover{text-decoration:underline;}
+.trial-banner-close{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:14px;padding:0 4px;opacity:0.7;}
+.trial-banner-close:hover{opacity:1;}
+.topbar{padding:0 12px;}
   #globalSearch{width:140px!important;}
   #globalSearch:focus{width:190px!important;}
 }
@@ -361,6 +385,34 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 }
 .hamburger-btn:hover{background:var(--navy-light);border-color:var(--navy-border);color:var(--text);}
 @media(max-width:768px){.hamburger-btn{display:flex!important;}}
+/* ── LOCKED NAV ITEM (Coming Soon) ── */
+.ni-locked{position:relative;cursor:default;}
+.ni-locked:hover{background:rgba(255,255,255,0.03)!important;color:var(--text3)!important;}
+.ni-locked .ni-lock-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:0.58rem;font-weight:700;letter-spacing:0.04em;
+  background:rgba(201,168,76,0.12);color:var(--gold);
+  border:1px solid rgba(201,168,76,0.25);
+  border-radius:9999px;padding:1px 6px;margin-left:auto;white-space:nowrap;
+}
+.ni-locked .ni-tooltip{
+  display:none;position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);
+  background:var(--navy-mid);border:1px solid var(--navy-border);
+  border-radius:var(--radius-md);padding:10px 14px;width:220px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);z-index:500;pointer-events:none;
+}
+.ni-locked:hover .ni-tooltip{display:block;}
+.ni-tooltip-title{font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:4px;}
+.ni-tooltip-desc{font-size:0.72rem;color:var(--text2);line-height:1.5;margin-bottom:6px;}
+.ni-tooltip-date{font-size:0.68rem;color:var(--gold);font-weight:600;}
+.ni-tooltip::before{
+  content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);
+  border:6px solid transparent;border-right-color:var(--navy-border);
+}
+.ni-tooltip::after{
+  content:'';position:absolute;right:calc(100% - 1px);top:50%;transform:translateY(-50%);
+  border:6px solid transparent;border-right-color:var(--navy-mid);
+}
 /* ── DATE PICKER ── */
 .dp-wrap{position:relative;display:block;}
 .dp-input{width:100%;padding:10px 14px;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.85rem;font-family:var(--font-body);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;}
@@ -393,7 +445,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </a>
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
-<nav class="sidebar-nav">
+<nav class="sidebar-nav" role="navigation" aria-label="Main navigation">
 <div class="ns">Operations</div>
 <a class="ni active" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Command Center</span></a>
 <a class="ni" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
@@ -404,7 +456,16 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" id="nav-email" onclick="showView('email')" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
 <a class="ni" id="nav-whatsapp" onclick="showView('whatsapp')" style="display:none;"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
 <a class="ni" href="automations.html" style="display:none;"><span class="ni-icon">⚡</span><span class="nav-text">Workflows</span></a>
-<a class="ni" style="pointer-events:none;opacity:0.4;"><span class="ni-icon">📡</span><span class="nav-text">Communications <span style="font-size:0.65rem;color:var(--text3);">Coming soon</span></span></a>
+<a class="ni ni-locked" tabindex="0" role="button" aria-label="Communications — coming soon" aria-disabled="true">
+  <span class="ni-icon">📡</span>
+  <span class="nav-text">Communications</span>
+  <span class="ni-lock-badge">🔒 Soon</span>
+  <div class="ni-tooltip" role="tooltip">
+    <div class="ni-tooltip-title">📡 Communications</div>
+    <div class="ni-tooltip-desc">Email campaigns, WhatsApp messaging, and automated follow-up sequences — all in one place.</div>
+    <div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
+  </div>
+</a>
 <div class="ns">Insights</div>
 <a class="ni" href="reports.html" id="nav-reports"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
 <div class="ns">Workspace</div>
@@ -462,6 +523,14 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 </header>
+<!-- TRIAL EXPIRY BANNER -->
+<div class="trial-banner" id="trialExpiryBanner" role="alert" aria-live="polite">
+  <span>⚠️ Your 14-day free trial has expired. Your data is safe — upgrade to continue.</span>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <a href="billing.html">Upgrade now →</a>
+    <button class="trial-banner-close" onclick="document.getElementById('trialExpiryBanner').classList.remove('visible')" aria-label="Dismiss">✕</button>
+  </div>
+</div>
 <!-- ROLE BANNER -->
 <div class="role-banner" id="roleBanner"></div>
 <!-- ══ DASHBOARD VIEW ══ -->
@@ -484,7 +553,15 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="qa-grid">
 <div class="qa" onclick="openModal('addContact')"><div class="qa-icon">➕</div><div class="qa-lbl">New Contact</div></div>
 <div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">💼</div><div class="qa-lbl">New Opportunity</div></div>
-<div class="qa" style="opacity:0.35;pointer-events:none;cursor:not-allowed;" title="Email coming soon"><div class="qa-icon">📧</div><div class="qa-lbl">Send Email</div></div>
+<div class="qa ni-locked" tabindex="0" role="button" aria-label="Send Email — coming soon" aria-disabled="true" style="cursor:default;opacity:0.6;">
+  <div class="qa-icon">📧</div>
+  <div class="qa-lbl">Send Email</div>
+  <div class="ni-tooltip" role="tooltip" style="left:50%;transform:translateX(-50%);top:calc(100% + 8px);">
+    <div class="ni-tooltip-title">📧 Email</div>
+    <div class="ni-tooltip-desc">Send emails directly from BluWav CRM with full tracking and logging.</div>
+    <div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
+  </div>
+</div>
 <div class="qa" onclick="openModal('addTask')"><div class="qa-icon">✅</div><div class="qa-lbl">Add Task</div></div>
 </div>
 <!-- Pipeline + Right Panel (Leaderboard or Activity) -->
@@ -2117,11 +2194,12 @@ async function saveDeal(){
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>{n.classList.remove('active');n.removeAttribute('aria-current');});
   if(window.innerWidth<=1024) closeMobileSidebar();
   const view=document.getElementById('view-'+name);
   if(view)view.classList.add('active');
   const nav=document.getElementById('nav-'+name);
+  if(nav){nav.setAttribute('aria-current','page');}
   if(nav)nav.classList.add('active');
   if(name==='contacts'){
     filteredCustomers=allCustomers.slice();
