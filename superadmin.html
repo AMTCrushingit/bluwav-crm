@@ -2148,16 +2148,41 @@ async function corexPushCRM(id){
 
   // Insert into CRM contacts table — single clean insert
   try{
+    // Parse budget to a numeric deal value
+    let dealVal=0;
+    if(lead.budget){
+      const m=lead.budget.match(/[\d,.]+/);
+      if(m){
+        const n=parseFloat(m[0].replace(/,/g,''));
+        if(lead.budget.includes('M'))dealVal=n*1000000;
+        else if(lead.budget.includes('K'))dealVal=n*1000;
+        else dealVal=n;
+      }
+    }
+    // Build rich notes with all COREX context
+    const corexNotes=[
+      lead.description||'',
+      '---',
+      'COREX Fit Index: '+lead.score+'/100',
+      'Tags: '+(lead.tags||[]).join(', '),
+      'Budget: '+(lead.budget||'TBD'),
+      'Deadline: '+(lead.deadline||'None'),
+      'Source: '+lead.source+' ('+lead.sourceType+')',
+      'Assigned Agent: '+(lead.assignedAgent||'Unassigned'),
+      'Discovered: '+new Date(lead.foundAt||Date.now()).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    ].join('\n');
+
     const contactObj={
       full_name: lead.name,
       email: lead.contact||null,
       business_name: lead.org||null,
       island: lead.country?lead.country.replace(/[^a-zA-Z\s&]/g,'').trim():null,
-      notes: lead.description||null,
+      notes: corexNotes,
       status: 'Lead',
       source_code: 'IH',
+      deal_value: dealVal||null,
       user_id: userId,
-      created_at: new Date().toISOString()
+      created_at: new Date(lead.foundAt||Date.now()).toISOString()
     };
     const {error}=await db.from('contacts').insert(contactObj);
     if(error){

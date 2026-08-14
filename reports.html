@@ -194,45 +194,45 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
 <span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
 <span class="logo-sub">CRM</span>
 </a>
-<button class="collapse-btn" onclick="toggleSidebar()">&#x2630;</button>
+<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Operations</div>
-<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x1F4CA;</span><span class="nav-text">Dashboard</span></a>
-<a class="ni" href="contacts.html"><span class="ni-icon">&#x1F465;</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">&#x2014;</span></a>
-<a class="ni" href="deals.html"><span class="ni-icon">&#x1F4BC;</span><span class="nav-text">Opportunities</span></a>
-<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x2705;</span><span class="nav-text">Tasks</span></a>
-<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x1F4C5;</span><span class="nav-text">Calendar</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
+<a class="ni" href="contacts.html"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
+<a class="ni" href="deals.html"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns">Growth</div>
-<a class="ni" style="display:none;"><span class="ni-icon">&#x1F4E7;</span><span class="nav-text">Email</span></a>
-<a class="ni" style="display:none;"><span class="ni-icon">&#x1F4AC;</span><span class="nav-text">WhatsApp</span></a>
-<a class="ni" style="display:none;"><span class="ni-icon">&#x26A1;</span><span class="nav-text">Workflows</span></a>
-<a class="ni" style="pointer-events:none;opacity:0.4;"><span class="ni-icon">&#x1F4E1;</span><span class="nav-text">Communications <span style="font-size:0.65rem;color:var(--text3);">Coming soon</span></span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">⚡</span><span class="nav-text">Workflows</span></a>
+<a class="ni" style="pointer-events:none;opacity:0.4;"><span class="ni-icon">📡</span><span class="nav-text">Communications <span style="font-size:0.65rem;color:var(--text3);">Coming soon</span></span></a>
 <div class="ns">Insights</div>
-<a class="ni  active" href="reports.html" id="nav-reports"><span class="ni-icon">&#x1F4C8;</span><span class="nav-text">Business Insights</span></a>
+<a class="ni active" href="reports.html" id="nav-reports"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
 <div class="ns">Workspace</div>
-<a class="ni" href="settings.html" id="nav-settings"><span class="ni-icon">&#x2699;&#xFE0F;</span><span class="nav-text">Settings</span></a>
-<a class="ni" href="billing.html" id="nav-billing"><span class="ni-icon">&#x1F4B3;</span><span class="nav-text">Billing</span></a>
+<a class="ni" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" href="billing.html" id="nav-billing"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <!-- Admin section — shown for manager/admin/owner -->
 <div class="ns" id="adminNav" style="display:none;">Admin</div>
-<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">&#x1F6E1;</span><span class="nav-text">Super Admin</span></a>
+<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
 <div class="trial-w" id="trialWidget">
-<div class="tw-label">&#x23F1; 14-Day Free Trial</div>
+<div class="tw-label">⏱ 14-Day Free Trial</div>
 <div class="tw-days" id="trialDaysNum">14</div>
-<div class="tw-sub" id="trialSub">days remaining &middot; No card needed</div>
+<div class="tw-sub" id="trialSub">days remaining · No card needed</div>
 <div class="tw-bar"><div class="tw-fill" id="trialFill" style="width:100%;"></div></div>
 </div>
 <div class="user-card" onclick="window.location.href='settings.html'">
-<div class="avatar" id="sidebarAvatar">&#x2014;</div>
+<div class="avatar" id="sidebarAvatar">—</div>
 <div class="user-info">
 <div class="user-name" id="sidebarName">Loading...</div>
-<div class="user-role-txt" id="sidebarRole">&#x2014;</div>
+<div class="user-role-txt" id="sidebarRole">—</div>
 <div class="role-badge" id="roleBadge"></div>
 </div>
 </div>
-<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md,8px);color:#ef4444;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;">&#x1F6AA; Sign Out</button>
+<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md,8px);color:#ef4444;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;">🚪 Sign Out</button>
 </div>
 </aside>
 <div class="main">
@@ -345,34 +345,27 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
 <tbody id="activityTableBody">
 <tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text3);">Loading activity...</td></tr>
 </tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-<script>
-  const { createClient } = supabase;
+
   const db = createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
 
   let allDeals=[], allContacts=[], allActivities=[];
   let revenueChart, stageChart, contactChart, activityChart;
 
-  (async()=>{
+  (async()=&gt;{
     const{data:{session}}=await db.auth.getSession();
     if(!session){window.location.href='login.html';return;}
 
     // Load profile — retry once if first attempt returns null
     let profile=null;
-    for(let attempt=0;attempt<2;attempt++){
+    for(let attempt=0;attempt&lt;2;attempt++){
       try{
         const r=await db.from('profiles').select('full_name,role,avatar_url').eq('id',session.user.id).single();
         if(r.data){profile=r.data;break;}
       }catch(e){}
-      if(attempt===0) await new Promise(r=>setTimeout(r,500));
+      if(attempt===0) await new Promise(r=&gt;setTimeout(r,500));
     }
     const name=(profile?.full_name)||session.user.user_metadata?.full_name||session.user.email?.split('@')[0]||'User';
-    const ini=name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    const ini=name.split(' ').map(n=&gt;n[0]).join('').toUpperCase().slice(0,2);
     const role=(profile?.role||session.user.user_metadata?.role||'salesperson');
     const sn=document.getElementById('sidebarName'); if(sn)sn.textContent=name;
     const tn=document.getElementById('topName'); if(tn)tn.textContent=name;
@@ -389,7 +382,7 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
       const dr=await dq; deals=dr.data||[];
     }catch(e){ console.warn('deals load:',e.message); }
     try{
-      let cq=db.from('contacts').select('id,full_name,island,created_at,status,user_id');
+      let cq=db.from('contacts').select('id,full_name,island,created_at,status,user_id,source_code,deal_value,contact_id');
       if(!isManager) cq=cq.eq('user_id',session.user.id);
       const cr=await cq; contacts=cr.data||[];
     }catch(e){ console.warn('contacts load:',e.message); }
@@ -404,13 +397,13 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
   })();
 
   function fmt(v){return '$'+(v||0).toLocaleString();}
-  function fmtK(v){return v>=1000?'$'+(v/1000).toFixed(1)+'K':fmt(v);}
+  function fmtK(v){return v&gt;=1000?'$'+(v/1000).toFixed(1)+'K':fmt(v);}
   function timeAgo(iso){
     if(!iso)return'—';
     const s=Math.floor((Date.now()-new Date(iso))/1000);
-    if(s<60)return'Just now';
-    if(s<3600)return Math.floor(s/60)+'m ago';
-    if(s<86400)return Math.floor(s/3600)+'h ago';
+    if(s&lt;60)return'Just now';
+    if(s&lt;3600)return Math.floor(s/60)+'m ago';
+    if(s&lt;86400)return Math.floor(s/3600)+'h ago';
     return Math.floor(s/86400)+'d ago';
   }
 
@@ -420,16 +413,17 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
     renderLeaderboard();
     renderIslands();
     renderActivityTable();
+    renderSourceBreakdown();
   }
 
   function renderKPIs(){
-    const won=allDeals.filter(d=>(d.stage||'').toLowerCase()==='won');
-    const active=allDeals.filter(d=>(d.stage||'').toLowerCase()!=='won'&&(d.stage||'').toLowerCase()!=='lost');
-    const lost=allDeals.filter(d=>(d.stage||'').toLowerCase()==='lost');
-    const pipeVal=active.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
-    const wonVal=won.reduce((s,d)=>s+(d.deal_value||d.value||0),0);
+    const won=allDeals.filter(d=&gt;(d.stage||'').toLowerCase()==='won');
+    const active=allDeals.filter(d=&gt;(d.stage||'').toLowerCase()!=='won'&amp;&amp;(d.stage||'').toLowerCase()!=='lost');
+    const lost=allDeals.filter(d=&gt;(d.stage||'').toLowerCase()==='lost');
+    const pipeVal=active.reduce((s,d)=&gt;s+(d.deal_value||d.value||0),0);
+    const wonVal=won.reduce((s,d)=&gt;s+(d.deal_value||d.value||0),0);
     const totalClosed=won.length+lost.length;
-    const winRate=totalClosed>0?Math.round((won.length/totalClosed)*100):0;
+    const winRate=totalClosed&gt;0?Math.round((won.length/totalClosed)*100):0;
 
     const kp=document.getElementById('kpiPipeline'); if(kp)kp.textContent=fmtK(pipeVal);
     const kw=document.getElementById('kpiWon'); if(kw)kw.textContent=fmtK(wonVal);
@@ -437,11 +431,11 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
     const kc=document.getElementById('kpiCustomers'); if(kc)kc.textContent=allContacts.length;
     const ks=document.getElementById('kpiPipelineSub'); if(ks)ks.textContent=active.length+' active deal'+(active.length!==1?'s':'');
     const kws=document.getElementById('kpiWonSub'); if(kws)kws.textContent=won.length+' deal'+(won.length!==1?'s':'')+' closed';
-    const krs=document.getElementById('kpiRateSub'); if(krs)krs.textContent=totalClosed>0?totalClosed+' deals evaluated':'No closed deals yet';
+    const krs=document.getElementById('kpiRateSub'); if(krs)krs.textContent=totalClosed&gt;0?totalClosed+' deals evaluated':'No closed deals yet';
     const kcs=document.getElementById('kpiCustomersSub'); if(kcs)kcs.textContent='In your workspace';
 
     // Clear trend indicators — real data, no fake %
-    ['kpiTrendPipeline','kpiTrendWon','kpiTrendRate','kpiTrendCustomers'].forEach(id=>{
+    ['kpiTrendPipeline','kpiTrendWon','kpiTrendRate','kpiTrendCustomers'].forEach(id=&gt;{
       const el=document.getElementById(id); if(el)el.textContent='';
     });
   }
@@ -449,27 +443,27 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
   function renderCharts(){
     const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const now=new Date(); const yr=now.getFullYear();
-    const last6=Array.from({length:6},(_,i)=>{const d=new Date(yr,now.getMonth()-5+i,1);return{label:months[d.getMonth()]+' '+d.getFullYear().toString().slice(2),month:d.getMonth(),year:d.getFullYear()};});
+    const last6=Array.from({length:6},(_,i)=&gt;{const d=new Date(yr,now.getMonth()-5+i,1);return{label:months[d.getMonth()]+' '+d.getFullYear().toString().slice(2),month:d.getMonth(),year:d.getFullYear()};});
 
     // Revenue chart
-    const pipeData=last6.map(m=>allDeals.filter(d=>{if(!d.created_at)return false;const cd=new Date(d.created_at);return cd.getMonth()===m.month&&cd.getFullYear()===m.year;}).reduce((s,d)=>s+(d.deal_value||d.value||0),0));
-    const wonData=last6.map(m=>allDeals.filter(d=>{if(!d.created_at)return false;const cd=new Date(d.created_at);return cd.getMonth()===m.month&&cd.getFullYear()===m.year&&(d.stage||'').toLowerCase()==='won';}).reduce((s,d)=>s+(d.deal_value||d.value||0),0));
-    if(revenueChart){revenueChart.data.labels=last6.map(m=>m.label);revenueChart.data.datasets[0].data=pipeData;revenueChart.data.datasets[1].data=wonData;revenueChart.update();}
+    const pipeData=last6.map(m=&gt;allDeals.filter(d=&gt;{if(!d.created_at)return false;const cd=new Date(d.created_at);return cd.getMonth()===m.month&amp;&amp;cd.getFullYear()===m.year;}).reduce((s,d)=&gt;s+(d.deal_value||d.value||0),0));
+    const wonData=last6.map(m=&gt;allDeals.filter(d=&gt;{if(!d.created_at)return false;const cd=new Date(d.created_at);return cd.getMonth()===m.month&amp;&amp;cd.getFullYear()===m.year&amp;&amp;(d.stage||'').toLowerCase()==='won';}).reduce((s,d)=&gt;s+(d.deal_value||d.value||0),0));
+    if(revenueChart){revenueChart.data.labels=last6.map(m=&gt;m.label);revenueChart.data.datasets[0].data=pipeData;revenueChart.data.datasets[1].data=wonData;revenueChart.update();}
 
     // Stage donut
     const stages=['Lead','Qualified','Proposal','Negotiation','Won','Lost'];
-    const stageCounts=stages.map(s=>allDeals.filter(d=>(d.stage||'').toLowerCase()===s.toLowerCase()).length).filter((_,i)=>stages[i]);
-    const stageLabels=stages.filter((_,i)=>allDeals.some(d=>(d.stage||'').toLowerCase()===stages[i].toLowerCase()));
-    const stageData=stageLabels.map(s=>allDeals.filter(d=>(d.stage||'').toLowerCase()===s.toLowerCase()).length);
+    const stageCounts=stages.map(s=&gt;allDeals.filter(d=&gt;(d.stage||'').toLowerCase()===s.toLowerCase()).length).filter((_,i)=&gt;stages[i]);
+    const stageLabels=stages.filter((_,i)=&gt;allDeals.some(d=&gt;(d.stage||'').toLowerCase()===stages[i].toLowerCase()));
+    const stageData=stageLabels.map(s=&gt;allDeals.filter(d=&gt;(d.stage||'').toLowerCase()===s.toLowerCase()).length);
     if(stageChart){stageChart.data.labels=stageLabels.length?stageLabels:['No data'];stageChart.data.datasets[0].data=stageData.length?stageData:[1];stageChart.update();}
 
     // Contact growth
-    const contactData=last6.map(m=>allContacts.filter(c=>{if(!c.created_at)return false;const cd=new Date(c.created_at);return cd.getMonth()===m.month&&cd.getFullYear()===m.year;}).length);
-    if(contactChart){contactChart.data.labels=last6.map(m=>m.label);contactChart.data.datasets[0].data=contactData;contactChart.update();}
+    const contactData=last6.map(m=&gt;allContacts.filter(c=&gt;{if(!c.created_at)return false;const cd=new Date(c.created_at);return cd.getMonth()===m.month&amp;&amp;cd.getFullYear()===m.year;}).length);
+    if(contactChart){contactChart.data.labels=last6.map(m=&gt;m.label);contactChart.data.datasets[0].data=contactData;contactChart.update();}
 
     // Activity breakdown
     const actTypes=['Call','Email','Meeting','Note','WhatsApp'];
-    const actCounts=actTypes.map(t=>allActivities.filter(a=>a.type===t).length);
+    const actCounts=actTypes.map(t=&gt;allActivities.filter(a=&gt;a.type===t).length);
     if(activityChart){activityChart.data.labels=actTypes;activityChart.data.datasets[0].data=actCounts;activityChart.update();}
   }
 
@@ -477,64 +471,113 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
     const el=document.getElementById('leaderboardBody'); if(!el)return;
     // Group deals by agent
     const agentMap={};
-    allDeals.forEach(d=>{
+    allDeals.forEach(d=&gt;{
       const aid=d.agent_id||'unknown';
       if(!agentMap[aid])agentMap[aid]={id:aid,deals:0,won:0,val:0};
       agentMap[aid].deals++;
       if((d.stage||'').toLowerCase()==='won'){agentMap[aid].won++;agentMap[aid].val+=(d.deal_value||d.value||0);}
     });
-    const sorted=Object.values(agentMap).sort((a,b)=>b.val-a.val).slice(0,5);
+    const sorted=Object.values(agentMap).sort((a,b)=&gt;b.val-a.val).slice(0,5);
     if(!sorted.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px;">No deal data yet — add opportunities to see team performance.</div>';return;}
     const rankColors=['gold','silver','bronze','',''];
-    el.innerHTML=sorted.map((a,i)=>`
+    el.innerHTML=sorted.map((a,i)=&gt;`
       <div class="leaderboard-item">
-        <div class="lb-rank ${rankColors[i]||''}">${i+1}</div>
-        <div class="lb-avatar" style="background:var(--cyan);">${(a.id.slice(0,2)||'??').toUpperCase()}</div>
-        <div class="lb-info"><div class="lb-name">Agent ${a.id.slice(0,8)}</div><div class="lb-deals">${a.deals} deal${a.deals!==1?'s':''} · ${a.won} won</div></div>
-        <div class="lb-val">${fmtK(a.val)}</div>
-      </div>`).join('');
+<div class="lb-rank ${rankColors[i]||''}">${i+1}</div>
+<div class="lb-avatar" style="background:var(--cyan);">${(a.id.slice(0,2)||'??').toUpperCase()}</div>
+<div class="lb-info"><div class="lb-name">Agent ${a.id.slice(0,8)}</div><div class="lb-deals">${a.deals} deal${a.deals!==1?'s':''} · ${a.won} won</div></div>
+<div class="lb-val">${fmtK(a.val)}</div>
+</div>`).join('');
   }
 
   function renderIslands(){
     const el=document.getElementById('islandBody'); if(!el)return;
     const islandMap={};
     const islandFlags={'Trinidad':'🇹🇹','Barbados':'🇧🇧','Jamaica':'🇯🇲','Guyana':'🇬🇾','St. Lucia':'🇱🇨','Dominica':'🇩🇲','Grenada':'🇬🇩','Antigua':'🇦🇬','St. Vincent':'🇻🇨','Belize':'🇧🇿','Other':'🌍'};
-    allContacts.forEach(c=>{
+    allContacts.forEach(c=&gt;{
       const island=(c.island||'Other').trim();
       islandMap[island]=(islandMap[island]||0)+1;
     });
-    const sorted=Object.entries(islandMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    const sorted=Object.entries(islandMap).sort((a,b)=&gt;b[1]-a[1]).slice(0,6);
     if(!sorted.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px;">No customer data yet — add customers to see geographic distribution.</div>';return;}
     const max=sorted[0][1]||1;
-    el.innerHTML=sorted.map(([island,count])=>`
+    el.innerHTML=sorted.map(([island,count])=&gt;`
       <div class="island-row">
-        <div class="island-flag">${islandFlags[island]||'🌍'}</div>
-        <div class="island-name">${island}</div>
-        <div class="island-bar-wrap"><div class="island-bar" style="width:${Math.round((count/max)*100)}%;"></div></div>
-        <div class="island-count">${count}</div>
-      </div>`).join('');
+<div class="island-flag">${islandFlags[island]||'🌍'}</div>
+<div class="island-name">${island}</div>
+<div class="island-bar-wrap"><div class="island-bar" style="width:${Math.round((count/max)*100)}%;"></div></div>
+<div class="island-count">${count}</div>
+</div>`).join('');
   }
 
   function renderActivityTable(){
     const tbody=document.getElementById('activityTableBody'); if(!tbody)return;
     if(!allActivities.length){tbody.innerHTML='<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--text3);">No activity logged yet.</td></tr>';return;}
-    tbody.innerHTML=allActivities.slice(0,10).map(a=>`
+    tbody.innerHTML=allActivities.slice(0,10).map(a=&gt;`
       <tr>
-        <td>${a.type||'Activity'}${a.note?' — '+a.note.slice(0,40):''}</td>
-        <td style="color:var(--text3);font-size:12px;">You</td>
-        <td style="color:var(--text3);">${timeAgo(a.created_at)}</td>
-      </tr>`).join('');
+<td>${a.type||'Activity'}${a.note?' — '+a.note.slice(0,40):''}</td>
+<td style="color:var(--text3);font-size:12px;">You</td>
+<td style="color:var(--text3);">${timeAgo(a.created_at)}</td>
+</tr>`).join('');
   }
 
   function setRange(r,btn){
-    document.querySelectorAll('.range-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.range-btn').forEach(b=&gt;b.classList.remove('active'));
     btn.classList.add('active');
     renderAll();
   }
 
-  function signOut(){
+  // ── SOURCE ATTRIBUTION BREAKDOWN ─────────────────────────────
+  const SOURCE_LABELS={'IH':'Intelligence Hub','FB':'Facebook','IG':'Instagram','LI':'LinkedIn','TK':'TikTok','YT':'YouTube','GO':'Google','WP':'WhatsApp','RF':'Referral','WB':'Website','EV':'Event','EM':'Email Campaign','DI':'Direct','OT':'Other'};
+  const SOURCE_COLORS={'IH':'var(--cyan)','FB':'#1877F2','IG':'#E1306C','LI':'#0A66C2','GO':'#4285F4','WP':'#25D366','RF':'var(--gold)','WB':'var(--purple)','EV':'var(--orange)','EM':'var(--success)','DI':'var(--text2)','OT':'var(--text3)'};
+
+  function renderSourceBreakdown(){
+    const filterVal=document.getElementById('sourceFilterSelect')?.value||'all';
+    const grid=document.getElementById('sourceBreakdownGrid');
+    const table=document.getElementById('sourceBreakdownTable');
+    if(!grid||!table)return;
+    const sourceCounts={};let total=0;
+    allContacts.forEach(function(c){const src=c.source_code||'OT';sourceCounts[src]=(sourceCounts[src]||0)+1;total++;});
+    if(total===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text3);font-size:13px;">No source data yet. Add customers with a source code to see attribution.</div>';table.innerHTML='';return;}
+    const sorted=Object.entries(sourceCounts).sort(function(a,b){return b[1]-a[1];});
+    const maxCount=sorted[0]?sorted[0][1]:1;
+    grid.innerHTML=sorted.map(function(entry){
+      const src=entry[0],count=entry[1];
+      const pct=Math.round((count/total)*100);
+      const color=SOURCE_COLORS[src]||'var(--text3)';
+      const label=SOURCE_LABELS[src]||src;
+      const isSelected=filterVal==='all'||filterVal===src;
+      const barW=Math.round((count/maxCount)*100);
+      return '<div style="background:var(--bg3);border:1px solid '+(isSelected?color:'var(--border)')+';border-radius:10px;padding:14px;opacity:'+(isSelected?'1':'0.4')+';">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'
+        +'<span style="font-size:11px;font-weight:800;color:'+color+';letter-spacing:0.05em;">'+src+'</span>'
+        +'<span style="font-size:18px;font-weight:800;color:var(--text);">'+count+'</span>'
+        +'</div>'
+        +'<div style="font-size:10px;color:var(--text3);margin-bottom:8px;">'+label+'</div>'
+        +'<div style="height:4px;border-radius:2px;background:rgba(255,255,255,0.06);overflow:hidden;">'
+        +'<div style="height:100%;border-radius:2px;background:'+color+';width:'+barW+'%;"></div>'
+        +'</div>'
+        +'<div style="font-size:10px;color:var(--text3);margin-top:4px;">'+pct+'% of total</div>'
+        +'</div>';
+    }).join('');
+    if(filterVal!=='all'){
+      const srcContacts=allContacts.filter(function(c){return (c.source_code||'OT')===filterVal;});
+      const wonDeals=allDeals.filter(function(d){const contact=srcContacts.find(function(c){return c.id===d.contact_id;});return contact&&(d.stage||'').toLowerCase()==='won';});
+      const wonVal=wonDeals.reduce(function(s,d){return s+(d.deal_value||d.value||0);},0);
+      const fmtK=function(v){return v>=1000?'$'+(v/1000).toFixed(1)+'K':'$'+v;};
+      table.innerHTML='<div style="background:rgba(0,200,224,0.05);border:1px solid rgba(0,200,224,0.15);border-radius:10px;padding:14px;display:flex;gap:24px;flex-wrap:wrap;margin-top:12px;">'
+        +'<div><div style="font-size:11px;color:var(--text3);">Customers</div><div style="font-size:20px;font-weight:800;color:var(--text);">'+srcContacts.length+'</div></div>'
+        +'<div><div style="font-size:11px;color:var(--text3);">Deals Won</div><div style="font-size:20px;font-weight:800;color:var(--success);">'+wonDeals.length+'</div></div>'
+        +'<div><div style="font-size:11px;color:var(--text3);">Revenue</div><div style="font-size:20px;font-weight:800;color:var(--gold);">'+fmtK(wonVal)+'</div></div>'
+        +'<div><div style="font-size:11px;color:var(--text3);">Conversion</div><div style="font-size:20px;font-weight:800;color:var(--cyan);">'+(srcContacts.length>0?Math.round((wonDeals.length/srcContacts.length)*100):0)+'%</div></div>'
+        +'</div>';
+    } else {
+      table.innerHTML='';
+    }
+  }
+
+    function signOut(){
     sessionStorage.removeItem('bw_gate_ok');
-    db.auth.signOut().then(()=>{ window.location.href='login.html'; }).catch(()=>{ window.location.href='login.html'; });
+    db.auth.signOut().then(()=&gt;{ window.location.href='login.html'; }).catch(()=&gt;{ window.location.href='login.html'; });
   }
 
   const chartDefaults = {
@@ -552,7 +595,7 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
         {label:'Won',data: [],backgroundColor:'rgba(212,175,55,0.7)',borderRadius:5,borderSkipped:false}
       ]
     },
-    options:{responsive:true,maintainAspectRatio:false,...chartDefaults,scales:{...chartDefaults.scales,y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>'$'+(v/1000).toFixed(0)+'K'}}}}
+    options:{responsive:true,maintainAspectRatio:false,...chartDefaults,scales:{...chartDefaults.scales,y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=&gt;'$'+(v/1000).toFixed(0)+'K'}}}}
   });
 
   // Stage Donut
@@ -592,7 +635,7 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
 
     function resetTimer(){
       clearTimeout(timer);
-      timer = setTimeout(async()=>{
+      timer = setTimeout(async()=&gt;{
         sessionStorage.removeItem('bw_gate_ok');
         await db.auth.signOut();
         window.location.href = 'login.html';
@@ -600,7 +643,7 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
     }
 
     // Reset on any user activity
-    ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=>{
+    ['mousedown','mousemove','keydown','scroll','touchstart','click'].forEach(evt=&gt;{
       document.addEventListener(evt, resetTimer, true);
     });
 
@@ -608,7 +651,7 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
     resetTimer();
   })();
 
-</script>
+
 <script id="canonical-sidebar-js">
 (function(){
   async function initPage(){
@@ -640,5 +683,5 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
   else setTimeout(initPage,100);
 })();
 </script>
-</body>
+</table></div></div></div></div></div></body>
 </html>
