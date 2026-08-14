@@ -16,7 +16,7 @@
   --gold:#C9A84C;--gold-light:#E8C96A;--gold-glow:rgba(201,168,76,0.12);
   --success:#22C55E;--error:#EF4444;--warning:#F59E0B;--purple:#a78bfa;
   --text:#FFFFFF;--text2:#D4DCF0;--text3:#9BAAC8;
-  --font-display:Georgia,'Times New Roman',serif;
+  --font-display:'Segoe UI',system-ui,sans-serif;
   --font-body:system-ui,-apple-system,'Segoe UI',sans-serif;
   --radius-sm:6px;--radius-md:12px;--radius-lg:20px;--radius-xl:28px;
   --transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
@@ -4194,6 +4194,9 @@ async function saveProfileSettings(){
 </div>
 </div>
 <!-- ADD EVENT MODAL -->
+<div class="drawer-overlay" id="addEventBackdrop" onclick="closeDrawer('modal-addEvent')"></div>
+<div class="modal-overlay drawer" id="modal-addEvent">
+<div class="modal">
 <div class="modal-hd"><h3>📅 New Event</h3><button class="modal-close" onclick="closeModal('addEvent')">✕</button></div>
 <div class="modal-body" style="display:grid;gap:14px;">
 <div><label class="fl">Event Title *</label><input class="fi" id="ev-title" placeholder="e.g. Client Meeting" style="margin-top:6px;"/></div>
@@ -4212,9 +4215,11 @@ async function saveProfileSettings(){
 </div>
 <div><label class="fl">Notes</label><textarea class="fi" id="ev-notes" placeholder="Optional notes..." rows="3" style="margin-top:6px;resize:vertical;"></textarea></div>
 </div>
-<div class="modal-ft">
+<div class="modal-footer">
 <button class="btn btn-ghost" onclick="closeModal('addEvent')">Cancel</button>
 <button class="btn btn-primary" onclick="saveEvent()">Add Event</button>
+</div>
+</div>
 </div>
 <script>
 // ── SAVE EVENT ─────────────────────────────────────────────────

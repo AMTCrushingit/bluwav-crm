@@ -308,12 +308,18 @@
     const{data:{session}}=await db.auth.getSession();
     if(!session){window.location.href='login.html';return;}
 
-    // Load profile
+    // Load profile — retry once if first attempt returns null
     let profile=null;
-    try{ const r=await db.from('profiles').select('full_name,role,avatar_url').eq('id',session.user.id).single(); profile=r.data; }catch(e){}
-    const name=(profile?.full_name)||session.user.email?.split('@')[0]||'User';
+    for(let attempt=0;attempt<2;attempt++){
+      try{
+        const r=await db.from('profiles').select('full_name,role,avatar_url').eq('id',session.user.id).single();
+        if(r.data){profile=r.data;break;}
+      }catch(e){}
+      if(attempt===0) await new Promise(r=>setTimeout(r,500));
+    }
+    const name=(profile?.full_name)||session.user.user_metadata?.full_name||session.user.email?.split('@')[0]||'User';
     const ini=name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-    const role=(profile?.role||'salesperson');
+    const role=(profile?.role||session.user.user_metadata?.role||'salesperson');
     const sn=document.getElementById('sidebarName'); if(sn)sn.textContent=name;
     const tn=document.getElementById('topName'); if(tn)tn.textContent=name;
     const tr=document.getElementById('topRole'); if(tr)tr.textContent=role.charAt(0).toUpperCase()+role.slice(1);

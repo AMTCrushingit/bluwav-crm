@@ -1714,7 +1714,7 @@ function cgShowStep1(){
   document.getElementById('cg-dot-1').style.background='#8b5cf6';
   document.getElementById('cg-dot-2').style.background='#2d1f5e';
   cgUpdateAttempts();
-  setTimeout(()=>document.getElementById('cg-passphrase')?.focus(),100);
+  const pp=document.getElementById('cg-passphrase'); if(pp){pp.value='';pp.focus();}
 }
 
 function cgUpdateAttempts(){
@@ -2500,14 +2500,14 @@ function corexToast(msg){
 <!-- Step 1 -->
 <div id="cg-step-1">
 <div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;text-align:left;">Step 1 of 2 — Access Passphrase</div>
-<input autocomplete="off" id="cg-passphrase" onkeydown="if(event.key==='Enter')cgVerifyPassphrase()" placeholder="Enter your passphrase" spellcheck="false" style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.05em;" type="password"/>
+<input autocomplete="new-password" id="cg-passphrase" onkeydown="if(event.key==='Enter')cgVerifyPassphrase()" placeholder="Enter your passphrase" spellcheck="false" style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.05em;" type="password"/>
 <div id="cg-err-1" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:11px 14px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
 <button onclick="cgVerifyPassphrase()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Continue →</button>
 </div>
 <!-- Step 2 -->
 <div id="cg-step-2" style="display:none;">
 <div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;text-align:left;">Step 2 of 2 — Security PIN</div>
-<input autocomplete="off" id="cg-pin" inputmode="numeric" maxlength="6" onkeydown="if(event.key==='Enter')cgVerifyPIN()" placeholder="Enter your PIN" style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.1em;" type="password"/>
+<input autocomplete="new-password" id="cg-pin" inputmode="numeric" maxlength="6" onkeydown="if(event.key==='Enter')cgVerifyPIN()" placeholder="Enter your PIN" style="width:100%;padding:13px 16px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:12px;color:#f5f3ff;font-size:15px;font-family:inherit;margin-bottom:10px;transition:all .2s;letter-spacing:.1em;" type="password"/>
 <div id="cg-err-2" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:11px 14px;color:#fca5a5;font-size:12px;margin-bottom:10px;"></div>
 <button onclick="cgVerifyPIN()" style="width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(124,58,237,0.4);">Unlock COREX 🔓</button>
 </div>
