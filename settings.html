@@ -59,7 +59,7 @@ async function handlePhotoUpload(input){
   const file = input.files[0];
   if(file.size > 2*1024*1024){ showToast('Photo must be under 2MB','error'); return; }
 
-  // Show preview immediately
+  // Show preview immediately while uploading
   const reader = new FileReader();
   reader.onload = function(e){
     const av = document.getElementById('profileAvatar');
@@ -67,40 +67,31 @@ async function handlePhotoUpload(input){
   };
   reader.readAsDataURL(file);
 
-  // Save to Supabase Storage
   try{
     const {data:{session}} = await db.auth.getSession();
     if(!session){ showToast('Not logged in','error'); return; }
     const uid = session.user.id;
-    const ext = file.name.split('.').pop();
+    const ext = file.name.split('.').pop().toLowerCase();
     const path = uid+'/avatar.'+ext;
 
-    // Upload to storage bucket 'avatars' (must exist in Supabase Storage)
-    const {error:upErr} = await db.storage.from('avatars').upload(path, file, {upsert:true});
+    showToast('Uploading photo...','');
+
+    // Upload to Supabase Storage 'avatars' bucket
+    const {error:upErr} = await db.storage.from('avatars').upload(path, file, {upsert:true, contentType:file.type});
     if(upErr){
-      // Bucket doesn't exist or upload failed — save as base64 in profile instead
-      const reader2=new FileReader();
-      reader2.onload=async function(ev){
-        const b64=ev.target.result;
-        await db.from('profiles').update({avatar_url:b64}).eq('id',uid).catch(()=>{});
-        localStorage.setItem('bw_avatar_url',b64);
-        showToast('✅ Photo saved to your profile','success');
-      };
-      reader2.readAsDataURL(file);
+      showToast('Upload failed: '+upErr.message,'error');
       return;
     }
 
-    // Get public URL
+    // Get public URL and save to profile
     const {data:{publicUrl}} = db.storage.from('avatars').getPublicUrl(path);
+    const {error:updateErr} = await db.from('profiles').update({avatar_url: publicUrl}).eq('id', uid);
+    if(updateErr){ showToast('Photo uploaded but profile not updated: '+updateErr.message,''); return; }
 
-    // Save URL to profile
-    await db.from('profiles').update({avatar_url: publicUrl}).eq('id', uid);
-
-    // Store in localStorage for other pages
     localStorage.setItem('bw_avatar_url', publicUrl);
     showToast('✅ Photo saved successfully','success');
   }catch(e){
-    showToast('Photo preview updated — save profile to apply','');
+    showToast('Upload error: '+e.message,'error');
   }
 }
 </script>
@@ -327,45 +318,45 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
 <span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
 <span class="logo-sub">CRM</span>
 </a>
-<button class="collapse-btn" onclick="toggleSidebar()">&#x2630;</button>
+<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Operations</div>
-<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x1F4CA;</span><span class="nav-text">Dashboard</span></a>
-<a class="ni" href="contacts.html"><span class="ni-icon">&#x1F465;</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">&#x2014;</span></a>
-<a class="ni" href="deals.html"><span class="ni-icon">&#x1F4BC;</span><span class="nav-text">Opportunities</span></a>
-<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x2705;</span><span class="nav-text">Tasks</span></a>
-<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x1F4C5;</span><span class="nav-text">Calendar</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
+<a class="ni" href="contacts.html"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
+<a class="ni" href="deals.html"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns">Growth</div>
-<a class="ni" style="display:none;"><span class="ni-icon">&#x1F4E7;</span><span class="nav-text">Email</span></a>
-<a class="ni" style="display:none;"><span class="ni-icon">&#x1F4AC;</span><span class="nav-text">WhatsApp</span></a>
-<a class="ni" style="display:none;"><span class="ni-icon">&#x26A1;</span><span class="nav-text">Workflows</span></a>
-<a class="ni" style="pointer-events:none;opacity:0.4;"><span class="ni-icon">&#x1F4E1;</span><span class="nav-text">Communications <span style="font-size:0.65rem;color:var(--text3);">Coming soon</span></span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">⚡</span><span class="nav-text">Workflows</span></a>
+<a class="ni" style="pointer-events:none;opacity:0.4;"><span class="ni-icon">📡</span><span class="nav-text">Communications <span style="font-size:0.65rem;color:var(--text3);">Coming soon</span></span></a>
 <div class="ns">Insights</div>
-<a class="ni" href="reports.html" id="nav-reports"><span class="ni-icon">&#x1F4C8;</span><span class="nav-text">Business Insights</span></a>
+<a class="ni" href="reports.html" id="nav-reports"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
 <div class="ns">Workspace</div>
-<a class="ni  active" href="settings.html" id="nav-settings"><span class="ni-icon">&#x2699;&#xFE0F;</span><span class="nav-text">Settings</span></a>
-<a class="ni" href="billing.html" id="nav-billing"><span class="ni-icon">&#x1F4B3;</span><span class="nav-text">Billing</span></a>
+<a class="ni active" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" href="billing.html" id="nav-billing"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <!-- Admin section — shown for manager/admin/owner -->
 <div class="ns" id="adminNav" style="display:none;">Admin</div>
-<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">&#x1F6E1;</span><span class="nav-text">Super Admin</span></a>
+<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
 <div class="trial-w" id="trialWidget">
-<div class="tw-label">&#x23F1; 14-Day Free Trial</div>
+<div class="tw-label">⏱ 14-Day Free Trial</div>
 <div class="tw-days" id="trialDaysNum">14</div>
-<div class="tw-sub" id="trialSub">days remaining &middot; No card needed</div>
+<div class="tw-sub" id="trialSub">days remaining · No card needed</div>
 <div class="tw-bar"><div class="tw-fill" id="trialFill" style="width:100%;"></div></div>
 </div>
 <div class="user-card" onclick="window.location.href='settings.html'">
-<div class="avatar" id="sidebarAvatar">&#x2014;</div>
+<div class="avatar" id="sidebarAvatar">—</div>
 <div class="user-info">
 <div class="user-name" id="sidebarName">Loading...</div>
-<div class="user-role-txt" id="sidebarRole">&#x2014;</div>
+<div class="user-role-txt" id="sidebarRole">—</div>
 <div class="role-badge" id="roleBadge"></div>
 </div>
 </div>
-<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md,8px);color:#ef4444;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;">&#x1F6AA; Sign Out</button>
+<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md,8px);color:#ef4444;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;">🚪 Sign Out</button>
 </div>
 </aside>
 <div class="main">
