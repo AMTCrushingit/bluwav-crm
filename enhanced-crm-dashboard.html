@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Command Center</title>
+<title>BluWav CRM — Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -79,16 +79,18 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 /* ══ TOPBAR ══ */
 /* Trial expiry banner */
 .trial-banner{
-  background:linear-gradient(90deg,rgba(239,68,68,0.12),rgba(245,158,11,0.08));
-  border-bottom:1px solid rgba(239,68,68,0.25);
-  padding:8px 24px;display:none;align-items:center;justify-content:space-between;
-  font-size:0.78rem;color:#fca5a5;flex-shrink:0;
+  background:rgba(201,168,76,0.06);
+  border-bottom:1px solid rgba(201,168,76,0.15);
+  padding:7px 24px;display:none;align-items:center;justify-content:space-between;
+  font-size:0.78rem;color:var(--text2);flex-shrink:0;transition:background 0.3s,border-color 0.3s;
 }
 .trial-banner.visible{display:flex;}
-.trial-banner a{color:var(--gold);font-weight:700;text-decoration:none;margin-left:8px;}
+.trial-banner.urgent{background:rgba(239,68,68,0.08);border-bottom-color:rgba(239,68,68,0.25);color:#fca5a5;}
+.trial-banner a{color:var(--gold);font-weight:700;text-decoration:none;}
 .trial-banner a:hover{text-decoration:underline;}
-.trial-banner-close{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:14px;padding:0 4px;opacity:0.7;}
-.trial-banner-close:hover{opacity:1;}
+.trial-banner-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;}
+.trial-banner-close:hover{color:var(--text);}
+.trial-banner-close:focus-visible{outline:2px solid var(--cyan);border-radius:3px;}
 .topbar{background:rgba(10,14,26,0.98);border-bottom:1px solid var(--navy-border);padding:0 24px;height:56px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);}
 .topbar-left .greeting{font-size:0.85rem;color:var(--text3);}
 .topbar-left h1{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--text);}
@@ -344,16 +346,18 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
   .content{padding:14px;}
   /* Trial expiry banner */
 .trial-banner{
-  background:linear-gradient(90deg,rgba(239,68,68,0.12),rgba(245,158,11,0.08));
-  border-bottom:1px solid rgba(239,68,68,0.25);
-  padding:8px 24px;display:none;align-items:center;justify-content:space-between;
-  font-size:0.78rem;color:#fca5a5;flex-shrink:0;
+  background:rgba(201,168,76,0.06);
+  border-bottom:1px solid rgba(201,168,76,0.15);
+  padding:7px 24px;display:none;align-items:center;justify-content:space-between;
+  font-size:0.78rem;color:var(--text2);flex-shrink:0;transition:background 0.3s,border-color 0.3s;
 }
 .trial-banner.visible{display:flex;}
-.trial-banner a{color:var(--gold);font-weight:700;text-decoration:none;margin-left:8px;}
+.trial-banner.urgent{background:rgba(239,68,68,0.08);border-bottom-color:rgba(239,68,68,0.25);color:#fca5a5;}
+.trial-banner a{color:var(--gold);font-weight:700;text-decoration:none;}
 .trial-banner a:hover{text-decoration:underline;}
-.trial-banner-close{background:none;border:none;color:#fca5a5;cursor:pointer;font-size:14px;padding:0 4px;opacity:0.7;}
-.trial-banner-close:hover{opacity:1;}
+.trial-banner-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;}
+.trial-banner-close:hover{color:var(--text);}
+.trial-banner-close:focus-visible{outline:2px solid var(--cyan);border-radius:3px;}
 .topbar{padding:0 12px;}
   #globalSearch{width:140px!important;}
   #globalSearch:focus{width:190px!important;}
@@ -446,13 +450,13 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav" role="navigation" aria-label="Main navigation">
-<div class="ns">Operations</div>
-<a class="ni active" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Command Center</span></a>
-<a class="ni" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
-<a class="ni" id="nav-deals" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span><span class="nb" id="navOpportunitiesBadge">—</span></a>
-<a class="ni" id="nav-tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
-<a class="ni" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
-<div class="ns">Growth</div>
+<div class="ns" data-tooltip="Operations">Operations</div>
+<a class="ni active" id="nav-dashboard" data-tooltip="Dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
+<a class="ni" id="nav-contacts" data-tooltip="Customers" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
+<a class="ni" id="nav-deals" data-tooltip="Opportunities" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span><span class="nb" id="navOpportunitiesBadge">—</span></a>
+<a class="ni" id="nav-tasks" data-tooltip="Tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
+<a class="ni" id="nav-calendar" data-tooltip="Calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
+<div class="ns" data-tooltip="Growth">Growth</div>
 <a class="ni" id="nav-email" onclick="showView('email')" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
 <a class="ni" id="nav-whatsapp" onclick="showView('whatsapp')" style="display:none;"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
 <a class="ni" href="automations.html" style="display:none;"><span class="ni-icon">⚡</span><span class="nav-text">Workflows</span></a>
@@ -466,23 +470,18 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
     <div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
   </div>
 </a>
-<div class="ns">Insights</div>
-<a class="ni" href="reports.html" id="nav-reports"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
-<div class="ns">Workspace</div>
-<a class="ni" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<div class="ns" data-tooltip="Insights">Insights</div>
+<a class="ni" href="reports.html" id="nav-reports" data-tooltip="Business Insights"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
+<div class="ns" data-tooltip="Workspace">Workspace</div>
+<a class="ni" href="settings.html" id="nav-settings" data-tooltip="Settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
 <a class="ni" href="billing.html"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <a class="ni" id="nav-team" onclick="showView('contacts')" style="display:none;"><span class="ni-icon">👤</span><span class="nav-text">Team</span></a>
 <!-- Admin section — visible to manager/admin/owner only -->
-<div class="ns" id="adminNav" style="display:none;">Admin</div>
-<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
+<div class="ns" id="adminNav" data-tooltip="Admin" style="display:none;">Admin</div>
+<a class="ni" href="superadmin.html" id="adminLink" data-tooltip="Super Admin" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
-<div class="trial-w" id="trialWidget">
-<div class="tw-label">⏱ 14-Day Free Trial</div>
-<div class="tw-days" id="trialDaysNum">14</div>
-<div class="tw-sub" id="trialSub">days remaining · No card needed</div>
-<div class="tw-bar"><div class="tw-fill" id="trialFill" style="width:100%;"></div></div>
-</div>
+<!-- Trial widget moved to top banner — sidebar space freed for navigation -->
 <div class="user-card" onclick="window.location.href='settings.html'">
 <div class="avatar" id="sidebarAvatar">—</div>
 <div class="user-info">
@@ -523,12 +522,18 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 </header>
-<!-- TRIAL EXPIRY BANNER -->
-<div class="trial-banner" id="trialExpiryBanner" role="alert" aria-live="polite">
-  <span>⚠️ Your 14-day free trial has expired. Your data is safe — upgrade to continue.</span>
+<!-- TRIAL BANNER — always visible, updates dynamically -->
+<div class="trial-banner visible" id="trialExpiryBanner" role="status" aria-live="polite" aria-label="Trial status">
   <div style="display:flex;align-items:center;gap:8px;">
-    <a href="billing.html">Upgrade now →</a>
-    <button class="trial-banner-close" onclick="document.getElementById('trialExpiryBanner').classList.remove('visible')" aria-label="Dismiss">✕</button>
+    <span id="trialBannerIcon">⏱</span>
+    <span id="trialBannerText">14-day free trial · No card needed</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="height:6px;width:80px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
+      <div id="trialBannerBar" style="height:100%;background:var(--gold);border-radius:3px;width:100%;transition:width 0.5s;"></div>
+    </div>
+    <a href="billing.html" style="color:var(--gold);font-weight:700;font-size:0.75rem;text-decoration:none;white-space:nowrap;">Upgrade →</a>
+    <button class="trial-banner-close" id="trialBannerClose" onclick="sessionStorage.setItem('trial_banner_dismissed','1');this.closest('.trial-banner').classList.remove('visible');" aria-label="Dismiss trial banner">✕</button>
   </div>
 </div>
 <!-- ROLE BANNER -->
