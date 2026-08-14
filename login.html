@@ -308,8 +308,31 @@ function _getGateState() {
   } catch(e) { return { attempts: 0, lockedUntil: 0 }; }
 }
 function _setGateState(attempts, lockedUntil) {
-  localStorage.setItem('bw_gate_state', JSON.stringify({ attempts: attempts, lockedUntil: lockedUntil || 0 }));
+  // Read current state first to avoid overwriting a higher attempt count
+  // set by another tab simultaneously
+  var current = _getGateState();
+  var newAttempts = Math.max(attempts, current.attempts);
+  var newLock = Math.max(lockedUntil || 0, current.lockedUntil || 0);
+  localStorage.setItem('bw_gate_state', JSON.stringify({ attempts: newAttempts, lockedUntil: newLock, ts: Date.now() }));
 }
+
+// Cross-tab sync: if another tab locks the gate, this tab reflects it immediately
+window.addEventListener('storage', function(e) {
+  if (e.key === 'bw_gate_state' && e.newValue) {
+    try {
+      var s = JSON.parse(e.newValue);
+      if (s.lockedUntil && s.lockedUntil > Date.now()) {
+        // Another tab triggered lockout — reflect it here
+        var inp = document.getElementById('gateInput');
+        var btn = document.querySelector('.gate-btn');
+        var errEl = document.getElementById('gateError');
+        if (inp) inp.disabled = true;
+        if (btn) btn.disabled = true;
+        if (errEl) { errEl.textContent = '🔒 Too many attempts. Try again later.'; errEl.style.display = 'block'; }
+      }
+    } catch(e2) {}
+  }
+});
 
 function checkGate() {
   var state = _getGateState();

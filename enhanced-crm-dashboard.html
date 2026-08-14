@@ -1022,7 +1022,11 @@ function updateTrialWidget(signupDateStr){
     if(fillEl)fillEl.style.background='linear-gradient(90deg,var(--orange),var(--gold))';
   }
   if(fillEl)fillEl.style.width=pct+'%';
-  localStorage.setItem('bw_trial_start',start.toISOString());
+  // Write-once: never overwrite an existing trial start date
+  // This prevents two tabs from setting different start times
+  if(!localStorage.getItem('bw_trial_start')){
+    localStorage.setItem('bw_trial_start',start.toISOString());
+  }
   localStorage.setItem('bw_trial_days_left',remaining);
 }
 
@@ -1055,9 +1059,7 @@ function showToast(msg,type=''){
 })();
 
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
-const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 
-// ── ORPHANED STATE CLEANUP ───────────────────────────────────────
 // Runs on every page load — clears any stale/partial state left
 // behind by closed tabs, lost connections, or interrupted logins
 (function cleanOrphanedState(){

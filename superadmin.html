@@ -1616,6 +1616,27 @@ const COREX_TAG_COLORS={"CRM Fit":"background:rgba(139,92,246,.15);color:#c4b5fd
 
 let corexLeads=[];
 let corexInactivityTimer=null;
+
+// Cross-tab COREX sync: if another tab adds leads, merge them in
+window.addEventListener('storage', function(e){
+  if(e.key==='corex_leads' && e.newValue){
+    try{
+      const incoming=JSON.parse(e.newValue);
+      if(!Array.isArray(incoming)) return;
+      // Merge: add any leads not already in our array (by id)
+      const existingIds=new Set(corexLeads.map(l=>l.id));
+      const newOnes=incoming.filter(l=>!existingIds.has(l.id));
+      if(newOnes.length>0){
+        corexLeads.unshift(...newOnes);
+        // Re-render if COREX is open
+        if(document.getElementById('corex-content')?.style.display!=='none'){
+          corexRenderStats();
+          corexRenderLeads();
+        }
+      }
+    }catch(e2){}
+  }
+});
 const COREX_PASSPHRASE=['AMT2026','-','COREX'].join('');
 const COREX_PIN=['26','20','68'].join('');
 const COREX_MAX_ATTEMPTS=3;
