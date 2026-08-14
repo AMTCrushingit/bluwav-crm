@@ -319,53 +319,51 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
 <span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
 <span class="logo-sub">CRM</span>
 </a>
-<button class="collapse-btn" onclick="toggleSidebar()">&#x2630;</button>
+<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Operations</div>
-<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x1F4CA;</span><span class="nav-text">Dashboard</span></a>
-<a class="ni" href="contacts.html"><span class="ni-icon">&#x1F465;</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">&#x2014;</span></a>
-<a class="ni" href="deals.html"><span class="ni-icon">&#x1F4BC;</span><span class="nav-text">Opportunities</span></a>
-<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x2705;</span><span class="nav-text">Tasks</span></a>
-<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x1F4C5;</span><span class="nav-text">Calendar</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
+<a class="ni" href="contacts.html"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
+<a class="ni" href="deals.html"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns">Growth</div>
-<a class="ni" style="display:none;"><span class="ni-icon">&#x1F4E7;</span><span class="nav-text">Email</span></a>
-<a class="ni" style="display:none;"><span class="ni-icon">&#x1F4AC;</span><span class="nav-text">WhatsApp</span></a>
-<a class="ni" style="display:none;"><span class="ni-icon">&#x26A1;</span><span class="nav-text">Workflows</span></a>
-<a class="ni" style="pointer-events:none;opacity:0.4;"><span class="ni-icon">&#x1F4E1;</span><span class="nav-text">Communications <span style="font-size:0.65rem;color:var(--text3);">Coming soon</span></span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">⚡</span><span class="nav-text">Workflows</span></a>
+<a class="ni" style="pointer-events:none;opacity:0.4;"><span class="ni-icon">📡</span><span class="nav-text">Communications <span style="font-size:0.65rem;color:var(--text3);">Coming soon</span></span></a>
 <div class="ns">Insights</div>
-<a class="ni" href="reports.html" id="nav-reports"><span class="ni-icon">&#x1F4C8;</span><span class="nav-text">Business Insights</span></a>
+<a class="ni" href="reports.html" id="nav-reports"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
 <div class="ns">Workspace</div>
-<a class="ni" href="settings.html" id="nav-settings"><span class="ni-icon">&#x2699;&#xFE0F;</span><span class="nav-text">Settings</span></a>
-<a class="ni  active" href="billing.html" id="nav-billing"><span class="ni-icon">&#x1F4B3;</span><span class="nav-text">Billing</span></a>
+<a class="ni" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni active" href="billing.html" id="nav-billing"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <!-- Admin section — shown for manager/admin/owner -->
 <div class="ns" id="adminNav" style="display:none;">Admin</div>
-<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">&#x1F6E1;</span><span class="nav-text">Super Admin</span></a>
+<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
 <div class="trial-w" id="trialWidget">
-<div class="tw-label">&#x23F1; 14-Day Free Trial</div>
+<div class="tw-label">⏱ 14-Day Free Trial</div>
 <div class="tw-days" id="trialDaysNum">14</div>
-<div class="tw-sub" id="trialSub">days remaining &middot; No card needed</div>
+<div class="tw-sub" id="trialSub">days remaining · No card needed</div>
 <div class="tw-bar"><div class="tw-fill" id="trialFill" style="width:100%;"></div></div>
 </div>
 <div class="user-card" onclick="window.location.href='settings.html'">
-<div class="avatar" id="sidebarAvatar">&#x2014;</div>
+<div class="avatar" id="sidebarAvatar">—</div>
 <div class="user-info">
 <div class="user-name" id="sidebarName">Loading...</div>
-<div class="user-role-txt" id="sidebarRole">&#x2014;</div>
+<div class="user-role-txt" id="sidebarRole">—</div>
 <div class="role-badge" id="roleBadge"></div>
 </div>
 </div>
-<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md,8px);color:#ef4444;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;">&#x1F6AA; Sign Out</button>
+<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md,8px);color:#ef4444;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;">🚪 Sign Out</button>
 </div>
 </aside>
 <div class="main" id="mainContent">
 <header class="topbar">
 <div class="topbar-left"><h1>Billing &amp; Plan</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Billing</div></div>
 <div class="topbar-right">
-<button class="btn btn-ghost" onclick="showToast('📄 Invoice downloaded','success')">⬇ Invoice</button>
-<button class="btn btn-gold" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">⚡ Upgrade</button>
 <div class="icon-btn">🔔<div class="notif-dot"></div></div>
 <div class="user-card" style="padding:4px 8px;border-radius:8px;">
 <div class="avatar" id="topAvatar" style="width:32px;height:32px;font-size:12px;">AM</div>
@@ -374,349 +372,167 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
 </div>
 </header>
 <div class="content">
-<!-- TRIAL BANNER -->
-<div class="trial-banner">
-<div class="trial-left">
-<div class="trial-days-circle" id="trialCircle">
-<div class="num" id="trialDays">14</div>
-<div class="lbl">Days</div>
-</div>
-<div class="trial-info">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
-<h3 id="trialHeading" style="margin:0;">🎉 Your 14-Day Free Trial is Active</h3>
-<span id="trialUrgencyBadge" style="display:none;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);animation:pulse 1.5s infinite;">⚠️ EXPIRING SOON</span>
-</div>
-<p id="trialSubtext">Full access to all BluWav CRM features — setup fee applies at signup</p>
-<div class="trial-progress">
-<div class="trial-bar"><div class="trial-fill" id="trialFill" style="width:100%;"></div></div>
-<div class="trial-dates">
-<span id="trialStart">Started today</span>
-<span id="trialEnd" style="font-weight:600;">Ends in 14 days — no card needed</span>
-</div>
-</div>
-<div id="trialHoursRow" style="display:none;margin-top:6px;">
-<span style="font-size:11px;color:var(--text3);">Time remaining: </span>
-<span id="trialHoursCount" style="font-size:12px;font-weight:700;color:#ef4444;font-variant-numeric:tabular-nums;"></span>
-</div>
-</div>
-</div>
-<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
-<button class="btn-activate" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">⚡ Activate Plan Now</button>
-<div id="trialCta" style="font-size:11px;color:var(--text3);text-align:right;max-width:180px;"></div>
-</div>
-</div>
-<!-- CURRENT PLAN + PAYMENT -->
-<div class="plan-info-grid">
-<div class="info-card">
-<div class="info-card-title">Current Plan</div>
-<div class="info-row"><span class="info-label">Plan</span><span class="info-value" style="color:var(--gold);">BluWav CRM Premium (Trial)</span></div>
-<div class="info-row"><span class="info-label">Trial Ends</span><span class="info-value" id="trialEndDate">—</span></div>
-<div class="info-row"><span class="info-label">Post-Trial Price</span><span class="info-value">$179/mo <span style="color:var(--green);font-size:11px;">✅ $299 Onboarding &amp; Setup</span></span></div>
-<div class="info-row"><span class="info-label">Setup Fee</span><span class="info-value">Charged at signup · One-time</span></div>
-<div class="info-row"><span class="info-label">Billing Cycle</span><span class="info-value">Monthly · 1st of month</span></div>
-<div class="info-row"><span class="info-label">Admin</span><span class="info-value" id="adminName">—</span></div>
-</div>
-<div class="info-card">
-<div class="info-card-title">Payment Method</div>
-<div style="text-align:center;padding:20px 0;">
-<div style="font-size:40px;margin-bottom:12px;">💳</div>
-<div style="font-size:14px;color:var(--text2);margin-bottom:6px;">No payment method on file</div>
-<div style="font-size:12px;color:var(--text3);margin-bottom:18px;">Add a card to activate your plan after the trial</div>
-<button class="btn-activate" onclick="openPaymentModal('premium','monthly')" style="font-size:13px;padding:10px 20px;">+ Add Payment Method</button>
-</div>
-</div>
-</div>
-<!-- PLANS -->
-<!-- GROWTH SYSTEMS — redirects to bluwavgrowth.com -->
-<div style="background:linear-gradient(135deg,rgba(0,200,224,0.06),rgba(0,200,224,0.02));border:1px solid rgba(0,200,224,0.2);border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-<div style="display:flex;align-items:center;gap:14px;">
-<div style="background:rgba(0,194,209,0.06);border:1px solid rgba(0,194,209,0.2);border-radius:14px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+<!-- [1] ACCOUNT BILLING STATUS — single source of truth -->
+<div id="billingStatusCard" style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
 <div>
-<div style="font-size:14px;font-weight:800;color:var(--cyan);margin-bottom:4px;">🌊 BluWav Growth System Packages</div>
-<div style="font-size:13px;color:var(--text2);">Website · Google Visibility · WhatsApp · Automation · Delivered in 48hrs</div>
-<div style="font-size:12px;color:var(--text3);margin-top:4px;">Ripple $397/mo · Current $697/mo · Surge $1,497/mo+</div>
+<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Account Status</div>
+<div id="statusHeadline" style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px;">Premium Trial Active</div>
+<div id="statusSubline" style="font-size:14px;color:var(--text3);margin-bottom:16px;">14 days remaining</div>
+<!-- Price summary -->
+<div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:20px;">
+<div><div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:2px;">Today</div><div style="font-size:20px;font-weight:800;color:var(--success);">$0</div></div>
+<div><div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:2px;">After trial</div><div id="afterTrialPrice" style="font-size:20px;font-weight:800;color:var(--text);">$179/mo</div></div>
+<div><div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:2px;">Billing starts</div><div id="billingStartDate" style="font-size:14px;font-weight:700;color:var(--text);">—</div></div>
 </div>
-<a href="https://www.bluwavgrowth.com" style="background:var(--cyan);color:#0a0e1a;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;" target="_blank">View Growth Plans →</a>
+<!-- Primary CTA -->
+<button id="primaryCTA" onclick="openPaymentModal('premium','monthly')" style="background:var(--gold);color:#0a0e1a;border:none;border-radius:10px;padding:12px 28px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;">Add payment method to keep access</button>
+<div style="font-size:12px;color:var(--text3);line-height:1.6;">
+        No charge today  ·  Cancel anytime before billing starts  ·  Secure payment via Stripe
+      </div>
 </div>
+<div style="text-align:right;">
+<div style="font-size:11px;color:var(--text3);font-weight:600;margin-bottom:4px;">Current Plan</div>
+<div id="currentPlanName" style="font-size:16px;font-weight:700;color:var(--cyan);">CRM Premium (Trial)</div>
+<div style="font-size:12px;color:var(--text3);margin-top:4px;">Unlimited contacts  ·  5 users  ·  Automation</div>
+<a href="#plans" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'});return false;" style="font-size:12px;color:var(--text3);text-decoration:none;display:block;margin-top:12px;">Compare plans →</a>
+</div>
+</div>
+</div>
+<!-- [2] CURRENT PLAN + PAYMENT METHOD -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;">
+<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Plan Summary</div>
+<div id="planSummaryName" style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;">CRM Premium — Trial</div>
+<div style="font-size:13px;color:var(--text3);line-height:1.7;margin-bottom:12px;">
+      ✓ Unlimited contacts<br/>
+      ✓ Up to 5 users<br/>
+      ✓ Pipeline &amp; automation<br/>
+      ✓ Reports &amp; insights
+    </div>
+<div style="font-size:12px;color:var(--text3);">Trial ends: <span id="trialEndDate" style="color:var(--text);font-weight:600;">—</span></div>
+</div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;">
+<div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Payment Method</div>
+<div id="paymentMethodDisplay">
+<div style="font-size:14px;color:var(--text3);margin-bottom:16px;">No payment method on file</div>
+<button onclick="openPaymentModal('premium','monthly')" style="background:var(--gold);color:#0a0e1a;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">+ Add Payment Method</button>
+</div>
+<div style="font-size:11px;color:var(--text3);margin-top:12px;">🔒 Secure payment handled by Stripe</div>
+</div>
+</div>
+<!-- [3] CRM PLANS — 3 only, collapsed by default -->
+<div id="plans" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:20px;">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
 <div>
-<div style="font-size:14px;font-weight:800;color:var(--cyan);margin-bottom:3px;">BluWav Growth System Packages</div>
-<div style="font-size:12px;color:var(--text3);">Website · Google Visibility · WhatsApp · Automation · Delivered in 48 hours</div>
-<div style="font-size:12px;color:var(--text3);margin-top:2px;">Ripple $397/mo · Current $697/mo · Surge $1,497/mo+</div>
+<div style="font-size:16px;font-weight:700;color:var(--text);">CRM Plans</div>
+<div style="font-size:12px;color:var(--text3);margin-top:2px;">14-day free trial on all plans  ·  No credit card required  ·  Cancel anytime</div>
+</div>
+<div style="display:flex;background:var(--bg3);border-radius:8px;padding:3px;gap:2px;">
+<button id="btnMonthly" onclick="setBilling('monthly')" style="padding:6px 16px;border-radius:6px;border:none;background:var(--gold);color:#0a0e1a;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Monthly</button>
+<button id="btnAnnual" onclick="setBilling('annual')" style="padding:6px 16px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Annual <span style="font-size:10px;color:var(--success);">Save 2 months</span></button>
 </div>
 </div>
-<a href="https://bluwavgrowth.com/pricing.html" style="background:var(--cyan);color:#0a0e1a;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;" target="_blank">View Growth Plans →</a>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+<!-- Starter -->
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;">
+<div style="font-size:13px;font-weight:700;color:var(--text3);margin-bottom:4px;">Starter</div>
+<div style="font-size:11px;color:var(--text3);margin-bottom:12px;">Solo operator getting organised</div>
+<div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:4px;"><span class="plan-price" data-annual="$49" data-monthly="$59">$59</span><span style="font-size:13px;color:var(--text3);">/mo</span></div>
+<div style="font-size:11px;color:var(--text3);margin-bottom:16px;">+ $99 onboarding &amp; setup</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.8;margin-bottom:16px;">
+        25 contacts  ·  1 user<br/>Basic pipeline tracking
+      </div>
+<button onclick="openPaymentModal('starter','monthly')" style="width:100%;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Choose Starter</button>
 </div>
-<!-- HOSTING RENEWAL -->
-<div style="background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(34,197,94,0.04));border:1px solid rgba(34,197,94,0.35);border-radius:14px;padding:18px 22px;margin-bottom:24px;position:relative;overflow:hidden;">
-<!-- Glow accent -->
-<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),rgba(34,197,94,0.3));border-radius:14px 14px 0 0;"></div>
-<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
-<div style="display:flex;align-items:center;gap:14px;">
-<div style="width:44px;height:44px;border-radius:10px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏠</div>
+<!-- Lite -->
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;">
+<div style="font-size:13px;font-weight:700;color:var(--text3);margin-bottom:4px;">Lite</div>
+<div style="font-size:11px;color:var(--text3);margin-bottom:12px;">Small team getting organised</div>
+<div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:4px;"><span class="plan-price" data-annual="$82" data-monthly="$99">$99</span><span style="font-size:13px;color:var(--text3);">/mo</span></div>
+<div style="font-size:11px;color:var(--text3);margin-bottom:16px;">+ $199 onboarding &amp; setup</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.8;margin-bottom:16px;">
+        Pipeline &amp; automation basics<br/>Better reporting, 3 users
+      </div>
+<button onclick="openPaymentModal('lite','monthly')" style="width:100%;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Choose Lite</button>
 </div>
-<div style="text-align:right;flex-shrink:0;">
-<!-- Savings badge -->
-<div style="display:inline-block;background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:6px;letter-spacing:0.3px;">🆕 SAVE 42% vs Monthly</div>
-<div style="display:flex;align-items:baseline;gap:6px;justify-content:flex-end;">
-<div style="font-size:13px;color:var(--text3);text-decoration:line-through;font-weight:400;">$49.83/mo</div>
-<div style="font-size:26px;font-weight:800;color:var(--green);line-height:1;">$349</div>
-</div>
-<div style="font-size:12px;color:var(--text3);margin-top:2px;">per year — just <strong style="color:var(--green);">$29.08/mo</strong></div>
-<div style="font-size:11px;color:var(--text3);margin-top:2px;">Billed annually after first 3 months</div>
-</div>
-</div>
-</div>
-<!-- GRACE PERIOD BANNER -->
-<div class="grace-banner" id="graceBanner">
-<div class="grace-icon">⚠️</div>
-<div style="flex:1;">
-<div class="grace-title">Subscription Lapsed — Grace Period Active</div>
-<div class="grace-msg">Your subscription has lapsed. You have <strong id="graceDaysLeft" style="color:#fcd34d;">7</strong> days to reactivate before your account becomes read-only. Your data is safe.</div>
-<button onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})" style="margin-top:8px;background:var(--gold);color:#0a0e1a;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;">Reactivate Now →</button>
-</div>
-</div>
-<!-- READ-ONLY BANNER -->
-<div class="readonly-banner" id="readonlyBanner">
-<div style="font-size:28px;margin-bottom:8px;">🔒</div>
-<div style="font-size:15px;font-weight:700;color:#fca5a5;margin-bottom:6px;">Account is Read-Only</div>
-<div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">Your grace period has ended. You can view your data but cannot add, edit, or delete anything until you reactivate your subscription.</div>
-<button onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})" style="background:var(--cyan);color:#0a0e1a;border:none;border-radius:9px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;">Reactivate Subscription →</button>
-</div>
-<div id="plans">
-<div class="section-header">
-<div class="section-title">🖥️ CRM Plans</div>
-<div class="section-sub">Every plan includes a 14-day free trial · Setup fee applies · Cancel anytime</div>
-</div>
-<div class="trial-note">⭐ Every plan includes a <strong>14-day free trial</strong>. Onboarding &amp; Setup fee charged at signup. Monthly billing starts after your trial ends.</div>
-<!-- Billing Toggle -->
-<div class="billing-toggle-wrap">
-<span class="active" id="monthlyLabel">Monthly</span>
-<label class="toggle-switch"><input id="billingToggle" onchange="toggleBilling(this)" type="checkbox"/><span class="toggle-slider"></span></label>
-<span id="annualLabel">Annual</span>
-<span class="save-badge">💰 Save 2 months</span>
-</div>
-<div class="plans-grid" style="grid-template-columns:repeat(3,1fr);">
-<!-- CRM STARTER -->
-<div class="plan-card">
-<div class="plan-icon">🌊</div>
-<div class="plan-name">CRM Starter</div>
-<div class="plan-tagline">Entry-level CRM for solo operators just getting started.</div>
-<div class="plan-price-block">
-<div class="plan-setup">$99 Onboarding &amp; Setup</div>
-<div class="plan-price-main" style="color:var(--cyan);">$59 <span>/month</span></div>
-<div class="plan-price-annual">Cancel anytime · No lock-in</div>
-</div>
-<div class="plan-features">
-<div class="plan-feature"><span class="ck">✓</span> 25 contacts</div>
-<div class="plan-feature"><span class="ck">✓</span> Lead tracking</div>
-<div class="plan-feature"><span class="ck">✓</span> Basic contact management</div>
-<div class="plan-feature"><span class="ck">✓</span> Basic reporting</div>
-<div class="plan-feature"><span class="ck">✓</span> 1 user only</div>
-<div class="plan-feature"><span class="ck">✓</span> Email support (72hr)</div>
-<div class="plan-feature no"><span class="ck" style="color:var(--text3);">✗</span> Automation</div>
-<div class="plan-feature no"><span class="ck" style="color:var(--text3);">✗</span> Pipeline tracking</div>
-<div class="plan-feature no"><span class="ck" style="color:var(--text3);">✗</span> Team members</div>
-</div>
-<button class="plan-btn cyan" onclick="openPaymentModal('starter','monthly')">🧪 Test Activation →</button>
-</div>
-<!-- CRM LITE -->
-<div class="plan-card">
-<div class="plan-icon">💼</div>
-<div class="plan-name">CRM Lite</div>
-<div class="plan-tagline">For small teams who need flexibility, pipeline tracking, and automation.</div>
-<div class="plan-price-block">
-<div class="plan-setup">$199 Onboarding &amp; Setup</div>
-<div class="plan-price-main" style="color:var(--cyan);">$<span id="litePrice">99</span> <span>/month</span></div>
-<div class="plan-price-annual" id="liteAnnual">or <strong>$990/year</strong> — 2 months free</div>
-</div>
-<div class="plan-features">
-<div class="plan-feature"><span class="ck">✓</span> Up to 250 contacts</div>
-<div class="plan-feature"><span class="ck">✓</span> Pipeline tracking</div>
-<div class="plan-feature"><span class="ck">✓</span> Basic automation</div>
-<div class="plan-feature"><span class="ck">✓</span> 2 team members</div>
-<div class="plan-feature"><span class="ck">✓</span> Standard reporting</div>
-<div class="plan-feature"><span class="ck">✓</span> Priority email support (48hr)</div>
-<div class="plan-feature no"><span class="ck" style="color:var(--text3);">✗</span> WhatsApp integration</div>
-<div class="plan-feature no"><span class="ck" style="color:var(--text3);">✗</span> Advanced automation</div>
-</div>
-<button class="plan-btn cyan" onclick="openPaymentModal('lite','monthly')">🧪 Test Activation →</button>
-</div>
-<!-- CRM PREMIUM — MOST POPULAR -->
-<div class="plan-card popular current">
-<div class="plan-badge" style="background:linear-gradient(135deg,var(--orange),var(--gold));color:#0a0e1a;">⭐ Most Popular — Best Value</div>
-<div class="plan-icon">🖤</div>
-<div class="plan-name">CRM Premium</div>
-<div class="plan-tagline">Complete CRM — the full BluWav experience for growing teams.</div>
-<div class="plan-price-block">
-<div class="plan-setup">$299 Onboarding &amp; Setup</div>
-<div class="plan-price-main" style="color:var(--orange);">$<span id="premiumPrice">179</span> <span>/month</span></div>
-<div class="plan-price-annual" id="premiumAnnual">or <strong>$1,990/year</strong> — 2 months free</div>
-<div class="nonprofit-badge">🌿 Nonprofit rate: $99/mo · $199 onboarding</div>
-</div>
-<div class="plan-features">
-<div class="plan-feature plus"><span class="ck">✓</span> Everything in CRM Lite, plus:</div>
-<div class="plan-feature"><span class="ck">✓</span> Unlimited contacts</div>
-<div class="plan-feature"><span class="ck">✓</span> Full pipeline (Lead → Quote → Won)</div>
-<div class="plan-feature"><span class="ck">✓</span> Automated follow-ups (30/60/90 days)</div>
-<div class="plan-feature"><span class="ck">✓</span> WhatsApp integration</div>
-<div class="plan-feature"><span class="ck">✓</span> Revenue &amp; aging reports</div>
-<div class="plan-feature"><span class="ck">✓</span> 5 team members</div>
-<div class="plan-feature"><span class="ck">✓</span> All future features included</div>
-<div class="plan-feature"><span class="ck">✓</span> Priority support (24hr)</div>
-</div>
-<button class="plan-btn active-plan">✓ Your Current Plan (Trial)</button>
-<button class="plan-btn orange" onclick="openPaymentModal('premium','monthly')">🧪 Test Activation →</button>
-<button class="plan-btn ghost" onclick="openPaymentModal('nonprofit','monthly')" style="font-size:11px;padding:8px;margin-top:4px;">🌿 Nonprofit Rate: $99/mo + $199 Onboarding &amp; Setup</button>
+<!-- Premium — recommended -->
+<div style="background:rgba(201,168,76,0.06);border:2px solid var(--gold);border-radius:12px;padding:20px;position:relative;">
+<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0a0e1a;font-size:10px;font-weight:800;padding:2px 12px;border-radius:9999px;white-space:nowrap;">RECOMMENDED</div>
+<div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;">Premium</div>
+<div style="font-size:11px;color:var(--text3);margin-bottom:12px;">Growing team ready to scale</div>
+<div style="font-size:28px;font-weight:800;color:var(--text);margin-bottom:4px;"><span class="plan-price" data-annual="$149" data-monthly="$179">$179</span><span style="font-size:13px;color:var(--text3);">/mo</span></div>
+<div style="font-size:11px;color:var(--text3);margin-bottom:16px;">+ $299 onboarding &amp; setup</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.8;margin-bottom:16px;">
+        Unlimited contacts  ·  5 users<br/>Full automation &amp; reports
+      </div>
+<button onclick="openPaymentModal('premium','monthly')" style="width:100%;background:var(--gold);color:#0a0e1a;border:none;border-radius:8px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Current Trial — Activate</button>
 </div>
 </div>
-<!-- ENTERPRISE + WHITE-LABEL ROW -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
-<!-- CRM ENTERPRISE -->
-<div class="plan-card" style="border-color:rgba(0,194,209,0.3);">
-<div class="plan-badge" style="background:rgba(0,194,209,0.15);color:var(--cyan);">🏛 Enterprise</div>
-<div class="plan-icon">🏛</div>
-<div class="plan-name">CRM Enterprise</div>
-<div class="plan-tagline">For larger teams needing custom workflows, API access, and dedicated support.</div>
-<div class="plan-price-block">
-<div class="plan-setup">$399 Onboarding &amp; Setup</div>
-<div class="plan-price-main" style="color:var(--cyan);">$499 <span>/month</span></div>
-<div class="plan-price-annual">Full team setup, data migration &amp; training included</div>
+<!-- Enterprise/White Label collapsed -->
+<div style="margin-top:16px;text-align:center;">
+<button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.textContent=this.textContent.includes('Show')?'Hide enterprise options ▲':'Need enterprise or agency options? ▼'" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:inherit;">Need enterprise or agency options? ▼</button>
+<div style="display:none;margin-top:14px;display:none;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;">
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;">
+<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Enterprise</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Custom roles, unlimited users, priority support</div>
+<div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:10px;">$349/mo</div>
+<button onclick="openPaymentModal('enterprise','monthly')" style="width:100%;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Contact us</button>
 </div>
-<div class="plan-features">
-<div class="plan-feature"><span class="ck">✓</span> Everything in CRM Premium</div>
-<div class="plan-feature"><span class="ck">✓</span> Unlimited team members</div>
-<div class="plan-feature"><span class="ck">✓</span> Custom workflows &amp; API access</div>
-<div class="plan-feature"><span class="ck">✓</span> Data migration support</div>
-<div class="plan-feature"><span class="ck">✓</span> Dedicated account manager</div>
-<div class="plan-feature"><span class="ck">✓</span> SLA guarantee</div>
-<div class="plan-feature"><span class="ck">✓</span> Quarterly strategy calls</div>
-<div class="plan-feature"><span class="ck">✓</span> Priority 12hr support</div>
-</div>
-<button class="plan-btn cyan" onclick="openPaymentModal('enterprise','monthly')">🧪 Test Enterprise Flow →</button>
-</div>
-<!-- WHITE LABEL AGENCY -->
-<div class="plan-card agency">
-<div class="plan-badge" style="background:var(--purple);color:#fff;">🏚 Agency Partner</div>
-<div class="plan-icon">🏚</div>
-<div class="plan-name">White-Label CRM</div>
-<div class="plan-tagline">Resell BluWav CRM under your own brand. Unlimited clients. Annual contract.</div>
-<div class="plan-price-block">
-<div class="plan-setup">$499 Onboarding &amp; Setup · Annual contract</div>
-<div class="plan-price-main" style="color:var(--purple);">$697 <span>/month</span></div>
-<div class="plan-price-annual">20 clients × $697/mo = <strong>$13,940 MRR</strong> for your agency</div>
-</div>
-<div class="agency-highlight">
-💰 Charge clients $297–$997/mo · Keep 85–95% · Clients never see BluWav
-</div>
-<div class="plan-features">
-<div class="plan-feature"><span class="ck">✓</span> Your logo &amp; domain</div>
-<div class="plan-feature"><span class="ck">✅</span> Unlimited client accounts</div>
-<div class="plan-feature"><span class="ck">✅</span> Super admin dashboard</div>
-<div class="plan-feature"><span class="ck">✅</span> Everything in CRM Premium</div>
-<div class="plan-feature"><span class="ck">✅</span> White-glove onboarding</div>
-<div class="plan-feature"><span class="ck">✅</span> Dedicated account manager</div>
-<div class="plan-feature"><span class="ck">✅</span> 85–95% client retention</div>
-</div>
-<button class="plan-btn purple" onclick="showToast('📅 Booking demo call...','success')">Book a Demo Call →</button>
+<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;">
+<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">White Label</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Agency &amp; partner accounts, custom branding</div>
+<div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:10px;">Custom</div>
+<button onclick="showToast('Contact hello@bluwavgrowth.com for White Label pricing','success')" style="width:100%;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Get in touch</button>
 </div>
 </div>
 </div>
-<!-- USAGE -->
-<div class="section-header" style="margin-top:8px;">
-<div class="section-title">Usage This Month</div>
-<div class="section-sub">Trial period — full access to all features</div>
 </div>
-<div class="usage-grid">
-<div class="usage-card">
-<div class="usage-header"><div class="usage-title">👥 Customers</div><div class="usage-val" id="contactUsage">— / Unlimited</div></div>
-<div class="usage-bar"><div class="usage-fill" id="contactBar" style="width:0%;background:var(--cyan);"></div></div>
-<div class="usage-sub">Unlimited on Premium plan</div>
-</div>
-<div class="usage-card">
-<div class="usage-header"><div class="usage-title">👤 User Seats</div><div class="usage-val">3 / 5</div></div>
-<div class="usage-bar"><div class="usage-fill" style="width:60%;background:var(--gold);"></div></div>
-<div class="usage-sub">2 seats remaining on Premium plan</div>
-</div>
-<div class="usage-card">
-<div class="usage-header"><div class="usage-title">⚡ Automations</div><div class="usage-val">284 runs</div></div>
-<div class="usage-bar"><div class="usage-fill" style="width:28%;background:var(--purple);"></div></div>
-<div class="usage-sub">Unlimited on Premium plan</div>
-</div>
-<div class="usage-card">
-<div class="usage-header"><div class="usage-title">📧 Emails Sent</div><div class="usage-val">142 / 1,000</div></div>
-<div class="usage-bar"><div class="usage-fill" style="width:14%;background:var(--green);"></div></div>
-<div class="usage-sub">858 emails remaining this month</div>
+<!-- Nonprofit -->
+<div style="margin-top:12px;text-align:center;">
+<button onclick="openPaymentModal('nonprofit','monthly')" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;">🌱 Nonprofit rate available — contact us</button>
 </div>
 </div>
-<!-- INVOICES -->
-<div class="invoice-wrap">
-<div class="invoice-header">
-<div class="invoice-title">Invoice History</div>
-<span style="font-size:12px;color:var(--text3);">Trial period — no invoices yet</span>
+<!-- [4] USAGE THIS MONTH -->
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:20px;">
+<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px;">Usage This Month</div>
+<div id="usageGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+<div style="text-align:center;background:var(--bg3);border-radius:10px;padding:14px;">
+<div id="usageContacts" style="font-size:22px;font-weight:800;color:var(--cyan);">—</div>
+<div style="font-size:11px;color:var(--text3);margin-top:2px;">Customers</div>
 </div>
-<table class="invoice-table">
-<thead><tr><th>Invoice</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead>
-<tbody>
-<tr>
-<td style="color:var(--text3);">INV-2026-001</td>
-<td id="firstInvoiceDate" style="color:var(--text3);">—</td>
-<td style="color:var(--text3);">$179.00</td>
-<td><span class="inv-badge upcoming">⏳ Upcoming</span></td>
-<td><span style="font-size:12px;color:var(--text3);">After trial</span></td>
-</tr>
-<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">No invoices yet — your first invoice will appear after your trial ends</td></tr>
-</tbody>
-</table>
+<div style="text-align:center;background:var(--bg3);border-radius:10px;padding:14px;">
+<div id="usageDeals" style="font-size:22px;font-weight:800;color:var(--cyan);">—</div>
+<div style="font-size:11px;color:var(--text3);margin-top:2px;">Opportunities</div>
+</div>
+<div style="text-align:center;background:var(--bg3);border-radius:10px;padding:14px;">
+<div id="usageUsers" style="font-size:22px;font-weight:800;color:var(--cyan);">1</div>
+<div style="font-size:11px;color:var(--text3);margin-top:2px;">Users (of 5)</div>
+</div>
+<div style="text-align:center;background:var(--bg3);border-radius:10px;padding:14px;">
+<div id="usageTasks" style="font-size:22px;font-weight:800;color:var(--cyan);">—</div>
+<div style="font-size:11px;color:var(--text3);margin-top:2px;">Tasks</div>
 </div>
 </div>
 </div>
-<!-- STRIPE PAYMENT MODAL -->
-<div class="modal-overlay" id="paymentModal">
-<div class="modal">
-<div class="modal-header">
-<div class="modal-title" id="modalTitle">Activate Your Plan</div>
-<div class="modal-close" onclick="closePaymentModal()">✕</div>
-</div>
-<div class="modal-body">
-<div class="plan-summary">
-<div class="plan-summary-name" id="modalPlanName">CRM Premium</div>
-<div class="plan-summary-price" id="modalPlanPrice">$179/month</div>
-<div class="plan-summary-sub" id="modalPlanSub">+ $299 Onboarding &amp; Setup · Billed monthly</div>
-</div>
-<div style="background:rgba(99,102,241,0.12);border:2px solid rgba(99,102,241,0.4);border-radius:12px;padding:14px 16px;margin:12px 0;text-align:center;">
-<div style="font-size:13px;font-weight:800;color:#a5b4fc;margin-bottom:4px;">🧪 BETA TEST MODE</div>
-<div style="font-size:12px;color:var(--text2);line-height:1.6;"><strong>No payment will be taken.</strong> This simulates the full activation flow. In production, Stripe processes payment securely.</div>
+<!-- [5] INVOICE HISTORY -->
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:20px;">
+<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px;">Invoice History</div>
+<div id="invoiceList">
+<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">No invoices yet — your first invoice will appear here after your trial ends.</div>
 </div>
 </div>
-<div id="stripe-test-notice" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#fcd34d;display:flex;align-items:center;gap:8px;">
-<span>⚠️</span>
-<span><strong>Test Mode:</strong> Use card 4242 4242 4242 4242, any future date, any CVC to test payments.</span>
+<!-- [6] GROWTH SERVICES — bottom cross-sell -->
+<div style="background:rgba(0,200,224,0.04);border:1px solid rgba(0,200,224,0.15);border-radius:14px;padding:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+<div>
+<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;">🌊 BluWav Growth System</div>
+<div style="font-size:12px;color:var(--text3);">Website  ·  Google visibility  ·  WhatsApp  ·  Automation  ·  Delivered in 48 hours</div>
 </div>
-<div class="secure-badge">🔒 Secured by Stripe · 256-bit SSL encryption · PCI compliant</div>
-<div class="stripe-field">
+<a href="https://www.bluwavgrowth.com" style="background:var(--cyan);color:#0a0e1a;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;" target="_blank">View Growth Plans →</a>
 </div>
-<div class="stripe-row">
-<div class="stripe-field">
-</div>
-<div class="stripe-field">
-</div>
-</div>
-<div class="stripe-row">
-<div class="stripe-field">
-</div>
-<div class="stripe-field">
-<label>Email</label>
-<input autocomplete="email" id="cardEmail" placeholder="you@company.com" type="email"/>
-</div>
-</div>
-<div style="background:rgba(0,194,209,0.08);border:1px solid rgba(0,194,209,0.2);border-radius:8px;padding:10px 14px;margin-top:8px;">
-</div>
-<div class="modal-footer">
-<button class="btn-cancel" onclick="closePaymentModal()">Cancel</button>
-<button class="btn-pay" id="payBtn" onclick="processPayment()" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">🧪 Simulate Activation (Beta)</button>
-</div>
-</div>
-</div>
+</div><!-- /content -->
+</div><!-- /main -->
 <div class="toast" id="toast"></div>
 <script>
 const{createClient}=supabase;
@@ -871,6 +687,73 @@ const PLAN_DETAILS={
   enterprise:{name:'CRM Enterprise',price:'$499/month',sub:'+ $399 Onboarding & Setup · Full team setup included'},
   agency:{name:'White-Label CRM',price:'$697/month',sub:'+ $499 Onboarding & Setup · Annual contract · Unlimited clients'},
 };
+
+// ── NEW BILLING PAGE INIT ────────────────────────────────────────
+function setBilling(type){
+  selectedBilling=type;
+  document.getElementById('btnMonthly').style.background=type==='monthly'?'var(--gold)':'transparent';
+  document.getElementById('btnMonthly').style.color=type==='monthly'?'#0a0e1a':'var(--text3)';
+  document.getElementById('btnAnnual').style.background=type==='annual'?'var(--gold)':'transparent';
+  document.getElementById('btnAnnual').style.color=type==='annual'?'#0a0e1a':'var(--text3)';
+  document.querySelectorAll('.plan-price').forEach(el=>{
+    el.textContent=type==='annual'?el.dataset.annual:el.dataset.monthly;
+  });
+}
+
+function initNewBillingPage(){
+  // Trial dates
+  const TRIAL_DAYS=14;
+  let start=localStorage.getItem('bw_trial_start');
+  if(!start){start=new Date().toISOString();localStorage.setItem('bw_trial_start',start);}
+  const startDate=new Date(start);
+  const trialEnd=new Date(startDate.getTime()+TRIAL_DAYS*86400000);
+  const now=new Date();
+  const daysLeft=Math.max(0,Math.ceil((trialEnd-now)/86400000));
+
+  // Populate status card
+  const statusEl=document.getElementById('statusHeadline');
+  const subEl=document.getElementById('statusSubline');
+  const ctaEl=document.getElementById('primaryCTA');
+  const billingStartEl=document.getElementById('billingStartDate');
+  const trialEndEl=document.getElementById('trialEndDate');
+
+  const fmtDate=d=>d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  if(billingStartEl) billingStartEl.textContent=fmtDate(trialEnd);
+  if(trialEndEl) trialEndEl.textContent=fmtDate(trialEnd);
+
+  if(daysLeft<=0){
+    if(statusEl) statusEl.textContent='Trial Expired';
+    if(subEl) subEl.textContent='Choose a plan to restore access';
+    if(ctaEl){ctaEl.textContent='Reactivate plan';ctaEl.style.background='#ef4444';}
+  } else if(daysLeft<=3){
+    if(statusEl) statusEl.textContent='Premium Trial — Ending Soon';
+    if(subEl) subEl.textContent=daysLeft+' day'+(daysLeft!==1?'s':'')+' remaining — add payment to keep access';
+    if(ctaEl) ctaEl.textContent='Add payment method — trial ends '+fmtDate(trialEnd);
+  } else {
+    if(statusEl) statusEl.textContent='Premium Trial Active';
+    if(subEl) subEl.textContent=daysLeft+' days remaining';
+  }
+
+  // Load usage from Supabase
+  db.auth.getSession().then(({data:{session}})=>{
+    if(!session) return;
+    const uid=session.user.id;
+    Promise.all([
+      db.from('contacts').select('id',{count:'exact',head:true}).eq('user_id',uid),
+      db.from('deals').select('id',{count:'exact',head:true}).eq('agent_id',uid),
+      db.from('tasks').select('id',{count:'exact',head:true}).eq('user_id',uid),
+    ]).then(([c,d,t])=>{
+      const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v??'0';};
+      set('usageContacts',c.count??0);
+      set('usageDeals',d.count??0);
+      set('usageTasks',t.count??0);
+    }).catch(()=>{});
+  }).catch(()=>{});
+}
+
+// Run after existing init
+setTimeout(initNewBillingPage, 500);
 
 function openPaymentModal(plan, billing){
   selectedPlan=plan;selectedBilling=billing;
