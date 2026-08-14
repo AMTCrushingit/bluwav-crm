@@ -75,9 +75,20 @@ async function handlePhotoUpload(input){
     const ext = file.name.split('.').pop();
     const path = uid+'/avatar.'+ext;
 
-    // Upload to storage bucket 'avatars'
+    // Upload to storage bucket 'avatars' (must exist in Supabase Storage)
     const {error:upErr} = await db.storage.from('avatars').upload(path, file, {upsert:true});
-    if(upErr){ showToast('Photo saved locally only — storage: '+upErr.message,''); return; }
+    if(upErr){
+      // Bucket doesn't exist or upload failed — save as base64 in profile instead
+      const reader2=new FileReader();
+      reader2.onload=async function(ev){
+        const b64=ev.target.result;
+        await db.from('profiles').update({avatar_url:b64}).eq('id',uid).catch(()=>{});
+        localStorage.setItem('bw_avatar_url',b64);
+        showToast('✅ Photo saved to your profile','success');
+      };
+      reader2.readAsDataURL(file);
+      return;
+    }
 
     // Get public URL
     const {data:{publicUrl}} = db.storage.from('avatars').getPublicUrl(path);
@@ -949,8 +960,8 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
 <script id="canonical-sidebar-js">
 (function(){
   async function initPage(){
-    if(typeof supabase==='undefined'){setTimeout(initPage,200);return;}
-    const db=supabase.createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
+    // Reuse existing db from page script — no new client
+    if(typeof db==='undefined'){setTimeout(initPage,300);return;}
     let session=null;
     try{const r=await db.auth.getSession();session=r.data?.session;}catch(e){}
     if(!session){window.location.href='login.html';return;}

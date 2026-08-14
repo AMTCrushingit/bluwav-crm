@@ -1468,7 +1468,7 @@ async function loadData(){
   allOpportunities = deals;
 
   const openOpportunities=deals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
-  const wonOpportunities=deals.filter(d=>d.stage==='won');
+  const wonOpportunities=deals.filter(d=>(d.stage||'').toLowerCase()==='won');
   const pipeVal=openOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
   const wonVal=wonOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
 

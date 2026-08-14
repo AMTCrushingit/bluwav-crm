@@ -534,6 +534,48 @@ body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);
 </div><!-- /content -->
 </div><!-- /main -->
 <div class="toast" id="toast"></div>
+<!-- PAYMENT MODAL -->
+<div id="paymentModal" onclick="if(event.target===this)closePaymentModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;padding:20px;">
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:28px;">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+<h3 id="modalTitle" style="font-size:18px;font-weight:700;color:var(--text);">Activate Plan</h3>
+<button onclick="closePaymentModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+</div>
+<!-- Plan summary -->
+<div style="background:var(--bg3);border-radius:12px;padding:16px;margin-bottom:20px;">
+<div id="modalPlanName" style="font-size:14px;font-weight:700;color:var(--text);">CRM Premium</div>
+<div id="modalPlanPrice" style="font-size:22px;font-weight:800;color:var(--gold);margin:4px 0;">$179/mo</div>
+<div id="modalPlanSub" style="font-size:12px;color:var(--text3);">+ $299 Onboarding &amp; Setup · Billed monthly</div>
+</div>
+<!-- Price clarity -->
+<div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:10px;padding:14px;margin-bottom:20px;font-size:13px;line-height:1.8;color:var(--text2);">
+<div>Today: <strong style="color:var(--success);">$0</strong></div>
+<div id="modalFirstCharge">First charge: $299 setup + $179/mo after trial</div>
+<div>Cancel anytime before billing starts</div>
+<div>🔒 Secure payment via Stripe</div>
+</div>
+<!-- Card form -->
+<div style="display:grid;gap:12px;margin-bottom:16px;">
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Card Number</label>
+<input id="cardNumber" maxlength="19" oninput="formatCard(this)" placeholder="1234 5678 9012 3456" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;" type="text"/></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Expiry</label>
+<input id="cardExpiry" maxlength="7" oninput="formatExpiry(this)" placeholder="MM / YY" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;" type="text"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">CVC</label>
+<input id="cardCVC" maxlength="4" placeholder="123" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;" type="text"/></div>
+</div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Name on Card</label>
+<input id="cardName" placeholder="Andrea M Tanguay" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;" type="text"/></div>
+<div><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Email</label>
+<input id="cardEmail" placeholder="you@company.com" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;" type="email"/></div>
+</div>
+<div id="card-errors" style="color:#ef4444;font-size:12px;margin-bottom:10px;min-height:16px;"></div>
+<button id="payBtn" onclick="processPayment()" style="width:100%;background:var(--gold);color:#0a0e1a;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;">Activate Plan — No charge today</button>
+<div style="text-align:center;margin-top:10px;">
+<button onclick="closePaymentModal()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:inherit;">Cancel</button>
+</div>
+</div>
+</div>
 <script>
 const{createClient}=supabase;
 const db=createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
@@ -762,12 +804,16 @@ function openPaymentModal(plan, billing){
   document.getElementById('modalPlanName').textContent=details.name;
   document.getElementById('modalPlanPrice').textContent=details.price;
   document.getElementById('modalPlanSub').textContent=details.sub;
-  document.getElementById('paymentModal').classList.add('open');
+  const pm=document.getElementById('paymentModal');
+  if(pm){pm.style.display='flex';}
+  // Pre-fill email if available
+  try{db.auth.getSession().then(({data:{session}})=>{if(session){const em=document.getElementById('cardEmail');if(em&&!em.value)em.value=session.user.email||'';const nm=document.getElementById('cardName');if(nm&&!nm.value)nm.value=session.user.user_metadata?.full_name||'';} });}catch(e){}
 
 }
 
 function closePaymentModal(){
-  document.getElementById('paymentModal').classList.remove('open');
+  const pm2=document.getElementById('paymentModal');
+  if(pm2){pm2.style.display='none';}
 }
 
 // Card formatting helpers
@@ -893,8 +939,8 @@ setTimeout(checkSubscriptionStatus, 1500);
 <script id="canonical-sidebar-js">
 (function(){
   async function initPage(){
-    if(typeof supabase==='undefined'){setTimeout(initPage,200);return;}
-    const db=supabase.createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
+    // Reuse existing db from page script — no new client
+    if(typeof db==='undefined'){setTimeout(initPage,300);return;}
     let session=null;
     try{const r=await db.auth.getSession();session=r.data?.session;}catch(e){}
     if(!session){window.location.href='login.html';return;}
