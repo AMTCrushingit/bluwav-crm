@@ -859,6 +859,30 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="fg"><label class="fl">Status</label><select class="fs" id="mc-status"><option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal">Proposal</option><option value="Won">Won</option></select></div>
 <div class="fg"><label class="fl">Location</label><input class="fi" id="mc-location" placeholder="City, Country"/></div>
 </div>
+<div class="fg"><label class="fl">Source</label>
+<select class="fs" id="mc-source">
+<option value="">— Select source —</option>
+<option value="FB">FB — Facebook</option>
+<option value="IG">IG — Instagram</option>
+<option value="LI">LI — LinkedIn</option>
+<option value="TK">TK — TikTok</option>
+<option value="YT">YT — YouTube</option>
+<option value="GO">GO — Google</option>
+<option value="IH">IH — Intelligence Hub</option>
+<option value="WP">WP — WhatsApp</option>
+<option value="RF">RF — Referral</option>
+<option value="WB">WB — Website</option>
+<option value="EV">EV — Event</option>
+<option value="EM">EM — Email Campaign</option>
+<option value="DI">DI — Direct / Walk-in</option>
+<option value="OT">OT — Other</option>
+</select>
+</div>
+<div class="fg"><label class="fl">Notes</label><textarea class="fta" id="mc-notes" placeholder="Any notes about this contact" rows="3"></textarea></div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-ghost" onclick="closeModal('addContact')">Cancel</button>
+<button class="btn btn-primary" onclick="saveContact()">Save Contact</button>
 </div>
 </div>
 </div>
@@ -4192,8 +4216,6 @@ async function saveProfileSettings(){
 <button class="btn btn-ghost" onclick="closeModal('addEvent')">Cancel</button>
 <button class="btn btn-primary" onclick="saveEvent()">Add Event</button>
 </div>
-
-
 <script>
 // ── SAVE EVENT ─────────────────────────────────────────────────
 async function saveEvent(){

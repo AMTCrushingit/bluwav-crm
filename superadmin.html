@@ -203,8 +203,8 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
 <div class="nav-section">
 <div class="nav-label">Platform</div>
 <a class="nav-item" onclick="showView('users')"><span class="nav-icon">👥</span> Users &amp; Roles</a>
-<a class="nav-item" onclick="showView('alldeals')"><span class="nav-icon">💼</span> All Opportunities</a>
-<a class="nav-item" onclick="showView('allcontacts')"><span class="nav-icon">👤</span> All Customers</a>
+<a class="nav-item" onclick="showView('alldeals')"><span class="nav-icon">💼</span> All Opportunities <span id="sa-opp-count" style="background:rgba(0,194,209,0.15);color:var(--cyan);font-size:10px;font-weight:700;padding:1px 6px;border-radius:9999px;margin-left:4px;">—</span></a>
+<a class="nav-item" onclick="showView('allcontacts')"><span class="nav-icon">👤</span> All Customers <span id="sa-cust-count" style="background:rgba(0,194,209,0.15);color:var(--cyan);font-size:10px;font-weight:700;padding:1px 6px;border-radius:9999px;margin-left:4px;">—</span></a>
 </div>
 <div class="nav-section">
 <div class="nav-label" style="color:var(--corex);letter-spacing:.12em;">🧠 COREX</div>
@@ -718,6 +718,12 @@ async function loadAll(){
     allOpportunities=deals||[];
     allProfiles=profiles||[];
     allPayouts=payouts||[];
+
+    // Update aggregate counts in nav
+    const oppCount=document.getElementById('sa-opp-count');
+    if(oppCount)oppCount.textContent=allOpportunities.length;
+    const custCount=document.getElementById('sa-cust-count');
+    if(custCount)custCount.textContent=allCustomers.length;
 
     updateCommandStrip();
     renderOverview();
