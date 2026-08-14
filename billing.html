@@ -5,7 +5,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BluWav CRM — Billing &amp; Plan</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+
 // Update banner when plan is activated
 function updatePlanBanner(planName){
   const trialPill = document.querySelector('.trial-pill');
@@ -38,26 +40,6 @@ function initStripe(){
   stripe = Stripe(stripeKey);
 }
 
-async function processPayment(planName, amount){
-  if(!stripe){
-    // Fallback: show success for testing
-    showToast('✅ Payment processed (test mode) — '+planName+' activated','success');
-    updatePlanBanner(planName);
-    closePaymentModal();
-    // Save to Supabase
-    if(currentUser){
-      await db.from('profiles').update({
-        plan: planName,
-        plan_activated_at: new Date().toISOString(),
-        subscription_status: 'active',
-        subscription_lapsed_at: null
-      }).eq('id', currentUser.id);
-    }
-    return;
-  }
-  // Real Stripe processing would go here
-}
-
 </script>
 <script src="https://js.stripe.com/v3/"></script>
 <style>
@@ -67,7 +49,7 @@ async function processPayment(planName, amount){
     .sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;transition:width 0.3s;}
     .sidebar.collapsed{width:60px;}
     .sidebar.collapsed .nav-label,.sidebar.collapsed .nav-text,.sidebar.collapsed .nav-badge,.sidebar.collapsed .user-info,.sidebar.collapsed .trial-pill,.sidebar.collapsed .logo-badge{display:none;}
-    .sidebar.collapsed .nav-item{justify-content:center;padding:10px;}
+    .sidebar.collapsed 
     .sidebar-logo{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
     .logo-text{font-size:22px;font-weight:800;white-space:nowrap;}.logo-text .blu{color:#fff;}.logo-text .wav{color:var(--cyan);}
     .logo-badge{display:inline-block;background:rgba(0,194,209,0.15);border:1px solid rgba(0,194,209,0.3);color:var(--cyan);font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:1px;margin-left:4px;vertical-align:middle;}
@@ -75,12 +57,12 @@ async function processPayment(planName, amount){
     .collapse-btn:hover{color:var(--text);}
     .sidebar-nav{flex:1;padding:12px 0;}.nav-section{padding:0 10px;margin-bottom:4px;}
     .nav-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:8px 8px 4px;}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--text2);text-decoration:none;font-size:13.5px;font-weight:500;transition:all 0.15s;cursor:pointer;position:relative;}
-.nav-item:visited,.nav-item:link{color:var(--text2)!important;}
-.nav-item:visited:hover{color:var(--text)!important;}
-    .nav-item:hover{background:rgba(255,255,255,0.05);color:var(--text);}
-    .nav-item.active{background:rgba(0,194,209,0.12);color:var(--cyan);}
-    .nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--cyan);border-radius:0 3px 3px 0;}
+    
+
+
+    
+    
+    
     .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
     .nav-text{white-space:nowrap;}
     .nav-badge{margin-left:auto;background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;padding:1px 7px;border-radius:10px;}
@@ -267,64 +249,120 @@ async function processPayment(planName, amount){
     .readonly-banner{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:none;text-align:center;}
     .readonly-banner.show{display:block;}
 
+
+/* ── LOCKED NAV ITEM ── */
+.ni-locked{position:relative;cursor:default;}
+.ni-locked:hover{background:rgba(255,255,255,0.03)!important;color:var(--text3)!important;}
+.ni-locked .ni-lock-badge{display:inline-flex;align-items:center;gap:3px;font-size:0.58rem;font-weight:700;background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.25);border-radius:9999px;padding:1px 6px;margin-left:auto;white-space:nowrap;}
+.ni-locked .ni-tooltip{display:none;position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-md);padding:10px 14px;width:220px;box-shadow:0 8px 24px rgba(0,0,0,0.4);z-index:500;pointer-events:none;}
+.ni-locked:hover .ni-tooltip{display:block;}
+.ni-tooltip-title{font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:4px;}
+.ni-tooltip-desc{font-size:0.72rem;color:var(--text2);line-height:1.5;margin-bottom:6px;}
+.ni-tooltip-date{font-size:0.68rem;color:var(--gold);font-weight:600;}
+.ni:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;border-radius:var(--radius-md);}
+</style>
+<style id="canonical-sidebar-css">
+*{box-sizing:border-box;}
+:root{
+  --navy-deep:#060d1a;--navy-mid:#0a1628;--navy-light:#0f1f35;--navy-border:rgba(255,255,255,0.08);
+  --cyan:#00C8E0;--cyan-glow:rgba(0,200,224,0.12);--gold:#C9A84C;--success:#22C55E;--error:#EF4444;--warning:#F59E0B;
+  --text:#ffffff;--text2:#b0bec5;--text3:#4a5568;
+  --font-body:'Segoe UI',system-ui,sans-serif;
+  --radius-md:8px;--radius-lg:12px;--radius-xl:16px;
+  --transition:all 0.15s ease;--sidebar:220px;
+}
+body{font-family:var(--font-body);background:var(--navy-deep);color:var(--text);display:flex;flex-direction:row;-webkit-font-smoothing:antialiased;font-size:15px;min-height:100vh;}
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);background:var(--navy-mid);border-right:1px solid var(--navy-border);display:flex;flex-direction:column;height:100vh;position:fixed;left:0;top:0;z-index:100;overflow-y:auto;overflow-x:hidden;transition:width 0.25s ease;}
+.sidebar.collapsed{width:56px;min-width:56px;}
+.sidebar.collapsed .nav-text,.sidebar.collapsed .nb,.sidebar.collapsed .user-info,.sidebar.collapsed .trial-w,.sidebar.collapsed .logo-sub{display:none;}
+.sidebar.collapsed .logo-wm{font-size:16px;}
+.sidebar.collapsed .ni{justify-content:center;padding:10px;}
+.sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid var(--navy-border);display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.logo-wm{font-family:var(--font-body);font-size:1.35rem;font-weight:800;line-height:1;letter-spacing:-0.5px;}
+.logo-wm .blu{color:#fff;}.logo-wm .wav{color:var(--cyan);}
+.logo-sub{font-size:0.45rem;font-weight:700;letter-spacing:0.28em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:4px;}
+.logo-sub::before,.logo-sub::after{content:'';display:block;width:12px;height:1px;background:var(--gold);opacity:.5;}
+.collapse-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;flex-shrink:0;}
+.collapse-btn:hover{color:var(--text);}
+.sidebar-nav{flex:1;padding:12px 0;}
+.ns{font-size:0.62rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;padding:10px 16px 4px;}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:var(--radius-md);cursor:pointer;transition:var(--transition);color:var(--text3);font-size:0.88rem;font-weight:500;text-decoration:none;position:relative;border:1px solid transparent;margin:1px 8px;}
+.ni:visited,.ni:link{color:var(--text3)!important;}
+.ni:hover,.ni:visited:hover{background:var(--navy-light);color:var(--text)!important;}
+.ni.active{background:var(--cyan-glow);color:var(--cyan);font-weight:600;border-color:rgba(0,200,224,0.15);}
+.ni.active::before{content:'';position:absolute;left:0;top:20%;height:60%;width:2px;background:var(--cyan);border-radius:0 2px 2px 0;}
+.ni-icon{width:18px;height:18px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;font-size:14px;}
+.nb{background:rgba(255,107,43,0.15);color:#ff6b2b;font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:9999px;margin-left:auto;}
+.sb-bottom{padding:12px;border-top:1px solid var(--navy-border);}
+.trial-w{background:linear-gradient(135deg,rgba(255,107,43,0.08),rgba(201,168,76,0.05));border:1px solid rgba(255,107,43,0.25);border-radius:var(--radius-md);padding:12px;margin-bottom:6px;}
+.tw-label{font-size:0.68rem;font-weight:700;color:var(--warning);margin-bottom:2px;}
+.tw-days{font-size:1.3rem;font-weight:700;color:var(--text);line-height:1;margin:3px 0;}
+.tw-sub{font-size:0.65rem;color:var(--text3);margin-bottom:6px;}
+.tw-bar{height:4px;border-radius:2px;background:rgba(255,255,255,0.08);overflow:hidden;}
+.tw-fill{height:100%;background:linear-gradient(90deg,var(--warning),var(--gold));border-radius:2px;transition:width 0.6s ease;}
+.user-card{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--radius-md);cursor:pointer;transition:var(--transition);margin-bottom:4px;}
+.user-card:hover{background:var(--navy-light);}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),#0099B0);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#0a0e1a;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:0.78rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role-txt{font-size:0.65rem;color:var(--text3);}
+.role-badge{font-size:0.6rem;font-weight:700;padding:1px 6px;border-radius:9999px;margin-top:2px;display:inline-block;}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--navy-border);border-radius:3px;}
 </style>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-logo">
-<span style="font-size:1.3rem;font-weight:800;letter-spacing:-0.5px;line-height:1;"><span style="color:#fff;">Blu</span><span style="color:#00C8E0;">Wav</span></span>
-<button class="collapse-btn" onclick="toggleSidebar()">☰</button>
+<a class="logo" href="enhanced-crm-dashboard.html">
+<span class="logo-wm"><span class="blu">Blu</span><span class="wav">Wav</span></span>
+<span class="logo-sub">CRM</span>
+</a>
+<button class="collapse-btn" onclick="toggleSidebar()">&#x2630;</button>
 </div>
 <nav class="sidebar-nav">
 <div class="ns">Operations</div>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📊</span><span class="nav-text"> Command Center</span></a>
-<a class="nav-item" href="contacts.html"><span class="nav-icon">👥</span><span class="nav-text"> Customers</span></a>
-<a class="nav-item" href="deals.html"><span class="nav-icon">💼</span><span class="nav-text"> Opportunities</span></a>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">✅</span><span class="nav-text"> Tasks</span></a>
-<a class="nav-item" href="enhanced-crm-dashboard.html"><span class="nav-icon">📅</span><span class="nav-text"> Calendar</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x1F4CA;</span><span class="nav-text">Dashboard</span></a>
+<a class="ni" href="contacts.html"><span class="ni-icon">&#x1F465;</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">&#x2014;</span></a>
+<a class="ni" href="deals.html"><span class="ni-icon">&#x1F4BC;</span><span class="nav-text">Opportunities</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x2705;</span><span class="nav-text">Tasks</span></a>
+<a class="ni" href="enhanced-crm-dashboard.html"><span class="ni-icon">&#x1F4C5;</span><span class="nav-text">Calendar</span></a>
 <div class="ns">Growth</div>
-<a class="nav-item" style="display:none;"><span class="nav-icon">📧</span><span class="nav-text"> Email</span></a>
-<a class="nav-item" style="display:none;"><span class="nav-icon">💬</span><span class="nav-text"> WhatsApp</span></a>
-<a class="nav-item" style="display:none;"><span class="nav-icon">⚡</span><span class="nav-text"> Workflows</span></a>
-<a class="nav-item" style="pointer-events:none;opacity:0.4;"><span class="nav-icon">📡</span><span class="nav-text"> Communications <span style="font-size:0.65rem;opacity:0.6;">Coming soon</span></span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">&#x1F4E7;</span><span class="nav-text">Email</span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">&#x1F4AC;</span><span class="nav-text">WhatsApp</span></a>
+<a class="ni" style="display:none;"><span class="ni-icon">&#x26A1;</span><span class="nav-text">Workflows</span></a>
+<a class="ni" style="pointer-events:none;opacity:0.4;"><span class="ni-icon">&#x1F4E1;</span><span class="nav-text">Communications <span style="font-size:0.65rem;color:var(--text3);">Coming soon</span></span></a>
 <div class="ns">Insights</div>
-<a class="nav-item" href="reports.html"><span class="nav-icon">📊</span><span class="nav-text"> Business Insights</span></a>
+<a class="ni" href="reports.html" id="nav-reports"><span class="ni-icon">&#x1F4C8;</span><span class="nav-text">Business Insights</span></a>
 <div class="ns">Workspace</div>
-<a class="nav-item" href="settings.html"><span class="nav-icon">⚙️</span><span class="nav-text"> Settings</span></a>
-<a class="active" href="billing.html"><span class="nav-icon">💳</span><span class="nav-text"> Billing</span></a>
+<a class="ni" href="settings.html" id="nav-settings"><span class="ni-icon">&#x2699;&#xFE0F;</span><span class="nav-text">Settings</span></a>
+<a class="ni  active" href="billing.html" id="nav-billing"><span class="ni-icon">&#x1F4B3;</span><span class="nav-text">Billing</span></a>
+<!-- Admin section — shown for manager/admin/owner -->
+<div class="ns" id="adminNav" style="display:none;">Admin</div>
+<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">&#x1F6E1;</span><span class="nav-text">Super Admin</span></a>
 </nav>
-<div class="sidebar-bottom">
-<div class="trial-pill" id="trialPill">
-<div class="tp-label">⏱ 14-Day Free Trial</div>
-<div class="tp-sub"><span id="trialDaysNum">14</span> days remaining · No card needed</div>
-<div style="height:5px;border-radius:3px;background:rgba(255,255,255,0.1);overflow:hidden;margin:6px 0;">
-<div id="trialFill" style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--orange),var(--gold));width:100%;transition:width 0.5s;"></div>
+<div class="sb-bottom">
+<div class="trial-w" id="trialWidget">
+<div class="tw-label">&#x23F1; 14-Day Free Trial</div>
+<div class="tw-days" id="trialDaysNum">14</div>
+<div class="tw-sub" id="trialSub">days remaining &middot; No card needed</div>
+<div class="tw-bar"><div class="tw-fill" id="trialFill" style="width:100%;"></div></div>
 </div>
-<button class="btn-upgrade" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">Upgrade Plan</button>
+<div class="user-card" onclick="window.location.href='settings.html'">
+<div class="avatar" id="sidebarAvatar">&#x2014;</div>
+<div class="user-info">
+<div class="user-name" id="sidebarName">Loading...</div>
+<div class="user-role-txt" id="sidebarRole">&#x2014;</div>
+<div class="role-badge" id="roleBadge"></div>
 </div>
-<script>
-(function(){
-  const start = localStorage.getItem('bw_trial_start');
-  if(!start) return;
-  const elapsed = Math.floor((Date.now() - new Date(start)) / (1000*60*60*24));
-  const remaining = Math.max(0, 14 - elapsed);
-  const pct = Math.max(0,(remaining/14)*100);
-  const d = document.getElementById('trialDaysNum');
-  const f = document.getElementById('trialFill');
-  const p = document.getElementById('trialPill');
-  if(d) d.textContent = remaining;
-  if(f) f.style.width = pct + '%';
-  if(remaining <= 3 && p){ p.style.borderColor='rgba(239,68,68,0.5)'; if(d) d.style.color='#ef4444'; }
-  else if(remaining <= 7 && p){ p.style.borderColor='rgba(245,158,11,0.4)'; }
-})();
-</script>
-<div class="user-card"><div class="avatar" id="sidebarAvatar">AM</div><div class="user-info"><div class="user-name" id="sidebarName">Loading...</div><div class="user-role" id="sidebarRole">—</div></div></div>
-<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:8px;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;">🚪 Sign Out</button>
+</div>
+<button onclick="signOut()" style="width:100%;margin-top:8px;padding:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-md,8px);color:#ef4444;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;">&#x1F6AA; Sign Out</button>
 </div>
 </aside>
 <div class="main" id="mainContent">
 <header class="topbar">
-<div class="topbar-left"><h1>Billing &amp; Plan</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Command Center</a> / Billing</div></div>
+<div class="topbar-left"><h1>Billing &amp; Plan</h1><div class="breadcrumb"><a href="enhanced-crm-dashboard.html">Dashboard</a> / Billing</div></div>
 <div class="topbar-right">
 <button class="btn btn-ghost" onclick="showToast('📄 Invoice downloaded','success')">⬇ Invoice</button>
 <button class="btn btn-gold" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">⚡ Upgrade</button>
@@ -968,6 +1006,37 @@ async function checkSubscriptionStatus(){
 // Run on page load
 setTimeout(checkSubscriptionStatus, 1500);
 
+</script>
+<script id="canonical-sidebar-js">
+(function(){
+  async function initPage(){
+    if(typeof supabase==='undefined'){setTimeout(initPage,200);return;}
+    const db=supabase.createClient('https://izyuupdmlzcphvdpigrs.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6eXV1cGRtbHpjcGh2ZHBpZ3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjEwNDcsImV4cCI6MjA5Njg5NzA0N30.cmrOK8uAMZKzB1wPZAt7ClEpuUBEkx1PFy49MkhEyog');
+    let session=null;
+    try{const r=await db.auth.getSession();session=r.data?.session;}catch(e){}
+    if(!session){window.location.href='login.html';return;}
+    let profile=null;
+    for(let i=0;i<2;i++){
+      try{const r=await db.from('profiles').select('full_name,role,avatar_url,created_at').eq('id',session.user.id).single();if(r.data){profile=r.data;break;}}catch(e){}
+      if(i===0)await new Promise(r=>setTimeout(r,500));
+    }
+    const name=(profile?.full_name)||session.user.user_metadata?.full_name||session.user.email?.split('@')[0]||'User';
+    const role=(profile?.role||session.user.user_metadata?.role||'salesperson');
+    const ini=name.split(' ').map(n=>n[0]||'').join('').toUpperCase().slice(0,2)||'?';
+    const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+    set('sidebarName',name);set('sidebarRole',role.charAt(0).toUpperCase()+role.slice(1));
+    set('sidebarAvatar',ini);set('topName',name);set('topAvatar',ini);set('topRole',role.charAt(0).toUpperCase()+role.slice(1));
+    const rb=document.getElementById('roleBadge');
+    if(rb){const bc={manager:'background:rgba(201,168,76,0.15);color:#C9A84C;',admin:'background:rgba(167,139,250,0.15);color:#a78bfa;',salesperson:'background:rgba(0,200,224,0.12);color:#00C8E0;',owner:'background:rgba(239,68,68,0.12);color:#ef4444;'};rb.style.cssText=bc[role]||bc.salesperson;rb.textContent={manager:'👑 Manager',admin:'🛡️ Admin',salesperson:'💼 Salesperson',owner:'⭐ Owner'}[role]||'💼 Salesperson';}
+    if(['manager','admin','owner'].includes(role)){const an=document.getElementById('adminNav');if(an)an.style.display='';const al=document.getElementById('adminLink');if(al)al.style.display='';}
+    const ts=profile?.created_at||localStorage.getItem('bw_trial_start');
+    if(ts){const el=Math.floor((Date.now()-new Date(ts))/(864e5));const rem=Math.max(0,14-el);const pct=Math.max(0,(rem/14)*100);set('trialDaysNum',rem);const f=document.getElementById('trialFill');if(f)f.style.width=pct+'%';const s=document.getElementById('trialSub');if(s)s.textContent=rem===0?'Trial expired · Upgrade':'days remaining · No card needed';const w=document.getElementById('trialWidget');if(w&&rem<=3)w.style.borderColor='rgba(239,68,68,0.5)';else if(w&&rem<=7)w.style.borderColor='rgba(245,158,11,0.4)';if(!localStorage.getItem('bw_trial_start')&&ts)localStorage.setItem('bw_trial_start',new Date(ts).toISOString());}
+    window.signOut=function(){sessionStorage.removeItem('bw_last_active');db.auth.signOut().then(()=>window.location.href='login.html').catch(()=>window.location.href='login.html');};
+    window.toggleSidebar=function(){const s=document.getElementById('sidebar');if(s)s.classList.toggle('collapsed');};
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initPage);
+  else setTimeout(initPage,100);
+})();
 </script>
 </body>
 </html>
