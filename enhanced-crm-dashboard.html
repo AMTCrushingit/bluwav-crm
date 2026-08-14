@@ -449,36 +449,36 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </a>
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
-<nav class="sidebar-nav" role="navigation" aria-label="Main navigation">
+<nav aria-label="Main navigation" class="sidebar-nav" role="navigation">
 <div class="ns" data-tooltip="Operations">Operations</div>
-<a class="ni active" id="nav-dashboard" data-tooltip="Dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
-<a class="ni" id="nav-contacts" data-tooltip="Customers" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
-<a class="ni" id="nav-deals" data-tooltip="Opportunities" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span><span class="nb" id="navOpportunitiesBadge">—</span></a>
-<a class="ni" id="nav-tasks" data-tooltip="Tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
-<a class="ni" id="nav-calendar" data-tooltip="Calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
+<a class="ni active" data-tooltip="Dashboard" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
+<a class="ni" data-tooltip="Customers" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
+<a class="ni" data-tooltip="Opportunities" id="nav-deals" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span><span class="nb" id="navOpportunitiesBadge">—</span></a>
+<a class="ni" data-tooltip="Tasks" id="nav-tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
+<a class="ni" data-tooltip="Calendar" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns" data-tooltip="Growth">Growth</div>
 <a class="ni" id="nav-email" onclick="showView('email')" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
 <a class="ni" id="nav-whatsapp" onclick="showView('whatsapp')" style="display:none;"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
 <a class="ni" href="automations.html" style="display:none;"><span class="ni-icon">⚡</span><span class="nav-text">Workflows</span></a>
-<a class="ni ni-locked" tabindex="0" role="button" aria-label="Communications — coming soon" aria-disabled="true">
-  <span class="ni-icon">📡</span>
-  <span class="nav-text">Communications</span>
-  <span class="ni-lock-badge">🔒 Soon</span>
-  <div class="ni-tooltip" role="tooltip">
-    <div class="ni-tooltip-title">📡 Communications</div>
-    <div class="ni-tooltip-desc">Email campaigns, WhatsApp messaging, and automated follow-up sequences — all in one place.</div>
-    <div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
-  </div>
+<a aria-disabled="true" aria-label="Communications — coming soon" class="ni ni-locked" role="button" tabindex="0">
+<span class="ni-icon">📡</span>
+<span class="nav-text">Communications</span>
+<span class="ni-lock-badge">🔒 Soon</span>
+<div class="ni-tooltip" role="tooltip">
+<div class="ni-tooltip-title">📡 Communications</div>
+<div class="ni-tooltip-desc">Email campaigns, WhatsApp messaging, and automated follow-up sequences — all in one place.</div>
+<div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
+</div>
 </a>
 <div class="ns" data-tooltip="Insights">Insights</div>
-<a class="ni" href="reports.html" id="nav-reports" data-tooltip="Business Insights"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
+<a class="ni" data-tooltip="Business Insights" href="reports.html" id="nav-reports"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
 <div class="ns" data-tooltip="Workspace">Workspace</div>
-<a class="ni" href="settings.html" id="nav-settings" data-tooltip="Settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" data-tooltip="Settings" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
 <a class="ni" href="billing.html"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <a class="ni" id="nav-team" onclick="showView('contacts')" style="display:none;"><span class="ni-icon">👤</span><span class="nav-text">Team</span></a>
 <!-- Admin section — visible to manager/admin/owner only -->
-<div class="ns" id="adminNav" data-tooltip="Admin" style="display:none;">Admin</div>
-<a class="ni" href="superadmin.html" id="adminLink" data-tooltip="Super Admin" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
+<div class="ns" data-tooltip="Admin" id="adminNav" style="display:none;">Admin</div>
+<a class="ni" data-tooltip="Super Admin" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
 <!-- Trial widget moved to top banner — sidebar space freed for navigation -->
@@ -523,18 +523,18 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </header>
 <!-- TRIAL BANNER — always visible, updates dynamically -->
-<div class="trial-banner visible" id="trialExpiryBanner" role="status" aria-live="polite" aria-label="Trial status">
-  <div style="display:flex;align-items:center;gap:8px;">
-    <span id="trialBannerIcon">⏱</span>
-    <span id="trialBannerText">14-day free trial · No card needed</span>
-  </div>
-  <div style="display:flex;align-items:center;gap:12px;">
-    <div style="height:6px;width:80px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
-      <div id="trialBannerBar" style="height:100%;background:var(--gold);border-radius:3px;width:100%;transition:width 0.5s;"></div>
-    </div>
-    <a href="billing.html" style="color:var(--gold);font-weight:700;font-size:0.75rem;text-decoration:none;white-space:nowrap;">Upgrade →</a>
-    <button class="trial-banner-close" id="trialBannerClose" onclick="sessionStorage.setItem('trial_banner_dismissed','1');this.closest('.trial-banner').classList.remove('visible');" aria-label="Dismiss trial banner">✕</button>
-  </div>
+<div aria-label="Trial status" aria-live="polite" class="trial-banner visible" id="trialExpiryBanner" role="status">
+<div style="display:flex;align-items:center;gap:8px;">
+<span id="trialBannerIcon">⏱</span>
+<span id="trialBannerText">14-day free trial · No card needed</span>
+</div>
+<div style="display:flex;align-items:center;gap:12px;">
+<div style="height:6px;width:80px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
+<div id="trialBannerBar" style="height:100%;background:var(--gold);border-radius:3px;width:100%;transition:width 0.5s;"></div>
+</div>
+<a href="billing.html" style="color:var(--gold);font-weight:700;font-size:0.75rem;text-decoration:none;white-space:nowrap;">Upgrade →</a>
+<button aria-label="Dismiss trial banner" class="trial-banner-close" id="trialBannerClose" onclick="sessionStorage.setItem('trial_banner_dismissed','1');this.closest('.trial-banner').classList.remove('visible');">✕</button>
+</div>
 </div>
 <!-- ROLE BANNER -->
 <div class="role-banner" id="roleBanner"></div>
@@ -558,14 +558,14 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="qa-grid">
 <div class="qa" onclick="openModal('addContact')"><div class="qa-icon">➕</div><div class="qa-lbl">New Contact</div></div>
 <div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">💼</div><div class="qa-lbl">New Opportunity</div></div>
-<div class="qa ni-locked" tabindex="0" role="button" aria-label="Send Email — coming soon" aria-disabled="true" style="cursor:default;opacity:0.6;">
-  <div class="qa-icon">📧</div>
-  <div class="qa-lbl">Send Email</div>
-  <div class="ni-tooltip" role="tooltip" style="left:50%;transform:translateX(-50%);top:calc(100% + 8px);">
-    <div class="ni-tooltip-title">📧 Email</div>
-    <div class="ni-tooltip-desc">Send emails directly from BluWav CRM with full tracking and logging.</div>
-    <div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
-  </div>
+<div aria-disabled="true" aria-label="Send Email — coming soon" class="qa ni-locked" role="button" style="cursor:default;opacity:0.6;" tabindex="0">
+<div class="qa-icon">📧</div>
+<div class="qa-lbl">Send Email</div>
+<div class="ni-tooltip" role="tooltip" style="left:50%;transform:translateX(-50%);top:calc(100% + 8px);">
+<div class="ni-tooltip-title">📧 Email</div>
+<div class="ni-tooltip-desc">Send emails directly from BluWav CRM with full tracking and logging.</div>
+<div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
+</div>
 </div>
 <div class="qa" onclick="openModal('addTask')"><div class="qa-icon">✅</div><div class="qa-lbl">Add Task</div></div>
 </div>
@@ -2023,18 +2023,43 @@ async function logActivity(){
     user_id: session?.user?.id||null,
     created_at: new Date().toISOString()
   };
-  // Try with contact_id first, fall back without if column doesn't exist
-  let {error} = await db.from('activities').insert(actObj);
-  if(error && error.message && error.message.includes('contact_id')){
-    const {note:n, ...actObjNoContact} = actObj;
-    const r2 = await db.from('activities').insert({...actObjNoContact, note});
-    error = r2.error;
+  // Insert activity — use only columns that exist in the schema
+  const insertObj = {
+    contact_id: _cpContactId,
+    type: type,
+    title: type + ': ' + note.substring(0,50),
+    description: note,
+    note: note,
+    user_id: session?.user?.id||null,
+    created_at: new Date().toISOString()
+  };
+  
+  try {
+    const {data:inserted, error} = await db.from('activities').insert(insertObj).select();
+    if(error){
+      console.warn('Activity insert error:', error.message);
+      // Try minimal insert with just the core columns
+      const {data:inserted2, error:error2} = await db.from('activities').insert({
+        type: type,
+        note: note,
+        description: note,
+        user_id: session?.user?.id||null,
+        created_at: new Date().toISOString()
+      }).select();
+      if(error2){
+        showToast('Could not save activity: '+error2.message,'');
+        return;
+      }
+      _cpActivities.unshift(inserted2?.[0]||{...insertObj,id:'db_'+Date.now()});
+    } else {
+      _cpActivities.unshift(inserted?.[0]||{...insertObj,id:'db_'+Date.now()});
+    }
+  } catch(e) {
+    console.warn('Activity save failed:', e.message);
+    showToast('Activity save failed: '+e.message,'');
+    return;
   }
-  if(error){
-    _cpActivities.unshift({...actObj, id:'local_'+Date.now()});
-  } else {
-    _cpActivities.unshift(actObj);
-  }
+  
   document.getElementById('cpActivityNote').value='';
   renderContactActivities();
   showToast(type+' logged ✓','success');
