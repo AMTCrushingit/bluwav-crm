@@ -1465,7 +1465,12 @@ async function loadData(){
     probability:d.probability||null,
     won_lost_reason:d.won_lost_reason||null,
   }));
-  
+
+  // Filter out orphaned deals (contact was deleted) — keep deals with valid contact or no contact
+  const validContactIds = new Set(allCustomers.map(c=>c.id));
+  allOpportunities = deals.filter(d=>!d.contact_id || validContactIds.has(d.contact_id));
+
+  const openOpportunities=allOpportunities.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
   const wonOpportunities=allOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
   const pipeVal=openOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
   const wonVal=wonOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
