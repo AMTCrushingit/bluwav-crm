@@ -400,47 +400,47 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
 <!-- Beta Tester Invitation -->
 <div class="card" style="margin-bottom:16px;">
 <div class="card-header">
-<div><div class="card-title">&#x1F4E8; Invite Beta Tester</div><div class="card-sub">Generate a personalised invitation &#x2014; copy and send via Gmail or Outlook, or attach your one-pager</div></div>
+<div><div class="card-title">📨 Invite Beta Tester</div><div class="card-sub">Generate a personalised invitation — copy and send via Gmail or Outlook, or attach your one-pager</div></div>
 </div>
 <div class="card-body">
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px;">
-  <div style="flex:1;min-width:180px;"><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Full Name *</label><input type="text" id="betaName" placeholder="e.g. Danielli Thompson" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;"/></div>
-  <div style="flex:1;min-width:180px;"><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Email Address *</label><input type="email" id="betaEmail" placeholder="tester@company.com" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;"/></div>
-  <div style="flex:1;min-width:140px;"><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Role</label>
-    <select id="betaRole" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;">
-      <option value="salesperson">Salesperson</option>
-      <option value="manager">Manager</option>
-      <option value="admin">Admin</option>
-    </select>
-  </div>
-  <div style="flex:1;min-width:180px;">
-    <label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">&#x1F4CE; Attach One-Pager (optional)</label>
-    <input type="file" id="betaAttachment" accept=".pdf,.doc,.docx,.png,.jpg" style="width:100%;padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:12px;font-family:inherit;cursor:pointer;" onchange="betaAttachmentSelected(this)"/>
-    <div style="font-size:10px;color:var(--text3);margin-top:3px;">Reminder to attach manually when sending</div>
-  </div>
-  <button onclick="inviteBetaTester()" style="background:linear-gradient(135deg,var(--cyan),#0099a8);color:#0a0e1a;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;align-self:flex-end;">&#x2709;&#xFE0F; Generate Invite</button>
+<div style="flex:1;min-width:180px;"><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Full Name *</label><input id="betaName" placeholder="e.g. Danielli Thompson" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;" type="text"/></div>
+<div style="flex:1;min-width:180px;"><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Email Address *</label><input id="betaEmail" placeholder="tester@company.com" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;" type="email"/></div>
+<div style="flex:1;min-width:140px;"><label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">Role</label>
+<select id="betaRole" style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;">
+<option value="salesperson">Salesperson</option>
+<option value="manager">Manager</option>
+<option value="admin">Admin</option>
+</select>
+</div>
+<div style="flex:1;min-width:180px;">
+<label style="font-size:11px;font-weight:600;color:var(--text3);display:block;margin-bottom:4px;">📎 Attach One-Pager (optional)</label>
+<input accept=".pdf,.doc,.docx,.png,.jpg" id="betaAttachment" onchange="betaAttachmentSelected(this)" style="width:100%;padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:12px;font-family:inherit;cursor:pointer;" type="file"/>
+<div style="font-size:10px;color:var(--text3);margin-top:3px;">Reminder to attach manually when sending</div>
+</div>
+<button onclick="inviteBetaTester()" style="background:linear-gradient(135deg,var(--cyan),#0099a8);color:#0a0e1a;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;align-self:flex-end;">✉️ Generate Invite</button>
 </div>
 <!-- Email preview panel -->
 <div id="betaInvitePanel" style="display:none;border:1px solid var(--border2);border-radius:10px;overflow:hidden;">
-  <div style="background:var(--bg3);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px;">
-    <span style="font-size:12px;font-weight:700;color:var(--text2);">&#x1F4E7; Email Preview &#x2014; Copy &amp; Send</span>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;">
-      <button onclick="copyBetaInvite()" style="background:var(--cyan);color:#0a0e1a;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">&#x1F4CB; Copy All</button>
-      <button onclick="openGmailInvite()" style="background:#EA4335;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">&#x1F4E7; Gmail &#x2197;</button>
-      <button onclick="openOutlookInvite()" style="background:#0078D4;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">&#x1F4E7; Outlook &#x2197;</button>
-    </div>
-  </div>
-  <div style="padding:16px;background:var(--bg2);">
-    <div style="font-size:11px;color:var(--text3);margin-bottom:2px;">TO:</div>
-    <div id="betaPreviewTo" style="font-size:13px;color:var(--text);margin-bottom:10px;font-weight:600;"></div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:2px;">SUBJECT:</div>
-    <div id="betaPreviewSubject" style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:10px;"></div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">BODY:</div>
-    <div id="betaPreviewBody" style="font-size:13px;color:var(--text2);white-space:pre-wrap;line-height:1.7;background:var(--bg3);border-radius:8px;padding:12px;border:1px solid var(--border);max-height:300px;overflow-y:auto;"></div>
-    <div id="betaAttachReminder" style="display:none;margin-top:10px;padding:8px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:12px;color:var(--gold);">
-      &#x1F4CE; Remember to manually attach: <span id="betaAttachName" style="font-weight:700;"></span>
-    </div>
-  </div>
+<div style="background:var(--bg3);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px;">
+<span style="font-size:12px;font-weight:700;color:var(--text2);">📧 Email Preview — Copy &amp; Send</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap;">
+<button onclick="copyBetaInvite()" style="background:var(--cyan);color:#0a0e1a;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">📋 Copy All</button>
+<button onclick="openGmailInvite()" style="background:#EA4335;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">📧 Gmail ↗</button>
+<button onclick="openOutlookInvite()" style="background:#0078D4;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">📧 Outlook ↗</button>
+</div>
+</div>
+<div style="padding:16px;background:var(--bg2);">
+<div style="font-size:11px;color:var(--text3);margin-bottom:2px;">TO:</div>
+<div id="betaPreviewTo" style="font-size:13px;color:var(--text);margin-bottom:10px;font-weight:600;"></div>
+<div style="font-size:11px;color:var(--text3);margin-bottom:2px;">SUBJECT:</div>
+<div id="betaPreviewSubject" style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:10px;"></div>
+<div style="font-size:11px;color:var(--text3);margin-bottom:4px;">BODY:</div>
+<div id="betaPreviewBody" style="font-size:13px;color:var(--text2);white-space:pre-wrap;line-height:1.7;background:var(--bg3);border-radius:8px;padding:12px;border:1px solid var(--border);max-height:300px;overflow-y:auto;"></div>
+<div id="betaAttachReminder" style="display:none;margin-top:10px;padding:8px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;font-size:12px;color:var(--gold);">
+      📎 Remember to manually attach: <span id="betaAttachName" style="font-weight:700;"></span>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1814,6 +1814,7 @@ function corexShowModule(name){
   if(name==='awards')corexRenderAwards();
   if(name==='trends')corexRenderTrends();
   if(name==='crmsync')corexRenderSyncLog();
+  if(name==='digest')corexRenderDigestHistory();
 }
 
 // ---- Init COREX content ----
@@ -1840,6 +1841,15 @@ async function corexInitContent(){
     else{corexLeads=[...SEED_LEADS];}
   }
   // Always re-render stats and table so counts are live
+  // Load last digest timestamp from Supabase (survives localStorage clear)
+  try{
+    const {data:prof}=await db.from('profiles').select('corex_last_digest').eq('id',(window._saCurrentUser||{}).id||'').single();
+    if(prof?.corex_last_digest){
+      const ts=new Date(prof.corex_last_digest).getTime();
+      localStorage.setItem('corex_last_digest_ts',ts.toString());
+    }
+  }catch(e){}
+
   corexRenderStats();
   corexRenderLeads();
   corexRenderFeed();
@@ -2125,6 +2135,28 @@ function corexRenderSyncLog(){
 async function corexPushCRM(id){
   const lead=corexLeads.find(l=>l.id===id);
   if(!lead||lead.pushedToCRM)return;
+  
+  // Get current user session for user_id
+  let userId=null;
+  try{ const {data:{session}}=await db.auth.getSession(); userId=session?.user?.id||null; }catch(e){}
+  
+  // Insert into contacts table
+  try{
+    const contactObj={
+      full_name: lead.name,
+      email: lead.contact||null,
+      business_name: lead.org||null,
+      island: lead.country?.replace(/[^a-zA-Z\s]/g,'').trim()||null,
+      notes: lead.description||null,
+      status: 'Lead',
+      source_code: 'IH',
+      user_id: userId,
+      created_at: new Date().toISOString()
+    };
+    const {error:contactErr}=await db.from('contacts').insert(contactObj);
+    if(contactErr) console.warn('COREX→CRM contact insert:',contactErr.message);
+    else corexToast('✅ COREX → CRM: '+lead.name+' added to Customers');
+  }catch(e){ console.warn('COREX push contact:',e.message); }
 
   // Actually insert into Supabase contacts table
   try {
@@ -2302,7 +2334,61 @@ function corexGenerateDigest(){
     db.from('profiles').update({corex_last_digest: new Date().toISOString()}).eq('id', (window._saCurrentUser||{}).id||'').then(()=>{}).catch(()=>{});
 
     corexToast('✅ COREX Intelligence Digest generated — '+newLeads.length+' new opportunities');
+    // Save to history
+    const outEl=document.getElementById('corex-digest-output');
+    if(outEl) corexSaveDigestToHistory(todayStr, outEl.innerHTML, newLeads.length);
   },2000);
+}
+
+// ---- Digest History ----
+function corexSaveDigestToHistory(dateStr, htmlContent, newCount){
+  const history=JSON.parse(localStorage.getItem('corex_digest_history')||'[]');
+  history.unshift({date:dateStr,ts:Date.now(),count:newCount,html:htmlContent});
+  // Keep last 30 digests
+  localStorage.setItem('corex_digest_history',JSON.stringify(history.slice(0,30)));
+  corexRenderDigestHistory();
+}
+
+function corexRenderDigestHistory(){
+  const el=document.getElementById('corex-digest-history');
+  if(!el)return;
+  const history=JSON.parse(localStorage.getItem('corex_digest_history')||'[]');
+  if(!history.length){
+    el.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">No saved digests yet — generate your first digest below.</div>';
+    return;
+  }
+  el.innerHTML=history.map((d,i)=>`
+    <div onclick="corexLoadDigest(${i})" style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(139,92,246,0.06)'" onmouseout="this.style.background=''">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:16px;">📊</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);">${d.date}</div>
+          <div style="font-size:11px;color:var(--text3);">${d.count} new opportunit${d.count!==1?'ies':'y'} reported</div>
+        </div>
+      </div>
+      <span style="font-size:11px;color:var(--cyan);">View →</span>
+    </div>`).join('');
+}
+
+function corexLoadDigest(index){
+  const history=JSON.parse(localStorage.getItem('corex_digest_history')||'[]');
+  const d=history[index];
+  if(!d)return;
+  const out=document.getElementById('corex-digest-output');
+  if(out)out.innerHTML=d.html;
+  const dateEl=document.getElementById('corex-digest-date');
+  if(dateEl)dateEl.textContent=d.date+' (saved)';
+  const copyBtn=document.getElementById('corex-copy-digest-btn');
+  if(copyBtn)copyBtn.style.display='inline-block';
+  corexShowModule('digest');
+  corexToast('📊 Loaded digest from '+d.date);
+}
+
+function corexClearDigestHistory(){
+  if(!confirm('Clear all saved digests?'))return;
+  localStorage.removeItem('corex_digest_history');
+  corexRenderDigestHistory();
+  corexToast('Digest history cleared');
 }
 
 function corexCopyDigest(){
@@ -2355,6 +2441,13 @@ function corexToast(msg){
         cgShowGate();
       }
     } else {
+      // Switching away from COREX — hide corex-content to prevent bleed-through
+      const cc=document.getElementById('corex-content');
+      if(cc) cc.style.display='none';
+      const cg=document.getElementById('corex-gate-inline');
+      if(cg) cg.style.display='none';
+      const cal=document.getElementById('corex-autolock-inline');
+      if(cal) cal.style.display='none';
       _orig(name);
     }
   };
@@ -2544,6 +2637,17 @@ function corexToast(msg){
 </div>
 <!-- MODULE: INTELLIGENCE DIGEST -->
 <div class="corex-module" id="corex-module-digest" style="display:none;">
+<!-- Saved Digests List -->
+<div class="card" style="margin-bottom:14px;">
+<div class="card-header">
+<div><div class="card-title">📁 Saved Digests</div><div class="card-sub">Click any digest to view it</div></div>
+<button onclick="corexClearDigestHistory()" style="background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;font-family:inherit;">Clear history</button>
+</div>
+<div id="corex-digest-history" style="padding:8px 0;">
+<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">No saved digests yet — generate your first digest below.</div>
+</div>
+</div>
+<!-- Current Digest -->
 <div class="card">
 <div class="card-header">
 <div><div class="card-title">📊 COREX Intelligence Digest</div><div class="card-sub" id="corex-digest-date"></div></div>

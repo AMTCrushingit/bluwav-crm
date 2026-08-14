@@ -859,11 +859,6 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="fg"><label class="fl">Status</label><select class="fs" id="mc-status"><option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal">Proposal</option><option value="Won">Won</option></select></div>
 <div class="fg"><label class="fl">Location</label><input class="fi" id="mc-location" placeholder="City, Country"/></div>
 </div>
-<div class="fg"><label class="fl">Notes</label><textarea class="fta" id="mc-notes" placeholder="Any notes..."></textarea></div>
-</div>
-<div class="modal-footer">
-<button class="btn btn-ghost" onclick="closeModal('addContact')">Cancel</button>
-<button class="btn btn-primary" onclick="saveContact()">Save Contact</button>
 </div>
 </div>
 </div>
@@ -934,7 +929,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 </div>
-<div class="modal-overlay" id="modal-addTask">
+<div class="drawer-overlay" id="addTaskBackdrop" onclick="closeDrawer('modal-addTask')"></div>
+<div class="modal-overlay drawer" id="modal-addTask">
 <div class="modal">
 <div class="modal-hd"><h3>✅ Add Task</h3><button class="modal-close" onclick="closeModal('addTask')">✕</button></div>
 <div class="modal-body">
@@ -1971,7 +1967,7 @@ function openModal(id){
       });
     }
   }
-  const drawerIds=['addContact','editContact','addDeal','editDeal'];
+  const drawerIds=['addContact','editContact','addDeal','editDeal','addTask','addEvent'];
   if(drawerIds.includes(id)){ openDrawer('modal-'+id); return; }
   document.getElementById('modal-'+id)?.classList.add('open');
   // Populate contact dropdown for deal modal
@@ -1988,7 +1984,7 @@ function openModal(id){
   }
 }
 function closeModal(id){
-  const drawerIds=['addContact','editContact','addDeal','editDeal'];
+  const drawerIds=['addContact','editContact','addDeal','editDeal','addTask','addEvent'];
   if(drawerIds.includes(id)){ closeDrawer('modal-'+id); return; }
   document.getElementById('modal-'+id)?.classList.remove('open');
 }
@@ -2009,9 +2005,11 @@ async function saveContact(){
   if(phone && !validatePhone(phone)){showFieldError(phoneEl,'Please enter a valid phone (e.g. +1 868 555 0000)');return;}
   else if(phoneEl) clearFieldError(phoneEl);
   // Build contact with only columns that exist in the contacts table
+  const sourceEl=document.getElementById('mc-source');
   const contact={
     full_name:(first+' '+last).trim(),
     email:email,
+    source_code:sourceEl?.value||null,
     phone:document.getElementById('mc-phone')?.value.trim()||null,
     business_name:document.getElementById('mc-biz')?.value.trim()||null,
     island:document.getElementById('mc-location')?.value.trim()||null,
@@ -4172,8 +4170,6 @@ async function saveProfileSettings(){
 </div>
 </div>
 <!-- ADD EVENT MODAL -->
-<div class="modal-overlay" id="modal-addEvent">
-<div class="modal" style="max-width:480px;">
 <div class="modal-hd"><h3>📅 New Event</h3><button class="modal-close" onclick="closeModal('addEvent')">✕</button></div>
 <div class="modal-body" style="display:grid;gap:14px;">
 <div><label class="fl">Event Title *</label><input class="fi" id="ev-title" placeholder="e.g. Client Meeting" style="margin-top:6px;"/></div>
@@ -4196,8 +4192,8 @@ async function saveProfileSettings(){
 <button class="btn btn-ghost" onclick="closeModal('addEvent')">Cancel</button>
 <button class="btn btn-primary" onclick="saveEvent()">Add Event</button>
 </div>
-</div>
-</div>
+
+
 <script>
 // ── SAVE EVENT ─────────────────────────────────────────────────
 async function saveEvent(){
