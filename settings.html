@@ -40,7 +40,14 @@ async function populateSettingsFields(){
       // Validate URL before applying to avoid 400 errors
       const img = new Image();
       img.onload = ()=>{ av.style.backgroundImage='url('+savedUrl+')'; av.style.backgroundSize='cover'; av.style.backgroundPosition='center'; av.textContent=''; };
-      img.onerror = ()=>{ av.textContent = ini(profile.full_name||session.user.email||'?'); localStorage.removeItem('bw_avatar_url'); };
+      img.onerror = ()=>{
+        // Bad URL — clear from localStorage and Supabase so it doesn't keep failing
+        localStorage.removeItem('bw_avatar_url');
+        av.style.backgroundImage='';
+        av.textContent = ini(profile.full_name||session.user.email||'?');
+        // Clear from Supabase profile silently
+        db.from('profiles').update({avatar_url:null}).eq('id',session.user.id).then(()=>{}).catch(()=>{});
+      };
       img.src = savedUrl;
     } else { av.textContent = ini(profile.full_name||session.user.email||'?'); }
   }
@@ -530,11 +537,11 @@ async function handlePhotoUpload(input){
     const name=session.user.user_metadata?.full_name||session.user.email?.split('@')[0]||'User';
     const ini=name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
     const parts=name.split(' ');
-    document.getElementById('sidebarName').textContent=name;
-    document.getElementById('topName').textContent=name;
-    document.getElementById('sidebarAvatar').textContent=ini;
-    document.getElementById('topAvatar').textContent=ini;
-    document.getElementById('profileAvatar').textContent=ini;
+    const snEl=document.getElementById('sidebarName'); if(snEl)snEl.textContent=name;
+    const tnEl=document.getElementById('topName'); if(tnEl)tnEl.textContent=name;
+    const saEl=document.getElementById('sidebarAvatar'); if(saEl)saEl.textContent=ini;
+    const taEl=document.getElementById('topAvatar'); if(taEl)taEl.textContent=ini;
+    const paEl=document.getElementById('profileAvatar'); if(paEl)paEl.textContent=ini;
     if(document.getElementById('firstName'))document.getElementById('firstName').value=parts[0]||'';
     if(document.getElementById('lastName'))document.getElementById('lastName').value=parts.slice(1).join(' ')||'';
     if(document.getElementById('profileEmail'))document.getElementById('profileEmail').value=session.user.email||'';
