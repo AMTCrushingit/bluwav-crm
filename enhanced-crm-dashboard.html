@@ -1057,6 +1057,44 @@ function showToast(msg,type=''){
 // ── AUTH + INIT ───────────────────────────────────────────────────────────────
 const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 
+// ── ORPHANED STATE CLEANUP ───────────────────────────────────────
+// Runs on every page load — clears any stale/partial state left
+// behind by closed tabs, lost connections, or interrupted logins
+(function cleanOrphanedState(){
+  try{
+    // 1. bw_gate_state: clear expired lockouts
+    const gs = JSON.parse(localStorage.getItem('bw_gate_state')||'{}');
+    if(gs.lockedUntil && Date.now() > gs.lockedUntil){
+      localStorage.removeItem('bw_gate_state');
+    }
+
+    // 2. corex_sa_auth: clear if timestamp is stale (>10 min)
+    const csAuth = localStorage.getItem('corex_sa_auth');
+    const csTs = parseInt(localStorage.getItem('corex_sa_auth_ts')||'0');
+    if(csAuth === 'true' && Date.now() - csTs > 10*60*1000){
+      localStorage.removeItem('corex_sa_auth');
+      localStorage.removeItem('corex_sa_auth_ts');
+    }
+
+    // 3. corex_sa_lockout: clear if expired
+    const csLock = parseInt(localStorage.getItem('corex_sa_lockout')||'0');
+    if(csLock && Date.now() > csLock){
+      localStorage.removeItem('corex_sa_lockout');
+      localStorage.removeItem('corex_sa_attempts');
+    }
+
+    // 4. bw_avatar_url: clear if it's a blob URL (doesn't survive tab close)
+    const avatarUrl = localStorage.getItem('bw_avatar_url');
+    if(avatarUrl && avatarUrl.startsWith('blob:')){
+      localStorage.removeItem('bw_avatar_url');
+    }
+
+    // 5. sessionStorage is automatically cleared on tab close — no action needed
+    // bw_gate_ok and bw_last_active are sessionStorage — safe by design
+
+  }catch(e){ /* silent — never block page load */ }
+})();
+
 // Activity tracker — resets on any user interaction
 function touchActivity() {
   sessionStorage.setItem('bw_last_active', Date.now().toString());

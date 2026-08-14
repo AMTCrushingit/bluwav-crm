@@ -155,10 +155,10 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 <button class="btn-primary" id="signInBtn" type="submit">Sign In →</button>
 </form>
 <div class="divider"><span>or continue with</span></div>
-<button class="btn-social" id="googleBtn" disabled style="opacity:0.4;cursor:not-allowed;" title="Coming soon">
+<button class="btn-social" disabled="" id="googleBtn" style="opacity:0.4;cursor:not-allowed;" title="Coming soon">
 <img alt="Google" src="https://www.google.com/favicon.ico"/> Continue with Google
       </button>
-<button class="btn-social" id="microsoftBtn" disabled style="opacity:0.4;cursor:not-allowed;" title="Coming soon">
+<button class="btn-social" disabled="" id="microsoftBtn" style="opacity:0.4;cursor:not-allowed;" title="Coming soon">
 <img alt="Microsoft" src="https://www.microsoft.com/favicon.ico"/> Continue with Microsoft
       </button>
 <div class="bottom-links">
@@ -260,6 +260,32 @@ msBtn.addEventListener('click', async () => {
 
 // Gate always shows on login page — no auto-redirect
 // User must always enter access code first
+
+// ── ORPHANED STATE CLEANUP (runs before gate check) ──────────────
+(function(){
+  try{
+    // Clear expired gate lockout
+    var gs=JSON.parse(localStorage.getItem('bw_gate_state')||'{}');
+    if(gs.lockedUntil && Date.now()>gs.lockedUntil){
+      localStorage.removeItem('bw_gate_state');
+    }
+    // Clear expired COREX auth
+    var csTs=parseInt(localStorage.getItem('corex_sa_auth_ts')||'0');
+    if(localStorage.getItem('corex_sa_auth')==='true' && Date.now()-csTs>10*60*1000){
+      localStorage.removeItem('corex_sa_auth');
+      localStorage.removeItem('corex_sa_auth_ts');
+    }
+    // Clear expired COREX lockout
+    var csLock=parseInt(localStorage.getItem('corex_sa_lockout')||'0');
+    if(csLock && Date.now()>csLock){
+      localStorage.removeItem('corex_sa_lockout');
+      localStorage.removeItem('corex_sa_attempts');
+    }
+    // Clear blob avatar URLs (don't survive tab close)
+    var av=localStorage.getItem('bw_avatar_url');
+    if(av && av.startsWith('blob:')) localStorage.removeItem('bw_avatar_url');
+  }catch(e){}
+})();
 
 // ── ACCESS GATE ─────────────────────────────────────────────────
 (function () {
