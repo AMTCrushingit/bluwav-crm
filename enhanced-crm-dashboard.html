@@ -1483,7 +1483,7 @@ async function loadData(){
   const winRate=deals.length?Math.round((wonOpportunities.length/deals.length)*100):0;
   const dmp=document.getElementById('dealMetricPipeline');if(dmp)dmp.textContent=fmt(pipeVal);
   const dma=document.getElementById('dealMetricAvg');if(dma)dma.textContent=fmt(avgDeal);
-  const dmc=document.getElementById('dealMetricCount');if(dmc)dmc.textContent=openOpportunities.length+' open deals';
+  const dmc=document.getElementById('dealMetricCount');if(dmc)dmc.textContent=openOpportunities.length+' open opportunities';
   const dmw=document.getElementById('dealMetricWon');if(dmw)dmw.textContent=fmt(wonVal);
   const dmr=document.getElementById('dealMetricRate');if(dmr)dmr.textContent=winRate+'%';
 
