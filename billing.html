@@ -5,7 +5,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>BluWav CRM — Billing &amp; Plan</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+
 // Update banner when plan is activated
 function updatePlanBanner(planName){
   const trialPill = document.querySelector('.trial-pill');
@@ -36,26 +38,6 @@ function initStripe(){
     return;
   }
   stripe = Stripe(stripeKey);
-}
-
-async function processPayment(planName, amount){
-  if(!stripe){
-    // Fallback: show success for testing
-    showToast('✅ Payment processed (test mode) — '+planName+' activated','success');
-    updatePlanBanner(planName);
-    closePaymentModal();
-    // Save to Supabase
-    if(currentUser){
-      await db.from('profiles').update({
-        plan: planName,
-        plan_activated_at: new Date().toISOString(),
-        subscription_status: 'active',
-        subscription_lapsed_at: null
-      }).eq('id', currentUser.id);
-    }
-    return;
-  }
-  // Real Stripe processing would go here
 }
 
 </script>

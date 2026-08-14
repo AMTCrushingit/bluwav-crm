@@ -1456,19 +1456,6 @@ async function generateDigest(){
   }
 }
 
-// ===== NAVIGATION =====
-function switchView(view){
-  ['dashboard','pipeline','sources','digest','settings'].forEach(v=>{
-    document.getElementById('view-'+v).style.display=v===view?'block':'none';
-  });
-  document.querySelectorAll('.sidebar-item').forEach(i=>{
-    i.classList.toggle('active',i.dataset.view===view);
-  });
-  if(view==='pipeline'){renderPipelineTable();renderKanban();}
-  if(view==='sources') renderSourcesView();
-  if(view==='settings'){renderAgents();renderWeights();}
-}
-
 // ===== RENDER ALL =====
 function renderAll(){
   renderStats();renderLeadsTable();renderFeed();renderSourceHealth();
