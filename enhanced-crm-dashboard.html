@@ -1107,14 +1107,11 @@ function touchActivity() {
 
 // Main auth init — runs immediately
 (async function() {
-  
 
-  // 2. Check 5-minute inactivity timeout
+  // 1. Check inactivity timeout first (sessionStorage survives page reload but not tab close)
   const lastActive = parseInt(sessionStorage.getItem('bw_last_active') || '0');
   const now = Date.now();
-
   if (lastActive > 0 && (now - lastActive) > AUTH_TIMEOUT) {
-    // Timed out — sign out and force re-login
     sessionStorage.removeItem('bw_last_active');
     sessionStorage.removeItem('bw_gate_ok');
     await db.auth.signOut();
@@ -1122,8 +1119,24 @@ function touchActivity() {
     return;
   }
 
-  // 3. Valid session within timeout — proceed
-  touchActivity(); // record this visit
+  // 2. Get session — retry up to 3x to handle post-login redirect timing
+  let session = null;
+  for(let attempt = 0; attempt < 3; attempt++){
+    await new Promise(r => setTimeout(r, attempt === 0 ? 600 : 800));
+    try{
+      const {data} = await db.auth.getSession();
+      session = data?.session;
+      if(session) break;
+    }catch(e){}
+  }
+
+  if(!session){
+    window.location.href = 'login.html';
+    return;
+  }
+
+  // 3. Valid session — proceed
+  touchActivity();
   currentUser = session.user;
   await initDashboard();
 
