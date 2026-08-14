@@ -1577,12 +1577,7 @@ const SOURCES_DATA=[
   {id:"s7",name:"Guyana eProcure",icon:"🏛️",desc:"Guyana Government Procurement Portal",type:"rfp",active:true,freq:"6h",lastScraped:new Date(Date.now()-6*60*60*1000).toISOString(),totalLeads:31,todayLeads:1,dailyCounts:[1,0,1,2,0,1,1]},
   {id:"s8",name:"OECS Procurement",icon:"🌊",desc:"OECS Commission Procurement & Digital Transformation tenders",type:"rfp",active:false,freq:"12h",lastScraped:new Date(Date.now()-18*60*60*1000).toISOString(),totalLeads:28,todayLeads:0,dailyCounts:[1,1,0,2,1,0,0]}
 ];
-const AGENTS_DATA=[
-  {name:"Devon",specialty:"Gov / RFP",region:"🌊 Caribbean"},
-  {name:"Aaliya",specialty:"NGO / Donor",region:"🌊 Caribbean"},
-  {name:"Marcus",specialty:"UN / Tech",region:"🌊 Caribbean & LATAM"},
-  {name:"Simone",specialty:"Startup Ecosystems",region:"🌊 Caribbean"}
-];
+const AGENTS_DATA=[{name:"Andrea M. Tanguay",specialty:"All Lead Types",region:"🌊 Caribbean",email:"tanyersinc@gmail.com"}];
 const DEFAULT_WEIGHTS={industry:25,geo:20,budget:20,orgType:15,sourceQuality:10,urgency:10};
 
 const COREX_AWARD_DATA=[
@@ -1610,10 +1605,10 @@ const COREX_DTI=[
 ];
 
 const COREX_ROUTING_RULES=[
-  {type:"Government / RFP",agent:"Devon",icon:"🏛️",color:"#8b5cf6"},
-  {type:"NGO / Donor Project",agent:"Aaliya",icon:"🌱",color:"#22c55e"},
-  {type:"UN / Tech / International",agent:"Marcus",icon:"🔬",color:"#a78bfa"},
-  {type:"Startup / Founder Ecosystem",agent:"Simone",icon:"🚀",color:"#f59e0b"}
+  {type:"Government / RFP",agent:"Andrea M. Tanguay",icon:"🏛️",color:"#8b5cf6"},
+  {type:"NGO / Donor Project",agent:"Andrea M. Tanguay",icon:"🌱",color:"#22c55e"},
+  {type:"UN / Tech / International",agent:"Andrea M. Tanguay",icon:"🔬",color:"#a78bfa"},
+  {type:"Startup / Founder Ecosystem",agent:"Andrea M. Tanguay",icon:"🚀",color:"#f59e0b"}
 ];
 
 const COREX_AGENT_COLORS={Devon:{bg:"rgba(139,92,246,.15)",color:"#c4b5fd"},Aaliya:{bg:"rgba(16,185,129,.12)",color:"#6ee7b7"},Marcus:{bg:"rgba(167,139,250,.15)",color:"#ddd6fe"},Simone:{bg:"rgba(245,158,11,.12)",color:"#fcd34d"}};
@@ -1875,29 +1870,45 @@ async function corexInitContent(){
 }
 
 // ---- Stats ----
+let corexActiveFilter='all';
+
 function corexRenderStats(){
-  // Always read live from corexLeads for accurate counts
   const total=corexLeads.length;
   const hot=corexLeads.filter(l=>l.score>=75).length;
   const pushed=corexLeads.filter(l=>l.pushedToCRM).length;
   const awaiting=corexLeads.filter(l=>l.status==='New').length;
   const data=[
-    {icon:'🎯',label:'Opportunities',val:total,color:'#8b5cf6',bg:'rgba(139,92,246,.12)'},
-    {icon:'🔥',label:'Hot (≥75)',val:hot,color:'#ef4444',bg:'rgba(239,68,68,.1)'},
-    {icon:'✅',label:'Synced to CRM',val:pushed,color:'#22c55e',bg:'rgba(34,197,94,.1)'},
-    {icon:'⏳',label:'Awaiting Routing',val:awaiting,color:'#f59e0b',bg:'rgba(245,158,11,.1)'}
+    {icon:'🎯',label:'All Opportunities',val:total,color:'#8b5cf6',bg:'rgba(139,92,246,.12)',filter:'all'},
+    {icon:'🔥',label:'Hot (≥75)',val:hot,color:'#ef4444',bg:'rgba(239,68,68,.1)',filter:'hot'},
+    {icon:'✅',label:'Synced to CRM',val:pushed,color:'#22c55e',bg:'rgba(34,197,94,.1)',filter:'synced'},
+    {icon:'⏳',label:'Awaiting Routing',val:awaiting,color:'#f59e0b',bg:'rgba(245,158,11,.1)',filter:'awaiting'}
   ];
   const el=document.getElementById('corex-stats-row');
   if(!el)return;
-  el.innerHTML=data.map(d=>`<div class="card" style="display:flex;align-items:center;gap:12px;padding:14px 16px;">
-    <div style="width:40px;height:40px;border-radius:10px;background:${d.bg};display:flex;align-items:center;justify-content:center;font-size:18px;">${d.icon}</div>
-    <div><div style="font-size:26px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;">${d.val}</div><div style="font-size:13px;color:var(--text3);font-weight:500;">${d.label}</div></div>
-  </div>`).join('');
+  el.innerHTML=data.map(d=>{
+    const isActive=corexActiveFilter===d.filter;
+    return '<div class="card" onclick="corexSetFilter(\''+d.filter+'\')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border:2px solid '+(isActive?d.color:'transparent')+';transition:border-color 0.2s;">'
+      +'<div style="width:40px;height:40px;border-radius:10px;background:'+d.bg+';display:flex;align-items:center;justify-content:center;font-size:18px;">'+d.icon+'</div>'
+      +'<div><div style="font-size:26px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;">'+d.val+'</div>'
+      +'<div style="font-size:13px;color:'+(isActive?d.color:'var(--text3)')+';font-weight:500;">'+d.label+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function corexSetFilter(filter){
+  corexActiveFilter=filter;
+  corexRenderStats();
+  corexRenderLeads();
 }
 
 // ---- Leads table ----
 function corexGetFiltered(){
   let f=[...corexLeads];
+  // Apply stat card filter first
+  if(corexActiveFilter==='hot') f=f.filter(l=>l.score>=75);
+  else if(corexActiveFilter==='synced') f=f.filter(l=>l.pushedToCRM);
+  else if(corexActiveFilter==='awaiting') f=f.filter(l=>l.status==='New');
+  // Then apply search/dropdown filters
   const search=(document.getElementById('corex-search')?.value||'').toLowerCase();
   const src=document.getElementById('corex-filter-source')?.value||'';
   const sc=document.getElementById('corex-filter-score')?.value||'';
@@ -2172,6 +2183,7 @@ async function corexPushCRM(id){
       'Discovered: '+new Date(lead.foundAt||Date.now()).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
     ].join('\n');
 
+    // Build contact object — source_code requires ALTER TABLE (run add_source_code_column.sql)
     const contactObj={
       full_name: lead.name,
       email: lead.contact||null,
@@ -2179,19 +2191,21 @@ async function corexPushCRM(id){
       island: lead.country?lead.country.replace(/[^a-zA-Z\s&]/g,'').trim():null,
       notes: corexNotes,
       status: 'Lead',
-      source_code: 'IH',
-      deal_value: dealVal||null,
       user_id: userId,
       created_at: new Date(lead.foundAt||Date.now()).toISOString()
     };
+    // Add source_code and deal_value if columns exist
+    try{ contactObj.source_code='IH'; }catch(e){}
+    try{ if(dealVal) contactObj.deal_value=dealVal; }catch(e){}
     const {error}=await db.from('contacts').insert(contactObj);
     if(error){
       console.warn('COREX→CRM insert error:', error.message);
       corexToast('⚠️ Sync error: '+error.message);
     } else {
-      corexToast('✅ COREX → CRM: '+lead.name+' added to Customers (source: IH)');
+      corexToast('✅ COREX → CRM: '+lead.name+' added to Customers');
       lead.pushedToCRM=true;
       lead.status='Pushed';
+      lead.assignedAgent='Andrea M. Tanguay';
       localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
       try{ await db.from('corex_leads').upsert({...lead}); }catch(e){}
       corexRenderStats();
