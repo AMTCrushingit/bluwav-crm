@@ -1105,6 +1105,8 @@ function touchActivity() {
   document.addEventListener(evt, touchActivity, true)
 );
 
+const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+
 // Main auth init — runs immediately
 (async function() {
 
@@ -1164,7 +1166,7 @@ async function initDashboard(){
     const meta = currentUser.user_metadata||{};
     const autoName = meta.full_name||currentUser.email?.split('@')[0]||'User';
     const autoRole = meta.role||'salesperson';
-    db.from('profiles').upsert({id:currentUser.id,full_name:autoName,role:autoRole}).then(()=>{}).catch(()=>{});
+    try{ await db.from('profiles').upsert({id:currentUser.id,full_name:autoName,role:autoRole}); }catch(e){}
     profile = {full_name:autoName,role:autoRole};
   }
 
@@ -1494,8 +1496,8 @@ async function loadLeaderboard(){
   if(!lb.length){
     lb=[
       {name:'Andrea M. Tanguay',deals:8,won:3,val:24000,color:'#00C8E0'},
-      {name:'Kenric Gilpin',deals:5,won:2,val:14000,color:'#C9A84C'},
-      {name:'Ryan Leah',deals:3,won:1,val:8000,color:'#FF6B2B'},
+      {name:'Agent 2',deals:5,won:2,val:14000,color:'#C9A84C'},
+      {name:'Agent 3',deals:3,won:1,val:8000,color:'#FF6B2B'},
     ];
   }
 

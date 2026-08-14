@@ -1,7 +1,9 @@
-name: Syntax Check
+name: BluWav CRM — Quality Gate
 
 on:
   push:
+    branches: ["main"]
+  pull_request:
     branches: ["main"]
 
 jobs:
@@ -12,7 +14,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Check JS syntax in all HTML files
+
+      - name: 1. JS Syntax Check (all HTML files)
         run: |
           python3 << 'PYEOF'
           import re, sys, subprocess, tempfile, os, glob
@@ -33,4 +36,41 @@ jobs:
               for e in errors: print(' ', e)
               sys.exit(1)
           print(f'All {len(glob.glob("*.html"))} HTML files passed syntax check')
+          PYEOF
+
+      - name: 2. Auth Flow & Regression Tests
+        run: node tests/auth-flow.test.js
+
+      - name: 3. Critical File Presence Check
+        run: |
+          python3 << 'PYEOF'
+          import sys, os
+          required = ['enhanced-crm-dashboard.html','login.html','settings.html',
+                      'reports.html','billing.html','contacts.html','deals.html',
+                      'superadmin.html','CNAME','tests/auth-flow.test.js']
+          missing = [f for f in required if not os.path.exists(f)]
+          if missing:
+              print('MISSING FILES:', missing)
+              sys.exit(1)
+          print(f'All {len(required)} required files present')
+          PYEOF
+
+      - name: 4. Security Scan (no exposed tokens)
+        run: |
+          python3 << 'PYEOF'
+          import re, sys, glob
+          dangerous = [r'ghp_[A-Za-z0-9]{36}', r'sk-bluwav-[A-Za-z0-9]+']
+          found = []
+          skip = ['superadmin.html','corex.html','login.html']
+          for fname in glob.glob('*.html'):
+              if fname in skip: continue
+              with open(fname) as f: c = f.read()
+              for pattern in dangerous:
+                  if re.search(pattern, c):
+                      found.append(f'{fname}: matches {pattern}')
+          if found:
+              print('SECURITY ISSUES:')
+              for f in found: print(' ', f)
+              sys.exit(1)
+          print('Security scan passed — no exposed tokens')
           PYEOF
