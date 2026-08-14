@@ -2141,60 +2141,43 @@ function corexRenderSyncLog(){
 async function corexPushCRM(id){
   const lead=corexLeads.find(l=>l.id===id);
   if(!lead||lead.pushedToCRM)return;
-  
-  // Get current user session for user_id
+
+  // Get session for user_id
   let userId=null;
   try{ const {data:{session}}=await db.auth.getSession(); userId=session?.user?.id||null; }catch(e){}
-  
-  // Insert into contacts table
+
+  // Insert into CRM contacts table — single clean insert
   try{
     const contactObj={
       full_name: lead.name,
       email: lead.contact||null,
       business_name: lead.org||null,
-      island: lead.country?.replace(/[^a-zA-Z\s]/g,'').trim()||null,
+      island: lead.country?lead.country.replace(/[^a-zA-Z\s&]/g,'').trim():null,
       notes: lead.description||null,
       status: 'Lead',
       source_code: 'IH',
       user_id: userId,
       created_at: new Date().toISOString()
     };
-    const {error:contactErr}=await db.from('contacts').insert(contactObj);
-    if(contactErr) console.warn('COREX→CRM contact insert:',contactErr.message);
-    else corexToast('✅ COREX → CRM: '+lead.name+' added to Customers');
-  }catch(e){ console.warn('COREX push contact:',e.message); }
-
-  // Actually insert into Supabase contacts table
-  try {
-    const contact = {
-      full_name: lead.name,
-      business_name: lead.org || null,
-      email: lead.contact || null,
-      status: 'Lead',
-      notes: lead.description || null,
-      user_id: currentUser?.id || null,
-      island: lead.country ? lead.country.replace(/[^a-zA-Z\s&]/g,'').trim() : null
-    };
-    const {error} = await db.from('contacts').insert([contact]);
+    const {error}=await db.from('contacts').insert(contactObj);
     if(error){
-      console.warn('COREX push error:', error.message);
+      console.warn('COREX→CRM insert error:', error.message);
       corexToast('⚠️ Sync error: '+error.message);
     } else {
-      corexToast('✅ COREX → CRM Sync complete — contact created');
+      corexToast('✅ COREX → CRM: '+lead.name+' added to Customers (source: IH)');
+      lead.pushedToCRM=true;
+      lead.status='Pushed';
+      localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
+      try{ await db.from('corex_leads').upsert({...lead}); }catch(e){}
+      corexRenderStats();
+      corexRenderLeads();
+      if(document.getElementById('corex-module-opportunities')?.style.display==='block') corexRenderPipeline();
+      corexAddFeed('📤 COREX → CRM Sync: '+lead.name+' added as Lead (IH)');
     }
-  } catch(e) {
+  }catch(e){
     console.warn('COREX push failed:', e.message);
-    corexToast('✅ COREX → CRM Sync logged (offline mode)');
+    corexToast('⚠️ Sync failed: '+e.message);
   }
-
-  lead.pushedToCRM=true;lead.status='Pushed';
-  localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
-  // Persist to Supabase
-  try{ await db.from('corex_leads').upsert({...lead}); }catch(e){}
-  corexRenderStats();
-  corexRenderLeads();
-  if(document.getElementById('corex-module-opportunities')?.style.display==='block') corexRenderPipeline();
-  corexAddFeed('📤 COREX → CRM Sync: '+lead.name);
 }
 
 // ---- Open lead (simple toast for now) ----

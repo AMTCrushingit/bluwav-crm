@@ -1223,16 +1223,7 @@ const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
     return;
   }
 
-  // 2. Get session — retry up to 3x to handle post-login redirect timing
-  let session = null;
-  for(let attempt = 0; attempt < 3; attempt++){
-    await new Promise(r => setTimeout(r, attempt === 0 ? 600 : 800));
-    try{
-      const {data} = await db.auth.getSession();
-      session = data?.session;
-      if(session) break;
-    }catch(e){}
-  }
+  
 
   if(!session){
     window.location.href = 'login.html';
@@ -1919,6 +1910,13 @@ function openContactProfile(contactId){
   document.getElementById('cpEmail').textContent = contact.email||'—';
   document.getElementById('cpPhone').textContent = contact.phone||contact.whatsapp||'—';
   document.getElementById('cpLocation').textContent = contact.island||'—';
+  const srcEl = document.getElementById('cpSource');
+  if(srcEl){
+    const srcMap={'FB':'Facebook','IG':'Instagram','LI':'LinkedIn','TK':'TikTok','YT':'YouTube','GO':'Google','IH':'Intelligence Hub','WP':'WhatsApp','RF':'Referral','WB':'Website','EV':'Event','EM':'Email Campaign','DI':'Direct','OT':'Other'};
+    const code = contact.source_code;
+    if(code) srcEl.innerHTML = '<span style="background:rgba(0,200,224,0.1);color:var(--cyan);font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px;letter-spacing:0.05em;">'+code+'</span> <span style="color:var(--text3);font-size:12px;">'+(srcMap[code]||code)+'</span>';
+    else srcEl.textContent = '—';
+  }
   document.getElementById('cpNotes').textContent = contact.notes||'No notes';
   document.getElementById('cpOpenOpportunities').textContent = openOpportunities.length;
   document.getElementById('cpTotalValue').textContent = fmt(totalVal);
@@ -4121,7 +4119,8 @@ async function saveProfileSettings(){
 <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Contact Info</div>
 <div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Email: </span><span id="cpEmail">—</span></div>
 <div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Phone: </span><span id="cpPhone">—</span></div>
-<div style="font-size:13px;color:var(--text2);"><span style="color:var(--text3);">Location: </span><span id="cpLocation">—</span></div>
+<div style="font-size:13px;color:var(--text2);margin-bottom:6px;"><span style="color:var(--text3);">Location: </span><span id="cpLocation">—</span></div>
+<div style="font-size:13px;color:var(--text2);"><span style="color:var(--text3);">Source: </span><span id="cpSource" style="font-weight:700;"></span></div>
 </div>
 <div style="background:var(--navy-light);border-radius:10px;padding:14px;">
 <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Deal Summary</div>
