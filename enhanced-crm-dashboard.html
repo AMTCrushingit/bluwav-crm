@@ -1465,10 +1465,8 @@ async function loadData(){
     probability:d.probability||null,
     won_lost_reason:d.won_lost_reason||null,
   }));
-  allOpportunities = deals;
-
-  const openOpportunities=deals.filter(d=>!['won','lost'].includes((d.stage||'').toLowerCase()));
-  const wonOpportunities=deals.filter(d=>(d.stage||'').toLowerCase()==='won');
+  
+  const wonOpportunities=allOpportunities.filter(d=>(d.stage||'').toLowerCase()==='won');
   const pipeVal=openOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
   const wonVal=wonOpportunities.reduce((s,d)=>s+(d.deal_value||0),0);
 
@@ -1476,7 +1474,7 @@ async function loadData(){
   document.getElementById('metricValue').textContent=fmt(pipeVal);
   document.getElementById('metricWon').textContent=wonOpportunities.length;
   const nd=document.getElementById('navOpportunitiesBadge');
-  if(nd)nd.textContent=deals.length;
+  if(nd)nd.textContent=allOpportunities.length;
 
   // Deal view metrics
   const avgDeal=openOpportunities.length?Math.round(pipeVal/openOpportunities.length):0;
