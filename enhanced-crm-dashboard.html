@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>BluWav CRM — Dashboard</title>
+<title>BluWav CRM — Command Center</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -16,7 +16,7 @@
   --gold:#C9A84C;--gold-light:#E8C96A;--gold-glow:rgba(201,168,76,0.12);
   --success:#22C55E;--error:#EF4444;--warning:#F59E0B;--purple:#a78bfa;
   --text:#FFFFFF;--text2:#D4DCF0;--text3:#9BAAC8;
-  --font-display:'Segoe UI',system-ui,sans-serif;
+  --font-display:Georgia,'Times New Roman',serif;
   --font-body:system-ui,-apple-system,'Segoe UI',sans-serif;
   --radius-sm:6px;--radius-md:12px;--radius-lg:20px;--radius-xl:28px;
   --transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
@@ -77,20 +77,6 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 .main.expanded{margin-left:60px;}
 
 /* ══ TOPBAR ══ */
-/* Trial expiry banner */
-.trial-banner{
-  background:rgba(201,168,76,0.06);
-  border-bottom:1px solid rgba(201,168,76,0.15);
-  padding:7px 24px;display:none;align-items:center;justify-content:space-between;
-  font-size:0.78rem;color:var(--text2);flex-shrink:0;transition:background 0.3s,border-color 0.3s;
-}
-.trial-banner.visible{display:flex;}
-.trial-banner.urgent{background:rgba(239,68,68,0.08);border-bottom-color:rgba(239,68,68,0.25);color:#fca5a5;}
-.trial-banner a{color:var(--gold);font-weight:700;text-decoration:none;}
-.trial-banner a:hover{text-decoration:underline;}
-.trial-banner-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;}
-.trial-banner-close:hover{color:var(--text);}
-.trial-banner-close:focus-visible{outline:2px solid var(--cyan);border-radius:3px;}
 .topbar{background:rgba(10,14,26,0.98);border-bottom:1px solid var(--navy-border);padding:0 24px;height:56px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);}
 .topbar-left .greeting{font-size:0.85rem;color:var(--text3);}
 .topbar-left h1{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--text);}
@@ -344,21 +330,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
   .qa-grid{grid-template-columns:repeat(2,1fr);}
   .pipe-cols{grid-template-columns:repeat(2,1fr);}
   .content{padding:14px;}
-  /* Trial expiry banner */
-.trial-banner{
-  background:rgba(201,168,76,0.06);
-  border-bottom:1px solid rgba(201,168,76,0.15);
-  padding:7px 24px;display:none;align-items:center;justify-content:space-between;
-  font-size:0.78rem;color:var(--text2);flex-shrink:0;transition:background 0.3s,border-color 0.3s;
-}
-.trial-banner.visible{display:flex;}
-.trial-banner.urgent{background:rgba(239,68,68,0.08);border-bottom-color:rgba(239,68,68,0.25);color:#fca5a5;}
-.trial-banner a{color:var(--gold);font-weight:700;text-decoration:none;}
-.trial-banner a:hover{text-decoration:underline;}
-.trial-banner-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;}
-.trial-banner-close:hover{color:var(--text);}
-.trial-banner-close:focus-visible{outline:2px solid var(--cyan);border-radius:3px;}
-.topbar{padding:0 12px;}
+  .topbar{padding:0 12px;}
   #globalSearch{width:140px!important;}
   #globalSearch:focus{width:190px!important;}
 }
@@ -388,35 +360,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
   flex-shrink:0;
 }
 .hamburger-btn:hover{background:var(--navy-light);border-color:var(--navy-border);color:var(--text);}
-@media(max-width:768px){.hamburger-btn{display:flex!important;}} @media(min-width:769px){.hamburger-btn{display:none!important;}}
-/* ── LOCKED NAV ITEM (Coming Soon) ── */
-.ni-locked{position:relative;cursor:default;}
-.ni-locked:hover{background:rgba(255,255,255,0.03)!important;color:var(--text3)!important;}
-.ni-locked .ni-lock-badge{
-  display:inline-flex;align-items:center;gap:3px;
-  font-size:0.58rem;font-weight:700;letter-spacing:0.04em;
-  background:rgba(201,168,76,0.12);color:var(--gold);
-  border:1px solid rgba(201,168,76,0.25);
-  border-radius:9999px;padding:1px 6px;margin-left:auto;white-space:nowrap;
-}
-.ni-locked .ni-tooltip{
-  display:none;position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);
-  background:var(--navy-mid);border:1px solid var(--navy-border);
-  border-radius:var(--radius-md);padding:10px 14px;width:220px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.4);z-index:500;pointer-events:none;
-}
-.ni-locked:hover .ni-tooltip{display:block;}
-.ni-tooltip-title{font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:4px;}
-.ni-tooltip-desc{font-size:0.72rem;color:var(--text2);line-height:1.5;margin-bottom:6px;}
-.ni-tooltip-date{font-size:0.68rem;color:var(--gold);font-weight:600;}
-.ni-tooltip::before{
-  content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);
-  border:6px solid transparent;border-right-color:var(--navy-border);
-}
-.ni-tooltip::after{
-  content:'';position:absolute;right:calc(100% - 1px);top:50%;transform:translateY(-50%);
-  border:6px solid transparent;border-right-color:var(--navy-mid);
-}
+@media(max-width:768px){.hamburger-btn{display:flex!important;}}
 /* ── DATE PICKER ── */
 .dp-wrap{position:relative;display:block;}
 .dp-input{width:100%;padding:10px 14px;background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.85rem;font-family:var(--font-body);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;}
@@ -449,39 +393,35 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </a>
 <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
 </div>
-<nav aria-label="Main navigation" class="sidebar-nav" role="navigation">
-<div class="ns" data-tooltip="Operations">Operations</div>
-<a class="ni active" data-tooltip="Dashboard" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Dashboard</span></a>
-<a class="ni" data-tooltip="Customers" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
-<a class="ni" data-tooltip="Opportunities" id="nav-deals" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span><span class="nb" id="navOpportunitiesBadge">—</span></a>
-<a class="ni" data-tooltip="Tasks" id="nav-tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
-<a class="ni" data-tooltip="Calendar" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
-<div class="ns" data-tooltip="Growth">Growth</div>
+<nav class="sidebar-nav">
+<div class="ns">Operations</div>
+<a class="ni active" id="nav-dashboard" onclick="showView('dashboard')"><span class="ni-icon">📊</span><span class="nav-text">Command Center</span></a>
+<a class="ni" id="nav-contacts" onclick="showView('contacts')"><span class="ni-icon">👥</span><span class="nav-text">Customers</span><span class="nb" id="navCustomersBadge">—</span></a>
+<a class="ni" id="nav-deals" onclick="showView('deals')"><span class="ni-icon">💼</span><span class="nav-text">Opportunities</span><span class="nb" id="navOpportunitiesBadge">—</span></a>
+<a class="ni" id="nav-tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
+<a class="ni" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
+<div class="ns">Growth</div>
 <a class="ni" id="nav-email" onclick="showView('email')" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
 <a class="ni" id="nav-whatsapp" onclick="showView('whatsapp')" style="display:none;"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
 <a class="ni" href="automations.html" style="display:none;"><span class="ni-icon">⚡</span><span class="nav-text">Workflows</span></a>
-<a aria-disabled="true" aria-label="Communications — coming soon" class="ni ni-locked" role="button" tabindex="0">
-<span class="ni-icon">📡</span>
-<span class="nav-text">Communications</span>
-<span class="ni-lock-badge">🔒 Soon</span>
-<div class="ni-tooltip" role="tooltip">
-<div class="ni-tooltip-title">📡 Communications</div>
-<div class="ni-tooltip-desc">Email campaigns, WhatsApp messaging, and automated follow-up sequences — all in one place.</div>
-<div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
-</div>
-</a>
-<div class="ns" data-tooltip="Insights">Insights</div>
-<a class="ni" data-tooltip="Business Insights" href="reports.html" id="nav-reports"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
-<div class="ns" data-tooltip="Workspace">Workspace</div>
-<a class="ni" data-tooltip="Settings" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" style="pointer-events:none;opacity:0.4;"><span class="ni-icon">📡</span><span class="nav-text">Communications <span style="font-size:0.65rem;color:var(--text3);">Coming soon</span></span></a>
+<div class="ns">Insights</div>
+<a class="ni" href="reports.html" id="nav-reports"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
+<div class="ns">Workspace</div>
+<a class="ni" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
 <a class="ni" href="billing.html"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <a class="ni" id="nav-team" onclick="showView('contacts')" style="display:none;"><span class="ni-icon">👤</span><span class="nav-text">Team</span></a>
 <!-- Admin section — visible to manager/admin/owner only -->
-<div class="ns" data-tooltip="Admin" id="adminNav" style="display:none;">Admin</div>
-<a class="ni" data-tooltip="Super Admin" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
+<div class="ns" id="adminNav" style="display:none;">Admin</div>
+<a class="ni" href="superadmin.html" id="adminLink" style="display:none;"><span class="ni-icon">🛡</span><span class="nav-text">Super Admin</span></a>
 </nav>
 <div class="sb-bottom">
-<!-- Trial widget moved to top banner — sidebar space freed for navigation -->
+<div class="trial-w" id="trialWidget">
+<div class="tw-label">⏱ 14-Day Free Trial</div>
+<div class="tw-days" id="trialDaysNum">14</div>
+<div class="tw-sub" id="trialSub">days remaining · No card needed</div>
+<div class="tw-bar"><div class="tw-fill" id="trialFill" style="width:100%;"></div></div>
+</div>
 <div class="user-card" onclick="window.location.href='settings.html'">
 <div class="avatar" id="sidebarAvatar">—</div>
 <div class="user-info">
@@ -522,20 +462,6 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 </header>
-<!-- TRIAL BANNER — always visible, updates dynamically -->
-<div aria-label="Trial status" aria-live="polite" class="trial-banner visible" id="trialExpiryBanner" role="status">
-<div style="display:flex;align-items:center;gap:8px;">
-<span id="trialBannerIcon">⏱</span>
-<span id="trialBannerText">14-day free trial · No card needed</span>
-</div>
-<div style="display:flex;align-items:center;gap:12px;">
-<div style="height:6px;width:80px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
-<div id="trialBannerBar" style="height:100%;background:var(--gold);border-radius:3px;width:100%;transition:width 0.5s;"></div>
-</div>
-<a href="billing.html" style="color:var(--gold);font-weight:700;font-size:0.75rem;text-decoration:none;white-space:nowrap;">Upgrade →</a>
-<button aria-label="Dismiss trial banner" class="trial-banner-close" id="trialBannerClose" onclick="sessionStorage.setItem('trial_banner_dismissed','1');this.closest('.trial-banner').classList.remove('visible');">✕</button>
-</div>
-</div>
 <!-- ROLE BANNER -->
 <div class="role-banner" id="roleBanner"></div>
 <!-- ══ DASHBOARD VIEW ══ -->
@@ -558,15 +484,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="qa-grid">
 <div class="qa" onclick="openModal('addContact')"><div class="qa-icon">➕</div><div class="qa-lbl">New Contact</div></div>
 <div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">💼</div><div class="qa-lbl">New Opportunity</div></div>
-<div aria-disabled="true" aria-label="Send Email — coming soon" class="qa ni-locked" role="button" style="cursor:default;opacity:0.6;" tabindex="0">
-<div class="qa-icon">📧</div>
-<div class="qa-lbl">Send Email</div>
-<div class="ni-tooltip" role="tooltip" style="left:50%;transform:translateX(-50%);top:calc(100% + 8px);">
-<div class="ni-tooltip-title">📧 Email</div>
-<div class="ni-tooltip-desc">Send emails directly from BluWav CRM with full tracking and logging.</div>
-<div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
-</div>
-</div>
+<div class="qa" style="opacity:0.35;pointer-events:none;cursor:not-allowed;" title="Email coming soon"><div class="qa-icon">📧</div><div class="qa-lbl">Send Email</div></div>
 <div class="qa" onclick="openModal('addTask')"><div class="qa-icon">✅</div><div class="qa-lbl">Add Task</div></div>
 </div>
 <!-- Pipeline + Right Panel (Leaderboard or Activity) -->
@@ -605,7 +523,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <div style="overflow-x:auto;">
 <table class="tbl">
-<thead><tr><th>Name</th><th>Company</th><th>Status</th><th>Date</th><th>Source</th></tr></thead>
+<thead><tr><th>Name</th><th>Company</th><th>Status</th><th>Date</th></tr></thead>
 <tbody id="recentCustomersBody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Loading...</td></tr></tbody>
 </table>
 </div>
@@ -1408,7 +1326,7 @@ async function loadData(){
   try {
   // Load contacts — matches dashboard.html exactly (contacts table, RLS-filtered)
   let contacts=[], cCount=0;
-  let cq = db.from('contacts').select('id,full_name,email,phone,whatsapp,business_name,island,notes,user_id,created_at,status,deal_value,last_contacted,source_code').order('created_at',{ascending:false});
+  let cq = db.from('contacts').select('id,full_name,email,phone,whatsapp,business_name,island,notes,user_id,created_at,status,deal_value,last_contacted').order('created_at',{ascending:false});
   if(viewingUserId && viewingUserId !== 'all' && viewingUserId !== null){
     cq = cq.eq('user_id', viewingUserId);
   }
@@ -1547,7 +1465,7 @@ function renderRecentCustomers(){
   const tbody=document.getElementById('recentCustomersBody');
   if(!tbody)return;
   if(!allCustomers.length){
-    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">No contacts yet</td></tr>';
+    tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">No contacts yet</td></tr>`;
     return;
   }
   const statusBadge={'Lead':'badge-muted','Qualified':'badge-cyan','Proposal':'badge-gold','Won':'badge-success','new':'badge-muted','contacted':'badge-cyan'};
@@ -1570,7 +1488,12 @@ function renderRecentCustomers(){
           <option value="Inactive" ${status==='Inactive'?'selected':''}>Inactive</option>
         </select>
       </td>
-       // ───────────────────────────────────────────────────────────────
+      <td style="color:var(--text3);font-size:0.75rem;">${date}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── LEADERBOARD ───────────────────────────────────────────────────────────────
 async function loadLeaderboard(){
   const body=document.getElementById('rightPanelBody');
   const ranks=['gold','silver','bronze','other','other'];
@@ -1599,19 +1522,16 @@ async function loadLeaderboard(){
   }
 
   const maxVal=lb[0]?.val||1;
-  body.innerHTML=lb.slice(0,5).map(function(rep,i){
-    var rankCls=ranks[i]||'other';
-    var barW=Math.round((rep.val/maxVal)*100);
-    return '<div class="lb-item">'
-      +'<div class="lb-rank '+rankCls+'">'+(i+1)+'</div>'
-      +'<div class="lb-avatar" style="background:'+rep.color+';">'+ini(rep.name)+'</div>'
-      +'<div class="lb-info"><div class="lb-name">'+rep.name+'</div>'
-      +'<div class="lb-deals">'+rep.deals+' deals &middot; '+rep.won+' won</div></div>'
-      +'<div style="text-align:right;">'
-      +'<div class="lb-val">'+fmt(rep.val)+'</div>'
-      +'<div class="lb-bar-wrap"><div class="lb-bar" style="width:'+barW+'%;"></div></div>'
-      +'</div></div>';
-  }).join('');
+  body.innerHTML=lb.slice(0,5).map((rep,i)=>`
+    <div class="lb-item">
+      <div class="lb-rank ${ranks[i]}">${i+1}</div>
+      <div class="lb-avatar" style="background:${rep.color};">${ini(rep.name)}</div>
+      <div class="lb-info"><div class="lb-name">${rep.name}</div><div class="lb-deals">${rep.deals} deals · ${rep.won} won</div></div>
+      <div style="text-align:right;">
+        <div class="lb-val">${fmt(rep.val)}</div>
+        <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round((rep.val/maxVal)*100)}%;"></div></div>
+      </div>
+    </div>`).join('');
 }
 
 // ── ACTIVITY FEED ─────────────────────────────────────────────────────────────
@@ -1625,13 +1545,11 @@ function loadActivityFeed(){
     {icon:'✅',cls:'c',text:'Task completed — <strong>Send proposal</strong>',time:'2d ago'},
     {icon:'⚡',cls:'g',text:'Automation — <strong>Welcome email</strong> sent ×2',time:'3d ago'},
   ];
-  body.innerHTML=activities.map(function(a){
-    return '<div class="act-item">'
-      +'<div class="act-icon '+a.cls+'">'+a.icon+'</div>'
-      +'<div class="act-body"><div class="act-text">'+a.text+'</div>'
-      +'<div class="act-time">'+a.time+'</div></div>'
-      +'</div>';
-  }).join('');
+  body.innerHTML=activities.map(a=>`
+    <div class="act-item">
+      <div class="act-dot ${a.cls}">${a.icon}</div>
+      <div><div class="act-txt">${a.text}</div><div class="act-time">${a.time}</div></div>
+    </div>`).join('');
 }
 
 // ── CONTACTS TABLE (sortable) ─────────────────────────────────────────────────
@@ -2199,12 +2117,11 @@ async function saveDeal(){
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(n=>{n.classList.remove('active');n.removeAttribute('aria-current');});
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
   if(window.innerWidth<=1024) closeMobileSidebar();
   const view=document.getElementById('view-'+name);
   if(view)view.classList.add('active');
   const nav=document.getElementById('nav-'+name);
-  if(nav){nav.setAttribute('aria-current','page');}
   if(nav)nav.classList.add('active');
   if(name==='contacts'){
     filteredCustomers=allCustomers.slice();
@@ -4277,9 +4194,6 @@ async function saveProfileSettings(){
 </div>
 </div>
 <!-- ADD EVENT MODAL -->
-<div class="drawer-overlay" id="addEventBackdrop" onclick="closeDrawer('modal-addEvent')"></div>
-<div class="modal-overlay drawer" id="modal-addEvent">
-<div class="modal">
 <div class="modal-hd"><h3>📅 New Event</h3><button class="modal-close" onclick="closeModal('addEvent')">✕</button></div>
 <div class="modal-body" style="display:grid;gap:14px;">
 <div><label class="fl">Event Title *</label><input class="fi" id="ev-title" placeholder="e.g. Client Meeting" style="margin-top:6px;"/></div>
@@ -4298,11 +4212,9 @@ async function saveProfileSettings(){
 </div>
 <div><label class="fl">Notes</label><textarea class="fi" id="ev-notes" placeholder="Optional notes..." rows="3" style="margin-top:6px;resize:vertical;"></textarea></div>
 </div>
-<div class="modal-footer">
+<div class="modal-ft">
 <button class="btn btn-ghost" onclick="closeModal('addEvent')">Cancel</button>
 <button class="btn btn-primary" onclick="saveEvent()">Add Event</button>
-</div>
-</div>
 </div>
 <script>
 // ── SAVE EVENT ─────────────────────────────────────────────────

@@ -50,15 +50,13 @@ function expect(val) {
 const dashboardPath = path.join(__dirname, '..', 'enhanced-crm-dashboard.html');
 const source = fs.readFileSync(dashboardPath, 'utf8');
 
-// Extract all script blocks — strip template literal HTML for pattern matching
-// (template literals with HTML are valid JS but confuse simple regex checks)
+// Extract all script blocks
 const scriptBlocks = [];
 const scriptRegex = /<script[^>]*>([\s\S]*?)<\/script>/g;
 let match;
 while ((match = scriptRegex.exec(source)) !== null) {
   if (match[1].trim().length > 20) scriptBlocks.push(match[1]);
 }
-// Join all JS for pattern-based tests (not syntax checking)
 const allJS = scriptBlocks.join('\n');
 
 console.log('');
