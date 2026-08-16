@@ -2456,6 +2456,254 @@ function corexToast(msg){
   setTimeout(()=>el.remove(),4000);
 }
 
+// ================================================================
+// CDSIA — Caribbean Distress Signal Intelligence
+// Feeds into COREX as sourceType="CDSIA"
+// ================================================================
+
+const CDSIA_SOURCES = [
+  {name:'Nassau Guardian',country:'Bahamas',flag:'🇧🇸'},
+  {name:'The Punch',country:'Bahamas',flag:'🇧🇸'},
+  {name:'Bahama Journal',country:'Bahamas',flag:'🇧🇸'},
+  {name:'Trinidad Express',country:'Trinidad & Tobago',flag:'🇹🇹'},
+  {name:'Trinidad Guardian',country:'Trinidad & Tobago',flag:'🇹🇹'},
+  {name:'Trinidad Newsday',country:'Trinidad & Tobago',flag:'🇹🇹'},
+  {name:'Jamaica Gleaner',country:'Jamaica',flag:'🇯🇲'},
+  {name:'Jamaica Observer',country:'Jamaica',flag:'🇯🇲'},
+  {name:'Barbados Today',country:'Barbados',flag:'🇧🇧'},
+  {name:'Guyana Chronicle',country:'Guyana',flag:'🇬🇾'},
+  {name:'Stabroek News',country:'Guyana',flag:'🇬🇾'},
+  {name:'Loop Caribbean',country:'Regional',flag:'🌊'},
+  {name:'Caribbean News Service',country:'Regional',flag:'🌊'},
+  {name:'CMC',country:'Regional',flag:'🌊'},
+];
+
+const CDSIA_DISTRESS_TYPES = {
+  Financial: {icon:'💰',color:'#ef4444',signals:['revenue collapse','wind-up petition','receivership','insolvency','debt default','profit warning','layoffs','cost-cutting']},
+  Operational: {icon:'⚙️',color:'#f97316',signals:['service disruption','supply chain','operational failure','capacity issues','staff shortage','system failure']},
+  Governance: {icon:'🏛️',color:'#8b5cf6',signals:['board resignation','CEO departure','regulatory action','compliance breach','investigation','audit failure']},
+  Digital: {icon:'💻',color:'#3b82f6',signals:['website outage','data breach','cyber attack','system migration','digital failure','IT crisis']},
+  Reputation: {icon:'📢',color:'#f59e0b',signals:['customer complaints','social media crisis','PR scandal','brand damage','public backlash','media scrutiny']},
+};
+
+// Seed CDSIA signals (simulated — replace with real news API)
+const CDSIA_SEED_SIGNALS = [
+  {id:'CDSIA001',sourceType:'CDSIA',organizationName:'Caribbean Airlines',country:'🇹🇹 Trinidad & Tobago',sector:'Aviation',distressType:['Financial','Operational'],distressSummary:'Caribbean Airlines reports significant revenue decline and route cancellations amid rising fuel costs and reduced passenger demand.',urgency:'Critical',opportunityScore:94,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'Trinidad Express',articleUrl:'#',dateDetected:new Date(Date.now()-2*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA002',sourceType:'CDSIA',organizationName:'National Commercial Bank Jamaica',country:'🇯🇲 Jamaica',sector:'Banking',distressType:['Governance','Financial'],distressSummary:'NCB reports board-level restructuring following regulatory review. Three senior executives resign amid compliance concerns.',urgency:'High',opportunityScore:88,recommendedServices:['BluWav CRM'],sourcePublication:'Jamaica Gleaner',articleUrl:'#',dateDetected:new Date(Date.now()-5*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA003',sourceType:'CDSIA',organizationName:'Massy Holdings',country:'🇹🇹 Trinidad & Tobago',sector:'Retail/Distribution',distressType:['Digital','Operational'],distressSummary:'Massy Holdings e-commerce platform experiences extended outage. Customer complaints surge across social media channels.',urgency:'High',opportunityScore:82,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'Trinidad Guardian',articleUrl:'#',dateDetected:new Date(Date.now()-8*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA004',sourceType:'CDSIA',organizationName:'Sagicor Financial',country:'🇧🇧 Barbados',sector:'Insurance/Finance',distressType:['Financial'],distressSummary:'Sagicor issues profit warning for Q3 2026. Investment portfolio underperformance cited amid regional economic headwinds.',urgency:'Medium',opportunityScore:76,recommendedServices:['BluWav CRM'],sourcePublication:'Barbados Today',articleUrl:'#',dateDetected:new Date(Date.now()-12*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA005',sourceType:'CDSIA',organizationName:'Guyana Power & Light',country:'🇬🇾 Guyana',sector:'Energy/Utilities',distressType:['Operational','Reputation'],distressSummary:'GPL faces mounting customer complaints over extended outages. Government threatens regulatory intervention.',urgency:'Critical',opportunityScore:91,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'Stabroek News',articleUrl:'#',dateDetected:new Date(Date.now()-1*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA006',sourceType:'CDSIA',organizationName:'Digicel Jamaica',country:'🇯🇲 Jamaica',sector:'Telecommunications',distressType:['Financial','Digital'],distressSummary:'Digicel Jamaica reports network infrastructure challenges following parent company debt restructuring.',urgency:'High',opportunityScore:85,recommendedServices:['BluWav CRM'],sourcePublication:'Jamaica Observer',articleUrl:'#',dateDetected:new Date(Date.now()-6*3600000).toISOString(),pushedToCRM:false},
+];
+
+let cdsiaSignals = [];
+
+function cdsiaInit(){
+  // Load from localStorage or use seed data
+  const stored = localStorage.getItem('cdsia_signals');
+  if(stored){try{cdsiaSignals=JSON.parse(stored);}catch(e){cdsiaSignals=[...CDSIA_SEED_SIGNALS];}}
+  else{cdsiaSignals=[...CDSIA_SEED_SIGNALS];localStorage.setItem('cdsia_signals',JSON.stringify(cdsiaSignals));}
+}
+
+function corexRenderCDSIA(){
+  cdsiaInit();
+  const urgencyFilter=document.getElementById('cdsiaUrgencyFilter')?.value||'';
+  const typeFilter=document.getElementById('cdsiaTypeFilter')?.value||'';
+
+  let filtered=[...cdsiaSignals];
+  if(urgencyFilter)filtered=filtered.filter(s=>s.urgency===urgencyFilter);
+  if(typeFilter)filtered=filtered.filter(s=>s.distressType.includes(typeFilter));
+  filtered.sort((a,b)=>b.opportunityScore-a.opportunityScore);
+
+  // Stats row
+  const statsEl=document.getElementById('cdsiaStatsRow');
+  if(statsEl){
+    const critical=cdsiaSignals.filter(s=>s.urgency==='Critical').length;
+    const financial=cdsiaSignals.filter(s=>s.distressType.includes('Financial')).length;
+    const operational=cdsiaSignals.filter(s=>s.distressType.includes('Operational')).length;
+    const governance=cdsiaSignals.filter(s=>s.distressType.includes('Governance')).length;
+    const stats=[
+      {icon:'🚨',label:'Total Signals',val:cdsiaSignals.length,color:'#ef4444',bg:'rgba(239,68,68,.12)'},
+      {icon:'🔴',label:'Critical',val:critical,color:'#ef4444',bg:'rgba(239,68,68,.1)'},
+      {icon:'💰',label:'Financial Distress',val:financial,color:'#f97316',bg:'rgba(249,115,22,.1)'},
+      {icon:'🏛️',label:'Governance',val:governance,color:'#8b5cf6',bg:'rgba(139,92,246,.1)'},
+    ];
+    statsEl.innerHTML=stats.map(s=>`<div class="card" style="display:flex;align-items:center;gap:12px;padding:14px 16px;">
+      <div style="width:40px;height:40px;border-radius:10px;background:${s.bg};display:flex;align-items:center;justify-content:center;font-size:18px;">${s.icon}</div>
+      <div><div style="font-size:22px;font-weight:800;color:${s.color};">${s.val}</div><div style="font-size:11px;color:var(--text3);">${s.label}</div></div>
+    </div>`).join('');
+  }
+
+  // Source grid
+  const srcEl=document.getElementById('cdsiaSourceGrid');
+  if(srcEl){
+    srcEl.innerHTML=CDSIA_SOURCES.map(s=>`<div style="background:var(--bg3);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+      <span style="font-size:16px;">${s.flag}</span>
+      <div><div style="font-size:12px;font-weight:600;color:var(--text);">${s.name}</div>
+      <div style="font-size:10px;color:var(--text3);">${s.country}</div></div>
+      <div style="margin-left:auto;width:6px;height:6px;border-radius:50%;background:#22c55e;"></div>
+    </div>`).join('');
+  }
+
+  // Signals table
+  const tbody=document.getElementById('cdsiaSignalsTbody');
+  if(!tbody)return;
+  if(!filtered.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3);">No distress signals detected</td></tr>';return;}
+
+  const urgencyColors={Critical:'background:rgba(239,68,68,.15);color:#fca5a5;',High:'background:rgba(249,115,22,.12);color:#fdba74;',Medium:'background:rgba(245,158,11,.12);color:#fcd34d;'};
+  const timeAgo=iso=>{const s=Math.floor((Date.now()-new Date(iso))/1000);if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';};
+
+  tbody.innerHTML=filtered.map(s=>`<tr style="border-bottom:1px solid var(--border);">
+    <td style="padding:10px 12px;">
+      <div style="font-weight:600;color:var(--text);font-size:13px;">${s.organizationName}</div>
+      <div style="font-size:11px;color:var(--text3);">${s.sector} · ${timeAgo(s.dateDetected)}</div>
+    </td>
+    <td style="padding:10px 12px;font-size:12px;color:var(--text2);">${s.country}</td>
+    <td style="padding:10px 12px;">${s.distressType.map(t=>`<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(139,92,246,.15);color:#c4b5fd;margin:1px;">${CDSIA_DISTRESS_TYPES[t]?.icon||'⚠️'} ${t}</span>`).join('')}</td>
+    <td style="padding:10px 12px;"><span style="padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;${urgencyColors[s.urgency]||''}">${s.urgency}</span></td>
+    <td style="padding:10px 12px;"><span style="background:rgba(139,92,246,.2);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;">${s.opportunityScore}</span></td>
+    <td style="padding:10px 12px;font-size:11px;color:var(--text3);">${s.sourcePublication}</td>
+    <td style="padding:10px 12px;">${s.recommendedServices.map(r=>`<span style="background:rgba(0,200,224,.1);color:var(--cyan);font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;margin:1px;display:inline-block;">${r}</span>`).join('')}</td>
+    <td style="padding:10px 12px;">
+      <div style="display:flex;gap:4px;">
+        <button onclick="cdsiaInjectToCorex('${s.id}')" style="background:${s.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${s.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;" ${s.pushedToCRM?'disabled':''}>
+          ${s.pushedToCRM?'✓ In COREX':'→ COREX'}
+        </button>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+function cdsiaInjectToCorex(id){
+  const signal=cdsiaSignals.find(s=>s.id===id);
+  if(!signal||signal.pushedToCRM)return;
+
+  // Convert CDSIA signal to COREX lead format
+  const corexLead={
+    id:'CDSIA_'+Date.now(),
+    name:signal.organizationName+' — '+signal.distressType.join('/')+' Distress',
+    org:signal.organizationName,
+    source:signal.sourcePublication,
+    sourceType:'CDSIA',
+    country:signal.country,
+    type:'Distress Signal',
+    deadline:null,
+    budget:'TBD',
+    contact:null,
+    description:signal.distressSummary+'
+
+Recommended Services: '+signal.recommendedServices.join(', '),
+    score:signal.opportunityScore,
+    tags:['CDSIA',...signal.distressType,signal.urgency==='Critical'?'Urgent':''],
+    status:'New',
+    fitBreakdown:{industry:20,geo:20,budget:10,orgType:15,sourceQuality:15,urgency:signal.urgency==='Critical'?20:signal.urgency==='High'?15:10},
+    assignedAgent:'Andrea M. Tanguay',
+    pushedToCRM:false,
+    whatsappSent:false,
+    foundAt:signal.dateDetected,
+    cdsiaUrgency:signal.urgency,
+    cdsiaDistressType:signal.distressType,
+    cdsiaRecommendedServices:signal.recommendedServices,
+  };
+
+  // Inject into COREX leads
+  corexLeads.unshift(corexLead);
+  localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
+  db.from('corex_leads').upsert(corexLead).then(()=>{}).catch(()=>{});
+
+  // Mark signal as pushed
+  signal.pushedToCRM=true;
+  localStorage.setItem('cdsia_signals',JSON.stringify(cdsiaSignals));
+
+  // Update COREX stats and feed
+  corexRenderStats();
+  corexRenderLeads();
+  corexAddFeed('🚨 CDSIA: '+signal.distressType[0]+' distress detected — '+signal.organizationName+' ('+signal.country+') Score: '+signal.opportunityScore);
+
+  corexToast('🚨 CDSIA signal injected into COREX — '+signal.organizationName);
+  corexRenderCDSIA();
+}
+
+async function corexRunCDSIACycle(){
+  corexToast('🚨 CDSIA scanning 18 Caribbean news sources...');
+  const msgs=[
+    '📡 Scanning Trinidad Express, Guardian, Newsday...',
+    '📡 Scanning Jamaica Gleaner, Observer...',
+    '📡 Scanning Barbados Today, Guyana Chronicle, Stabroek...',
+    '📡 Scanning Loop Caribbean, CMC, Caribbean News Service...',
+    '🔍 Analysing signals for distress patterns...',
+    '🚨 CDSIA: Financial distress signal detected — '+cdsiaSignals[0]?.organizationName,
+    '🚨 CDSIA: Governance signal detected — '+cdsiaSignals[1]?.organizationName,
+    '✅ CDSIA scan complete — '+cdsiaSignals.length+' active signals',
+  ];
+  msgs.forEach((m,i)=>setTimeout(()=>corexAddFeed(m),i*700));
+  setTimeout(()=>{
+    // Add a new simulated signal
+    const newSignal={
+      id:'CDSIA_'+Date.now(),
+      sourceType:'CDSIA',
+      organizationName:'Caribbean Development Bank — Regional SME Fund',
+      country:'🇧🇧 Barbados',
+      sector:'Finance/Development',
+      distressType:['Financial','Operational'],
+      distressSummary:'CDB SME fund reports disbursement delays and administrative challenges. Partner organizations seeking alternative CRM and management solutions.',
+      urgency:'High',
+      opportunityScore:87,
+      recommendedServices:['BluWav CRM','Stratiix'],
+      sourcePublication:'Barbados Today',
+      articleUrl:'#',
+      dateDetected:new Date().toISOString(),
+      pushedToCRM:false,
+    };
+    cdsiaSignals.unshift(newSignal);
+    localStorage.setItem('cdsia_signals',JSON.stringify(cdsiaSignals));
+    corexRenderCDSIA();
+    corexToast('✅ CDSIA cycle complete — '+cdsiaSignals.length+' signals active');
+  },msgs.length*700+300);
+}
+
+// Hook CDSIA into main intelligence cycle
+const _origCorexRunCycle=corexRunCycle;
+corexRunCycle=async function(){
+  await _origCorexRunCycle();
+  setTimeout(corexRunCDSIACycle,2000);
+};
+
+// Hook CDSIA into corexShowModule
+const _origCorexShowModule=corexShowModule;
+corexShowModule=function(name){
+  _origCorexShowModule(name);
+  if(name==='cdsia')corexRenderCDSIA();
+};
+
+// Add CDSIA section to digest
+const _origCorexGenerateDigest=corexGenerateDigest;
+corexGenerateDigest=function(){
+  _origCorexGenerateDigest();
+  // Append CDSIA section to digest after generation
+  setTimeout(()=>{
+    const out=document.getElementById('corex-digest-output');
+    if(!out||!cdsiaSignals.length)return;
+    const critical=cdsiaSignals.filter(s=>s.urgency==='Critical');
+    const high=cdsiaSignals.filter(s=>s.urgency==='High');
+    const cdsiaSection=`<div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(167,139,250,0.15);">
+      <h3 style="font-size:13px;font-weight:700;color:#ef4444;margin-bottom:10px;">🚨 CDSIA Distress Signals</h3>
+      <div style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;">
+        <div style="font-size:12px;color:var(--text3);">🔴 Critical: <strong style="color:#fca5a5;">${critical.length}</strong></div>
+        <div style="font-size:12px;color:var(--text3);">🟠 High Priority: <strong style="color:#fdba74;">${high.length}</strong></div>
+        <div style="font-size:12px;color:var(--text3);">📡 Total Signals: <strong style="color:var(--text);">${cdsiaSignals.length}</strong></div>
+      </div>
+      ${cdsiaSignals.slice(0,3).map((s,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(239,68,68,.06);border-radius:8px;margin-bottom:6px;border-left:3px solid #ef4444;">
+        <span style="font-size:13px;font-weight:800;color:#fca5a5;">#${i+1}</span>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">${s.organizationName}</div>
+        <div style="font-size:11px;color:var(--text3);">${s.country} · ${s.distressType.join('/')} · ${s.sourcePublication}</div></div>
+        <span style="background:rgba(239,68,68,.2);color:#fca5a5;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;">${s.opportunityScore}</span>
+      </div>`).join('')}
+    </div>`;
+    out.innerHTML+=cdsiaSection;
+  },2600);
+};
+
 // ---- COREX showView override ----
 // Wrap the original showView to intercept 'corex' navigation
 (function(){
@@ -2596,6 +2844,7 @@ function corexToast(msg){
 <button class="corex-tab" data-module="crmsync" onclick="corexShowModule('crmsync')">🔄 CRM Sync Layer</button>
 <button class="corex-tab" data-module="routing" onclick="corexShowModule('routing')">👥 Agent Routing</button>
 <button class="corex-tab" data-module="awards" onclick="corexShowModule('awards')">🏆 Award Monitoring</button>
+<button class="corex-tab" data-module="cdsia" onclick="corexShowModule('cdsia')">🚨 CDSIA Signals</button>
 <button class="corex-tab" data-module="trends" onclick="corexShowModule('trends')">📈 Market Trends</button>
 </div>
 <!-- COREX Stats Row -->
