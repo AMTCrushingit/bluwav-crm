@@ -23,6 +23,37 @@
   --shadow-card:0 4px 24px rgba(0,0,0,0.4);
   --sidebar:220px;
 }
+/* ── LIGHT THEME ── */
+body.light{
+  --navy-deep:#F0F6FF;
+  --navy-mid:#FFFFFF;
+  --navy-light:#E8F2FF;
+  --navy-border:rgba(10,42,67,0.12);
+  --text:#0A2A43;
+  --text2:#2E4A6A;
+  --text3:#5A7A95;
+  --cyan:#0099B0;
+  --cyan-glow:rgba(0,153,176,0.1);
+  --gold:#B8860B;
+  --gold-light:#D4AF37;
+  --success:#16A34A;
+  --error:#DC2626;
+  --warning:#D97706;
+  --orange:#E05A00;
+  --orange-glow:rgba(224,90,0,0.1);
+}
+body.light .sidebar{background:#0F1628;border-right-color:rgba(255,255,255,0.08);}
+body.light .sidebar .ns{color:#7a9bb5;}
+body.light .sidebar .ni{color:#94a3b8;}
+body.light .sidebar .ni:hover{background:rgba(255,255,255,0.06);color:#e2e8f0;}
+body.light .sidebar .ni.active{background:rgba(0,200,224,0.15);color:#00C8E0;}
+body.light .sidebar .user-name{color:#e2e8f0;}
+body.light .sidebar .user-role-txt{color:#64748b;}
+body.light .topbar{background:#FFFFFF;border-bottom-color:rgba(10,42,67,0.1);}
+body.light .score-high{background:rgba(22,163,74,0.1);color:#16A34A;}
+body.light .score-mid{background:rgba(217,119,6,0.1);color:#D97706;}
+body.light .score-low{background:rgba(220,38,38,0.1);color:#DC2626;}
+
 html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(--navy-deep);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;flex-direction:row;overflow:hidden;font-size:15px;}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--navy-deep);}
@@ -511,6 +542,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <button class="ib" onclick="loadData();showToast('Refreshed ✓','success')" title="Refresh data">↻</button>
 <button class="ib" onclick="toggleNotif()" title="Notifications">🔔<span class="ndot"></span></button>
 <button class="ib" onclick="showView('settings')" title="Workspace Settings">⚙️</button>
+<button class="ib" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size:15px;">🌙</button>
 <div class="tb-div"></div>
 <div class="user-chip" onclick="showView('settings')">
 <div class="avatar" id="topAvatar" style="width:26px;height:26px;font-size:0.65rem;">—</div>
