@@ -2590,9 +2590,7 @@ function cdsiaInjectToCorex(id){
     deadline:null,
     budget:'TBD',
     contact:null,
-    description:signal.distressSummary+'
-
-Recommended Services: '+signal.recommendedServices.join(', '),
+    description:signal.distressSummary+'\n\nRecommended Services: '+signal.recommendedServices.join(', '),
     score:signal.opportunityScore,
     tags:['CDSIA',...signal.distressType,signal.urgency==='Critical'?'Urgent':''],
     status:'New',
