@@ -2948,6 +2948,75 @@ async function changePassword(){
   }catch(e){showToast('Error: '+e.message,'');}
 }
 
+// ── PAYMENT MODAL ────────────────────────────────────────────────
+const PLAN_DETAILS={
+  starter:{name:'CRM Starter',price:'$59/mo',sub:'+ $99 Onboarding & Setup · Billed monthly',charge:'$99 setup + $59/mo after trial'},
+  lite:{name:'CRM Lite',price:'$99/mo',sub:'+ $199 Onboarding & Setup · Billed monthly',charge:'$199 setup + $99/mo after trial'},
+  premium:{name:'CRM Premium',price:'$179/mo',sub:'+ $299 Onboarding & Setup · Billed monthly',charge:'$299 setup + $179/mo after trial'},
+  nonprofit:{name:'Nonprofit Rate',price:'$99/mo',sub:'+ $199 Onboarding & Setup · Nonprofit pricing',charge:'$199 setup + $99/mo after trial'},
+};
+
+let _selectedPlan='premium', _selectedBilling='monthly';
+
+function openPaymentModal(plan, billing){
+  _selectedPlan=plan||'premium';
+  _selectedBilling=billing||'monthly';
+  const d=PLAN_DETAILS[plan]||PLAN_DETAILS.premium;
+  const t=document.getElementById('payModalTitle');if(t)t.textContent='Activate '+d.name;
+  const n=document.getElementById('payModalPlanName');if(n)n.textContent=d.name;
+  const p=document.getElementById('payModalPrice');if(p)p.textContent=d.price;
+  const s=document.getElementById('payModalSub');if(s)s.textContent=d.sub;
+  const fc=document.getElementById('payModalFirstCharge');if(fc)fc.textContent='First charge: '+d.charge;
+  // Pre-fill name
+  const nameEl=document.getElementById('payName');
+  if(nameEl&&!nameEl.value&&currentUser){
+    nameEl.value=currentUser.user_metadata?.full_name||'';
+  }
+  const modal=document.getElementById('paymentModal');
+  if(modal)modal.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+
+function closePaymentModal(){
+  const modal=document.getElementById('paymentModal');
+  if(modal)modal.style.display='none';
+  document.body.style.overflow='';
+  const err=document.getElementById('payError');if(err)err.textContent='';
+}
+
+function formatCardNum(input){
+  let v=input.value.replace(/\D/g,'').substring(0,16);
+  input.value=v.replace(/(.{4})/g,'$1 ').trim();
+}
+function formatExpiry(input){
+  let v=input.value.replace(/\D/g,'').substring(0,4);
+  if(v.length>=2)v=v.substring(0,2)+' / '+v.substring(2);
+  input.value=v;
+}
+
+async function processPayment(){
+  const btn=document.getElementById('payBtn');
+  const err=document.getElementById('payError');
+  const cardNum=(document.getElementById('payCardNumber')?.value||'').replace(/\s/g,'');
+  const expiry=document.getElementById('payExpiry')?.value||'';
+  const cvc=document.getElementById('payCVC')?.value||'';
+  const name=document.getElementById('payName')?.value.trim()||'';
+
+  if(!cardNum||cardNum.length<16){err.textContent='Please enter a valid 16-digit card number.';return;}
+  if(!expiry.includes('/')){err.textContent='Please enter a valid expiry date (MM / YY).';return;}
+  if(!cvc||cvc.length<3){err.textContent='Please enter a valid CVC.';return;}
+  if(!name){err.textContent='Please enter the name on your card.';return;}
+  err.textContent='';
+
+  btn.disabled=true;btn.textContent='Processing...';
+  // Simulate payment (Stripe not yet connected)
+  await new Promise(r=>setTimeout(r,1500));
+  btn.disabled=false;btn.textContent='Activate Plan — No charge today';
+  closePaymentModal();
+  showToast('✅ Plan activation submitted — our team will confirm within 24 hours','success');
+  logAudit('plan_activation_attempted', _selectedPlan+' '+_selectedBilling);
+}
+
 // ── THEME TOGGLE ─────────────────────────────────────────────────
 function toggleTheme(){
   const isLight = document.body.classList.toggle('light');
@@ -4861,5 +4930,45 @@ function quickWA(id){
 }
 
 </script>
+<!-- ── PAYMENT MODAL ── -->
+<div class="drawer-overlay" id="paymentModalBackdrop" onclick="closePaymentModal()"></div>
+<div id="paymentModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closePaymentModal()">
+<div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:20px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;padding:28px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+    <h3 id="payModalTitle" style="font-size:1.1rem;font-weight:700;color:var(--text);">Activate Plan</h3>
+    <button onclick="closePaymentModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+  </div>
+  <!-- Plan summary -->
+  <div style="background:var(--navy-light);border-radius:12px;padding:16px;margin-bottom:20px;">
+    <div style="font-size:0.85rem;font-weight:700;color:var(--text);" id="payModalPlanName">CRM Premium</div>
+    <div style="font-size:1.3rem;font-weight:800;color:var(--gold);margin:4px 0;" id="payModalPrice">$179/mo</div>
+    <div style="font-size:0.72rem;color:var(--text3);" id="payModalSub">+ $299 Onboarding & Setup · Billed monthly</div>
+  </div>
+  <!-- Price clarity -->
+  <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:10px;padding:14px;margin-bottom:20px;font-size:0.78rem;line-height:1.8;color:var(--text2);">
+    <div>Today: <strong style="color:var(--success);">$0</strong></div>
+    <div id="payModalFirstCharge">First charge after trial ends</div>
+    <div>Cancel anytime before billing starts</div>
+    <div>🔒 Secure payment via Stripe</div>
+  </div>
+  <!-- Card form -->
+  <div style="display:grid;gap:12px;margin-bottom:16px;">
+    <div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Card Number</label>
+    <input id="payCardNumber" type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNum(this)" class="fi"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Expiry</label>
+      <input id="payExpiry" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" class="fi"/></div>
+      <div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">CVC</label>
+      <input id="payCVC" type="text" placeholder="123" maxlength="4" class="fi"/></div>
+    </div>
+    <div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Name on Card</label>
+    <input id="payName" type="text" placeholder="Andrea M Tanguay" class="fi"/></div>
+  </div>
+  <div id="payError" style="color:var(--error);font-size:0.78rem;margin-bottom:10px;min-height:16px;"></div>
+  <button id="payBtn" onclick="processPayment()" style="width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:10px;padding:13px;font-size:0.9rem;font-weight:800;cursor:pointer;font-family:var(--font-body);">Activate Plan — No charge today</button>
+  <button onclick="closePaymentModal()" style="width:100%;background:none;border:none;color:var(--text3);font-size:0.78rem;cursor:pointer;font-family:var(--font-body);margin-top:10px;">Cancel</button>
+</div>
+</div>
+
 </body>
 </html>
