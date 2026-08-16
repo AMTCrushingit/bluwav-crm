@@ -30,29 +30,79 @@ body.light{
   --navy-light:#E8F2FF;
   --navy-border:rgba(10,42,67,0.12);
   --text:#0A2A43;
-  --text2:#2E4A6A;
-  --text3:#5A7A95;
-  --cyan:#0099B0;
-  --cyan-glow:rgba(0,153,176,0.1);
-  --gold:#B8860B;
-  --gold-light:#D4AF37;
-  --success:#16A34A;
-  --error:#DC2626;
-  --warning:#D97706;
-  --orange:#E05A00;
-  --orange-glow:rgba(224,90,0,0.1);
+  --text2:#1e3a5f;
+  --text3:#4a6a8a;
+  --cyan:#0077A8;
+  --cyan-glow:rgba(0,119,168,0.1);
+  --gold:#8B6914;
+  --gold-light:#B8860B;
+  --success:#15803D;
+  --error:#B91C1C;
+  --warning:#B45309;
+  --orange:#C04A00;
+  --orange-glow:rgba(192,74,0,0.1);
 }
-body.light .sidebar{background:#0F1628;border-right-color:rgba(255,255,255,0.08);}
+/* Sidebar stays dark for readability */
+body.light .sidebar{background:#0A1628;border-right-color:rgba(255,255,255,0.08);}
 body.light .sidebar .ns{color:#7a9bb5;}
 body.light .sidebar .ni{color:#94a3b8;}
 body.light .sidebar .ni:hover{background:rgba(255,255,255,0.06);color:#e2e8f0;}
 body.light .sidebar .ni.active{background:rgba(0,200,224,0.15);color:#00C8E0;}
 body.light .sidebar .user-name{color:#e2e8f0;}
 body.light .sidebar .user-role-txt{color:#64748b;}
-body.light .topbar{background:#FFFFFF;border-bottom-color:rgba(10,42,67,0.1);}
-body.light .score-high{background:rgba(22,163,74,0.1);color:#16A34A;}
-body.light .score-mid{background:rgba(217,119,6,0.1);color:#D97706;}
-body.light .score-low{background:rgba(220,38,38,0.1);color:#DC2626;}
+/* Topbar */
+body.light .topbar{background:#FFFFFF;border-bottom-color:rgba(10,42,67,0.12);}
+body.light .topbar-left h1{color:#0A2A43;}
+/* Cards & panels */
+body.light .stat{background:#FFFFFF;border-color:rgba(10,42,67,0.1);box-shadow:0 1px 4px rgba(10,42,67,0.06);}
+body.light .stat-lbl{color:#4a6a8a;}
+body.light .stat-val{color:#0A2A43;}
+body.light .panel{background:#FFFFFF;border-color:rgba(10,42,67,0.1);box-shadow:0 1px 4px rgba(10,42,67,0.06);}
+body.light .panel-title{color:#0A2A43;}
+body.light .panel-sub{color:#4a6a8a;}
+/* Tables */
+body.light th{color:#4a6a8a;border-bottom-color:rgba(10,42,67,0.1);}
+body.light td{color:#1e3a5f;border-bottom-color:rgba(10,42,67,0.06);}
+body.light tr:hover td{background:rgba(10,42,67,0.03);}
+/* Inputs */
+body.light .fi,body.light .fs,body.light .fta{background:#F8FAFF;border-color:rgba(10,42,67,0.15);color:#0A2A43;}
+body.light .fi:focus,body.light .fs:focus,body.light .fta:focus{border-color:var(--cyan);background:#FFFFFF;}
+/* Badges */
+body.light .score-high{background:rgba(21,128,61,0.1);color:#15803D;}
+body.light .score-mid{background:rgba(180,83,9,0.1);color:#B45309;}
+body.light .score-low{background:rgba(185,28,28,0.1);color:#B91C1C;}
+body.light .badge-muted{background:rgba(10,42,67,0.08);color:#4a6a8a;}
+/* Pipeline cards */
+body.light .pipe-col{background:#EEF4FF;}
+body.light .pipe-card{background:#FFFFFF;border-color:rgba(10,42,67,0.1);}
+body.light .pipe-card-name{color:#0A2A43;}
+body.light .pipe-card-meta{color:#4a6a8a;}
+/* Nav section labels */
+body.light .ns{color:#4a6a8a;}
+/* Buttons */
+body.light .btn-ghost{background:#EEF4FF;color:#0A2A43;border-color:rgba(10,42,67,0.15);}
+body.light .btn-ghost:hover{background:#E0ECFF;}
+/* Role banner */
+body.light .role-banner{border-bottom-color:rgba(10,42,67,0.1);}
+/* Scrollbar */
+body.light ::-webkit-scrollbar-thumb{background:rgba(10,42,67,0.2);}
+/* Content area */
+body.light .content{background:#F0F6FF;}
+/* Kanban */
+body.light .kanban-col{background:#EEF4FF;}
+body.light .kanban-card{background:#FFFFFF;border-color:rgba(10,42,67,0.1);}
+/* Modal */
+body.light .modal{background:#FFFFFF;border-color:rgba(10,42,67,0.15);}
+body.light .modal-hd{border-bottom-color:rgba(10,42,67,0.1);}
+body.light .modal-hd h3{color:#0A2A43;}
+body.light .modal-footer{border-top-color:rgba(10,42,67,0.1);}
+/* Drawer */
+body.light .modal-overlay.drawer{background:#FFFFFF!important;border-left-color:rgba(10,42,67,0.15)!important;}
+/* IB buttons */
+body.light .ib{background:#EEF4FF;border-color:rgba(10,42,67,0.15);color:#0A2A43;}
+body.light .ib:hover{background:#E0ECFF;}
+/* Trial banner */
+body.light .trial-banner{background:rgba(180,83,9,0.06);border-bottom-color:rgba(180,83,9,0.15);}
 
 html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(--navy-deep);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;flex-direction:row;overflow:hidden;font-size:15px;}
 ::-webkit-scrollbar{width:5px;height:5px;}
