@@ -502,9 +502,9 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </a>
 <div class="ns" data-tooltip="Insights">Insights</div>
-<a class="ni" data-tooltip="Business Insights" onclick="showView('reports')" id="nav-reports" style="cursor:pointer;"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
+<a class="ni" data-tooltip="Business Insights" id="nav-reports" onclick="showView('reports')" style="cursor:pointer;"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
 <div class="ns" data-tooltip="Workspace">Workspace</div>
-<a class="ni" data-tooltip="Settings" onclick="showView('settings')" style="cursor:pointer;" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" data-tooltip="Settings" id="nav-settings" onclick="showView('settings')" style="cursor:pointer;"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
 <a class="ni" id="nav-billing" onclick="showView('billing')"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <a class="ni" id="nav-team" onclick="showView('contacts')" style="display:none;"><span class="ni-icon">👤</span><span class="nav-text">Team</span></a>
 <!-- Admin section — visible to manager/admin/owner only -->
@@ -542,7 +542,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <button class="ib" onclick="loadData();showToast('Refreshed ✓','success')" title="Refresh data">↻</button>
 <button class="ib" onclick="toggleNotif()" title="Notifications">🔔<span class="ndot"></span></button>
 <button class="ib" onclick="showView('settings')" title="Workspace Settings">⚙️</button>
-<button class="ib" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size:15px;">🌙</button>
+<button class="ib" id="themeToggleBtn" onclick="toggleTheme()" style="font-size:15px;" title="Toggle light/dark mode">🌙</button>
 <div class="tb-div"></div>
 <div class="user-chip" onclick="showView('settings')">
 <div class="avatar" id="topAvatar" style="width:26px;height:26px;font-size:0.65rem;">—</div>
@@ -564,7 +564,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div style="height:6px;width:80px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
 <div id="trialBannerBar" style="height:100%;background:var(--gold);border-radius:3px;width:100%;transition:width 0.5s;"></div>
 </div>
-<a onclick="showView('billing')" style="cursor:pointer;" style="color:var(--gold);font-weight:700;font-size:0.75rem;text-decoration:none;white-space:nowrap;">Upgrade →</a>
+<a onclick="showView('billing')" style="color:var(--gold);font-weight:700;font-size:0.75rem;text-decoration:none;white-space:nowrap;">Upgrade →</a>
 <button aria-label="Dismiss trial banner" class="trial-banner-close" id="trialBannerClose" onclick="sessionStorage.setItem('trial_banner_dismissed','1');this.closest('.trial-banner').classList.remove('visible');">✕</button>
 </div>
 </div>
@@ -620,7 +620,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel" id="rightPanel">
 <div class="panel-hd"><div class="panel-title" id="rightPanelTitle">⚡ Activity</div><button class="btn btn-ghost btn-sm">All →</button></div>
 <div class="panel-body" id="rightPanelBody" style="padding:0 20px;">
-<div style="text-align:center;padding:32px;color:var(--text3);">Loading...</div>
+<div style="text-align:center;padding:32px;color:var(--text3);font-size:0.82rem;">No data yet</div>
 </div>
 </div>
 </div>
@@ -807,7 +807,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel">
 <div class="panel-hd"><div class="panel-title">🎯 Stage Conversion Funnel</div></div>
 <div class="panel-body" id="funnelBody" style="padding:16px 20px;">
-<div style="text-align:center;color:var(--text3);padding:20px;">Loading...</div>
+<div style="text-align:center;color:var(--text3);padding:20px;font-size:0.82rem;">No funnel data yet</div>
 </div>
 </div>
 </div>
@@ -816,13 +816,13 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel">
 <div class="panel-hd"><div class="panel-title">🏆 Agent Performance</div></div>
 <div class="panel-body" id="agentPerfBody" style="padding:0 20px;">
-<div style="text-align:center;color:var(--text3);padding:20px;">Loading...</div>
+<div style="text-align:center;color:var(--text3);padding:20px;font-size:0.82rem;">No agent data yet</div>
 </div>
 </div>
 <div class="panel">
 <div class="panel-hd"><div class="panel-title">📋 Won/Lost Reasons</div></div>
 <div class="panel-body" id="reasonsBody" style="padding:16px 20px;">
-<div style="text-align:center;color:var(--text3);padding:20px;">Loading...</div>
+<div style="text-align:center;color:var(--text3);padding:20px;font-size:0.82rem;">No won/lost data yet</div>
 </div>
 </div>
 </div>
@@ -960,86 +960,79 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <!-- ══ BILLING VIEW ══ -->
 <div class="view" id="view-billing">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-  <div>
-    <div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Workspace</div>
-    <h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Billing & Plan</h1>
-  </div>
-
+<div>
+<div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Workspace</div>
+<h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Billing &amp; Plan</h1>
 </div>
-
+</div>
 <!-- [1] Account Billing Status -->
 <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-xl);padding:24px;margin-bottom:16px;">
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-    <div>
-      <div style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Account Status</div>
-      <div id="billingStatusHeadline" style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:4px;">Premium Trial Active</div>
-      <div id="billingStatusSub" style="font-size:0.82rem;color:var(--text3);margin-bottom:16px;">14 days remaining</div>
-      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
-        <div><div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:2px;">Today</div><div style="font-size:1.2rem;font-weight:800;color:var(--success);">$0</div></div>
-        <div><div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:2px;">After trial</div><div style="font-size:1.2rem;font-weight:800;color:var(--text);" id="billingAfterTrial">$179/mo</div></div>
-        <div><div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:2px;">Billing starts</div><div style="font-size:0.85rem;font-weight:700;color:var(--text);" id="billingStartDate">—</div></div>
-      </div>
-      <button onclick="showToast('To activate a plan, visit the full billing page','');window.open('billing.html','_blank')" style="background:var(--gold);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:10px 22px;font-size:0.85rem;font-weight:800;cursor:pointer;font-family:var(--font-body);" id="billingCTA">Add payment method to keep access</button>
-      <div style="font-size:0.72rem;color:var(--text3);margin-top:8px;">No charge today · Cancel anytime · Secure payment via Stripe</div>
-    </div>
-    <div style="text-align:right;">
-      <div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:4px;">Current Plan</div>
-      <div style="font-size:0.95rem;font-weight:700;color:var(--cyan);">CRM Premium (Trial)</div>
-      <div style="font-size:0.72rem;color:var(--text3);margin-top:4px;">Unlimited contacts · 5 users · Automation</div>
-      <a onclick="showView('billing')" style="cursor:pointer;" style="font-size:0.72rem;color:var(--text3);text-decoration:none;display:block;margin-top:10px;">Compare plans →</a>
-    </div>
-  </div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+<div>
+<div style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Account Status</div>
+<div id="billingStatusHeadline" style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:4px;">Premium Trial Active</div>
+<div id="billingStatusSub" style="font-size:0.82rem;color:var(--text3);margin-bottom:16px;">14 days remaining</div>
+<div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
+<div><div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:2px;">Today</div><div style="font-size:1.2rem;font-weight:800;color:var(--success);">$0</div></div>
+<div><div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:2px;">After trial</div><div id="billingAfterTrial" style="font-size:1.2rem;font-weight:800;color:var(--text);">$179/mo</div></div>
+<div><div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:2px;">Billing starts</div><div id="billingStartDate" style="font-size:0.85rem;font-weight:700;color:var(--text);">—</div></div>
 </div>
-
+<button id="billingCTA" onclick="openPaymentModal('premium','monthly')" style="background:var(--gold);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:10px 22px;font-size:0.85rem;font-weight:800;cursor:pointer;font-family:var(--font-body);">Add payment method to keep access</button>
+<div style="font-size:0.72rem;color:var(--text3);margin-top:8px;">No charge today · Cancel anytime · Secure payment via Stripe</div>
+</div>
+<div style="text-align:right;">
+<div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:4px;">Current Plan</div>
+<div style="font-size:0.95rem;font-weight:700;color:var(--cyan);">CRM Premium (Trial)</div>
+<div style="font-size:0.72rem;color:var(--text3);margin-top:4px;">Unlimited contacts · 5 users · Automation</div>
+<a onclick="showView('billing')" style="font-size:0.72rem;color:var(--text3);text-decoration:none;display:block;margin-top:10px;">Compare plans →</a>
+</div>
+</div>
+</div>
 <!-- [2] Plans (3 only) -->
 <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-xl);padding:20px;margin-bottom:16px;">
-  <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:4px;">CRM Plans</div>
-  <div style="font-size:0.72rem;color:var(--text3);margin-bottom:16px;">14-day free trial · No credit card required · Cancel anytime</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-    <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:16px;">
-      <div style="font-size:0.78rem;font-weight:700;color:var(--text3);margin-bottom:4px;">Starter</div>
-      <div style="font-size:1.4rem;font-weight:800;color:var(--text);">$59<span style="font-size:0.72rem;color:var(--text3);">/mo</span></div>
-      <div style="font-size:0.68rem;color:var(--text3);margin-bottom:12px;">+ $99 setup</div>
-      <div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px;">25 contacts · 1 user</div>
-      <button onclick="showToast('To activate a plan, visit the full billing page','');window.open('billing.html','_blank')" style="width:100%;background:transparent;border:1px solid var(--navy-border);color:var(--text2);border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">Choose Starter</button>
-    </div>
-    <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:16px;">
-      <div style="font-size:0.78rem;font-weight:700;color:var(--text3);margin-bottom:4px;">Lite</div>
-      <div style="font-size:1.4rem;font-weight:800;color:var(--text);">$99<span style="font-size:0.72rem;color:var(--text3);">/mo</span></div>
-      <div style="font-size:0.68rem;color:var(--text3);margin-bottom:12px;">+ $199 setup</div>
-      <div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px;">Pipeline · 3 users</div>
-      <button onclick="showToast('To activate a plan, visit the full billing page','');window.open('billing.html','_blank')" style="width:100%;background:transparent;border:1px solid var(--navy-border);color:var(--text2);border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">Choose Lite</button>
-    </div>
-    <div style="background:rgba(201,168,76,0.06);border:2px solid var(--gold);border-radius:var(--radius-lg);padding:16px;position:relative;">
-      <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy-deep);font-size:0.6rem;font-weight:800;padding:2px 10px;border-radius:9999px;white-space:nowrap;">CURRENT TRIAL</div>
-      <div style="font-size:0.78rem;font-weight:700;color:var(--gold);margin-bottom:4px;">Premium</div>
-      <div style="font-size:1.4rem;font-weight:800;color:var(--text);">$179<span style="font-size:0.72rem;color:var(--text3);">/mo</span></div>
-      <div style="font-size:0.68rem;color:var(--text3);margin-bottom:12px;">+ $299 setup</div>
-      <div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px;">Unlimited · 5 users</div>
-      <button onclick="showToast('To activate a plan, visit the full billing page','');window.open('billing.html','_blank')" style="width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:var(--font-body);">Activate Premium</button>
-    </div>
-  </div>
+<div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:4px;">CRM Plans</div>
+<div style="font-size:0.72rem;color:var(--text3);margin-bottom:16px;">14-day free trial · No credit card required · Cancel anytime</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+<div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:16px;">
+<div style="font-size:0.78rem;font-weight:700;color:var(--text3);margin-bottom:4px;">Starter</div>
+<div style="font-size:1.4rem;font-weight:800;color:var(--text);">$59<span style="font-size:0.72rem;color:var(--text3);">/mo</span></div>
+<div style="font-size:0.68rem;color:var(--text3);margin-bottom:12px;">+ $99 setup</div>
+<div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px;">25 contacts · 1 user</div>
+<button onclick="openPaymentModal('starter','monthly')" style="width:100%;background:transparent;border:1px solid var(--navy-border);color:var(--text2);border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">Choose Starter</button>
 </div>
-
+<div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:16px;">
+<div style="font-size:0.78rem;font-weight:700;color:var(--text3);margin-bottom:4px;">Lite</div>
+<div style="font-size:1.4rem;font-weight:800;color:var(--text);">$99<span style="font-size:0.72rem;color:var(--text3);">/mo</span></div>
+<div style="font-size:0.68rem;color:var(--text3);margin-bottom:12px;">+ $199 setup</div>
+<div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px;">Pipeline · 3 users</div>
+<button onclick="openPaymentModal('lite','monthly')" style="width:100%;background:transparent;border:1px solid var(--navy-border);color:var(--text2);border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">Choose Lite</button>
+</div>
+<div style="background:rgba(201,168,76,0.06);border:2px solid var(--gold);border-radius:var(--radius-lg);padding:16px;position:relative;">
+<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy-deep);font-size:0.6rem;font-weight:800;padding:2px 10px;border-radius:9999px;white-space:nowrap;">CURRENT TRIAL</div>
+<div style="font-size:0.78rem;font-weight:700;color:var(--gold);margin-bottom:4px;">Premium</div>
+<div style="font-size:1.4rem;font-weight:800;color:var(--text);">$179<span style="font-size:0.72rem;color:var(--text3);">/mo</span></div>
+<div style="font-size:0.68rem;color:var(--text3);margin-bottom:12px;">+ $299 setup</div>
+<div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px;">Unlimited · 5 users</div>
+<button onclick="openPaymentModal('premium','monthly')" style="width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:var(--font-body);">Activate Premium</button>
+</div>
+</div>
+</div>
 <!-- [3] Usage -->
 <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-xl);padding:20px;margin-bottom:16px;">
-  <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:14px;">Usage This Month</div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
-    <div style="text-align:center;background:var(--navy-light);border-radius:var(--radius-lg);padding:12px;"><div style="font-size:1.3rem;font-weight:800;color:var(--cyan);" id="billingUsageContacts">—</div><div style="font-size:0.68rem;color:var(--text3);">Customers</div></div>
-    <div style="text-align:center;background:var(--navy-light);border-radius:var(--radius-lg);padding:12px;"><div style="font-size:1.3rem;font-weight:800;color:var(--cyan);" id="billingUsageDeals">—</div><div style="font-size:0.68rem;color:var(--text3);">Opportunities</div></div>
-    <div style="text-align:center;background:var(--navy-light);border-radius:var(--radius-lg);padding:12px;"><div style="font-size:1.3rem;font-weight:800;color:var(--cyan);">1</div><div style="font-size:0.68rem;color:var(--text3);">Users (of 5)</div></div>
-    <div style="text-align:center;background:var(--navy-light);border-radius:var(--radius-lg);padding:12px;"><div style="font-size:1.3rem;font-weight:800;color:var(--cyan);" id="billingUsageTasks">—</div><div style="font-size:0.68rem;color:var(--text3);">Tasks</div></div>
-  </div>
+<div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:14px;">Usage This Month</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+<div style="text-align:center;background:var(--navy-light);border-radius:var(--radius-lg);padding:12px;"><div id="billingUsageContacts" style="font-size:1.3rem;font-weight:800;color:var(--cyan);">—</div><div style="font-size:0.68rem;color:var(--text3);">Customers</div></div>
+<div style="text-align:center;background:var(--navy-light);border-radius:var(--radius-lg);padding:12px;"><div id="billingUsageDeals" style="font-size:1.3rem;font-weight:800;color:var(--cyan);">—</div><div style="font-size:0.68rem;color:var(--text3);">Opportunities</div></div>
+<div style="text-align:center;background:var(--navy-light);border-radius:var(--radius-lg);padding:12px;"><div style="font-size:1.3rem;font-weight:800;color:var(--cyan);">1</div><div style="font-size:0.68rem;color:var(--text3);">Users (of 5)</div></div>
+<div style="text-align:center;background:var(--navy-light);border-radius:var(--radius-lg);padding:12px;"><div id="billingUsageTasks" style="font-size:1.3rem;font-weight:800;color:var(--cyan);">—</div><div style="font-size:0.68rem;color:var(--text3);">Tasks</div></div>
 </div>
-
+</div>
 <!-- [4] Growth Services -->
 <div style="background:rgba(0,200,224,0.04);border:1px solid rgba(0,200,224,0.15);border-radius:var(--radius-xl);padding:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-  <div><div style="font-size:0.85rem;font-weight:700;color:var(--text);">🌊 BluWav Growth System</div><div style="font-size:0.72rem;color:var(--text3);">Website · Google · WhatsApp · Automation · 48 hours</div></div>
-  <a href="https://www.bluwavgrowth.com" target="_blank" style="background:var(--cyan);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:8px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;">View Growth Plans →</a>
+<div><div style="font-size:0.85rem;font-weight:700;color:var(--text);">🌊 BluWav Growth System</div><div style="font-size:0.72rem;color:var(--text3);">Website · Google · WhatsApp · Automation · 48 hours</div></div>
+<a href="https://www.bluwavgrowth.com" style="background:var(--cyan);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:8px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;" target="_blank">View Growth Plans →</a>
 </div>
 </div><!-- /view-billing -->
-
-
 </div><!-- /content -->
 </div><!-- /main -->
 <!-- ══ MODALS ══ -->
@@ -1180,7 +1173,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </div>
 <div id="notifList" style="overflow-y:auto;flex:1;">
-<div style="padding:24px;text-align:center;color:var(--text3);font-size:0.8rem;">Loading...</div>
+<div style="padding:24px;text-align:center;color:var(--text3);font-size:0.8rem;">No data yet</div>
 </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -2726,6 +2719,24 @@ function initSettingsView(){
     }
   }).catch(()=>{});
 }
+
+// ── THEME TOGGLE ─────────────────────────────────────────────────
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light');
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn) btn.textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('bw_theme', isLight ? 'light' : 'dark');
+}
+// Restore on load
+(function(){
+  if(localStorage.getItem('bw_theme')==='light'){
+    document.body.classList.add('light');
+    window.addEventListener('load',function(){
+      const btn=document.getElementById('themeToggleBtn');
+      if(btn)btn.textContent='☀️';
+    });
+  }
+})();
 
 function signOut(){
   sessionStorage.removeItem('bw_gate_ok');
