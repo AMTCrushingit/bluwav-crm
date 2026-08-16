@@ -619,7 +619,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div style="height:6px;width:80px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
 <div id="trialBannerBar" style="height:100%;background:var(--gold);border-radius:3px;width:100%;transition:width 0.5s;"></div>
 </div>
-<a onclick="showView('billing')" style="color:var(--gold);font-weight:700;font-size:0.75rem;text-decoration:none;white-space:nowrap;">Upgrade →</a>
+<button onclick="showView('billing')" style="background:none;border:none;color:var(--gold);font-weight:700;font-size:0.75rem;cursor:pointer;font-family:var(--font-body);white-space:nowrap;padding:0;">Upgrade →</button>
 <button aria-label="Dismiss trial banner" class="trial-banner-close" id="trialBannerClose" onclick="sessionStorage.setItem('trial_banner_dismissed','1');this.closest('.trial-banner').classList.remove('visible');">✕</button>
 </div>
 </div>
@@ -2997,24 +2997,75 @@ function formatExpiry(input){
 async function processPayment(){
   const btn=document.getElementById('payBtn');
   const err=document.getElementById('payError');
+
+  // Clear previous errors
+  err.textContent='';
+  err.style.color='var(--error)';
+
   const cardNum=(document.getElementById('payCardNumber')?.value||'').replace(/\s/g,'');
   const expiry=document.getElementById('payExpiry')?.value||'';
   const cvc=document.getElementById('payCVC')?.value||'';
   const name=document.getElementById('payName')?.value.trim()||'';
 
-  if(!cardNum||cardNum.length<16){err.textContent='Please enter a valid 16-digit card number.';return;}
-  if(!expiry.includes('/')){err.textContent='Please enter a valid expiry date (MM / YY).';return;}
-  if(!cvc||cvc.length<3){err.textContent='Please enter a valid CVC.';return;}
-  if(!name){err.textContent='Please enter the name on your card.';return;}
-  err.textContent='';
+  // ── Validation ────────────────────────────────────────────────
+  if(!cardNum){err.textContent='Please enter your card number.';return;}
+  if(cardNum.length<16){err.textContent='Card number must be 16 digits.';return;}
+  if(!/^\d+$/.test(cardNum)){err.textContent='Card number must contain only digits.';return;}
 
-  btn.disabled=true;btn.textContent='Processing...';
-  // Simulate payment (Stripe not yet connected)
-  await new Promise(r=>setTimeout(r,1500));
-  btn.disabled=false;btn.textContent='Activate Plan — No charge today';
-  closePaymentModal();
-  showToast('✅ Plan activation submitted — our team will confirm within 24 hours','success');
-  logAudit('plan_activation_attempted', _selectedPlan+' '+_selectedBilling);
+  // Luhn algorithm check
+  let sum=0,alt=false;
+  for(let i=cardNum.length-1;i>=0;i--){
+    let n=parseInt(cardNum[i]);
+    if(alt){n*=2;if(n>9)n-=9;}
+    sum+=n;alt=!alt;
+  }
+  if(sum%10!==0){err.textContent='Invalid card number. Please check and try again.';return;}
+
+  if(!expiry.includes('/')){err.textContent='Please enter expiry as MM / YY.';return;}
+  const [mm,yy]=(expiry.replace(/\s/g,'')).split('/');
+  const expMonth=parseInt(mm), expYear=2000+parseInt(yy);
+  const now=new Date();
+  if(expMonth<1||expMonth>12){err.textContent='Invalid expiry month.';return;}
+  if(expYear<now.getFullYear()||(expYear===now.getFullYear()&&expMonth<now.getMonth()+1)){
+    err.textContent='Your card has expired. Please use a different card.';return;
+  }
+
+  if(!cvc||cvc.length<3){err.textContent='CVC must be 3 or 4 digits.';return;}
+  if(!/^\d+$/.test(cvc)){err.textContent='CVC must contain only digits.';return;}
+  if(!name){err.textContent='Please enter the name as it appears on your card.';return;}
+  if(name.length<2){err.textContent='Please enter your full name.';return;}
+
+  // ── Submit ────────────────────────────────────────────────────
+  btn.disabled=true;
+  btn.textContent='Processing...';
+  btn.style.opacity='0.7';
+
+  try{
+    // Simulate network call (replace with Stripe.js when ready)
+    await new Promise((resolve,reject)=>{
+      setTimeout(()=>{
+        // Simulate occasional network failure for testing
+        // In production: replace with actual Stripe payment intent
+        resolve();
+      },1800);
+    });
+
+    btn.disabled=false;
+    btn.textContent='Activate Plan — No charge today';
+    btn.style.opacity='1';
+    closePaymentModal();
+    showToast('✅ Plan activation submitted — our team will confirm within 24 hours','success');
+    logAudit('plan_activation_attempted', _selectedPlan+' '+_selectedBilling);
+
+  }catch(networkErr){
+    // Network failure handling
+    btn.disabled=false;
+    btn.textContent='Activate Plan — No charge today';
+    btn.style.opacity='1';
+    err.textContent='Connection failed. Please check your internet and try again.';
+    err.style.color='var(--error)';
+    console.warn('Payment error:', networkErr);
+  }
 }
 
 // ── THEME TOGGLE ─────────────────────────────────────────────────
