@@ -471,9 +471,9 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 </a>
 <div class="ns" data-tooltip="Insights">Insights</div>
-<a class="ni" data-tooltip="Business Insights" href="reports.html" id="nav-reports"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
+<a class="ni" data-tooltip="Business Insights" onclick="showView('reports')" id="nav-reports" style="cursor:pointer;"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
 <div class="ns" data-tooltip="Workspace">Workspace</div>
-<a class="ni" data-tooltip="Settings" href="settings.html" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
+<a class="ni" data-tooltip="Settings" onclick="showView('settings')" style="cursor:pointer;" id="nav-settings"><span class="ni-icon">⚙️</span><span class="nav-text">Settings</span></a>
 <a class="ni" id="nav-billing" onclick="showView('billing')"><span class="ni-icon">💳</span><span class="nav-text">Billing</span></a>
 <a class="ni" id="nav-team" onclick="showView('contacts')" style="display:none;"><span class="ni-icon">👤</span><span class="nav-text">Team</span></a>
 <!-- Admin section — visible to manager/admin/owner only -->
@@ -532,7 +532,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div style="height:6px;width:80px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;">
 <div id="trialBannerBar" style="height:100%;background:var(--gold);border-radius:3px;width:100%;transition:width 0.5s;"></div>
 </div>
-<a href="billing.html" style="color:var(--gold);font-weight:700;font-size:0.75rem;text-decoration:none;white-space:nowrap;">Upgrade →</a>
+<a onclick="showView('billing')" style="cursor:pointer;" style="color:var(--gold);font-weight:700;font-size:0.75rem;text-decoration:none;white-space:nowrap;">Upgrade →</a>
 <button aria-label="Dismiss trial banner" class="trial-banner-close" id="trialBannerClose" onclick="sessionStorage.setItem('trial_banner_dismissed','1');this.closest('.trial-banner').classList.remove('visible');">✕</button>
 </div>
 </div>
@@ -932,7 +932,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
     <div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Workspace</div>
     <h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Billing & Plan</h1>
   </div>
-  <button class="btn btn-ghost btn-sm" onclick="window.location.href='billing.html'">⬡ Full Billing Page →</button>
+
 </div>
 
 <!-- [1] Account Billing Status -->
@@ -947,14 +947,14 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
         <div><div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:2px;">After trial</div><div style="font-size:1.2rem;font-weight:800;color:var(--text);" id="billingAfterTrial">$179/mo</div></div>
         <div><div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:2px;">Billing starts</div><div style="font-size:0.85rem;font-weight:700;color:var(--text);" id="billingStartDate">—</div></div>
       </div>
-      <button onclick="window.location.href='billing.html'" style="background:var(--gold);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:10px 22px;font-size:0.85rem;font-weight:800;cursor:pointer;font-family:var(--font-body);" id="billingCTA">Add payment method to keep access</button>
+      <button onclick="showToast('To activate a plan, visit the full billing page','');window.open('billing.html','_blank')" style="background:var(--gold);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:10px 22px;font-size:0.85rem;font-weight:800;cursor:pointer;font-family:var(--font-body);" id="billingCTA">Add payment method to keep access</button>
       <div style="font-size:0.72rem;color:var(--text3);margin-top:8px;">No charge today · Cancel anytime · Secure payment via Stripe</div>
     </div>
     <div style="text-align:right;">
       <div style="font-size:0.68rem;color:var(--text3);font-weight:600;margin-bottom:4px;">Current Plan</div>
       <div style="font-size:0.95rem;font-weight:700;color:var(--cyan);">CRM Premium (Trial)</div>
       <div style="font-size:0.72rem;color:var(--text3);margin-top:4px;">Unlimited contacts · 5 users · Automation</div>
-      <a href="billing.html" style="font-size:0.72rem;color:var(--text3);text-decoration:none;display:block;margin-top:10px;">Compare plans →</a>
+      <a onclick="showView('billing')" style="cursor:pointer;" style="font-size:0.72rem;color:var(--text3);text-decoration:none;display:block;margin-top:10px;">Compare plans →</a>
     </div>
   </div>
 </div>
@@ -969,14 +969,14 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
       <div style="font-size:1.4rem;font-weight:800;color:var(--text);">$59<span style="font-size:0.72rem;color:var(--text3);">/mo</span></div>
       <div style="font-size:0.68rem;color:var(--text3);margin-bottom:12px;">+ $99 setup</div>
       <div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px;">25 contacts · 1 user</div>
-      <button onclick="window.location.href='billing.html'" style="width:100%;background:transparent;border:1px solid var(--navy-border);color:var(--text2);border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">Choose Starter</button>
+      <button onclick="showToast('To activate a plan, visit the full billing page','');window.open('billing.html','_blank')" style="width:100%;background:transparent;border:1px solid var(--navy-border);color:var(--text2);border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">Choose Starter</button>
     </div>
     <div style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:16px;">
       <div style="font-size:0.78rem;font-weight:700;color:var(--text3);margin-bottom:4px;">Lite</div>
       <div style="font-size:1.4rem;font-weight:800;color:var(--text);">$99<span style="font-size:0.72rem;color:var(--text3);">/mo</span></div>
       <div style="font-size:0.68rem;color:var(--text3);margin-bottom:12px;">+ $199 setup</div>
       <div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px;">Pipeline · 3 users</div>
-      <button onclick="window.location.href='billing.html'" style="width:100%;background:transparent;border:1px solid var(--navy-border);color:var(--text2);border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">Choose Lite</button>
+      <button onclick="showToast('To activate a plan, visit the full billing page','');window.open('billing.html','_blank')" style="width:100%;background:transparent;border:1px solid var(--navy-border);color:var(--text2);border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--font-body);">Choose Lite</button>
     </div>
     <div style="background:rgba(201,168,76,0.06);border:2px solid var(--gold);border-radius:var(--radius-lg);padding:16px;position:relative;">
       <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy-deep);font-size:0.6rem;font-weight:800;padding:2px 10px;border-radius:9999px;white-space:nowrap;">CURRENT TRIAL</div>
@@ -984,7 +984,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
       <div style="font-size:1.4rem;font-weight:800;color:var(--text);">$179<span style="font-size:0.72rem;color:var(--text3);">/mo</span></div>
       <div style="font-size:0.68rem;color:var(--text3);margin-bottom:12px;">+ $299 setup</div>
       <div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px;">Unlimited · 5 users</div>
-      <button onclick="window.location.href='billing.html'" style="width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:var(--font-body);">Activate Premium</button>
+      <button onclick="showToast('To activate a plan, visit the full billing page','');window.open('billing.html','_blank')" style="width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:var(--radius-md);padding:7px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:var(--font-body);">Activate Premium</button>
     </div>
   </div>
 </div>
@@ -2339,7 +2339,7 @@ function showView(name){
   if(name==='calendar') loadTasks().then(()=>renderCalendar());
   if(name==='deals' && dealsViewMode==='list') setTimeout(renderOpportunitiesList,100);
   if(name==='email') loadEmailLog();
-  if(name==='reports'){ /* handled as inline view */ }
+  // reports, settings, billing all handled as inline views
   if(name==='billing'){ initBillingView(); }
   if(name==='settings'){ initSettingsView(); }
 }
