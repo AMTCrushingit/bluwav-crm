@@ -793,10 +793,10 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div>
 <!-- KPI Stats -->
 <div class="stats-grid">
-<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Revenue (Won)</span><span>💰</span></div><div class="stat-val" id="rMetricRev">$0</div><div class="stat-chg" id="rMetricRevChg">Loading...</div></div>
-<div class="stat g"><div class="stat-hd"><span class="stat-lbl">New Leads</span><span>🎯</span></div><div class="stat-val" id="rMetricLeads">0</div><div class="stat-chg" id="rMetricLeadsChg">Loading...</div></div>
-<div class="stat s"><div class="stat-hd"><span class="stat-lbl">Conversion Rate</span><span>📈</span></div><div class="stat-val" id="rMetricConv">0%</div><div class="stat-chg" id="rMetricConvChg">Loading...</div></div>
-<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Avg Opportunity Size</span><span>⚡</span></div><div class="stat-val" id="rMetricAvg">$0</div><div class="stat-chg nt" id="rMetricAvgChg">Loading...</div></div>
+<div class="stat c"><div class="stat-hd"><span class="stat-lbl">Revenue (Won)</span><span>💰</span></div><div class="stat-val" id="rMetricRev">$0</div><div class="stat-chg nt" id="rMetricRevChg">Won deals</div></div>
+<div class="stat g"><div class="stat-hd"><span class="stat-lbl">New Leads</span><span>🎯</span></div><div class="stat-val" id="rMetricLeads">0</div><div class="stat-chg nt" id="rMetricLeadsChg">Total customers</div></div>
+<div class="stat s"><div class="stat-hd"><span class="stat-lbl">Conversion Rate</span><span>📈</span></div><div class="stat-val" id="rMetricConv">0%</div><div class="stat-chg nt" id="rMetricConvChg">Win rate</div></div>
+<div class="stat o"><div class="stat-hd"><span class="stat-lbl">Avg Opportunity Size</span><span>⚡</span></div><div class="stat-val" id="rMetricAvg">$0</div><div class="stat-chg nt" id="rMetricAvgChg">Per opportunity</div></div>
 </div>
 <!-- Charts row -->
 <div class="two-col">
@@ -1367,6 +1367,13 @@ const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
       window.location.href = 'login.html';
     }
   });
+
+  // 5. Handle hash-based routing (from redirects)
+  const hash = window.location.hash.replace('#','');
+  if(['reports','settings','billing'].includes(hash)){
+    setTimeout(()=>showView(hash), 500);
+    history.replaceState(null,'',window.location.pathname);
+  }
 })();
 
 async function initDashboard(){
