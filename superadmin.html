@@ -2197,21 +2197,36 @@ async function corexPushCRM(id){
     // Add source_code and deal_value if columns exist
     try{ contactObj.source_code='IH'; }catch(e){}
     try{ if(dealVal) contactObj.deal_value=dealVal; }catch(e){}
-    const {error}=await db.from('contacts').insert(contactObj);
+    // Try full insert first
+    let {data:inserted, error}=await db.from('contacts').insert(contactObj).select();
+    
+    // If source_code column missing, retry without it
+    if(error && error.message && (error.message.includes('source_code') || error.message.includes('deal_value'))){
+      console.warn('Retrying without optional columns:', error.message);
+      const {source_code, deal_value, ...coreObj} = contactObj;
+      const r2 = await db.from('contacts').insert(coreObj).select();
+      error = r2.error;
+      inserted = r2.data;
+    }
+    
     if(error){
-      console.warn('COREX→CRM insert error:', error.message);
-      corexToast('⚠️ Sync error: '+error.message);
+      console.error('COREX→CRM insert error:', error.message, error.details, error.hint);
+      corexToast('⚠️ Sync failed: '+error.message);
+      // Show full error in activity feed for debugging
+      corexAddFeed('❌ Sync error for '+lead.name+': '+error.message);
     } else {
+      const contactId = inserted?.[0]?.id;
       corexToast('✅ COREX → CRM: '+lead.name+' added to Customers');
       lead.pushedToCRM=true;
       lead.status='Pushed';
       lead.assignedAgent='Andrea M. Tanguay';
+      lead.crmContactId=contactId||null;
       localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
       try{ await db.from('corex_leads').upsert({...lead}); }catch(e){}
       corexRenderStats();
       corexRenderLeads();
       if(document.getElementById('corex-module-opportunities')?.style.display==='block') corexRenderPipeline();
-      corexAddFeed('📤 COREX → CRM Sync: '+lead.name+' added as Lead (IH)');
+      corexAddFeed('📤 COREX → CRM: '+lead.name+' added as Lead — view in Customers tab');
     }
   }catch(e){
     console.warn('COREX push failed:', e.message);
