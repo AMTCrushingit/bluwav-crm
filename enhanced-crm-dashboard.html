@@ -420,6 +420,11 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 }
 .hamburger-btn:hover{background:var(--navy-light);border-color:var(--navy-border);color:var(--text);}
 @media(max-width:768px){.hamburger-btn{display:flex!important;}}
+/* ── SETTINGS NAV ── */
+.settings-nav-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--radius-md);cursor:pointer;font-size:0.82rem;font-weight:500;color:var(--text3);transition:var(--transition);margin:1px 0;}
+.settings-nav-item:hover{background:var(--navy-light);color:var(--text);}
+.settings-nav-item.active{background:var(--cyan-glow);color:var(--cyan);font-weight:600;}
+
 /* ── LOCKED NAV ITEM (Coming Soon) ── */
 .ni-locked{position:relative;cursor:default;}
 .ni-locked:hover{background:rgba(255,255,255,0.03)!important;color:var(--text3)!important;}
@@ -907,17 +912,83 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 </div><!-- /calendar -->
 <!-- ══ SETTINGS VIEW ══ -->
 <div class="view" id="view-settings">
-<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Workspace</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Workspace Settings</h1></div>
-<div class="panel">
-<div class="panel-hd"><div class="panel-title">⚙️ Account Workspace Settings</div></div>
-<div class="panel-body">
-<div style="display:flex;flex-direction:column;gap:16px;">
-<div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
-<div class="fg"><label class="fl">Email</label><input class="fi" id="settingsEmail" placeholder="your@email.com" readonly="" style="opacity:0.6;cursor:not-allowed;" type="email"/></div>
-<div class="fg"><label class="fl">Role</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
-<button class="btn btn-primary btn-sm" id="settingsSaveBtn" onclick="saveProfileSettings()" style="align-self:flex-start;">Save Changes</button>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+  <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Workspace</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Workspace Settings</h1></div>
 </div>
-</div>
+<div style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start;">
+  <!-- Settings nav -->
+  <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:8px;">
+    <div class="settings-nav-item active" onclick="switchSettingsTab('profile',this)" id="stab-profile">👤 Profile</div>
+    <div class="settings-nav-item" onclick="switchSettingsTab('team',this)" id="stab-team">👥 Team</div>
+    <div class="settings-nav-item" onclick="switchSettingsTab('security',this)" id="stab-security">🔒 Security</div>
+    <div class="settings-nav-item" onclick="switchSettingsTab('audit',this)" id="stab-audit">📋 Access Log</div>
+  </div>
+  <!-- Settings content -->
+  <div>
+    <!-- Profile tab -->
+    <div id="stab-content-profile">
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-hd"><div class="panel-title">Personal Information</div></div>
+        <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
+          <div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
+          <div class="fg"><label class="fl">Email Address</label><input class="fi" id="settingsEmail" type="email" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
+          <div class="fg"><label class="fl">Role / Title</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
+          <div class="fg"><label class="fl">Phone</label><input class="fi" id="settingsPhone" placeholder="+1 (xxx) xxx-xxxx" type="tel"/></div>
+          <button class="btn btn-primary btn-sm" id="settingsSaveBtn" onclick="saveProfileSettings()" style="align-self:flex-start;">Save Changes</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hd"><div class="panel-title">Change Password</div></div>
+        <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
+          <div class="fg"><label class="fl">New Password</label><input class="fi" id="settingsNewPw" type="password" placeholder="Min 8 characters"/></div>
+          <div class="fg"><label class="fl">Confirm Password</label><input class="fi" id="settingsConfirmPw" type="password" placeholder="Repeat new password"/></div>
+          <button class="btn btn-ghost btn-sm" onclick="changePassword()" style="align-self:flex-start;">Update Password</button>
+        </div>
+      </div>
+    </div>
+    <!-- Team tab -->
+    <div id="stab-content-team" style="display:none;">
+      <div class="panel">
+        <div class="panel-hd"><div class="panel-title">Team Members</div><div class="panel-sub">Manage your team and their access levels</div></div>
+        <div class="panel-body">
+          <div id="teamMembersList"><div style="text-align:center;padding:24px;color:var(--text3);font-size:0.82rem;">Loading team...</div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Security tab -->
+    <div id="stab-content-security" style="display:none;">
+      <div class="panel">
+        <div class="panel-hd"><div class="panel-title">Security Settings</div></div>
+        <div class="panel-body" style="display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--navy-light);border-radius:var(--radius-md);">
+            <div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">Two-Factor Authentication</div><div style="font-size:0.72rem;color:var(--text3);">Add an extra layer of security to your account</div></div>
+            <span class="badge badge-muted">Not configured</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--navy-light);border-radius:var(--radius-md);">
+            <div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">Session Timeout</div><div style="font-size:0.72rem;color:var(--text3);">Auto-logout after 10 minutes of inactivity</div></div>
+            <span class="badge badge-green">Active</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--navy-light);border-radius:var(--radius-md);">
+            <div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">Login Notifications</div><div style="font-size:0.72rem;color:var(--text3);">Email alert on new login</div></div>
+            <span class="badge badge-muted">Coming soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Audit/Access Log tab -->
+    <div id="stab-content-audit" style="display:none;">
+      <div class="panel">
+        <div class="panel-hd"><div class="panel-title">📋 Access & Activity Log</div><div class="panel-sub">Who accessed the system and when</div></div>
+        <div style="overflow-x:auto;">
+          <table><thead><tr>
+            <th>User</th><th>Action</th><th>Details</th><th>Time</th>
+          </tr></thead><tbody id="auditLogBody">
+            <tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text3);">Loading audit log...</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div><!-- /settings -->
 <!-- EMAIL VIEW -->
@@ -1352,6 +1423,8 @@ const AUTH_TIMEOUT = 10 * 60 * 1000; // 10 minutes
   touchActivity();
   currentUser = session.user;
   await initDashboard();
+  // Log login event
+  setTimeout(()=>logAudit('login','Logged in successfully'),1000);
 
   // 4. Handle future sign-outs
   db.auth.onAuthStateChange((event) => {
@@ -2340,6 +2413,7 @@ async function saveDeal(){
     return;
   }
   showToast('Deal saved ✓','success');
+  logAudit('deal_created', name);
   notifyAdmin('💼 New Opportunity Added — BluWav CRM (14-Day Trial)',
     'Deal: '+name+'\nValue: $'+val+'\nStage: '+stage+'\nType: '+dealType+'\nAgent: '+currentUser?.email+'\nTime: '+new Date().toLocaleString());
   closeModal('addDeal');
@@ -2718,6 +2792,110 @@ function initSettingsView(){
       if(roleEl)roleEl.value=(p.role||'salesperson').charAt(0).toUpperCase()+(p.role||'salesperson').slice(1);
     }
   }).catch(()=>{});
+}
+
+// ── AUDIT LOGGING ────────────────────────────────────────────────
+async function logAudit(action, details=''){
+  if(!currentUser) return;
+  try{
+    await db.from('audit_logs').insert({
+      user_id: currentUser.id,
+      action: action,
+      entity_type: 'session',
+      entity_id: currentUser.id,
+      after: {details, url: window.location.pathname, timestamp: new Date().toISOString()},
+      created_at: new Date().toISOString()
+    });
+  }catch(e){ /* silent — never block UI */ }
+}
+
+// Log page/view access
+const _origShowView = showView;
+showView = function(name){
+  _origShowView(name);
+  const viewNames={dashboard:'Dashboard',contacts:'Customers',deals:'Opportunities',tasks:'Tasks',calendar:'Calendar',reports:'Business Insights',settings:'Settings',billing:'Billing',email:'Email',whatsapp:'WhatsApp'};
+  if(viewNames[name]) logAudit('view_accessed', viewNames[name]);
+};
+
+// Load audit log for settings page
+async function loadAuditLog(){
+  const tbody = document.getElementById('auditLogBody');
+  if(!tbody) return;
+  try{
+    const{data,error} = await db.from('audit_logs')
+      .select('*,profiles(full_name)')
+      .order('created_at',{ascending:false})
+      .limit(50);
+    if(error||!data||!data.length){
+      tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text3);">No activity logged yet</td></tr>';
+      return;
+    }
+    const timeAgo=iso=>{const s=Math.floor((Date.now()-new Date(iso))/1000);if(s<60)return'Just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';};
+    const actionLabels={login:'🔐 Login',logout:'🚪 Logout',view_accessed:'👁 Viewed',contact_created:'➕ Added Customer',deal_created:'➕ Added Opportunity',task_created:'➕ Added Task',contact_updated:'✏️ Updated Customer',deal_updated:'✏️ Updated Opportunity'};
+    tbody.innerHTML=data.map(log=>{
+      const name=log.profiles?.full_name||'Unknown';
+      const action=actionLabels[log.action]||log.action;
+      const details=log.after?.details||'';
+      return `<tr>
+        <td style="font-weight:600;color:var(--text);">${name}</td>
+        <td>${action}</td>
+        <td style="color:var(--text3);">${details}</td>
+        <td style="color:var(--text3);font-size:0.75rem;white-space:nowrap;">${timeAgo(log.created_at)}</td>
+      </tr>`;
+    }).join('');
+  }catch(e){
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text3);">Could not load audit log</td></tr>';
+  }
+}
+
+// ── SETTINGS TABS ─────────────────────────────────────────────────
+function switchSettingsTab(tab, el){
+  // Hide all content tabs
+  ['profile','team','security','audit'].forEach(t=>{
+    const c=document.getElementById('stab-content-'+t);
+    if(c)c.style.display='none';
+    const n=document.getElementById('stab-'+t);
+    if(n)n.classList.remove('active');
+  });
+  // Show selected
+  const selected=document.getElementById('stab-content-'+tab);
+  if(selected)selected.style.display='block';
+  if(el)el.classList.add('active');
+  // Load data for tab
+  if(tab==='team') loadTeamMembers();
+  if(tab==='audit') loadAuditLog();
+}
+
+async function loadTeamMembers(){
+  const el=document.getElementById('teamMembersList');
+  if(!el)return;
+  try{
+    const{data}=await db.from('profiles').select('id,full_name,role,last_seen').order('full_name');
+    if(!data||!data.length){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">No team members yet</div>';return;}
+    const roleColors={manager:'badge-gold',admin:'badge-purple',salesperson:'badge-cyan',owner:'badge-red'};
+    const timeAgo=iso=>{if(!iso)return'Never';const s=Math.floor((Date.now()-new Date(iso))/1000);if(s<60)return'Just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';};
+    el.innerHTML='<table><thead><tr><th>Name</th><th>Role</th><th>Last Active</th></tr></thead><tbody>'+
+      data.map(m=>`<tr>
+        <td style="font-weight:600;color:var(--text);">${m.full_name||'—'}</td>
+        <td><span class="badge ${roleColors[m.role]||'badge-muted'}">${m.role||'salesperson'}</span></td>
+        <td style="color:var(--text3);font-size:0.75rem;">${timeAgo(m.last_seen)}</td>
+      </tr>`).join('')+'</tbody></table>';
+  }catch(e){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);">Could not load team</div>';}
+}
+
+async function changePassword(){
+  const pw=document.getElementById('settingsNewPw')?.value;
+  const confirm=document.getElementById('settingsConfirmPw')?.value;
+  if(!pw||pw.length<8){showToast('Password must be at least 8 characters','');return;}
+  if(pw!==confirm){showToast('Passwords do not match','');return;}
+  try{
+    const{error}=await db.auth.updateUser({password:pw});
+    if(error){showToast('Error: '+error.message,'');return;}
+    showToast('✅ Password updated','success');
+    document.getElementById('settingsNewPw').value='';
+    document.getElementById('settingsConfirmPw').value='';
+    logAudit('password_changed','Password updated');
+  }catch(e){showToast('Error: '+e.message,'');}
 }
 
 // ── THEME TOGGLE ─────────────────────────────────────────────────
