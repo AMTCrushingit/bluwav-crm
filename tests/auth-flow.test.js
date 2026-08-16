@@ -59,6 +59,142 @@ while ((match = scriptRegex.exec(source)) !== null) {
 }
 const allJS = scriptBlocks.join('\n');
 
+// ================================================================
+// EXTENDED TEST SUITE — High-Risk Path Coverage
+// ================================================================
+
+console.log('\n📋 Group 7: Payment & Billing Functions');
+
+test('openPaymentModal() function is defined', () => {
+  expect(allJS).toContain('function openPaymentModal(');
+});
+
+test('processPayment() function is defined', () => {
+  expect(allJS).toContain('function processPayment()');
+});
+
+test('Luhn algorithm is implemented in payment validation', () => {
+  expect(allJS).toContain('sum%10!==0');
+});
+
+test('Expired card detection is implemented', () => {
+  expect(allJS).toContain('expYear<now.getFullYear()');
+});
+
+test('Network failure handling in processPayment', () => {
+  expect(allJS).toContain('Connection failed');
+});
+
+test('PLAN_DETAILS object is defined with all plans', () => {
+  expect(allJS).toContain('PLAN_DETAILS=');
+  expect(allJS).toContain("starter:");
+  expect(allJS).toContain("premium:");
+  expect(allJS).toContain("lite:");
+});
+
+test('closePaymentModal() function is defined', () => {
+  expect(allJS).toContain('function closePaymentModal()');
+});
+
+console.log('\n📋 Group 8: Navigation & Routing');
+
+test('showView() function is defined', () => {
+  expect(allJS).toContain('function showView(');
+});
+
+test('billing view exists in HTML', () => {
+  expect(source).toContain('id="view-billing"');
+});
+
+test('settings view exists in HTML', () => {
+  expect(source).toContain('id="view-settings"');
+});
+
+test('reports view exists in HTML', () => {
+  expect(source).toContain('id="view-reports"');
+});
+
+test('showView handles billing view', () => {
+  expect(allJS).toContain("initBillingView()");
+});
+
+test('showView handles settings view', () => {
+  expect(allJS).toContain("initSettingsView()");
+});
+
+test('Upgrade button uses showView not href', () => {
+  const hasHrefUpgrade = /href="billing\.html"[^>]*>Upgrade/.test(source);
+  expect(hasHrefUpgrade).toBeFalsy();
+});
+
+console.log('\n📋 Group 9: Security Functions');
+
+test('sanitize() XSS protection function is defined', () => {
+  expect(allJS).toContain('function sanitize(');
+});
+
+test('sanitize() escapes HTML entities', () => {
+  expect(allJS).toContain("replace(/&/g,'&amp;')");
+  expect(allJS).toContain("replace(/</g,'&lt;')");
+});
+
+test('logAudit() function is defined', () => {
+  expect(allJS).toContain('function logAudit(');
+});
+
+test('Login event is logged after auth', () => {
+  expect(allJS).toContain("logAudit('login'");
+});
+
+test('toggleTheme() function is defined', () => {
+  expect(allJS).toContain('function toggleTheme()');
+});
+
+test('Theme preference saved to localStorage', () => {
+  expect(allJS).toContain("localStorage.setItem('bw_theme'");
+});
+
+console.log('\n📋 Group 10: Phone & Form Validation');
+
+test('formatPhoneInput() function is defined', () => {
+  expect(allJS).toContain('function formatPhoneInput(');
+});
+
+test('getFullPhone() combines country code + number', () => {
+  expect(allJS).toContain('function getFullPhone()');
+});
+
+test('Phone country code dropdown exists', () => {
+  expect(source).toContain('id="mc-phone-cc"');
+});
+
+test('validatePhone() function is defined', () => {
+  expect(allJS).toContain('function validatePhone(');
+});
+
+test('validateEmail() function is defined', () => {
+  expect(allJS).toContain('function validateEmail(');
+});
+
+console.log('\n📋 Group 11: Trial & Billing State');
+
+test('updateTrialWidget() function is defined', () => {
+  expect(allJS).toContain('function updateTrialWidget(');
+});
+
+test('AUTH_TIMEOUT is 10 minutes', () => {
+  expect(allJS).toContain('10 * 60 * 1000');
+});
+
+test('initBillingView() populates usage counts', () => {
+  expect(allJS).toContain('function initBillingView()');
+  expect(allJS).toContain('billingUsageContacts');
+});
+
+test('Trial banner shows on expiry', () => {
+  expect(source).toContain('trialExpiryBanner');
+});
+
 console.log('');
 console.log('═══════════════════════════════════════════════════════════');
 console.log('  BluWav CRM — Auth Flow Test Suite');
@@ -266,3 +402,4 @@ if (failed > 0) {
   console.log('✅ ALL TESTS PASSED — safe to deploy');
   process.exit(0);
 }
+

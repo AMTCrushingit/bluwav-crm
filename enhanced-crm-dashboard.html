@@ -1164,7 +1164,26 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal-body">
 <div class="fg-row"><div class="fg"><label class="fl">First Name <span class="req">*</span></label><input class="fi" id="mc-first" placeholder="First name"/></div><div class="fg"><label class="fl">Last Name <span class="req">*</span></label><input class="fi" id="mc-last" placeholder="Last name"/></div></div>
 <div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="mc-email" placeholder="email@company.com" type="email"/></div>
-<div class="fg"><label class="fl">Phone / WhatsApp</label><input class="fi" id="mc-phone" placeholder="+1 (xxx) xxx-xxxx" type="tel"/></div>
+<div class="fg"><label class="fl">Phone / WhatsApp</label>
+<div style="display:flex;gap:6px;">
+  <select id="mc-phone-cc" class="fs" style="width:110px;flex-shrink:0;">
+    <option value="+1">🇨🇦 +1 CA</option>
+    <option value="+1">🇺🇸 +1 US</option>
+    <option value="+1868">🇹🇹 +1868 TT</option>
+    <option value="+1876">🇯🇲 +1876 JM</option>
+    <option value="+1246">🇧🇧 +1246 BB</option>
+    <option value="+1473">🇬🇩 +1473 GD</option>
+    <option value="+1784">🇻🇨 +1784 VC</option>
+    <option value="+1758">🇱🇨 +1758 LC</option>
+    <option value="+1767">🇩🇲 +1767 DM</option>
+    <option value="+1869">🇰🇳 +1869 KN</option>
+    <option value="+592">🇬🇾 +592 GY</option>
+    <option value="+44">🇬🇧 +44 UK</option>
+    <option value="+52">🇲🇽 +52 MX</option>
+  </select>
+  <input class="fi" id="mc-phone" placeholder="(xxx) xxx-xxxx" type="tel" style="flex:1;" oninput="formatPhoneInput(this)"/>
+</div>
+</div>
 <div class="fg"><label class="fl">Business Name</label><input class="fi" id="mc-biz" placeholder="Company name"/></div>
 <div class="fg-row">
 <div class="fg"><label class="fl">Status</label><select class="fs" id="mc-status"><option value="Lead">Lead</option><option value="Qualified">Qualified</option><option value="Proposal">Proposal</option><option value="Won">Won</option></select></div>
@@ -1315,6 +1334,11 @@ let currentSortCol = 'name', currentSortDir = 'asc';
 let revenueChart = null, reportsChart = null;
 
 const COLORS = ['#00C8E0','#C9A84C','#22C55E','#FF6B2B','#a78bfa','#2980B9','#E74C3C','#27AE60'];
+function sanitize(str){
+  if(!str)return'';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+}
+
 function ini(n){return(n||'?').split(' ').map(x=>x[0]||'').join('').toUpperCase().slice(0,2);}
 function getColor(n){let h=0;for(let c of(n||''))h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
 function fmt(v){return '$'+(v||0).toLocaleString();}
@@ -2390,7 +2414,8 @@ async function saveContact(){
     full_name:(first+' '+last).trim(),
     email:email,
     source_code:sourceEl?.value||null,
-    phone:document.getElementById('mc-phone')?.value.trim()||null,
+    phone:getFullPhone(),
+    whatsapp:getFullPhone(),
     business_name:document.getElementById('mc-biz')?.value.trim()||null,
     island:document.getElementById('mc-location')?.value.trim()||null,
     notes:document.getElementById('mc-notes')?.value.trim()||null,
@@ -2694,6 +2719,20 @@ function closeDrawer(id){
 }
 
 // ── VALIDATION HELPERS ──────────────────────────────────────────
+function formatPhoneInput(input){
+  // Format as (xxx) xxx-xxxx as user types
+  let v=input.value.replace(/\D/g,'').substring(0,10);
+  if(v.length>=6) v='('+v.substring(0,3)+') '+v.substring(3,6)+'-'+v.substring(6);
+  else if(v.length>=3) v='('+v.substring(0,3)+') '+v.substring(3);
+  input.value=v;
+}
+
+function getFullPhone(){
+  const cc=document.getElementById('mc-phone-cc')?.value||'+1';
+  const num=(document.getElementById('mc-phone')?.value||'').replace(/\D/g,'');
+  return num?cc+num:null;
+}
+
 function validateEmail(email){
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
