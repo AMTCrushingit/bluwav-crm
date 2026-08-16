@@ -1,0 +1,29 @@
+name: Verify Branch Protection
+
+on:
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday 9am — weekly check
+
+jobs:
+  verify-protection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check branch protection is active
+        run: |
+          echo "Checking branch protection on main..."
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/branches/main/protection")
+          
+          if echo "$RESPONSE" | grep -q "required_status_checks"; then
+            echo "✅ Branch protection is active on main"
+          else
+            echo "⚠️ Branch protection may not be fully configured"
+            echo "Run setup-branch-protection.sh to apply rules"
+          fi
+
+      - name: Verify quality gate passes
+        run: node tests/auth-flow.test.js
