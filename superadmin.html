@@ -208,8 +208,14 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
 </div>
 <div class="nav-section">
 <div class="nav-label" style="color:var(--corex);letter-spacing:.12em;">&#x1F9E0; COREX</div>
-<a class="nav-item" id="corex-nav-item" onclick="showView('corex')">
-<span class="nav-icon">&#x1F9E0;</span> COREX
+<a class="nav-item" id="corex-nav-item" onclick="showView('corex');corexSetAgent('cotis')">
+  <span class="nav-icon">&#x26A1;</span> COTIS
+</a>
+<a class="nav-item" id="corex-cdsia-nav" onclick="showView('corex');corexSetAgent('cdsia')">
+  <span class="nav-icon">&#x1F6A8;</span> CDSIA
+</a>
+<a class="nav-item" id="corex-ifin-nav" onclick="corexShowIFINLocked()" style="opacity:0.45;" title="Coming soon">
+  <span class="nav-icon">&#x1F4B0;</span> IFIN <span style="font-size:9px;color:#4c3494;margin-left:4px;">&#x1F512;</span>
 </a>
 </div>
 <div class="nav-section">
@@ -2862,6 +2868,36 @@ function corexToggleConfig(){
   }, 60 * 60 * 1000);
 })();
 
+
+// ---- COREX Agent Navigation ----
+const COREX_AGENTS = {
+  cotis: {icon:'\u26A1', name:'COTIS', module:'command', desc:'Tenders & Procurement'},
+  cdsia: {icon:'\u{1F6A8}', name:'CDSIA', module:'cdsia', desc:'Distress Signals'},
+  ifin:  {icon:'\u{1F4B0}', name:'IFIN',  module:'ifin',  desc:'Funding Intelligence'}
+};
+
+function corexSetAgent(agentKey){
+  const agent = COREX_AGENTS[agentKey];
+  if(!agent) return;
+  // Update indicator
+  const icon = document.getElementById('corex-agent-icon');
+  const name = document.getElementById('corex-agent-name');
+  if(icon) icon.textContent = agent.icon;
+  if(name) name.textContent = agent.name;
+  // Highlight active sidebar nav item
+  document.querySelectorAll('#corex-nav-item, #corex-cdsia-nav, #corex-ifin-nav').forEach(el=>el.classList.remove('active'));
+  const navMap = {cotis:'corex-nav-item', cdsia:'corex-cdsia-nav', ifin:'corex-ifin-nav'};
+  const activeNav = document.getElementById(navMap[agentKey]);
+  if(activeNav) activeNav.classList.add('active');
+  // Show the agent module
+  corexShowModule(agent.module);
+}
+
+function corexShowIFINLocked(){
+  corexToast('\u{1F512} IFIN — Funding & Donor Intelligence is reserved for the next build cycle');
+  corexSetAgent('ifin');
+}
+
 </script>
 <!-- ================================================================
          COREX INTELLIGENCE ENGINE — Super Admin Module
@@ -2954,17 +2990,20 @@ function corexToggleConfig(){
 </div>
 <!-- COREX Sub-nav tabs -->
 <div id="corex-tabs" style="display:flex;align-items:center;gap:6px;background:rgba(28,22,64,0.8);border:1px solid rgba(167,139,250,0.18);border-radius:12px;padding:6px;margin-bottom:20px;flex-wrap:wrap;">
-<button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">&#x26A1; COTIS</button>
-<button class="corex-tab" data-module="cdsia" onclick="corexShowModule('cdsia')">&#x1F6A8; CDSIA</button>
-<button class="corex-tab" data-module="ifin" onclick="corexShowModule('ifin')" style="opacity:0.5;" title="Coming soon">&#x1F4B0; IFIN</button>
-<button class="corex-tab" data-module="opportunities" onclick="corexShowModule('opportunities')">&#x1F4D8; Opportunity Report</button>
-<button class="corex-tab" data-module="digest" onclick="corexShowModule('digest')">&#x1F4CA; Intelligence Digest</button>
-<button class="corex-tab" data-module="routing" onclick="corexShowModule('routing')" style="margin-left:auto;">&#x1F465; Agent Routing</button>
-<button class="corex-tab" data-module="outreach" onclick="corexShowModule('outreach')">&#x1F4E4; Outreach</button>
-<button class="corex-tab" data-module="crmsync" onclick="corexShowModule('crmsync')">&#x1F504; CRM Sync</button>
-<button class="corex-tab" data-module="scanner" onclick="corexShowModule('scanner')">&#x1F4E1; Scanner</button>
-<button class="corex-tab" data-module="awards" onclick="corexShowModule('awards')">&#x1F3C6; Awards</button>
-<button class="corex-tab" data-module="trends" onclick="corexShowModule('trends')">&#x1F4C8; Trends</button>
+  <!-- Active agent indicator -->
+  <div id="corex-agent-indicator" style="display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(139,92,246,0.15);border:1px solid rgba(167,139,250,0.25);border-radius:8px;font-size:12px;font-weight:700;color:#c4b5fd;margin-right:4px;">
+    <span id="corex-agent-icon">&#x26A1;</span>
+    <span id="corex-agent-name">COTIS</span>
+  </div>
+  <!-- Two deliverable tabs -->
+  <button class="corex-tab active" data-module="report" onclick="corexShowModule('opportunities')">&#x1F4D8; Opportunity Report</button>
+  <button class="corex-tab" data-module="digest" onclick="corexShowModule('digest')">&#x1F4D9; Intelligence Digest</button>
+  <!-- Separator -->
+  <div style="width:1px;height:24px;background:rgba(167,139,250,0.15);margin:0 4px;"></div>
+  <!-- Config tabs (secondary) -->
+  <button class="corex-tab" data-module="routing" onclick="corexShowModule('routing')" style="font-size:11px;opacity:0.7;">&#x1F465; Routing</button>
+  <button class="corex-tab" data-module="outreach" onclick="corexShowModule('outreach')" style="font-size:11px;opacity:0.7;">&#x1F4E4; Outreach</button>
+  <button class="corex-tab" data-module="crmsync" onclick="corexShowModule('crmsync')" style="font-size:11px;opacity:0.7;">&#x1F504; CRM Sync</button>
 </div>
 <!-- COREX Stats Row -->
 <div id="corex-stats-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;"></div>
