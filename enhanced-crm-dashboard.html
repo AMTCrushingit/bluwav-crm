@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-18 16:51 UTC -->
+<!-- BUILD: 2026-08-18 16:56 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -2283,46 +2283,55 @@ function renderContactActivities(){
 }
 
 async function logActivity(){
-  if(!_cpContactId){ showToast('No contact selected',''); return; }
-  const type = document.getElementById('cpActivityType').value;
-  const note = document.getElementById('cpActivityNote').value.trim();
-  if(!note){ showToast('Please enter a note',''); return; }
-  // Safe session fetch — never throws
-  let userId = null;
-  try{
-    const sessionRes = await db.auth.getSession();
-    userId = sessionRes?.data?.session?.user?.id || null;
-  }catch(e){ userId = null; }
-  // Insert activity — only columns confirmed in Supabase schema
-  // insertObj replaced by activityRow below
-
-  // Exact schema: id, org_id, contact_id, deal_id, type, title, description, completed, due_at, created_by, created_at, user_id
-  const activityRow = {
-    contact_id: _cpContactId,
-    type: type,
-    title: type.charAt(0).toUpperCase()+type.slice(1) + ': ' + note.substring(0, 80),
-    description: note,
-    created_by: userId,
-    user_id: userId,
-    created_at: new Date().toISOString()
-  };
-
-  try {
-    const {data:inserted, error} = await db.from('activities').insert(activityRow).select();
-    if(error){
-      showToast('Could not save activity: '+error.message,'');
-      console.warn('Activity insert error:', error.message);
-      return;
-    }
-    _cpActivities.unshift(inserted?.[0]||{...activityRow,id:'local_'+Date.now()});
-  } catch(e) {
-    showToast('Activity save failed: '+e.message,'');
+  // Guard: contact must be selected
+  if(!_cpContactId){
+    showToast('No contact selected','');
     return;
   }
-  
-  document.getElementById('cpActivityNote').value='';
+
+  // Get form values
+  const type = document.getElementById('cpActivityType').value;
+  const note = document.getElementById('cpActivityNote').value.trim();
+  if(!note){
+    showToast('Please enter a note','');
+    return;
+  }
+
+  // Get current user id safely
+  let userId = null;
+  try {
+    const res = await db.auth.getSession();
+    userId = res?.data?.session?.user?.id || null;
+  } catch(e) { /* proceed without user id */ }
+
+  // Build row — exact Supabase schema:
+  // id(uuid), org_id(uuid), contact_id(uuid), deal_id(uuid),
+  // type(text CHECK: call/email/task/meeting/note/whatsapp),
+  // title(text NOT NULL), description(text), completed(bool),
+  // due_at(timestamptz), created_by(uuid), created_at(timestamptz), user_id(uuid)
+  const row = {
+    contact_id: _cpContactId,
+    type:        type,
+    title:       type.charAt(0).toUpperCase() + type.slice(1) + ': ' + note.substring(0, 80),
+    description: note,
+    created_by:  userId,
+    user_id:     userId,
+    created_at:  new Date().toISOString()
+  };
+
+  const { data, error } = await db.from('activities').insert(row).select().single();
+
+  if(error){
+    showToast('Could not save: ' + error.message, '');
+    console.error('logActivity error:', error);
+    return;
+  }
+
+  // Success — update UI
+  _cpActivities.unshift(data || row);
+  document.getElementById('cpActivityNote').value = '';
   renderContactActivities();
-  showToast(type+' logged ✓','success');
+  showToast(row.title + ' ✓', 'success');
   updateLastContacted(_cpContactId);
 }
 
