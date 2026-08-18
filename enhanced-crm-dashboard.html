@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-18 15:51 UTC -->
+<!-- BUILD: 2026-08-18 16:31 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -2287,14 +2287,19 @@ async function logActivity(){
   const type = document.getElementById('cpActivityType').value;
   const note = document.getElementById('cpActivityNote').value.trim();
   if(!note){ showToast('Please enter a note',''); return; }
-  const {data:{session}} = await db.auth.getSession();
+  // Safe session fetch — never throws
+  let userId = null;
+  try{
+    const sessionRes = await db.auth.getSession();
+    userId = sessionRes?.data?.session?.user?.id || null;
+  }catch(e){ userId = null; }
   // Insert activity — only columns confirmed in Supabase schema
   const insertObj = {
     contact_id: _cpContactId,
     type: type,
     title: type + ': ' + note.substring(0,50),
     description: note,
-    user_id: session?.user?.id||null,
+    user_id: userId,
     created_at: new Date().toISOString()
   };
 
@@ -2303,11 +2308,11 @@ async function logActivity(){
     if(error){
       // Try progressively simpler inserts to find what columns exist
       const fallbacks = [
-        {contact_id:_cpContactId, type, description:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()},
-        {contact_id:_cpContactId, type, notes:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()},
-        {contact_id:_cpContactId, activity_type:type, note:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()},
-        {contact_id:_cpContactId, body:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()},
-        {type, description:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()}
+        {contact_id:_cpContactId, type, description:note, user_id:userId, created_at:new Date().toISOString()},
+        {contact_id:_cpContactId, type, notes:note, user_id:userId, created_at:new Date().toISOString()},
+        {contact_id:_cpContactId, activity_type:type, note:note, user_id:userId, created_at:new Date().toISOString()},
+        {contact_id:_cpContactId, body:note, user_id:userId, created_at:new Date().toISOString()},
+        {type, description:note, user_id:userId, created_at:new Date().toISOString()}
       ];
       let saved = false;
       for(const fb of fallbacks){
