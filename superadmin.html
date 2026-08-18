@@ -209,7 +209,7 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
 <div class="nav-section">
 <div class="nav-label" style="color:var(--corex);letter-spacing:.12em;">&#x1F9E0; COREX</div>
 <a class="nav-item" id="corex-nav-item" onclick="showView('corex')">
-<span class="nav-icon">&#x1F9E0;</span> COREX Intelligence Engine
+<span class="nav-icon">&#x1F9E0;</span> COREX
 </a>
 </div>
 <div class="nav-section">
@@ -1791,6 +1791,7 @@ function corexShowModule(name){
   if(name==='awards')corexRenderAwards();
   if(name==='trends')corexRenderTrends();
   if(name==='cdsia')corexRenderCDSIA();
+  // ifin: placeholder only, no render needed
   if(name==='crmsync')corexRenderSyncLog();
   if(name==='digest')corexRenderDigestHistory();
 }
@@ -2713,6 +2714,7 @@ const _origCorexShowModule=corexShowModule;
 corexShowModule=function(name){
   _origCorexShowModule(name);
   if(name==='cdsia')corexRenderCDSIA();
+  // ifin: placeholder only, no render needed
 };
 
 // Add CDSIA section to digest
@@ -2952,9 +2954,10 @@ function corexToggleConfig(){
 </div>
 <!-- COREX Sub-nav tabs -->
 <div id="corex-tabs" style="display:flex;align-items:center;gap:6px;background:rgba(28,22,64,0.8);border:1px solid rgba(167,139,250,0.18);border-radius:12px;padding:6px;margin-bottom:20px;flex-wrap:wrap;">
-<button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">&#x26A1; Intelligence Hub</button>
-<button class="corex-tab" data-module="cdsia" onclick="corexShowModule('cdsia')">&#x1F6A8; CDSIA Signals</button>
-<button class="corex-tab" data-module="opportunities" onclick="corexShowModule('opportunities')">&#x1F3AF; Opportunity Intel</button>
+<button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">&#x26A1; COTIS</button>
+<button class="corex-tab" data-module="cdsia" onclick="corexShowModule('cdsia')">&#x1F6A8; CDSIA</button>
+<button class="corex-tab" data-module="ifin" onclick="corexShowModule('ifin')" style="opacity:0.5;" title="Coming soon">&#x1F4B0; IFIN</button>
+<button class="corex-tab" data-module="opportunities" onclick="corexShowModule('opportunities')">&#x1F4D8; Opportunity Report</button>
 <button class="corex-tab" data-module="digest" onclick="corexShowModule('digest')">&#x1F4CA; Intelligence Digest</button>
 <button class="corex-tab" data-module="routing" onclick="corexShowModule('routing')" style="margin-left:auto;">&#x1F465; Agent Routing</button>
 <button class="corex-tab" data-module="outreach" onclick="corexShowModule('outreach')">&#x1F4E4; Outreach</button>
@@ -3233,6 +3236,29 @@ function corexToggleConfig(){
 </div>
 </div>
 </div><!-- end corex-module-cdsia -->
+
+<!-- MODULE: IFIN — Funding & Donor Intelligence (Reserved) -->
+<div class="corex-module" id="corex-module-ifin" style="display:none;">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;text-align:center;padding:40px;">
+    <div style="font-size:48px;margin-bottom:16px;filter:drop-shadow(0 0 20px rgba(167,139,250,0.3));">&#x1F4B0;</div>
+    <div style="font-size:22px;font-weight:800;color:#c4b5fd;margin-bottom:8px;">IFIN</div>
+    <div style="font-size:14px;font-weight:600;color:#7c6fa0;margin-bottom:20px;letter-spacing:.06em;text-transform:uppercase;">Funding & Donor Intelligence Engine</div>
+    <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(167,139,250,0.15);border-radius:14px;padding:24px 32px;max-width:480px;margin-bottom:24px;">
+      <div style="font-size:13px;color:#a78bfa;line-height:1.8;">
+        IFIN will monitor and score:<br/>
+        <span style="color:#7c6fa0;">&#x2022; IDB, World Bank, GCF donor calls</span><br/>
+        <span style="color:#7c6fa0;">&#x2022; USAID, EU-LAC, GIZ funding windows</span><br/>
+        <span style="color:#7c6fa0;">&#x2022; Caribbean development finance cycles</span><br/>
+        <span style="color:#7c6fa0;">&#x2022; Grant deadlines & eligibility signals</span><br/>
+        <span style="color:#7c6fa0;">&#x2022; Credii-aligned education finance opportunities</span>
+      </div>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:9999px;padding:6px 18px;font-size:12px;font-weight:600;color:#7c6fa0;">
+      &#x1F512; Reserved — Coming in next build cycle
+    </div>
+  </div>
+</div>
+
 </div><!-- end corex-content -->
 </div><!-- end view-corex -->
 <!-- COREX QUALIFY & PUSH MODAL -->
