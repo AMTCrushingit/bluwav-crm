@@ -2301,20 +2301,24 @@ async function logActivity(){
   try {
     const {data:inserted, error} = await db.from('activities').insert(insertObj).select();
     if(error){
-      console.warn('Activity insert error:', error.message);
-      // Fallback: minimal insert without optional columns
-      const {data:inserted2, error:error2} = await db.from('activities').insert({
-        contact_id: _cpContactId,
-        type: type,
-        description: note,
-        user_id: session?.user?.id||null,
-        created_at: new Date().toISOString()
-      }).select();
-      if(error2){
-        showToast('Could not save activity: '+error2.message,'');
+      // Try progressively simpler inserts to find what columns exist
+      const fallbacks = [
+        {contact_id:_cpContactId, type, description:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()},
+        {contact_id:_cpContactId, type, notes:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()},
+        {contact_id:_cpContactId, activity_type:type, note:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()},
+        {contact_id:_cpContactId, body:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()},
+        {type, description:note, user_id:session?.user?.id||null, created_at:new Date().toISOString()}
+      ];
+      let saved = false;
+      for(const fb of fallbacks){
+        const {data:fd, error:fe} = await db.from('activities').insert(fb).select();
+        if(!fe){ _cpActivities.unshift(fd?.[0]||{...fb,id:'local_'+Date.now()}); saved=true; break; }
+        console.warn('Activity fallback failed:', fe.message, '| tried:', JSON.stringify(fb));
+      }
+      if(!saved){
+        showToast('Could not save activity — schema mismatch. Check console.','');
         return;
       }
-      _cpActivities.unshift(inserted2?.[0]||{...insertObj,id:'local_'+Date.now()});
     } else {
       _cpActivities.unshift(inserted?.[0]||{...insertObj,id:'local_'+Date.now()});
     }
