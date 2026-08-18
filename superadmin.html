@@ -54,6 +54,8 @@ html,body{height:100%;width:100%;font-family:'Segoe UI',system-ui,sans-serif;bac
 .refresh-btn{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--text3);padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s;}
 .refresh-btn:hover{border-color:var(--corex);color:var(--corex-light);}
 .last-updated{font-size:13px;color:var(--text3);}
+/* Hide command strip when COREX is active */
+body.corex-active .command-strip{display:none;}
 
 /* COMMAND STRIP */
 .command-strip{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 28px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;flex-shrink:0;width:100%;box-sizing:border-box;}
@@ -1415,6 +1417,7 @@ const viewTitles={
 };
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.body.classList.toggle('corex-active', name==='corex');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const v=document.getElementById('view-'+name);
   if(v)v.classList.add('active');
@@ -2975,7 +2978,7 @@ function corexShowIFINLocked(){
 <div style="display:flex;align-items:center;gap:14px;">
 <div style="font-size:28px;filter:drop-shadow(0 0 12px rgba(167,139,250,0.5));">🧠</div>
 <div>
-<div style="font-size:20px;font-weight:800;background:linear-gradient(135deg,#f5f3ff,#c4b5fd,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">COREX Intelligence Engine</div>
+<div style="font-size:14px;font-weight:700;color:#c4b5fd;">&#x1F9E0; COREX Intelligence Constellation</div>
 <div style="font-size:13px;color:#9d8fd4;margin-top:2px;">Caribbean Opportunity &amp; Revenue Intelligence Engine · Super Admin Only</div>
 </div>
 </div>
@@ -2984,6 +2987,8 @@ function corexShowIFINLocked(){
 <span style="width:6px;height:6px;border-radius:50%;background:#a78bfa;display:inline-block;animation:corex-pulse 2s ease-in-out infinite;"></span>
               Active — Intelligence Cycle Running
             </div>
+<span style="font-size:11px;color:#4c3494;white-space:nowrap;">Last run: <span id="corex-last-run" style="color:#7c6fa0;">—</span></span>
+<button onclick="corexRunCycle()" title="Refresh" style="background:rgba(139,92,246,0.15);border:1px solid rgba(167,139,250,0.2);color:#c4b5fd;border-radius:8px;padding:7px 10px;font-size:14px;cursor:pointer;">&#x21BB;</button>
 <button id="corex-run-btn" onclick="corexRunCycle()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.3);">▶ Run Intelligence Cycle</button>
 <button onclick="cgLockCOREX()" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🔒 Lock</button>
 </div>
