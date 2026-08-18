@@ -2525,6 +2525,9 @@ function cdsiaInit(){
   
 }
 
+// ---- CDSIA safe string escape ----
+function cdsiaEsc(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 function corexRenderCDSIA(filterType, filterVal){
   cdsiaInit();
   const urgencyFilter = document.getElementById('cdsiaUrgencyFilter')?.value||'';
@@ -2550,10 +2553,15 @@ function corexRenderCDSIA(filterType, filterVal){
       {icon:'\u2699\uFE0F',label:'Operational',val:operational,color:'#a78bfa',bg:'rgba(167,139,250,.1)',ft:'distress',fv:'Operational'},
       {icon:'\u{1F3DB}\uFE0F',label:'Governance',val:governance,color:'#60a5fa',bg:'rgba(96,165,250,.1)',ft:'distress',fv:'Governance'}
     ];
-    statsEl.innerHTML=cards.map(d=>`<div onclick="${d.ft?`cdsiaFilterBy('${d.ft}','${d.fv}')`:''}" style="background:#1a1035;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;${d.ft?'cursor:pointer;':''}border:1px solid rgba(167,139,250,0.1);">
+    statsEl.innerHTML=cards.map(d=>`<div data-ft="${d.ft||''}" data-fv="${d.fv||''}" style="background:#1a1035;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;${d.ft?'cursor:pointer;':''}border:1px solid rgba(167,139,250,0.1);" class="cdsia-stat-card">
       <div style="width:36px;height:36px;border-radius:9px;background:${d.bg};display:flex;align-items:center;justify-content:center;font-size:16px;">${d.icon}</div>
-      <div><div style="font-size:20px;font-weight:800;color:${d.color};">${d.val}</div><div style="font-size:10px;color:var(--text3);">${d.label}${d.ft?' \u2192':''}</div></div>
+      <div><div style="font-size:20px;font-weight:800;color:${d.color};">${d.val}</div><div style="font-size:10px;color:var(--text3);">${d.label}${d.ft?' →':''}</div></div>
     </div>`).join('');
+    // Wire click events after render
+    statsEl.querySelectorAll('.cdsia-stat-card[data-ft]').forEach(el=>{
+      const ft=el.dataset.ft; const fv=el.dataset.fv;
+      if(ft) el.addEventListener('click',()=>cdsiaFilterBy(ft,fv));
+    });
   }
 
   // Source grid (render once)
@@ -2582,13 +2590,13 @@ function corexRenderCDSIA(filterType, filterVal){
   }
   const urgencyColor={Critical:'#ef4444',High:'#f97316',Medium:'#f59e0b',Low:'#22c55e'};
   tbody.innerHTML=filtered.map(s=>`<tr style="border-bottom:1px solid var(--border);">
-    <td style="padding:10px 12px;font-weight:600;color:var(--text);font-size:12px;max-width:160px;">${sanitize(s.organizationName)}</td>
-    <td style="padding:10px 12px;font-size:12px;color:var(--text2);white-space:nowrap;">${sanitize(s.country)}</td>
+    <td style="padding:10px 12px;font-weight:600;color:var(--text);font-size:12px;max-width:160px;">${cdsiaEsc(s.organizationName)}</td>
+    <td style="padding:10px 12px;font-size:12px;color:var(--text2);white-space:nowrap;">${cdsiaEsc(s.country)}</td>
     <td style="padding:10px 12px;">${s.distressType.map(t=>`<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(139,92,246,.15);color:#c4b5fd;margin:1px;">${CDSIA_DISTRESS_TYPES[t]?.icon||'\u26A0\uFE0F'} ${t}</span>`).join('')}</td>
     <td style="padding:10px 12px;"><span style="font-size:11px;font-weight:700;color:${urgencyColor[s.urgency]||'#94a3b8'};">${s.urgency}</span></td>
     <td style="padding:10px 12px;"><span style="background:rgba(139,92,246,.2);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;">${s.opportunityScore}</span></td>
-    <td style="padding:10px 12px;font-size:11px;color:var(--text3);">${sanitize(s.sourcePublication)}</td>
-    <td style="padding:10px 12px;font-size:11px;color:var(--text3);max-width:200px;line-height:1.4;">${sanitize(s.distressSummary.substring(0,90))}${s.distressSummary.length>90?'...':''}</td>
+    <td style="padding:10px 12px;font-size:11px;color:var(--text3);">${cdsiaEsc(s.sourcePublication)}</td>
+    <td style="padding:10px 12px;font-size:11px;color:var(--text3);max-width:200px;line-height:1.4;">${cdsiaEsc(s.distressSummary.substring(0,90))}${s.distressSummary.length>90?'...':''}</td>
     <td style="padding:10px 12px;">
       <button onclick="cdsiaInjectToCorex('${s.id}')" style="background:${s.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${s.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:5px;padding:4px 9px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;" ${s.pushedToCRM?'disabled':''}>
         ${s.pushedToCRM?'\u2713 In COREX':'\u2192 COREX'}
