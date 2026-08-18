@@ -2975,22 +2975,17 @@ function corexToggleConfig(){
 </div>
 </div>
 <!-- COREX Sub-nav tabs -->
-<div id="corex-tabs" style="display:flex;align-items:center;gap:4px;background:rgba(28,22,64,0.8);border:1px solid rgba(167,139,250,0.18);border-radius:12px;padding:6px;margin-bottom:20px;flex-wrap:wrap;">
+<div id="corex-tabs" style="display:flex;align-items:center;gap:6px;background:rgba(28,22,64,0.8);border:1px solid rgba(167,139,250,0.18);border-radius:12px;padding:6px;margin-bottom:20px;flex-wrap:wrap;">
 <button class="corex-tab active" data-module="command" onclick="corexShowModule('command')">&#x26A1; Intelligence Hub</button>
 <button class="corex-tab" data-module="cdsia" onclick="corexShowModule('cdsia')">&#x1F6A8; CDSIA Signals</button>
 <button class="corex-tab" data-module="opportunities" onclick="corexShowModule('opportunities')">&#x1F3AF; Opportunity Intel</button>
 <button class="corex-tab" data-module="digest" onclick="corexShowModule('digest')">&#x1F4CA; Intelligence Digest</button>
-<div style="margin-left:auto;position:relative;">
-  <button id="corex-config-btn" onclick="corexToggleConfig()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(167,139,250,0.15);color:#7c6fa0;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;">&#x2699;&#xFE0F; Config &#x25BC;</button>
-  <div id="corex-config-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:#1a1035;border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:6px;min-width:180px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
-    <button onclick="corexShowModule('routing');corexToggleConfig()" style="width:100%;text-align:left;background:none;border:none;color:#c4b5fd;font-size:12px;padding:8px 12px;cursor:pointer;border-radius:6px;font-family:inherit;">&#x1F465; Agent Routing</button>
-    <button onclick="corexShowModule('outreach');corexToggleConfig()" style="width:100%;text-align:left;background:none;border:none;color:#c4b5fd;font-size:12px;padding:8px 12px;cursor:pointer;border-radius:6px;font-family:inherit;">&#x1F4E4; Outreach Automation</button>
-    <button onclick="corexShowModule('crmsync');corexToggleConfig()" style="width:100%;text-align:left;background:none;border:none;color:#c4b5fd;font-size:12px;padding:8px 12px;cursor:pointer;border-radius:6px;font-family:inherit;">&#x1F504; CRM Sync Layer</button>
-    <button onclick="corexShowModule('scanner');corexToggleConfig()" style="width:100%;text-align:left;background:none;border:none;color:#c4b5fd;font-size:12px;padding:8px 12px;cursor:pointer;border-radius:6px;font-family:inherit;">&#x1F4E1; Procurement Scanner</button>
-    <button onclick="corexShowModule('awards');corexToggleConfig()" style="width:100%;text-align:left;background:none;border:none;color:#c4b5fd;font-size:12px;padding:8px 12px;cursor:pointer;border-radius:6px;font-family:inherit;">&#x1F3C6; Award Monitoring</button>
-    <button onclick="corexShowModule('trends');corexToggleConfig()" style="width:100%;text-align:left;background:none;border:none;color:#c4b5fd;font-size:12px;padding:8px 12px;cursor:pointer;border-radius:6px;font-family:inherit;">&#x1F4C8; Market Trends</button>
-  </div>
-</div>
+<button class="corex-tab" data-module="routing" onclick="corexShowModule('routing')" style="margin-left:auto;">&#x1F465; Agent Routing</button>
+<button class="corex-tab" data-module="outreach" onclick="corexShowModule('outreach')">&#x1F4E4; Outreach</button>
+<button class="corex-tab" data-module="crmsync" onclick="corexShowModule('crmsync')">&#x1F504; CRM Sync</button>
+<button class="corex-tab" data-module="scanner" onclick="corexShowModule('scanner')">&#x1F4E1; Scanner</button>
+<button class="corex-tab" data-module="awards" onclick="corexShowModule('awards')">&#x1F3C6; Awards</button>
+<button class="corex-tab" data-module="trends" onclick="corexShowModule('trends')">&#x1F4C8; Trends</button>
 </div>
 <!-- COREX Stats Row -->
 <div id="corex-stats-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;"></div>
