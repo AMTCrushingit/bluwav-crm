@@ -2512,79 +2512,104 @@ const CDSIA_SEED_SIGNALS = [
 let cdsiaSignals = [];
 
 function cdsiaInit(){
-  // Load from localStorage or use seed data
+  // Load from localStorage, always ensure all seed signals present
   const stored = localStorage.getItem('cdsia_signals');
-  if(stored){try{cdsiaSignals=JSON.parse(stored);}catch(e){cdsiaSignals=[...CDSIA_SEED_SIGNALS];}}
-  else{cdsiaSignals=[...CDSIA_SEED_SIGNALS];localStorage.setItem('cdsia_signals',JSON.stringify(cdsiaSignals));}
+  if(stored){
+    try{
+      const parsed=JSON.parse(stored);
+      const storedIds=new Set(parsed.map(s=>s.id));
+      const missing=CDSIA_SEED_SIGNALS.filter(s=>!storedIds.has(s.id));
+      cdsiaSignals=[...missing,...parsed];
+    }catch(e){ cdsiaSignals=[...CDSIA_SEED_SIGNALS]; }
+  } else { cdsiaSignals=[...CDSIA_SEED_SIGNALS]; }
+  
 }
 
-function corexRenderCDSIA(){
+function corexRenderCDSIA(filterType, filterVal){
   cdsiaInit();
-  const urgencyFilter=document.getElementById('cdsiaUrgencyFilter')?.value||'';
-  const typeFilter=document.getElementById('cdsiaTypeFilter')?.value||'';
-
-  let filtered=[...cdsiaSignals];
-  if(urgencyFilter)filtered=filtered.filter(s=>s.urgency===urgencyFilter);
-  if(typeFilter)filtered=filtered.filter(s=>s.distressType.includes(typeFilter));
+  const urgencyFilter = document.getElementById('cdsiaUrgencyFilter')?.value||'';
+  const typeFilter = document.getElementById('cdsiaTypeFilter')?.value||'';
+  let filtered = [...cdsiaSignals];
+  if(urgencyFilter) filtered = filtered.filter(s=>s.urgency===urgencyFilter);
+  if(typeFilter) filtered = filtered.filter(s=>s.distressType.includes(typeFilter));
+  if(filterType==='urgency'&&filterVal) filtered = filtered.filter(s=>s.urgency===filterVal);
+  if(filterType==='distress'&&filterVal) filtered = filtered.filter(s=>s.distressType.includes(filterVal));
   filtered.sort((a,b)=>b.opportunityScore-a.opportunityScore);
 
-  // Stats row
-  const statsEl=document.getElementById('cdsiaStatsRow');
+  // Clickable stat cards
+  const statsEl = document.getElementById('cdsiaStatsRow');
   if(statsEl){
     const critical=cdsiaSignals.filter(s=>s.urgency==='Critical').length;
     const financial=cdsiaSignals.filter(s=>s.distressType.includes('Financial')).length;
     const operational=cdsiaSignals.filter(s=>s.distressType.includes('Operational')).length;
     const governance=cdsiaSignals.filter(s=>s.distressType.includes('Governance')).length;
-    const stats=[
-      {icon:'🚨',label:'Total Signals',val:cdsiaSignals.length,color:'#ef4444',bg:'rgba(239,68,68,.12)'},
-      {icon:'🔴',label:'Critical',val:critical,color:'#ef4444',bg:'rgba(239,68,68,.1)'},
-      {icon:'💰',label:'Financial Distress',val:financial,color:'#f97316',bg:'rgba(249,115,22,.1)'},
-      {icon:'🏛️',label:'Governance',val:governance,color:'#8b5cf6',bg:'rgba(139,92,246,.1)'},
+    const cards=[
+      {icon:'\u{1F6A8}',label:'Total Signals',val:cdsiaSignals.length,color:'#ef4444',bg:'rgba(239,68,68,.12)',ft:null,fv:null},
+      {icon:'\u{1F534}',label:'Critical',val:critical,color:'#ef4444',bg:'rgba(239,68,68,.08)',ft:'urgency',fv:'Critical'},
+      {icon:'\u{1F4B8}',label:'Financial',val:financial,color:'#f59e0b',bg:'rgba(245,158,11,.1)',ft:'distress',fv:'Financial'},
+      {icon:'\u2699\uFE0F',label:'Operational',val:operational,color:'#a78bfa',bg:'rgba(167,139,250,.1)',ft:'distress',fv:'Operational'},
+      {icon:'\u{1F3DB}\uFE0F',label:'Governance',val:governance,color:'#60a5fa',bg:'rgba(96,165,250,.1)',ft:'distress',fv:'Governance'}
     ];
-    statsEl.innerHTML=stats.map(s=>`<div class="card" style="display:flex;align-items:center;gap:12px;padding:14px 16px;">
-      <div style="width:40px;height:40px;border-radius:10px;background:${s.bg};display:flex;align-items:center;justify-content:center;font-size:18px;">${s.icon}</div>
-      <div><div style="font-size:22px;font-weight:800;color:${s.color};">${s.val}</div><div style="font-size:11px;color:var(--text3);">${s.label}</div></div>
+    statsEl.innerHTML=cards.map(d=>`<div onclick="${d.ft?`cdsiaFilterBy('${d.ft}','${d.fv}')`:''}" style="background:#1a1035;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;${d.ft?'cursor:pointer;':''}border:1px solid rgba(167,139,250,0.1);">
+      <div style="width:36px;height:36px;border-radius:9px;background:${d.bg};display:flex;align-items:center;justify-content:center;font-size:16px;">${d.icon}</div>
+      <div><div style="font-size:20px;font-weight:800;color:${d.color};">${d.val}</div><div style="font-size:10px;color:var(--text3);">${d.label}${d.ft?' \u2192':''}</div></div>
     </div>`).join('');
   }
 
-  // Source grid
+  // Source grid (render once)
   const srcEl=document.getElementById('cdsiaSourceGrid');
-  if(srcEl){
-    srcEl.innerHTML=CDSIA_SOURCES.map(s=>`<div style="background:var(--bg3);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
-      <span style="font-size:16px;">${s.flag}</span>
-      <div><div style="font-size:12px;font-weight:600;color:var(--text);">${s.name}</div>
-      <div style="font-size:10px;color:var(--text3);">${s.country}</div></div>
-      <div style="margin-left:auto;width:6px;height:6px;border-radius:50%;background:#22c55e;"></div>
+  if(srcEl&&!srcEl.dataset.rendered){
+    srcEl.innerHTML=CDSIA_SOURCES.map(s=>`<div style="background:var(--bg3);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;">
+      <span style="font-size:10px;font-weight:700;color:#a78bfa;background:rgba(139,92,246,.15);padding:1px 5px;border-radius:4px;">${s.code}</span>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text);">${s.name}</div><div style="font-size:10px;color:var(--text3);">${s.country}</div></div>
+      <span style="margin-left:auto;width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0;"></span>
     </div>`).join('');
+    srcEl.dataset.rendered='1';
   }
+
+  // Signal count
+  const countEl=document.getElementById('cdsiaSignalCount');
+  if(countEl) countEl.textContent='('+filtered.length+' of '+cdsiaSignals.length+')';
+  const resetBtn=document.getElementById('cdsiaResetBtn');
+  if(resetBtn) resetBtn.style.display=(filterType||urgencyFilter||typeFilter)?'inline-flex':'none';
 
   // Signals table
   const tbody=document.getElementById('cdsiaSignalsTbody');
-  if(!tbody)return;
-  if(!filtered.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3);">No distress signals detected</td></tr>';return;}
-
-  const urgencyColors={Critical:'background:rgba(239,68,68,.15);color:#fca5a5;',High:'background:rgba(249,115,22,.12);color:#fdba74;',Medium:'background:rgba(245,158,11,.12);color:#fcd34d;'};
-  const timeAgo=iso=>{const s=Math.floor((Date.now()-new Date(iso))/1000);if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';};
-
+  if(!tbody) return;
+  if(filtered.length===0){
+    tbody.innerHTML='<tr><td colspan="8" style="padding:32px;text-align:center;color:var(--text3);font-size:13px;">No signals match the current filter.</td></tr>';
+    return;
+  }
+  const urgencyColor={Critical:'#ef4444',High:'#f97316',Medium:'#f59e0b',Low:'#22c55e'};
   tbody.innerHTML=filtered.map(s=>`<tr style="border-bottom:1px solid var(--border);">
-    <td style="padding:10px 12px;">
-      <div style="font-weight:600;color:var(--text);font-size:13px;">${s.organizationName}</div>
-      <div style="font-size:11px;color:var(--text3);">${s.sector} · ${timeAgo(s.dateDetected)}</div>
-    </td>
-    <td style="padding:10px 12px;font-size:12px;color:var(--text2);">${s.country}</td>
-    <td style="padding:10px 12px;">${s.distressType.map(t=>`<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(139,92,246,.15);color:#c4b5fd;margin:1px;">${CDSIA_DISTRESS_TYPES[t]?.icon||'⚠️'} ${t}</span>`).join('')}</td>
-    <td style="padding:10px 12px;"><span style="padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;${urgencyColors[s.urgency]||''}">${s.urgency}</span></td>
+    <td style="padding:10px 12px;font-weight:600;color:var(--text);font-size:12px;max-width:160px;">${sanitize(s.organizationName)}</td>
+    <td style="padding:10px 12px;font-size:12px;color:var(--text2);white-space:nowrap;">${sanitize(s.country)}</td>
+    <td style="padding:10px 12px;">${s.distressType.map(t=>`<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(139,92,246,.15);color:#c4b5fd;margin:1px;">${CDSIA_DISTRESS_TYPES[t]?.icon||'\u26A0\uFE0F'} ${t}</span>`).join('')}</td>
+    <td style="padding:10px 12px;"><span style="font-size:11px;font-weight:700;color:${urgencyColor[s.urgency]||'#94a3b8'};">${s.urgency}</span></td>
     <td style="padding:10px 12px;"><span style="background:rgba(139,92,246,.2);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;">${s.opportunityScore}</span></td>
-    <td style="padding:10px 12px;font-size:11px;color:var(--text3);">${s.sourcePublication}</td>
-    <td style="padding:10px 12px;">${s.recommendedServices.map(r=>`<span style="background:rgba(0,200,224,.1);color:var(--cyan);font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;margin:1px;display:inline-block;">${r}</span>`).join('')}</td>
+    <td style="padding:10px 12px;font-size:11px;color:var(--text3);">${sanitize(s.sourcePublication)}</td>
+    <td style="padding:10px 12px;font-size:11px;color:var(--text3);max-width:200px;line-height:1.4;">${sanitize(s.distressSummary.substring(0,90))}${s.distressSummary.length>90?'...':''}</td>
     <td style="padding:10px 12px;">
-      <div style="display:flex;gap:4px;">
-        <button onclick="cdsiaInjectToCorex('${s.id}')" style="background:${s.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${s.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;" ${s.pushedToCRM?'disabled':''}>
-          ${s.pushedToCRM?'✓ In COREX':'→ COREX'}
-        </button>
-      </div>
+      <button onclick="cdsiaInjectToCorex('${s.id}')" style="background:${s.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${s.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:5px;padding:4px 9px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;" ${s.pushedToCRM?'disabled':''}>
+        ${s.pushedToCRM?'\u2713 In COREX':'\u2192 COREX'}
+      </button>
     </td>
   </tr>`).join('');
+}
+
+function cdsiaFilterBy(type,val){ corexRenderCDSIA(type,val); }
+function cdsiaResetFilter(){
+  if(document.getElementById('cdsiaUrgencyFilter')) document.getElementById('cdsiaUrgencyFilter').value='';
+  if(document.getElementById('cdsiaTypeFilter')) document.getElementById('cdsiaTypeFilter').value='';
+  corexRenderCDSIA();
+}
+function cdsiaToggleSources(){
+  const panel=document.getElementById('cdsiaSourcePanel');
+  const icon=document.getElementById('cdsiaSourceToggleIcon');
+  if(!panel) return;
+  const open=panel.style.display==='none';
+  panel.style.display=open?'block':'none';
+  if(icon) icon.textContent=open?'\u25BC':'\u25B6';
 }
 
 function cdsiaInjectToCorex(id){
@@ -3091,134 +3116,127 @@ corexGenerateDigest=function(){
 <div class="card-body"><div id="corex-dti-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div></div>
 </div>
 </div>
-
 <!-- MODULE: CDSIA SIGNALS -->
 <div class="corex-module" id="corex-module-cdsia" style="display:none;">
-
-  <!-- Top bar: filters + scan button -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-      <select id="cdsiaUrgencyFilter" onchange="corexRenderCDSIA()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
-        <option value="">All Urgency</option>
-        <option value="Critical">&#x1F6A8; Critical</option>
-        <option value="High">&#x1F534; High</option>
-        <option value="Medium">&#x1F7E1; Medium</option>
-        <option value="Low">&#x1F7E2; Low</option>
-      </select>
-      <select id="cdsiaTypeFilter" onchange="corexRenderCDSIA()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
-        <option value="">All Distress Types</option>
-        <option value="Financial">&#x1F4B8; Financial</option>
-        <option value="Operational">&#x2699;&#xFE0F; Operational</option>
-        <option value="Governance">&#x1F3DB;&#xFE0F; Governance</option>
-        <option value="Digital">&#x1F4BB; Digital</option>
-        <option value="Reputation">&#x1F4E2; Reputation</option>
-      </select>
-    </div>
-    <button onclick="cdsiaRunScan()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">&#x1F4E1; Run CDSIA Scan</button>
-  </div>
-
-  <!-- Stats row -->
-  <div id="cdsiaStatsRow" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;"></div>
-
-  <!-- Source registry -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="card-header"><div class="card-title">&#x1F4F0; Caribbean News Sources Being Monitored</div></div>
-    <div class="card-body">
-      <div id="cdsiaSourceGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div>
-    </div>
-  </div>
-
-  <!-- Signals table -->
-  <div class="card">
-    <div class="card-header">
-      <div><div class="card-title">&#x1F6A8; Active Distress Signals</div><div class="card-sub">Ranked by COREX Fit Index — click &#x2192; COREX to qualify</div></div>
-    </div>
-    <div style="overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;">
-        <thead><tr style="background:var(--bg3);">
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Organisation</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Distress Type</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Urgency</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Publication</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Summary</th>
-          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Action</th>
-        </tr></thead>
-        <tbody id="cdsiaSignalsTbody"></tbody>
-      </table>
-    </div>
-  </div>
-
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+<select id="cdsiaUrgencyFilter" onchange="corexRenderCDSIA()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+<option value="">All Urgency</option>
+<option value="Critical">🚨 Critical</option>
+<option value="High">🔴 High</option>
+<option value="Medium">🟡 Medium</option>
+<option value="Low">🟢 Low</option>
+</select>
+<select id="cdsiaTypeFilter" onchange="corexRenderCDSIA()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+<option value="">All Distress Types</option>
+<option value="Financial">💸 Financial</option>
+<option value="Operational">⚙️ Operational</option>
+<option value="Governance">🏛️ Governance</option>
+<option value="Digital">💻 Digital</option>
+<option value="Reputation">📢 Reputation</option>
+</select>
+</div>
+<button onclick="cdsiaRunScan()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📡 Run CDSIA Scan</button>
+</div>
+<div id="cdsiaStatsRow" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px;"></div>
+<div style="margin-bottom:14px;">
+<button onclick="cdsiaToggleSources()" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">
+<span id="cdsiaSourceToggleIcon">▶</span> 18 Caribbean news sources being monitored
+    </button>
+<div id="cdsiaSourcePanel" style="display:none;margin-top:10px;">
+<div id="cdsiaSourceGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div>
+<div class="card-title">🚨 Active Distress Signals <span id="cdsiaSignalCount" style="font-size:11px;color:var(--text3);font-weight:400;"></span></div>
+<div class="card-sub">Ranked by COREX Fit Index — click → COREX to qualify into pipeline</div>
+</div>
+<button id="cdsiaResetBtn" onclick="cdsiaResetFilter()" style="display:none;background:var(--bg3);border:1px solid var(--border2);color:var(--text3);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;">✕ Clear filter</button>
+</div>
+<div style="max-height:440px;overflow-y:auto;">
+<table style="width:100%;border-collapse:collapse;">
+<thead><tr style="background:var(--bg3);position:sticky;top:0;z-index:1;">
+<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Organisation</th>
+<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
+<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Distress Type</th>
+<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Urgency</th>
+<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
+<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Publication</th>
+<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Summary</th>
+<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Action</th>
+</tr></thead>
+<tbody id="cdsiaSignalsTbody"></tbody>
+</table>
+</div>
+</div>
 </div><!-- end corex-module-cdsia -->
-
 </div><!-- end corex-content -->
 </div><!-- end view-corex -->
-
 <!-- COREX QUALIFY & PUSH MODAL -->
 <div id="corex-qualify-modal" style="display:none;position:fixed;inset:0;z-index:99990;background:rgba(13,10,26,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;font-family:'Inter',system-ui,sans-serif;">
-  <div style="background:linear-gradient(145deg,#1a1035,#120d24);border:1px solid rgba(167,139,250,0.25);border-radius:20px;padding:32px 36px;width:560px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:0 0 60px rgba(139,92,246,0.2);">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
-      <div>
-        <div style="font-size:18px;font-weight:800;color:#f5f3ff;margin-bottom:4px;">&#x2705; Qualify &amp; Push to CRM</div>
-        <div style="font-size:12px;color:#7c6fa0;">Review and confirm before this lead enters the CRM pipeline</div>
-      </div>
-      <button onclick="corexCloseQualifyModal()" style="background:none;border:none;color:#4c3494;font-size:20px;cursor:pointer;line-height:1;padding:0 4px;">&#x2715;</button>
-    </div>
-    <div style="background:rgba(139,92,246,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:12px;padding:14px 16px;margin-bottom:20px;">
-      <div style="font-size:13px;font-weight:700;color:#c4b5fd;" id="cqm-lead-name">—</div>
-      <div style="font-size:11px;color:#7c6fa0;margin-top:2px;" id="cqm-org">—</div>
-      <div style="margin-top:8px;display:flex;align-items:center;gap:10px;">
-        <span style="background:rgba(139,92,246,0.2);color:#c4b5fd;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:700;">COREX Fit Index: <span id="cqm-score">—</span></span>
-        <span style="font-size:11px;color:#7c6fa0;" id="cqm-source-label">—</span>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-      <div>
-        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Contact / Org Name *</label>
-        <input id="cqm-contact-name" type="text" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" />
-      </div>
-      <div>
-        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Company / Organisation</label>
-        <input id="cqm-company" type="text" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" />
-      </div>
-      <div>
-        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Contact Email</label>
-        <input id="cqm-contact-email" type="email" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" />
-      </div>
-      <div>
-        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Country / Territory</label>
-        <input id="cqm-country" type="text" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" />
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:120px 1fr;gap:12px;margin-bottom:12px;align-items:end;">
-      <div>
-        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Source Code</label>
-        <input id="cqm-source-code" type="text" maxlength="4" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#c4b5fd;font-size:14px;font-weight:700;font-family:inherit;text-transform:uppercase;letter-spacing:.1em;" />
-      </div>
-      <div style="font-size:11px;color:#4c3494;padding-bottom:10px;">IH = Intelligence Hub &nbsp;&#183;&nbsp; CD = CDSIA &nbsp;&#183;&nbsp; RF = RFP &nbsp;&#183;&nbsp; DO = Donor &nbsp;&#183;&nbsp; FD = Founder &nbsp;&#183;&nbsp; JB = Job Board</div>
-    </div>
-    <div style="margin-bottom:12px;">
-      <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Assigned Agent</label>
-      <select id="cqm-agent" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;">
-        <option>Andrea M. Tanguay</option>
-        <option>Devon</option>
-        <option>Aaliya</option>
-        <option>Marcus</option>
-        <option>Simone</option>
-      </select>
-    </div>
-    <div style="margin-bottom:20px;">
-      <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">CRM Notes <span style="color:#4c3494;font-weight:400;text-transform:none;">(pre-filled from COREX intelligence — edit as needed)</span></label>
-      <textarea id="cqm-notes" rows="6" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#c4b5fd;font-size:12px;font-family:inherit;resize:vertical;line-height:1.6;"></textarea>
-    </div>
-    <input type="hidden" id="cqm-lead-id" />
-    <div style="display:flex;gap:10px;justify-content:flex-end;">
-      <button onclick="corexCloseQualifyModal()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(167,139,250,0.15);color:#7c6fa0;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Cancel</button>
-      <button id="cqm-confirm-btn" onclick="corexConfirmQualify()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.4);">&#x2705; Confirm &amp; Push to CRM</button>
-    </div>
-  </div>
+<div style="background:linear-gradient(145deg,#1a1035,#120d24);border:1px solid rgba(167,139,250,0.25);border-radius:20px;padding:32px 36px;width:560px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:0 0 60px rgba(139,92,246,0.2);">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
+<div>
+<div style="font-size:18px;font-weight:800;color:#f5f3ff;margin-bottom:4px;">✅ Qualify &amp; Push to CRM</div>
+<div style="font-size:12px;color:#7c6fa0;">Review and confirm before this lead enters the CRM pipeline</div>
 </div>
-
+<button onclick="corexCloseQualifyModal()" style="background:none;border:none;color:#4c3494;font-size:20px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
+</div>
+<div style="background:rgba(139,92,246,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:12px;padding:14px 16px;margin-bottom:20px;">
+<div id="cqm-lead-name" style="font-size:13px;font-weight:700;color:#c4b5fd;">—</div>
+<div id="cqm-org" style="font-size:11px;color:#7c6fa0;margin-top:2px;">—</div>
+<div style="margin-top:8px;display:flex;align-items:center;gap:10px;">
+<span style="background:rgba(139,92,246,0.2);color:#c4b5fd;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:700;">COREX Fit Index: <span id="cqm-score">—</span></span>
+<span id="cqm-source-label" style="font-size:11px;color:#7c6fa0;">—</span>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+<div>
+<label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Contact / Org Name *</label>
+<input id="cqm-contact-name" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" type="text"/>
+</div>
+<div>
+<label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Company / Organisation</label>
+<input id="cqm-company" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" type="text"/>
+</div>
+<div>
+<label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Contact Email</label>
+<input id="cqm-contact-email" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" type="email"/>
+</div>
+<div>
+<label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Country / Territory</label>
+<input id="cqm-country" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" type="text"/>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:120px 1fr;gap:12px;margin-bottom:12px;align-items:end;">
+<div>
+<label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Source Code</label>
+<input id="cqm-source-code" maxlength="4" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#c4b5fd;font-size:14px;font-weight:700;font-family:inherit;text-transform:uppercase;letter-spacing:.1em;" type="text"/>
+</div>
+<div style="font-size:11px;color:#4c3494;padding-bottom:10px;">IH = Intelligence Hub  ·  CD = CDSIA  ·  RF = RFP  ·  DO = Donor  ·  FD = Founder  ·  JB = Job Board</div>
+</div>
+<div style="margin-bottom:12px;">
+<label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Assigned Agent</label>
+<select id="cqm-agent" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;">
+<option>Andrea M. Tanguay</option>
+<option>Devon</option>
+<option>Aaliya</option>
+<option>Marcus</option>
+<option>Simone</option>
+</select>
+</div>
+<div style="margin-bottom:20px;">
+<label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">CRM Notes <span style="color:#4c3494;font-weight:400;text-transform:none;">(pre-filled from COREX intelligence — edit as needed)</span></label>
+<textarea id="cqm-notes" rows="6" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#c4b5fd;font-size:12px;font-family:inherit;resize:vertical;line-height:1.6;"></textarea>
+</div>
+<input id="cqm-lead-id" type="hidden"/>
+<div style="display:flex;gap:10px;justify-content:flex-end;">
+<button onclick="corexCloseQualifyModal()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(167,139,250,0.15);color:#7c6fa0;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Cancel</button>
+<button id="cqm-confirm-btn" onclick="corexConfirmQualify()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.4);">✅ Confirm &amp; Push to CRM</button>
+</div>
+</div>
+</div>
 </body>
 </html>
