@@ -964,82 +964,82 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <!-- ══ SETTINGS VIEW ══ -->
 <div class="view" id="view-settings">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-  <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Workspace</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Workspace Settings</h1></div>
+<div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Workspace</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Workspace Settings</h1></div>
 </div>
 <div style="display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start;">
-  <!-- Settings nav -->
-  <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:8px;">
-    <div class="settings-nav-item active" onclick="switchSettingsTab('profile',this)" id="stab-profile">👤 Profile</div>
-    <div class="settings-nav-item" onclick="switchSettingsTab('team',this)" id="stab-team">👥 Team</div>
-    <div class="settings-nav-item" onclick="switchSettingsTab('security',this)" id="stab-security">🔒 Security</div>
-    <div class="settings-nav-item" onclick="switchSettingsTab('audit',this)" id="stab-audit">📋 Access Log</div>
-  </div>
-  <!-- Settings content -->
-  <div>
-    <!-- Profile tab -->
-    <div id="stab-content-profile">
-      <div class="panel" style="margin-bottom:16px;">
-        <div class="panel-hd"><div class="panel-title">Personal Information</div></div>
-        <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
-          <div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
-          <div class="fg"><label class="fl">Email Address</label><input class="fi" id="settingsEmail" type="email" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
-          <div class="fg"><label class="fl">Role / Title</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
-          <div class="fg"><label class="fl">Phone</label><input class="fi" id="settingsPhone" placeholder="+1 (xxx) xxx-xxxx" type="tel"/></div>
-          <button class="btn btn-primary btn-sm" id="settingsSaveBtn" onclick="saveProfileSettings()" style="align-self:flex-start;">Save Changes</button>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-hd"><div class="panel-title">Change Password</div></div>
-        <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
-          <div class="fg"><label class="fl">New Password</label><input class="fi" id="settingsNewPw" type="password" placeholder="Min 8 characters"/></div>
-          <div class="fg"><label class="fl">Confirm Password</label><input class="fi" id="settingsConfirmPw" type="password" placeholder="Repeat new password"/></div>
-          <button class="btn btn-ghost btn-sm" onclick="changePassword()" style="align-self:flex-start;">Update Password</button>
-        </div>
-      </div>
-    </div>
-    <!-- Team tab -->
-    <div id="stab-content-team" style="display:none;">
-      <div class="panel">
-        <div class="panel-hd"><div class="panel-title">Team Members</div><div class="panel-sub">Manage your team and their access levels</div></div>
-        <div class="panel-body">
-          <div id="teamMembersList"><div style="text-align:center;padding:24px;color:var(--text3);font-size:0.82rem;">Loading team...</div></div>
-        </div>
-      </div>
-    </div>
-    <!-- Security tab -->
-    <div id="stab-content-security" style="display:none;">
-      <div class="panel">
-        <div class="panel-hd"><div class="panel-title">Security Settings</div></div>
-        <div class="panel-body" style="display:flex;flex-direction:column;gap:16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--navy-light);border-radius:var(--radius-md);">
-            <div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">Two-Factor Authentication</div><div style="font-size:0.72rem;color:var(--text3);">Add an extra layer of security to your account</div></div>
-            <span class="badge badge-muted">Not configured</span>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--navy-light);border-radius:var(--radius-md);">
-            <div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">Session Timeout</div><div style="font-size:0.72rem;color:var(--text3);">Auto-logout after 10 minutes of inactivity</div></div>
-            <span class="badge badge-green">Active</span>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--navy-light);border-radius:var(--radius-md);">
-            <div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">Login Notifications</div><div style="font-size:0.72rem;color:var(--text3);">Email alert on new login</div></div>
-            <span class="badge badge-muted">Coming soon</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Audit/Access Log tab -->
-    <div id="stab-content-audit" style="display:none;">
-      <div class="panel">
-        <div class="panel-hd"><div class="panel-title">📋 Access & Activity Log</div><div class="panel-sub">Who accessed the system and when</div></div>
-        <div style="overflow-x:auto;">
-          <table><thead><tr>
-            <th>User</th><th>Action</th><th>Details</th><th>Time</th>
-          </tr></thead><tbody id="auditLogBody">
-            <tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text3);">Loading audit log...</td></tr>
-          </tbody></table>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- Settings nav -->
+<div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-lg);padding:8px;">
+<div class="settings-nav-item active" id="stab-profile" onclick="switchSettingsTab('profile',this)">👤 Profile</div>
+<div class="settings-nav-item" id="stab-team" onclick="switchSettingsTab('team',this)">👥 Team</div>
+<div class="settings-nav-item" id="stab-security" onclick="switchSettingsTab('security',this)">🔒 Security</div>
+<div class="settings-nav-item" id="stab-audit" onclick="switchSettingsTab('audit',this)">📋 Access Log</div>
+</div>
+<!-- Settings content -->
+<div>
+<!-- Profile tab -->
+<div id="stab-content-profile">
+<div class="panel" style="margin-bottom:16px;">
+<div class="panel-hd"><div class="panel-title">Personal Information</div></div>
+<div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
+<div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
+<div class="fg"><label class="fl">Email Address</label><input class="fi" id="settingsEmail" readonly="" style="opacity:0.6;cursor:not-allowed;" type="email"/></div>
+<div class="fg"><label class="fl">Role / Title</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
+<div class="fg"><label class="fl">Phone</label><input class="fi" id="settingsPhone" placeholder="+1 (xxx) xxx-xxxx" type="tel"/></div>
+<button class="btn btn-primary btn-sm" id="settingsSaveBtn" onclick="saveProfileSettings()" style="align-self:flex-start;">Save Changes</button>
+</div>
+</div>
+<div class="panel">
+<div class="panel-hd"><div class="panel-title">Change Password</div></div>
+<div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
+<div class="fg"><label class="fl">New Password</label><input class="fi" id="settingsNewPw" placeholder="Min 8 characters" type="password"/></div>
+<div class="fg"><label class="fl">Confirm Password</label><input class="fi" id="settingsConfirmPw" placeholder="Repeat new password" type="password"/></div>
+<button class="btn btn-ghost btn-sm" onclick="changePassword()" style="align-self:flex-start;">Update Password</button>
+</div>
+</div>
+</div>
+<!-- Team tab -->
+<div id="stab-content-team" style="display:none;">
+<div class="panel">
+<div class="panel-hd"><div class="panel-title">Team Members</div><div class="panel-sub">Manage your team and their access levels</div></div>
+<div class="panel-body">
+<div id="teamMembersList"><div style="text-align:center;padding:24px;color:var(--text3);font-size:0.82rem;">Loading team...</div></div>
+</div>
+</div>
+</div>
+<!-- Security tab -->
+<div id="stab-content-security" style="display:none;">
+<div class="panel">
+<div class="panel-hd"><div class="panel-title">Security Settings</div></div>
+<div class="panel-body" style="display:flex;flex-direction:column;gap:16px;">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--navy-light);border-radius:var(--radius-md);">
+<div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">Two-Factor Authentication</div><div style="font-size:0.72rem;color:var(--text3);">Add an extra layer of security to your account</div></div>
+<span class="badge badge-muted">Not configured</span>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--navy-light);border-radius:var(--radius-md);">
+<div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">Session Timeout</div><div style="font-size:0.72rem;color:var(--text3);">Auto-logout after 10 minutes of inactivity</div></div>
+<span class="badge badge-green">Active</span>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--navy-light);border-radius:var(--radius-md);">
+<div><div style="font-size:0.85rem;font-weight:600;color:var(--text);">Login Notifications</div><div style="font-size:0.72rem;color:var(--text3);">Email alert on new login</div></div>
+<span class="badge badge-muted">Coming soon</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Audit/Access Log tab -->
+<div id="stab-content-audit" style="display:none;">
+<div class="panel">
+<div class="panel-hd"><div class="panel-title">📋 Access &amp; Activity Log</div><div class="panel-sub">Who accessed the system and when</div></div>
+<div style="overflow-x:auto;">
+<table><thead><tr>
+<th>User</th><th>Action</th><th>Details</th><th>Time</th>
+</tr></thead><tbody id="auditLogBody">
+<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text3);">Loading audit log...</td></tr>
+</tbody></table>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div><!-- /settings -->
 <!-- EMAIL VIEW -->
@@ -1167,22 +1167,22 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="mc-email" placeholder="email@company.com" type="email"/></div>
 <div class="fg"><label class="fl">Phone / WhatsApp</label>
 <div style="display:flex;gap:6px;">
-  <select id="mc-phone-cc" class="fs" style="width:110px;flex-shrink:0;">
-    <option value="+1">🇨🇦 +1 CA</option>
-    <option value="+1">🇺🇸 +1 US</option>
-    <option value="+1868">🇹🇹 +1868 TT</option>
-    <option value="+1876">🇯🇲 +1876 JM</option>
-    <option value="+1246">🇧🇧 +1246 BB</option>
-    <option value="+1473">🇬🇩 +1473 GD</option>
-    <option value="+1784">🇻🇨 +1784 VC</option>
-    <option value="+1758">🇱🇨 +1758 LC</option>
-    <option value="+1767">🇩🇲 +1767 DM</option>
-    <option value="+1869">🇰🇳 +1869 KN</option>
-    <option value="+592">🇬🇾 +592 GY</option>
-    <option value="+44">🇬🇧 +44 UK</option>
-    <option value="+52">🇲🇽 +52 MX</option>
-  </select>
-  <input class="fi" id="mc-phone" placeholder="(xxx) xxx-xxxx" type="tel" style="flex:1;" oninput="formatPhoneInput(this)"/>
+<select class="fs" id="mc-phone-cc" style="width:110px;flex-shrink:0;">
+<option value="+1">🇨🇦 +1 CA</option>
+<option value="+1">🇺🇸 +1 US</option>
+<option value="+1868">🇹🇹 +1868 TT</option>
+<option value="+1876">🇯🇲 +1876 JM</option>
+<option value="+1246">🇧🇧 +1246 BB</option>
+<option value="+1473">🇬🇩 +1473 GD</option>
+<option value="+1784">🇻🇨 +1784 VC</option>
+<option value="+1758">🇱🇨 +1758 LC</option>
+<option value="+1767">🇩🇲 +1767 DM</option>
+<option value="+1869">🇰🇳 +1869 KN</option>
+<option value="+592">🇬🇾 +592 GY</option>
+<option value="+44">🇬🇧 +44 UK</option>
+<option value="+52">🇲🇽 +52 MX</option>
+</select>
+<input class="fi" id="mc-phone" oninput="formatPhoneInput(this)" placeholder="(xxx) xxx-xxxx" style="flex:1;" type="tel"/>
 </div>
 </div>
 <div class="fg"><label class="fl">Business Name</label><input class="fi" id="mc-biz" placeholder="Company name"/></div>
@@ -2288,34 +2288,24 @@ async function logActivity(){
   const note = document.getElementById('cpActivityNote').value.trim();
   if(!note){ showToast('Please enter a note',''); return; }
   const {data:{session}} = await db.auth.getSession();
-  const actObj = {
-    contact_id: _cpContactId,
-    type: type,
-    title: type + ': ' + note.substring(0,50),
-    description: note,
-    note: note,
-    user_id: session?.user?.id||null,
-    created_at: new Date().toISOString()
-  };
-  // Insert activity — use only columns that exist in the schema
+  // Insert activity — only columns confirmed in Supabase schema
   const insertObj = {
     contact_id: _cpContactId,
     type: type,
     title: type + ': ' + note.substring(0,50),
     description: note,
-    note: note,
     user_id: session?.user?.id||null,
     created_at: new Date().toISOString()
   };
-  
+
   try {
     const {data:inserted, error} = await db.from('activities').insert(insertObj).select();
     if(error){
       console.warn('Activity insert error:', error.message);
-      // Try minimal insert with just the core columns
+      // Fallback: minimal insert without optional columns
       const {data:inserted2, error:error2} = await db.from('activities').insert({
+        contact_id: _cpContactId,
         type: type,
-        note: note,
         description: note,
         user_id: session?.user?.id||null,
         created_at: new Date().toISOString()
@@ -2324,9 +2314,9 @@ async function logActivity(){
         showToast('Could not save activity: '+error2.message,'');
         return;
       }
-      _cpActivities.unshift(inserted2?.[0]||{...insertObj,id:'db_'+Date.now()});
+      _cpActivities.unshift(inserted2?.[0]||{...insertObj,id:'local_'+Date.now()});
     } else {
-      _cpActivities.unshift(inserted?.[0]||{...insertObj,id:'db_'+Date.now()});
+      _cpActivities.unshift(inserted?.[0]||{...insertObj,id:'local_'+Date.now()});
     }
   } catch(e) {
     console.warn('Activity save failed:', e.message);
@@ -5023,43 +5013,42 @@ function quickWA(id){
 </script>
 <!-- ── PAYMENT MODAL ── -->
 <div class="drawer-overlay" id="paymentModalBackdrop" onclick="closePaymentModal()"></div>
-<div id="paymentModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closePaymentModal()">
+<div id="paymentModal" onclick="if(event.target===this)closePaymentModal()" style="position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
 <div style="background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:20px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;padding:28px;">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-    <h3 id="payModalTitle" style="font-size:1.1rem;font-weight:700;color:var(--text);">Activate Plan</h3>
-    <button onclick="closePaymentModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;">✕</button>
-  </div>
-  <!-- Plan summary -->
-  <div style="background:var(--navy-light);border-radius:12px;padding:16px;margin-bottom:20px;">
-    <div style="font-size:0.85rem;font-weight:700;color:var(--text);" id="payModalPlanName">CRM Premium</div>
-    <div style="font-size:1.3rem;font-weight:800;color:var(--gold);margin:4px 0;" id="payModalPrice">$179/mo</div>
-    <div style="font-size:0.72rem;color:var(--text3);" id="payModalSub">+ $299 Onboarding & Setup · Billed monthly</div>
-  </div>
-  <!-- Price clarity -->
-  <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:10px;padding:14px;margin-bottom:20px;font-size:0.78rem;line-height:1.8;color:var(--text2);">
-    <div>Today: <strong style="color:var(--success);">$0</strong></div>
-    <div id="payModalFirstCharge">First charge after trial ends</div>
-    <div>Cancel anytime before billing starts</div>
-    <div>🔒 Secure payment via Stripe</div>
-  </div>
-  <!-- Card form -->
-  <div style="display:grid;gap:12px;margin-bottom:16px;">
-    <div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Card Number</label>
-    <input id="payCardNumber" type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNum(this)" class="fi"/></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Expiry</label>
-      <input id="payExpiry" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" class="fi"/></div>
-      <div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">CVC</label>
-      <input id="payCVC" type="text" placeholder="123" maxlength="4" class="fi"/></div>
-    </div>
-    <div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Name on Card</label>
-    <input id="payName" type="text" placeholder="Andrea M Tanguay" class="fi"/></div>
-  </div>
-  <div id="payError" style="color:var(--error);font-size:0.78rem;margin-bottom:10px;min-height:16px;"></div>
-  <button id="payBtn" onclick="processPayment()" style="width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:10px;padding:13px;font-size:0.9rem;font-weight:800;cursor:pointer;font-family:var(--font-body);">Activate Plan — No charge today</button>
-  <button onclick="closePaymentModal()" style="width:100%;background:none;border:none;color:var(--text3);font-size:0.78rem;cursor:pointer;font-family:var(--font-body);margin-top:10px;">Cancel</button>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+<h3 id="payModalTitle" style="font-size:1.1rem;font-weight:700;color:var(--text);">Activate Plan</h3>
+<button onclick="closePaymentModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+</div>
+<!-- Plan summary -->
+<div style="background:var(--navy-light);border-radius:12px;padding:16px;margin-bottom:20px;">
+<div id="payModalPlanName" style="font-size:0.85rem;font-weight:700;color:var(--text);">CRM Premium</div>
+<div id="payModalPrice" style="font-size:1.3rem;font-weight:800;color:var(--gold);margin:4px 0;">$179/mo</div>
+<div id="payModalSub" style="font-size:0.72rem;color:var(--text3);">+ $299 Onboarding &amp; Setup · Billed monthly</div>
+</div>
+<!-- Price clarity -->
+<div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:10px;padding:14px;margin-bottom:20px;font-size:0.78rem;line-height:1.8;color:var(--text2);">
+<div>Today: <strong style="color:var(--success);">$0</strong></div>
+<div id="payModalFirstCharge">First charge after trial ends</div>
+<div>Cancel anytime before billing starts</div>
+<div>🔒 Secure payment via Stripe</div>
+</div>
+<!-- Card form -->
+<div style="display:grid;gap:12px;margin-bottom:16px;">
+<div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Card Number</label>
+<input class="fi" id="payCardNumber" maxlength="19" oninput="formatCardNum(this)" placeholder="1234 5678 9012 3456" type="text"/></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+<div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Expiry</label>
+<input class="fi" id="payExpiry" maxlength="7" oninput="formatExpiry(this)" placeholder="MM / YY" type="text"/></div>
+<div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">CVC</label>
+<input class="fi" id="payCVC" maxlength="4" placeholder="123" type="text"/></div>
+</div>
+<div><label style="font-size:0.68rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px;">Name on Card</label>
+<input class="fi" id="payName" placeholder="Andrea M Tanguay" type="text"/></div>
+</div>
+<div id="payError" style="color:var(--error);font-size:0.78rem;margin-bottom:10px;min-height:16px;"></div>
+<button id="payBtn" onclick="processPayment()" style="width:100%;background:var(--gold);color:var(--navy-deep);border:none;border-radius:10px;padding:13px;font-size:0.9rem;font-weight:800;cursor:pointer;font-family:var(--font-body);">Activate Plan — No charge today</button>
+<button onclick="closePaymentModal()" style="width:100%;background:none;border:none;color:var(--text3);font-size:0.78rem;cursor:pointer;font-family:var(--font-body);margin-top:10px;">Cancel</button>
 </div>
 </div>
-
 </body>
 </html>
