@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-18 16:37 UTC -->
+<!-- BUILD: 2026-08-18 16:51 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -2300,7 +2300,7 @@ async function logActivity(){
   const activityRow = {
     contact_id: _cpContactId,
     type: type,
-    title: type + ': ' + note.substring(0, 80),
+    title: type.charAt(0).toUpperCase()+type.slice(1) + ': ' + note.substring(0, 80),
     description: note,
     created_by: userId,
     user_id: userId,
@@ -4717,11 +4717,11 @@ async function saveProfileSettings(){
 <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Log Activity</div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;">
 <select id="cpActivityType" style="background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:8px;color:var(--text);font-size:12px;padding:7px 10px;outline:none;font-family:inherit;">
-<option value="Call">Call</option>
-<option value="Email">Email</option>
-<option value="Meeting">Meeting</option>
-<option value="Note">Note</option>
-<option value="WhatsApp">WhatsApp</option>
+<option value="call">Call</option>
+<option value="email">Email</option>
+<option value="meeting">Meeting</option>
+<option value="note">Note</option>
+<option value="task">Task</option>
 </select>
 <input id="cpActivityNote" placeholder="What happened?" style="flex:1;min-width:160px;background:var(--navy-deep);border:1px solid var(--navy-border);border-radius:8px;color:var(--text);font-size:12px;padding:7px 10px;outline:none;font-family:inherit;"/>
 <button onclick="logActivity()" style="background:var(--cyan);border:none;border-radius:8px;padding:7px 14px;color:var(--navy-deep);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Log</button>
