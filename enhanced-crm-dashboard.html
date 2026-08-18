@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-18 05:28 UTC -->
+<!-- BUILD: 2026-08-18 05:31 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -646,7 +646,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="qa-grid">
 <div class="qa" onclick="openModal('addContact')"><div class="qa-icon">➕</div><div class="qa-lbl">New Contact</div></div>
 <div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">💼</div><div class="qa-lbl">New Opportunity</div></div>
-<div aria-disabled="true" aria-label="Send Email — coming soon" class="qa ni-locked" role="button" style="cursor:default;opacity:0.6;" tabindex="0">
+<div aria-disabled="true" aria-label="Send Email — not available during beta" class="qa ni-locked" role="button" style="cursor:not-allowed;opacity:0.35;filter:grayscale(0.5);" tabindex="-1" title="Email not available during beta">
 <div class="qa-icon">📧</div>
 <div class="qa-lbl">Send Email</div>
 <div class="ni-tooltip" role="tooltip" style="left:50%;transform:translateX(-50%);top:calc(100% + 8px);">
@@ -1889,7 +1889,7 @@ function loadActivityFeed(){
   const activities=[
     {icon:'🏆',cls:'s',text:'Opportunity won — <strong>E-Commerce Store</strong> $7,100',time:'2h ago'},
     {icon:'📧',cls:'c',text:'Email sent to a customer',time:'4h ago'},
-    {icon:'💼',cls:'g',text:'New deal — <strong>Annual Retainer</strong> $24,000',time:'Yesterday'},
+    {icon:'💼',cls:'g',text:'New opportunity — <strong>Annual Retainer</strong> $24,000',time:'Yesterday'},
     {icon:'👤',cls:'o',text:'<strong>3 contacts</strong> added this week',time:'2d ago'},
     {icon:'✅',cls:'c',text:'Task completed — <strong>Send proposal</strong>',time:'2d ago'},
     {icon:'⚡',cls:'g',text:'Automation — <strong>Welcome email</strong> sent ×2',time:'3d ago'},
@@ -2091,7 +2091,7 @@ function globalSearchFn(q){
   if(!fc.length&&!fd.length){
     results.innerHTML=`<div style="padding:16px 14px;font-size:0.78rem;color:var(--text3);text-align:center;">
       <div style="font-size:20px;margin-bottom:6px;">🔍</div>
-      No contacts or deals found for "<strong style="color:var(--text2);">${q}</strong>"
+      No contacts or opportunities found for "<strong style="color:var(--text2);">${q}</strong>"
       <div style="margin-top:10px;">
         <button onclick="openModal('addContact');document.getElementById('mc-first').value='${q.split(' ')[0]}';document.getElementById('searchResults').style.display='none';" 
           style="background:var(--cyan);color:var(--navy-deep);border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;">
@@ -3741,7 +3741,7 @@ function renderOpportunitiesList(){
         <button class="btn btn-danger btn-sm" onclick="deleteDeal('${d.id}')" title="Delete">&#x1F5D1;</button>
       </div></td>
     </tr>`;
-  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3);">No deals found</td></tr>';
+  }).join('') || '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3);">No opportunities found</td></tr>';
   const countEl = document.getElementById('dealsListCount');
   if(countEl) countEl.textContent = dealsListFiltered.length + ' deal' + (dealsListFiltered.length!==1?'s':'');
 }
@@ -4557,8 +4557,8 @@ function startRealtime(){
           var md=document.getElementById('metricOpportunities'); if(md) md.textContent=openD.length;
           var nd=document.getElementById('navOpportunitiesBadge'); if(nd) nd.textContent=allOpportunities.length;
           if(newRow.agent_id!==currentUser?.id){
-            showToast('New deal: '+(newRow.deal_name||newRow.title||'Untitled'),'success');
-            createNotif('&#x1F4BC;','var(--gold)','New deal: '+(newRow.deal_name||newRow.title||'Untitled'),'deal_rt');
+            showToast('New opportunity: '+(newRow.deal_name||newRow.title||'Untitled'),'success');
+            createNotif('&#x1F4BC;','var(--gold)','New opportunity: '+(newRow.deal_name||newRow.title||'Untitled'),'deal_rt');
           }
         }
       }
