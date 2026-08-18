@@ -2878,14 +2878,16 @@ function initSettingsView(){
 async function logAudit(action, details=''){
   if(!currentUser) return;
   // Fire-and-forget — never throws, never blocks UI, never logs to console
-  db.from('audit_logs').insert({
-    user_id: currentUser.id,
-    action: action,
-    entity_type: 'session',
-    entity_id: currentUser.id,
-    after: {details, url: window.location.pathname, timestamp: new Date().toISOString()},
-    created_at: new Date().toISOString()
-  }).then(()=>{}).catch(()=>{});
+  try{
+    await db.from('audit_logs').insert({
+      user_id: currentUser.id,
+      action: action,
+      entity_type: 'session',
+      entity_id: currentUser.id,
+      after: {details, url: window.location.pathname, timestamp: new Date().toISOString()},
+      created_at: new Date().toISOString()
+    });
+  }catch(e){ /* silent — table may not exist, never block UI */ }
 }
 
 // Log page/view access
