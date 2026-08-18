@@ -1946,7 +1946,7 @@ function corexRenderLeads(){
     <td style="padding:10px 12px;">
       <div style="display:flex;gap:4px;">
         <button onclick="event.stopPropagation();corexPushCRM('${l.id}')" style="background:${l.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${l.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:5px;padding:3px 7px;font-size:10px;font-weight:700;cursor:pointer;" ${l.pushedToCRM?'disabled':''}>
-          ${l.pushedToCRM?'✓ Synced':'📤 Sync'}
+          ${l.pushedToCRM?'✓ In CRM':'✅ Qualify & Push'}
         </button>
       </div>
     </td>
@@ -2148,89 +2148,101 @@ function corexRenderSyncLog(){
   </div>`).join('');
 }
 
-// ---- Push to CRM ----
-async function corexPushCRM(id){
-  const lead=corexLeads.find(l=>l.id===id);
-  if(!lead||lead.pushedToCRM)return;
+// ---- Qualify & Push to CRM (deliberate, human-triggered) ----
+function corexPushCRM(id){
+  const lead = corexLeads.find(l=>l.id===id);
+  if(!lead || lead.pushedToCRM) return;
+  corexOpenQualifyModal(lead);
+}
 
-  // Get session for user_id
-  let userId=null;
-  try{ const {data:{session}}=await db.auth.getSession(); userId=session?.user?.id||null; }catch(e){}
+function corexOpenQualifyModal(lead){
+  const srcMap = {rfp:'RF',donor:'DO',jobboard:'JB',founder:'FD',directory:'DI',CDSIA:'CD'};
+  const srcCode = srcMap[lead.sourceType] || 'IH';
+  const srcLabel = lead.sourceType==='CDSIA' ? 'CDSIA Distress Signal' : 'COREX Intelligence Hub';
+  const notes = [
+    'COREX Fit Index: '+lead.score+'/100',
+    'Source: '+lead.source,
+    'Country: '+lead.country,
+    lead.budget ? 'Budget: '+lead.budget : '',
+    lead.deadline ? 'Deadline: '+lead.deadline : '',
+    lead.description ? '\nIntelligence Summary:\n'+lead.description : '',
+    lead.tags && lead.tags.length ? '\nTags: '+lead.tags.join(', ') : ''
+  ].filter(Boolean).join('\n');
 
-  // Insert into CRM contacts table — single clean insert
-  try{
-    // Parse budget to a numeric deal value
-    let dealVal=0;
-    if(lead.budget){
-      const m=lead.budget.match(/[\d,.]+/);
-      if(m){
-        const n=parseFloat(m[0].replace(/,/g,''));
-        if(lead.budget.includes('M'))dealVal=n*1000000;
-        else if(lead.budget.includes('K'))dealVal=n*1000;
-        else dealVal=n;
-      }
-    }
-    // Build rich notes with all COREX context
-    const corexNotes=[
-      lead.description||'',
-      '---',
-      'COREX Fit Index: '+lead.score+'/100',
-      'Tags: '+(lead.tags||[]).join(', '),
-      'Budget: '+(lead.budget||'TBD'),
-      'Deadline: '+(lead.deadline||'None'),
-      'Source: '+lead.source+' ('+lead.sourceType+')',
-      'Assigned Agent: '+(lead.assignedAgent||'Unassigned'),
-      'Discovered: '+new Date(lead.foundAt||Date.now()).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
-    ].join('\n');
+  const modal = document.getElementById('corex-qualify-modal');
+  if(!modal){ corexToast('Qualify modal not found'); return; }
+  document.getElementById('cqm-lead-name').textContent = lead.name;
+  document.getElementById('cqm-org').textContent = lead.org || '—';
+  document.getElementById('cqm-score').textContent = lead.score;
+  document.getElementById('cqm-source-code').value = srcCode;
+  document.getElementById('cqm-source-label').textContent = srcLabel;
+  document.getElementById('cqm-contact-name').value = lead.name;
+  document.getElementById('cqm-company').value = lead.org || '';
+  document.getElementById('cqm-contact-email').value = lead.contact || '';
+  document.getElementById('cqm-country').value = (lead.country||'').replace(/[^ -~]/g,'').trim();
+  document.getElementById('cqm-notes').value = notes;
+  document.getElementById('cqm-agent').value = lead.assignedAgent || 'Andrea M. Tanguay';
+  document.getElementById('cqm-lead-id').value = lead.id;
+  modal.style.display = 'flex';
+}
 
-    // Build contact object — source_code requires ALTER TABLE (run add_source_code_column.sql)
-    const contactObj={
-      full_name: lead.name,
-      email: lead.contact||null,
-      business_name: lead.org||null,
-      island: lead.country?lead.country.replace(/[^a-zA-Z\s&]/g,'').trim():null,
-      notes: corexNotes,
+function corexCloseQualifyModal(){
+  const m = document.getElementById('corex-qualify-modal');
+  if(m) m.style.display = 'none';
+}
+
+async function corexConfirmQualify(){
+  const leadId = document.getElementById('cqm-lead-id').value;
+  const lead = corexLeads.find(l=>l.id===leadId);
+  if(!lead){ corexToast('Lead not found'); return; }
+
+  const srcCode = (document.getElementById('cqm-source-code').value||'IH').trim().toUpperCase();
+  const contactName = document.getElementById('cqm-contact-name').value.trim();
+  const company = document.getElementById('cqm-company').value.trim();
+  const email = document.getElementById('cqm-contact-email').value.trim();
+  const country = document.getElementById('cqm-country').value.trim();
+  const notes = document.getElementById('cqm-notes').value.trim();
+  const agent = document.getElementById('cqm-agent').value.trim();
+
+  if(!contactName){ corexToast('Contact name is required'); return; }
+
+  const btn = document.getElementById('cqm-confirm-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Pushing to CRM...'; }
+
+  try {
+    const nameParts = contactName.split(' ');
+    const firstName = nameParts[0] || contactName;
+    const lastName = nameParts.slice(1).join(' ') || '';
+
+    const { error } = await db.from('contacts').insert([{
+      first_name: firstName,
+      last_name: lastName,
+      company: company || null,
+      email: email || null,
+      island: country || null,
+      source_code: srcCode,
       status: 'Lead',
-      user_id: userId,
-      created_at: new Date(lead.foundAt||Date.now()).toISOString()
-    };
-    // Add source_code and deal_value if columns exist
-    try{ contactObj.source_code='IH'; }catch(e){}
-    try{ if(dealVal) contactObj.deal_value=dealVal; }catch(e){}
-    // Try full insert first
-    let {data:inserted, error}=await db.from('contacts').insert(contactObj).select();
-    
-    // If source_code column missing, retry without it
-    if(error && error.message && (error.message.includes('source_code') || error.message.includes('deal_value'))){
-      console.warn('Retrying without optional columns:', error.message);
-      const {source_code, deal_value, ...coreObj} = contactObj;
-      const r2 = await db.from('contacts').insert(coreObj).select();
-      error = r2.error;
-      inserted = r2.data;
-    }
-    
-    if(error){
-      console.error('COREX→CRM insert error:', error.message, error.details, error.hint);
-      corexToast('⚠️ Sync failed: '+error.message);
-      // Show full error in activity feed for debugging
-      corexAddFeed('❌ Sync error for '+lead.name+': '+error.message);
-    } else {
-      const contactId = inserted?.[0]?.id;
-      corexToast('✅ COREX → CRM: '+lead.name+' added to Customers');
-      lead.pushedToCRM=true;
-      lead.status='Pushed';
-      lead.assignedAgent='Andrea M. Tanguay';
-      lead.crmContactId=contactId||null;
-      localStorage.setItem('corex_leads',JSON.stringify(corexLeads));
-      try{ await db.from('corex_leads').upsert({...lead}); }catch(e){}
-      corexRenderStats();
-      corexRenderLeads();
-      if(document.getElementById('corex-module-opportunities')?.style.display==='block') corexRenderPipeline();
-      corexAddFeed('📤 COREX → CRM: '+lead.name+' added as Lead — view in Customers tab');
-    }
-  }catch(e){
-    console.warn('COREX push failed:', e.message);
-    corexToast('⚠️ Sync failed: '+e.message);
+      notes: notes || null,
+      created_at: new Date().toISOString()
+    }]);
+
+    if(error) throw error;
+
+    lead.pushedToCRM = true;
+    lead.status = 'Pushed';
+    lead.qualifiedAt = new Date().toISOString();
+    lead.qualifiedBy = agent;
+    localStorage.setItem('corex_leads', JSON.stringify(corexLeads));
+
+    corexRenderLeads();
+    corexRenderStats();
+    corexAddFeed('✅ Qualified & pushed to CRM: '+lead.name+' ['+srcCode+'] by '+agent);
+    corexToast('✅ '+lead.name+' added to CRM with source ['+srcCode+']');
+    corexCloseQualifyModal();
+  } catch(err){
+    console.error('CRM push error:', err);
+    corexToast('CRM push failed: '+(err.message||'Unknown error'));
+    if(btn){ btn.disabled=false; btn.textContent='Confirm & Push to CRM'; }
   }
 }
 
@@ -3061,5 +3073,71 @@ corexGenerateDigest=function(){
 </div>
 </div><!-- end corex-content -->
 </div><!-- end view-corex -->
+
+<!-- COREX QUALIFY & PUSH MODAL -->
+<div id="corex-qualify-modal" style="display:none;position:fixed;inset:0;z-index:99990;background:rgba(13,10,26,0.85);backdrop-filter:blur(6px);align-items:center;justify-content:center;font-family:'Inter',system-ui,sans-serif;">
+  <div style="background:linear-gradient(145deg,#1a1035,#120d24);border:1px solid rgba(167,139,250,0.25);border-radius:20px;padding:32px 36px;width:560px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:0 0 60px rgba(139,92,246,0.2);">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:18px;font-weight:800;color:#f5f3ff;margin-bottom:4px;">&#x2705; Qualify &amp; Push to CRM</div>
+        <div style="font-size:12px;color:#7c6fa0;">Review and confirm before this lead enters the CRM pipeline</div>
+      </div>
+      <button onclick="corexCloseQualifyModal()" style="background:none;border:none;color:#4c3494;font-size:20px;cursor:pointer;line-height:1;padding:0 4px;">&#x2715;</button>
+    </div>
+    <div style="background:rgba(139,92,246,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:12px;padding:14px 16px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:700;color:#c4b5fd;" id="cqm-lead-name">—</div>
+      <div style="font-size:11px;color:#7c6fa0;margin-top:2px;" id="cqm-org">—</div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:10px;">
+        <span style="background:rgba(139,92,246,0.2);color:#c4b5fd;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:700;">COREX Fit Index: <span id="cqm-score">—</span></span>
+        <span style="font-size:11px;color:#7c6fa0;" id="cqm-source-label">—</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Contact / Org Name *</label>
+        <input id="cqm-contact-name" type="text" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" />
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Company / Organisation</label>
+        <input id="cqm-company" type="text" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" />
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Contact Email</label>
+        <input id="cqm-contact-email" type="email" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" />
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Country / Territory</label>
+        <input id="cqm-country" type="text" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;" />
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:12px;margin-bottom:12px;align-items:end;">
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Source Code</label>
+        <input id="cqm-source-code" type="text" maxlength="4" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#c4b5fd;font-size:14px;font-weight:700;font-family:inherit;text-transform:uppercase;letter-spacing:.1em;" />
+      </div>
+      <div style="font-size:11px;color:#4c3494;padding-bottom:10px;">IH = Intelligence Hub &nbsp;&#183;&nbsp; CD = CDSIA &nbsp;&#183;&nbsp; RF = RFP &nbsp;&#183;&nbsp; DO = Donor &nbsp;&#183;&nbsp; FD = Founder &nbsp;&#183;&nbsp; JB = Job Board</div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">Assigned Agent</label>
+      <select id="cqm-agent" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#f5f3ff;font-size:13px;font-family:inherit;">
+        <option>Andrea M. Tanguay</option>
+        <option>Devon</option>
+        <option>Aaliya</option>
+        <option>Marcus</option>
+        <option>Simone</option>
+      </select>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:10px;font-weight:700;color:#7c6fa0;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;">CRM Notes <span style="color:#4c3494;font-weight:400;text-transform:none;">(pre-filled from COREX intelligence — edit as needed)</span></label>
+      <textarea id="cqm-notes" rows="6" style="width:100%;padding:9px 12px;background:rgba(13,10,26,0.8);border:1px solid rgba(167,139,250,0.2);border-radius:8px;color:#c4b5fd;font-size:12px;font-family:inherit;resize:vertical;line-height:1.6;"></textarea>
+    </div>
+    <input type="hidden" id="cqm-lead-id" />
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="corexCloseQualifyModal()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(167,139,250,0.15);color:#7c6fa0;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Cancel</button>
+      <button id="cqm-confirm-btn" onclick="corexConfirmQualify()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(124,58,237,0.4);">&#x2705; Confirm &amp; Push to CRM</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
