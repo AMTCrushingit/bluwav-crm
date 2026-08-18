@@ -1814,6 +1814,7 @@ function corexShowModule(name){
   if(name==='routing')corexRenderRouting();
   if(name==='awards')corexRenderAwards();
   if(name==='trends')corexRenderTrends();
+  if(name==='cdsia')corexRenderCDSIA();
   if(name==='crmsync')corexRenderSyncLog();
   if(name==='digest')corexRenderDigestHistory();
 }
@@ -2634,6 +2635,25 @@ function cdsiaInjectToCorex(id){
   corexRenderCDSIA();
 }
 
+// ---- CDSIA Run Scan ----
+function cdsiaRunScan(){
+  corexToast('📡 CDSIA scanning 18 Caribbean news sources...');
+  const newSignals = [
+    {id:'CDSIA_S'+Date.now()+'_1',sourceType:'CDSIA',organizationName:'First Citizens Bank',country:'🇹🇹 Trinidad & Tobago',sector:'Banking',distressType:['Financial','Governance'],distressSummary:'First Citizens Bank reports unexpected Q3 loss amid rising non-performing loans and regulatory scrutiny.',urgency:'High',opportunityScore:86,recommendedServices:['BluWav CRM'],sourcePublication:'Trinidad Express',articleUrl:'#',dateDetected:new Date().toISOString(),pushedToCRM:false},
+    {id:'CDSIA_S'+Date.now()+'_2',sourceType:'CDSIA',organizationName:'Caribbean Airlines Cargo',country:'🇯🇲 Jamaica',sector:'Logistics',distressType:['Operational'],distressSummary:'Caribbean Airlines Cargo division faces route suspension and staff reductions following operational review.',urgency:'Medium',opportunityScore:74,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'Jamaica Gleaner',articleUrl:'#',dateDetected:new Date().toISOString(),pushedToCRM:false}
+  ];
+  // Merge without duplicates
+  const existingIds = new Set(cdsiaSignals.map(s=>s.organizationName));
+  const added = newSignals.filter(s=>!existingIds.has(s.organizationName));
+  cdsiaSignals = [...added, ...cdsiaSignals];
+  localStorage.setItem('cdsia_signals', JSON.stringify(cdsiaSignals));
+  setTimeout(()=>{
+    corexRenderCDSIA();
+    corexAddFeed('🚨 CDSIA scan complete — '+added.length+' new distress signal'+(added.length===1?'':'s')+' detected');
+    corexToast('✅ CDSIA scan complete — '+added.length+' new signal'+(added.length===1?'':'s')+' found');
+  }, 1500);
+}
+
 async function corexRunCDSIACycle(){
   corexToast('🚨 CDSIA scanning 18 Caribbean news sources...');
   const msgs=[
@@ -3071,6 +3091,67 @@ corexGenerateDigest=function(){
 <div class="card-body"><div id="corex-dti-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div></div>
 </div>
 </div>
+
+<!-- MODULE: CDSIA SIGNALS -->
+<div class="corex-module" id="corex-module-cdsia" style="display:none;">
+
+  <!-- Top bar: filters + scan button -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <select id="cdsiaUrgencyFilter" onchange="corexRenderCDSIA()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+        <option value="">All Urgency</option>
+        <option value="Critical">&#x1F6A8; Critical</option>
+        <option value="High">&#x1F534; High</option>
+        <option value="Medium">&#x1F7E1; Medium</option>
+        <option value="Low">&#x1F7E2; Low</option>
+      </select>
+      <select id="cdsiaTypeFilter" onchange="corexRenderCDSIA()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+        <option value="">All Distress Types</option>
+        <option value="Financial">&#x1F4B8; Financial</option>
+        <option value="Operational">&#x2699;&#xFE0F; Operational</option>
+        <option value="Governance">&#x1F3DB;&#xFE0F; Governance</option>
+        <option value="Digital">&#x1F4BB; Digital</option>
+        <option value="Reputation">&#x1F4E2; Reputation</option>
+      </select>
+    </div>
+    <button onclick="cdsiaRunScan()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">&#x1F4E1; Run CDSIA Scan</button>
+  </div>
+
+  <!-- Stats row -->
+  <div id="cdsiaStatsRow" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;"></div>
+
+  <!-- Source registry -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-header"><div class="card-title">&#x1F4F0; Caribbean News Sources Being Monitored</div></div>
+    <div class="card-body">
+      <div id="cdsiaSourceGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div>
+    </div>
+  </div>
+
+  <!-- Signals table -->
+  <div class="card">
+    <div class="card-header">
+      <div><div class="card-title">&#x1F6A8; Active Distress Signals</div><div class="card-sub">Ranked by COREX Fit Index — click &#x2192; COREX to qualify</div></div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:var(--bg3);">
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Organisation</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Distress Type</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Urgency</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Publication</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Summary</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Action</th>
+        </tr></thead>
+        <tbody id="cdsiaSignalsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end corex-module-cdsia -->
+
 </div><!-- end corex-content -->
 </div><!-- end view-corex -->
 
