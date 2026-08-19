@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 18:07 UTC -->
+<!-- BUILD: 2026-08-19 20:43 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -911,7 +911,41 @@ function renderTenantHealth(){
     </div>`).join('');
   }
 
-  tbody.innerHTML=allProfiles.map(p=>{
+  // Prepend invited (not yet activated) beta testers
+  const inviteRows = (()=>{
+    const invites = JSON.parse(localStorage.getItem('bw_beta_invites')||'[]');
+    const pending = invites.filter(i=>i.status==='Invited');
+    if(!pending.length) return '';
+    const daysSince = iso=>{ if(!iso) return '—'; const d=Math.floor((Date.now()-new Date(iso))/86400000); return d===0?'Today':d===1?'Yesterday':d+' days ago'; };
+    return pending.map(inv=>`<tr style="border-bottom:1px solid var(--border);background:rgba(139,92,246,0.04);">
+      <td style="padding:10px 14px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:30px;height:30px;border-radius:50%;background:rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#c4b5fd;flex-shrink:0;">${inv.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">${inv.name}</div>
+            <div style="font-size:11px;color:var(--text3);">${inv.email}</div>
+          </div>
+        </div>
+      </td>
+      <td style="padding:10px 14px;font-size:12px;color:var(--text3);">${inv.email}</td>
+      <td style="padding:10px 14px;"><span style="background:rgba(139,92,246,.15);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:700;">${inv.role||'Salesperson'}</span></td>
+      <td style="padding:10px 14px;font-size:11px;color:var(--text3);">Beta</td>
+      <td style="padding:10px 14px;"><span style="background:rgba(245,158,11,.12);color:#fcd34d;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:700;">&#x23F3; Awaiting Activation</span><div style="font-size:10px;color:var(--text3);margin-top:2px;">Invited ${daysSince(inv.invitedAt)}</div></td>
+      <td style="padding:10px 14px;font-size:11px;color:var(--text3);">Never</td>
+      <td style="padding:10px 14px;font-size:11px;color:var(--text3);">—</td>
+      <td style="padding:10px 14px;font-size:11px;color:var(--text3);">—</td>
+      <td style="padding:10px 14px;font-size:11px;color:var(--text3);">—</td>
+      <td style="padding:10px 14px;"><span style="background:rgba(139,92,246,.1);color:#a78bfa;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;">Invited</span></td>
+      <td style="padding:10px 14px;">
+        <div style="display:flex;gap:4px;">
+          <button onclick="resendInvite('${inv.id}')" style="background:rgba(139,92,246,.15);border:none;color:#c4b5fd;border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer;" title="Resend invite">&#x2709;&#xFE0F;</button>
+          <button onclick="deleteInvite('${inv.id}')" style="background:rgba(239,68,68,.1);border:none;color:#ef4444;border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer;" title="Remove">&#x1F5D1;</button>
+        </div>
+      </td>
+    </tr>`).join('');
+  })();
+
+  tbody.innerHTML=inviteRows+allProfiles.map(p=>{
     const daysLeft=trialDaysLeft(p);
     const online=isOnline(p);
     const contactCount=allCustomers.filter(c=>c.user_id===p.id).length;
@@ -1032,6 +1066,22 @@ www.bluwavgrowth.com`;
   }
 
   showToast('✅ Invite ready — use Gmail or Outlook button to send','success');
+
+  // ── Record invite in tracking list ──
+  const invites = JSON.parse(localStorage.getItem('bw_beta_invites')||'[]');
+  const existing = invites.findIndex(i=>i.email===email);
+  const inviteRecord = {
+    id: 'INV_'+Date.now(),
+    name, email, role, code,
+    invitedAt: new Date().toISOString(),
+    status: 'Invited',
+    activatedAt: null,
+    trialStarted: null
+  };
+  if(existing > -1){ invites[existing] = {...invites[existing], ...inviteRecord, id: invites[existing].id}; }
+  else { invites.unshift(inviteRecord); }
+  localStorage.setItem('bw_beta_invites', JSON.stringify(invites));
+  setTimeout(()=>{ if(typeof loadTenantHealth==='function') loadTenantHealth(); }, 300);
 }
 
 function betaAttachmentSelected(input){
@@ -3147,6 +3197,97 @@ function ifinRunScan(){
       corexToast('\u2705 IFIN scan complete \u2014 all windows up to date');
     }
   }, 1800);
+}
+
+
+// ================================================================
+// BETA INVITE TRACKING
+// ================================================================
+function getBetaInvites(){
+  try{ return JSON.parse(localStorage.getItem('bw_beta_invites')||'[]'); }
+  catch(e){ return []; }
+}
+
+function markInviteActivated(email){
+  const invites = getBetaInvites();
+  const idx = invites.findIndex(i=>i.email===email);
+  if(idx > -1){
+    invites[idx].status = 'Trial Active';
+    invites[idx].activatedAt = new Date().toISOString();
+    invites[idx].trialStarted = new Date().toISOString();
+    localStorage.setItem('bw_beta_invites', JSON.stringify(invites));
+  }
+}
+
+function deleteInvite(id){
+  if(!confirm('Remove this invite record?')) return;
+  const invites = getBetaInvites().filter(i=>i.id!==id);
+  localStorage.setItem('bw_beta_invites', JSON.stringify(invites));
+  if(typeof loadTenantHealth==='function') loadTenantHealth();
+}
+
+function resendInvite(id){
+  const invite = getBetaInvites().find(i=>i.id===id);
+  if(!invite) return;
+  // Pre-fill the invite form
+  const nameEl = document.getElementById('betaName');
+  const emailEl = document.getElementById('betaEmail');
+  if(nameEl) nameEl.value = invite.name;
+  if(emailEl) emailEl.value = invite.email;
+  showToast('\u2709\uFE0F Form pre-filled \u2014 click Generate Invite to resend','success');
+  document.getElementById('betaName')?.scrollIntoView({behavior:'smooth'});
+}
+
+function renderBetaInvitesInTable(container){
+  const invites = getBetaInvites();
+  if(!invites.length) return '';
+
+  const daysSince = iso => {
+    if(!iso) return '—';
+    const d = Math.floor((Date.now()-new Date(iso))/86400000);
+    return d===0?'Today':d===1?'Yesterday':d+' days ago';
+  };
+  const trialDaysLeft = iso => {
+    if(!iso) return null;
+    const left = 14 - Math.floor((Date.now()-new Date(iso))/86400000);
+    return Math.max(0, left);
+  };
+
+  return invites.map(inv=>{
+    const isActive = inv.status==='Trial Active';
+    const daysLeft = isActive ? trialDaysLeft(inv.trialStarted) : null;
+    const statusBadge = isActive
+      ? `<span style="background:rgba(34,197,94,.15);color:#22c55e;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:700;">Trial Active</span>`
+      : `<span style="background:rgba(139,92,246,.15);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:700;">Invited</span>`;
+    const trialInfo = isActive && daysLeft!==null
+      ? `<div style="font-size:10px;color:${daysLeft<=3?'#ef4444':'#22c55e'};margin-top:2px;">${daysLeft}d left</div>`
+      : `<div style="font-size:10px;color:var(--text3);margin-top:2px;">Sent ${daysSince(inv.invitedAt)}</div>`;
+
+    return `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:10px 14px;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);">${inv.name}</div>
+        <div style="font-size:11px;color:var(--text3);">${inv.email}</div>
+      </td>
+      <td style="padding:10px 14px;font-size:11px;color:var(--text3);">${inv.role||'Salesperson'}</td>
+      <td style="padding:10px 14px;">${statusBadge}${trialInfo}</td>
+      <td style="padding:10px 14px;">
+        <div style="font-size:11px;color:var(--text3);">${isActive?'Activated '+daysSince(inv.activatedAt):'Awaiting activation'}</div>
+        <div style="font-size:10px;color:var(--text3);">Code: ${inv.code}</div>
+      </td>
+      <td style="padding:10px 14px;font-size:11px;color:var(--text3);">${isActive?'—':'—'}</td>
+      <td style="padding:10px 14px;font-size:11px;color:var(--text3);">—</td>
+      <td style="padding:10px 14px;font-size:11px;color:var(--text3);">—</td>
+      <td style="padding:10px 14px;">
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;background:rgba(245,158,11,.1);color:#f59e0b;">Invited</span>
+      </td>
+      <td style="padding:10px 14px;">
+        <div style="display:flex;gap:6px;">
+          <button onclick="resendInvite('${inv.id}')" style="background:rgba(139,92,246,.15);border:none;color:#c4b5fd;border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer;" title="Resend">&#x2709;&#xFE0F;</button>
+          <button onclick="deleteInvite('${inv.id}')" style="background:rgba(239,68,68,.1);border:none;color:#ef4444;border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer;" title="Remove">&#x1F5D1;</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
 </script>
