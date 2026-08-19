@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 04:04 UTC -->
+<!-- BUILD: 2026-08-19 04:57 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -544,7 +544,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" data-tooltip="Tasks" id="nav-tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
 <a class="ni" data-tooltip="Calendar" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns" data-tooltip="Growth">Growth</div>
-<a class="ni" id="nav-email" onclick="showToast('Email not available during beta','')" title="Not available during beta" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
+<a class="ni" id="nav-email" onclick="showView('email')" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
 <a class="ni" id="nav-whatsapp" onclick="showView('whatsapp')" style="display:none;"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
 <a class="ni" href="automations.html" style="display:none;"><span class="ni-icon">⚡</span><span class="nav-text">Workflows</span></a>
 <a aria-disabled="true" aria-label="Communications — coming soon" class="ni ni-locked" role="button" tabindex="0">
@@ -919,7 +919,19 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div><div style="font-size:0.78rem;color:var(--text3);margin-bottom:3px;">Productivity</div><h1 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;">Tasks</h1></div>
 <button class="btn btn-primary btn-sm" onclick="openModal('addTask')">+ New Task</button>
 </div>
-<div class=\"panel\">\n<div class=\"panel-hd\" style=\"flex-direction:column;align-items:stretch;gap:10px;\">\n<div style=\"display:flex;align-items:center;justify-content:space-between;\"><div class=\"panel-title\">\u2705 My Tasks</div><span id=\"tasksProgressLabel\" style=\"font-size:12px;color:var(--text3);font-weight:600;\"></span></div>\n<div id=\"tasksProgressBar\" style=\"display:none;height:6px;background:var(--navy-border);border-radius:3px;overflow:hidden;\"><div id=\"tasksProgressFill\" style=\"height:100%;border-radius:3px;background:var(--cyan);transition:width 0.4s ease;width:0%;\"></div></div>\n</div>\n<div class=\"panel-body\" id=\"tasksBody\" style=\"padding:0;\">\n<div id=\"tasksList\"></div>\n<div id=\"noTasks\" style=\"text-align:center;padding:40px;color:var(--text3);display:none;\">\n<div style=\"font-size:2.5rem;margin-bottom:12px;\">\u2705</div>\n<div style=\"font-size:0.9rem;font-weight:600;color:var(--text2);margin-bottom:6px;\">No tasks yet</div>\n<div style=\"font-size:0.78rem;margin-bottom:20px;\">Add your first task to stay on top of your pipeline.</div>\n<button class=\"btn btn-primary btn-sm\" onclick=\"openModal(\\'addTask\\')\">+ Add Task</button>\n</div>\n<div id=\"tasksDoneSection\" style=\"display:none;border-top:1px solid var(--navy-border);\">\n<button onclick=\"toggleDoneTasks()\" style=\"width:100%;background:none;border:none;padding:10px 20px;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;\"><span id=\"tasksDoneToggleIcon\">\u25b6</span><span id=\"tasksDoneLabel\">Done (0)</span></button>\n<div id=\"tasksDoneList\" style=\"display:none;\"></div>\n</div>\n</div>\n</div></div><!-- /tasks -->
+<div class="panel">
+<div class="panel-hd"><div class="panel-title">✅ My Tasks</div></div>
+<div class="panel-body" id="tasksBody">
+<div id="tasksList"></div>
+<div id="noTasks" style="text-align:center;padding:40px;color:var(--text3);">
+<div style="font-size:2.5rem;margin-bottom:12px;">✅</div>
+<div style="font-size:0.9rem;font-weight:600;color:var(--text2);margin-bottom:6px;">No tasks yet</div>
+<div style="font-size:0.78rem;margin-bottom:20px;">Add your first task to stay on top of your pipeline.</div>
+<button class="btn btn-primary btn-sm" onclick="openModal('addTask')">+ Add Task</button>
+</div>
+</div>
+</div>
+</div><!-- /tasks -->
 <!-- ══ CALENDAR VIEW ══ -->
 <div class="view" id="view-calendar">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
@@ -969,18 +981,6 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel" style="margin-bottom:16px;">
 <div class="panel-hd"><div class="panel-title">Personal Information</div></div>
 <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
-<!-- Photo upload -->
-<div style="display:flex;align-items:center;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--navy-border);">
-  <div id="settingsAvatarPreview" style="width:64px;height:64px;border-radius:50%;background:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--navy-deep);flex-shrink:0;overflow:hidden;cursor:pointer;" onclick="document.getElementById('settingsPhotoInput').click()" title="Click to upload photo">
-    <span id="settingsAvatarInitials">AM</span>
-  </div>
-  <div>
-    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Profile Photo</div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">JPG or PNG, max 2MB</div>
-    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('settingsPhotoInput').click()" type="button">Upload Photo</button>
-    <input accept="image/jpeg,image/png" id="settingsPhotoInput" style="display:none;" type="file" onchange="handleSettingsPhotoUpload(this)"/>
-  </div>
-</div>
 <div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
 <div class="fg"><label class="fl">Email Address</label><input class="fi" id="settingsEmail" readonly="" style="opacity:0.6;cursor:not-allowed;" type="email"/></div>
 <div class="fg"><label class="fl">Role / Title</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
@@ -2864,7 +2864,6 @@ function initBillingView(){
 
 // ── SETTINGS VIEW INIT ───────────────────────────────────────────
 function initSettingsView(){
-  loadSettingsAvatar();
   // Populate settings fields from current user data
   if(!currentUser)return;
   const nameEl=document.getElementById('settingsName');
@@ -3362,36 +3361,47 @@ async function loadTasks(){
 }
 
 function renderTasks(){
-  const list        = document.getElementById('tasksList');
-  const doneList    = document.getElementById('tasksDoneList');
-  const noTasks     = document.getElementById('noTasks');
-  const doneSection = document.getElementById('tasksDoneSection');
-  const doneLabel   = document.getElementById('tasksDoneLabel');
-  const progressBar = document.getElementById('tasksProgressBar');
-  const progressFill= document.getElementById('tasksProgressFill');
-  const progressLbl = document.getElementById('tasksProgressLabel');
+  const list = document.getElementById('tasksList');
+  const noTasks = document.getElementById('noTasks');
   if(!list) return;
+
+  // Inject progress bar + done section if not already present
+  if(!document.getElementById('tasksProgressBar')){
+    const panel = list.closest('.panel-body') || list.parentElement;
+    if(panel){
+      // Progress bar — inject before tasksList
+      const pb = document.createElement('div');
+      pb.innerHTML = '<div style="padding:0 20px 10px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:11px;color:var(--text3);font-weight:600;" id="tasksProgressLabel"></span></div><div id="tasksProgressBar" style="height:5px;background:var(--navy-border);border-radius:3px;overflow:hidden;"><div id="tasksProgressFill" style="height:100%;border-radius:3px;background:var(--cyan);transition:width 0.4s ease;width:0%;"></div></div></div>';
+      panel.insertBefore(pb, list);
+      // Done section — inject after tasksList
+      const ds = document.createElement('div');
+      ds.id = 'tasksDoneSection';
+      ds.style.cssText = 'display:none;border-top:1px solid var(--navy-border);';
+      ds.innerHTML = '<button onclick="toggleDoneTasks()" style="width:100%;background:none;border:none;padding:10px 20px;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;"><span id="tasksDoneToggleIcon">&#x25B6;</span><span id="tasksDoneLabel">Done (0)</span></button><div id="tasksDoneList" style="display:none;"></div>';
+      panel.appendChild(ds);
+    }
+  }
 
   const active = allTasks.filter(t=>!t.completed);
   const done   = allTasks.filter(t=>t.completed);
   const total  = allTasks.length;
 
+  // Empty state
   if(!total){
     list.innerHTML='';
     if(noTasks) noTasks.style.display='block';
-    if(doneSection) doneSection.style.display='none';
-    if(progressBar) progressBar.style.display='none';
+    const ds=document.getElementById('tasksDoneSection');
+    if(ds) ds.style.display='none';
     updateTasksBadge(0);
+    updateTasksProgress(0,0);
     return;
   }
   if(noTasks) noTasks.style.display='none';
 
-  // Progress bar
-  const pct = Math.round((done.length/total)*100);
-  if(progressBar) progressBar.style.display='block';
-  if(progressFill){ progressFill.style.width=pct+'%'; progressFill.style.background=pct===100?'var(--success)':'var(--cyan)'; }
-  if(progressLbl) progressLbl.textContent=done.length+'/'+total+' done';
+  // Progress
+  updateTasksProgress(done.length, total);
 
+  // Row builder
   const fmtDate = d=>{ if(!d) return ''; const p=d.split('-'); return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])).toLocaleDateString('en-US',{month:'short',day:'numeric'}); };
   const priColor = p=>p==='High'?'var(--error)':p==='Medium'?'var(--warning)':'var(--success)';
   const taskRow = (t,isDone)=>`
@@ -3406,18 +3416,34 @@ function renderTasks(){
       <button onclick="deleteTask('${t.id}')" style="background:none;border:none;color:var(--error);cursor:pointer;font-size:0.8rem;padding:4px;" title="Delete">&#x1f5d1;</button>
     </div>`;
 
+  // Active tasks
   list.innerHTML = active.length
     ? active.map(t=>taskRow(t,false)).join('')
     : '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">&#x1F389; All tasks complete!</div>';
 
+  // Done section
+  const doneSection = document.getElementById('tasksDoneSection');
+  const doneList    = document.getElementById('tasksDoneList');
+  const doneLabel   = document.getElementById('tasksDoneLabel');
   if(done.length){
     if(doneSection) doneSection.style.display='block';
-    if(doneLabel) doneLabel.textContent='Done ('+done.length+')';
-    if(doneList) doneList.innerHTML=done.map(t=>taskRow(t,true)).join('');
+    if(doneLabel)   doneLabel.textContent='Done ('+done.length+')';
+    if(doneList)    doneList.innerHTML=done.map(t=>taskRow(t,true)).join('');
   } else {
     if(doneSection) doneSection.style.display='none';
   }
+
   updateTasksBadge(active.length);
+}
+
+function updateTasksProgress(done, total){
+  const fill  = document.getElementById('tasksProgressFill');
+  const label = document.getElementById('tasksProgressLabel');
+  if(!fill||!total) return;
+  const pct = Math.round((done/total)*100);
+  fill.style.width = pct+'%';
+  fill.style.background = pct===100?'var(--success)':'var(--cyan)';
+  if(label) label.textContent = done+'/'+total+' done';
 }
 
 function updateTasksBadge(count){
@@ -5073,58 +5099,6 @@ function quickWA(id){
   var sel=document.getElementById('wa-contact-select');if(sel)sel.value=id;
   var el=document.getElementById('wa-phone-input');if(el)el.value=ct.phone||ct.whatsapp||'';
   var msg=document.getElementById('wa-message-input');if(msg)msg.focus();
-}
-
-
-// ---- Settings photo upload ----
-async function handleSettingsPhotoUpload(input){
-  const file = input.files[0];
-  if(!file) return;
-  if(file.size > 2*1024*1024){ showToast('Photo must be under 2MB',''); return; }
-
-  // Show preview immediately
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const preview = document.getElementById('settingsAvatarPreview');
-    if(preview){
-      preview.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />';
-    }
-    localStorage.setItem('bw_avatar_url', e.target.result);
-    // Update topbar avatar too
-    const topAvatar = document.getElementById('topbarAvatar');
-    if(topAvatar) topAvatar.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-
-  // Upload to Supabase storage
-  try{
-    const res = await db.auth.getSession();
-    const uid = res?.data?.session?.user?.id;
-    if(!uid){ showToast('Not logged in',''); return; }
-    const ext = file.name.split('.').pop();
-    const path = uid+'/avatar.'+ext;
-    const { error } = await db.storage.from('avatars').upload(path, file, {upsert:true});
-    if(error){ showToast('Photo saved locally only',''); return; }
-    const { data:urlData } = db.storage.from('avatars').getPublicUrl(path);
-    if(urlData?.publicUrl){
-      await db.from('profiles').update({avatar_url: urlData.publicUrl}).eq('id', uid);
-      localStorage.setItem('bw_avatar_url', urlData.publicUrl);
-      showToast('Photo updated ✓','success');
-    }
-  }catch(e){ showToast('Photo saved locally',''); }
-}
-
-// Load saved avatar on settings open
-function loadSettingsAvatar(){
-  const url = localStorage.getItem('bw_avatar_url');
-  const initials = document.getElementById('settingsAvatarInitials');
-  const preview = document.getElementById('settingsAvatarPreview');
-  if(url && preview){
-    preview.innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />';
-  } else if(initials && currentUser){
-    const name = currentUser.full_name || currentUser.email || 'U';
-    initials.textContent = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-  }
 }
 
 </script>
