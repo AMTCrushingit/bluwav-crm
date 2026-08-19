@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 16:57 UTC -->
+<!-- BUILD: 2026-08-19 17:55 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -2197,41 +2197,61 @@ async function corexConfirmQualify(){
   const btn = document.getElementById('cqm-confirm-btn');
   if(btn){ btn.disabled=true; btn.textContent='Pushing to CRM...'; }
 
-  try {
-    const nameParts = contactName.split(' ');
-    const firstName = nameParts[0] || contactName;
-    const lastName = nameParts.slice(1).join(' ') || '';
+  const nameParts = contactName.split(' ');
+  const firstName = nameParts[0] || contactName;
+  const lastName = nameParts.slice(1).join(' ') || '';
 
-    const { error } = await db.from('contacts').insert([{
+  // Try insert with source_code first, fall back without it
+  let insertError = null;
+  try {
+    const {error:e1} = await db.from('contacts').insert([{
       first_name: firstName,
       last_name: lastName,
-      company: company || null,
-      email: email || null,
-      island: country || null,
+      company: company||null,
+      email: email||null,
+      island: country||null,
       source_code: srcCode,
       status: 'Lead',
-      notes: notes || null,
+      notes: notes||null,
       created_at: new Date().toISOString()
     }]);
+    if(e1 && e1.message && e1.message.includes('source_code')){
+      // source_code column missing — insert without it, prepend to notes
+      const {error:e2} = await db.from('contacts').insert([{
+        first_name: firstName,
+        last_name: lastName,
+        company: company||null,
+        email: email||null,
+        island: country||null,
+        status: 'Lead',
+        notes: '['+srcCode+'] '+(notes||''),
+        created_at: new Date().toISOString()
+      }]);
+      insertError = e2;
+    } else {
+      insertError = e1;
+    }
+  } catch(e){ insertError = e; }
 
-    if(error) throw error;
-
-    lead.pushedToCRM = true;
-    lead.status = 'Pushed';
-    lead.qualifiedAt = new Date().toISOString();
-    lead.qualifiedBy = agent;
-    localStorage.setItem('corex_leads', JSON.stringify(corexLeads));
-
-    corexRenderLeads();
-    corexRenderStats();
-    corexAddFeed('✅ Qualified & pushed to CRM: '+lead.name+' ['+srcCode+'] by '+agent);
-    corexToast('✅ '+lead.name+' added to CRM with source ['+srcCode+']');
-    corexCloseQualifyModal();
-  } catch(err){
-    console.error('CRM push error:', err);
-    corexToast('CRM push failed: '+(err.message||'Unknown error'));
-    if(btn){ btn.disabled=false; btn.textContent='Confirm & Push to CRM'; }
+  if(insertError){
+    corexToast('CRM push failed: '+(insertError.message||'Unknown error'));
+    console.error('CRM push error:', insertError);
+    if(btn){ btn.disabled=false; btn.textContent='✅ Confirm & Push to CRM'; }
+    return;
   }
+
+  // Success
+  lead.pushedToCRM = true;
+  lead.status = 'Pushed';
+  lead.qualifiedAt = new Date().toISOString();
+  lead.qualifiedBy = agent;
+  localStorage.setItem('corex_leads', JSON.stringify(corexLeads));
+
+  corexRenderLeads();
+  corexRenderStats();
+  corexAddFeed('✅ Qualified & pushed to CRM: '+lead.name+' ['+srcCode+'] by '+agent);
+  corexToast('✅ '+lead.name+' added to CRM with source ['+srcCode+']');
+  corexCloseQualifyModal();
 }
 
 // ---- Open lead (simple toast for now) ----
@@ -2497,14 +2517,16 @@ const CDSIA_DISTRESS_TYPES = {
 
 // Seed CDSIA signals (simulated — replace with real news API)
 const CDSIA_SEED_SIGNALS = [
-  {id:'CDSIA001',sourceType:'CDSIA',organizationName:'Prestige Auto Parts TT',country:'🇹🇹 Trinidad & Tobago',sector:'Automotive Retail',distressType:['Scaling','CRM Need'],distressSummary:'Prestige Auto Parts opened 3rd location in San Fernando. Owner managing 400+ customers via WhatsApp groups and spreadsheets. No CRM in place. Staff coordination breaking down.',urgency:'High',opportunityScore:92,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'TTMA Directory',articleUrl:'https://www.ttma.com/members',contactName:'Marcus Phillip (Owner)',contactEmail:'info@prestigeautoparts.tt',contactPhone:'+1-868-XXX-XXXX',whyItMatters:'3-location auto parts business managing 400+ customers manually. Direct CRM fit. Stratiix can install operating rhythms across locations.',actionRequired:'Reach out to Marcus Phillip directly. Lead with CRM demo for multi-location retail.',dateDetected:new Date(Date.now()-2*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA002',sourceType:'CDSIA',organizationName:'Karibu Catering Services',country:'🇯🇲 Jamaica',sector:'Food & Hospitality',distressType:['Founder Bottleneck','Execution Chaos'],distressSummary:'Karibu Catering growing rapidly — 12 staff, 80+ weekly events. Owner reports "I approve everything, nothing moves without me." Classic founder bottleneck. No operating system in place.',urgency:'Critical',opportunityScore:94,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'JBDC SME Directory',articleUrl:'https://www.jbdc.net/sme-directory',contactName:'Kezia Brown (Founder)',contactEmail:'kezia@karibucatering.com',contactPhone:'+1-876-XXX-XXXX',whyItMatters:'12-staff catering company at classic scaling inflection point. Founder is the bottleneck. Stratiix Operating System is the exact solution. High urgency — competitor risk.',actionRequired:'Devon to initiate outreach today. Lead with Stratiix Diagnostic offer.',dateDetected:new Date(Date.now()-5*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA003',sourceType:'CDSIA',organizationName:'SunCoast Real Estate Barbados',country:'🇧🇧 Barbados',sector:'Real Estate',distressType:['Digital Gap','CRM Need'],distressSummary:'SunCoast Real Estate managing 200+ property listings via email and paper files. No CRM, no digital pipeline. Agents losing leads. Competitor using digital tools gaining market share.',urgency:'High',opportunityScore:88,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'BIDC Export Ready Directory',articleUrl:'https://www.bidc.com.bb/export-ready',contactName:'Sandra Alleyne (Director)',contactEmail:'s.alleyne@suncoastrealty.bb',contactPhone:'+1-246-XXX-XXXX',whyItMatters:'200+ listings managed manually. Agents losing leads to digital-first competitors. BluWav CRM + Growth package is a complete solution. High conversion probability.',actionRequired:'Aaliya to contact Sandra Alleyne. Demo the pipeline management and lead capture features.',dateDetected:new Date(Date.now()-8*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA004',sourceType:'CDSIA',organizationName:'Guyana Freight Solutions',country:'🇬🇾 Guyana',sector:'Logistics & Freight',distressType:['Scaling','Execution Chaos'],distressSummary:'Guyana Freight Solutions won 3 new government contracts. Fleet growing from 8 to 22 vehicles. No dispatch system, no client management. Owner coordinating everything via phone.',urgency:'Critical',opportunityScore:96,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'Stabroek News Business',articleUrl:'https://www.stabroeknews.com/business',contactName:'Ravi Persaud (CEO)',contactEmail:'ravi@guyanafreight.gy',contactPhone:'+592-XXX-XXXX',whyItMatters:'Fleet tripling in size with zero systems. Government contracts at risk. Stratiix installs governance + workflows. BluWav CRM manages client relationships. Highest score this cycle.',actionRequired:'URGENT — Devon to contact Ravi Persaud this week. Government contract risk creates urgency.',dateDetected:new Date(Date.now()-1*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA005',sourceType:'CDSIA',organizationName:'Island Wellness Spa Group',country:'🇱🇨 St. Lucia',sector:'Health & Wellness',distressType:['Growth Stall','Digital Gap'],distressSummary:'Island Wellness Spa has 3 locations but no unified booking system, no email marketing, no client retention strategy. Revenue plateaued for 18 months. Owner seeking growth support.',urgency:'Medium',opportunityScore:82,recommendedServices:['BluWav Growth','BluWav CRM'],sourcePublication:'OECS Business Registry',articleUrl:'https://www.oecs.org/business-registry',contactName:'Monique Charles (Owner)',contactEmail:'monique@islandwellness.lc',contactPhone:'+1-758-XXX-XXXX',whyItMatters:'3-location spa with 18-month revenue plateau. No digital marketing or CRM. BluWav Growth package directly addresses the stall. Good upsell to CRM after Growth engagement.',actionRequired:'Simone to reach out. Lead with BluWav Growth audit offer.',dateDetected:new Date(Date.now()-12*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA006',sourceType:'CDSIA',organizationName:'Caribbean Tech Consultants',country:'🇹🇹 Trinidad & Tobago',sector:'Technology Services',distressType:['Governance Failure','Founder Bottleneck'],distressSummary:'Caribbean Tech Consultants — 18 staff, $2M revenue — reporting team misalignment, missed project deadlines, and client escalations. No governance framework. Founder overwhelmed.',urgency:'Critical',opportunityScore:95,recommendedServices:['Stratiix'],sourcePublication:'LinkedIn Caribbean SME',articleUrl:'https://www.linkedin.com/company/caribbean-tech-consultants',contactName:'Andre Williams (Founder & CEO)',contactEmail:'andre@caribtechconsultants.com',contactPhone:'+1-868-XXX-XXXX',whyItMatters:'$2M tech firm with governance breakdown. Missed deadlines and client escalations signal imminent client loss. Stratiix OS is the exact intervention needed. High-value engagement.',actionRequired:'Marcus to contact Andre Williams. Lead with Stratiix Diagnostic — position as urgent intervention.',dateDetected:new Date(Date.now()-3*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA007',sourceType:'CDSIA',organizationName:'Bajan Bites Food Truck Network',country:'🇧🇧 Barbados',sector:'Food & Beverage',distressType:['Digital Gap','CRM Need'],distressSummary:'Bajan Bites operating 6 food trucks with no digital ordering, no customer database, no loyalty programme. Competitor launched app. Owner posted in Facebook group seeking "affordable CRM solution".',urgency:'High',opportunityScore:86,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'Barbados Facebook Business Group',articleUrl:'https://www.facebook.com/groups/barbadosbusiness',contactName:'Tricia Holder (Owner)',contactEmail:'bajanbites@gmail.com',contactPhone:'+1-246-XXX-XXXX',whyItMatters:'Owner actively seeking CRM — warm lead. 6 food trucks, no digital infrastructure. BluWav CRM starter package is affordable entry point. Growth package for loyalty programme.',actionRequired:'Aaliya to respond to Facebook post directly. Warm lead — high conversion probability.',dateDetected:new Date(Date.now()-6*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA008',sourceType:'CDSIA',organizationName:'Dominica Eco Tours',country:'🇩🇲 Dominica',sector:'Tourism & Hospitality',distressType:['Funding Seeking','Scaling'],distressSummary:'Dominica Eco Tours applied for CDB Business Innovation Fund grant. 40+ tour packages, managing bookings via WhatsApp. Seeking digital tools to qualify for grant disbursement.',urgency:'High',opportunityScore:84,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'CDB Grant Portal',articleUrl:'https://www.caribank.org/business-innovation-fund',contactName:'James Titre (Director)',contactEmail:'james@dominicaecotours.dm',contactPhone:'+1-767-XXX-XXXX',whyItMatters:'Grant-funded digitization creates budget certainty. CDB requires digital tools for disbursement — BluWav CRM qualifies. Time-sensitive: grant deadline approaching.',actionRequired:'Devon to contact James Titre. Position BluWav CRM as grant-eligible digital tool.',dateDetected:new Date(Date.now()-9*3600000).toISOString(),pushedToCRM:false}
+  // ── REAL VERIFIED SIGNALS ──
+  {id:'CDSIA001',sourceType:'CDSIA',organizationName:'Blue Water Guyana',country:'🇬🇾 Guyana',sector:'Logistics & 3PL',distressType:['Scaling','Execution Chaos'],distressSummary:'Blue Water Guyana just launched 3PL operations for ExxonMobil Guyana — managing warehousing, inventory and logistics for offshore operations. Hiring 32-50 local staff. Rapid scaling with new service lines. Systems and operating rhythms needed urgently.',urgency:'Critical',opportunityScore:96,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'Blue Water News',articleUrl:'https://www.bws.net/media/news/blue-water-guyana-launches-3pl-operations-for-exxonmobil-guyana',contactName:'Richard DeNobrega (Country Manager)',contactEmail:'richard.denobrega@bws.net',contactPhone:'+592-XXX-XXXX',whyItMatters:'New 3PL contract with ExxonMobil Guyana. Scaling from startup to 50 staff. No operating system in place. Stratiix installs governance + workflows. BluWav CRM manages client relationships. High-value, time-sensitive engagement.',actionRequired:'Devon to contact Richard DeNobrega this week. Lead with Stratiix Diagnostic — position as scaling infrastructure.',dateDetected:new Date(Date.now()-2*3600000).toISOString(),pushedToCRM:false},
+
+  {id:'CDSIA002',sourceType:'CDSIA',organizationName:'Caribbean Tech TrendZ (CTTL)',country:'🇹🇹 Trinidad & Tobago',sector:'IT Consulting & Digital Transformation',distressType:['Governance Failure','Founder Bottleneck'],distressSummary:'CTTL is a 19-staff IT consulting firm in Trinidad providing digital transformation services since 2001. Growing client base across the Caribbean. At the complexity ceiling where founder-led coordination breaks down. No formal operating rhythms or governance framework visible.',urgency:'High',opportunityScore:88,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'Caribbean Tech TrendZ',articleUrl:'https://www.cttl.net',contactName:'CTTL Leadership Team',contactEmail:'info@cttl.net',contactPhone:'+1-868-XXX-XXXX',whyItMatters:'19-staff IT firm at classic scaling inflection point. Digital transformation firm that needs its own transformation. Stratiix OS is the exact intervention. High credibility — they sell transformation, they need it too.',actionRequired:'Marcus to contact CTTL. Lead with peer positioning — "We help transformation firms build the systems they install for others."',dateDetected:new Date(Date.now()-5*3600000).toISOString(),pushedToCRM:false},
+
+  {id:'CDSIA003',sourceType:'CDSIA',organizationName:'GBest Consultants TT',country:'🇹🇹 Trinidad & Tobago',sector:'Management Consulting',distressType:['Scaling','CRM Need'],distressSummary:'GBest Consultants — 18-staff management consulting firm in Trinidad, 25+ years experience. Specializes in training, strategic management, and organizational development. Growing regional client base with no CRM infrastructure. Director: Christian Sealy.',urgency:'High',opportunityScore:85,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'GBest Consultants',articleUrl:'https://www.gbestconsultants.com',contactName:'Christian Sealy (Director)',contactEmail:'christian@gbestconsultants.com',contactPhone:'+1-868-XXX-XXXX',whyItMatters:'18-staff consulting firm managing regional clients without CRM. Direct fit for BluWav CRM. Stratiix can help them build the operating rhythms they sell to clients. Strong upsell potential.',actionRequired:'Simone to contact Christian Sealy. Lead with BluWav CRM demo for consulting firm client management.',dateDetected:new Date(Date.now()-8*3600000).toISOString(),pushedToCRM:false},
+
+  {id:'CDSIA004',sourceType:'CDSIA',organizationName:'JBDC Digital Jamaica MSMEs',country:'🇯🇲 Jamaica',sector:'MSME Development / Government Programme',distressType:['Digital Gap','CRM Need'],distressSummary:'JBDC Digital Jamaica Project targeting 2,700 entrepreneurs for digital transformation. 1,800+ MSMEs already trained. Programme actively implementing CRM tools for 500+ MSMEs. EU-funded. Harold Davis (Acting CEO) confirmed CRM tools are a priority for disbursement qualification.',urgency:'Critical',opportunityScore:94,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'JBDC World MSME Day 2026',articleUrl:'https://www.jbdc.net/jbdc-celebrates-resilience-of-msmes-on-world-msme-day-2026/',contactName:'Harold Davis (Acting CEO, JBDC)',contactEmail:'info@jbdc.net',contactPhone:'+1-876-928-5323',whyItMatters:'EU-funded programme with 2,700 MSME targets. JBDC is actively seeking CRM tools for disbursement. BluWav CRM qualifies as an eligible digital tool. Partnership with JBDC = pipeline of 2,700 MSMEs. Highest strategic value signal this cycle.',actionRequired:'Devon to contact Harold Davis at JBDC immediately. Position BluWav CRM as EU-eligible digital tool for the Digital Jamaica Project.',dateDetected:new Date(Date.now()-1*3600000).toISOString(),pushedToCRM:false},
+
+  {id:'CDSIA005',sourceType:'CDSIA',organizationName:'Ekco Caribbean (T&T Office)',country:'🇹🇹 Trinidad & Tobago',sector:'Cybersecurity & Managed Services',distressType:['Scaling','Execution Chaos'],distressSummary:'Irish cybersecurity firm Ekco opened Trinidad & Tobago office in Jan 2026 — €10M investment, creating 18 jobs by 2027. Targeting T&T, Barbados and Jamaica. Scaling rapidly with new sales and technical roles. No Caribbean-specific CRM or operating system in place.',urgency:'High',opportunityScore:87,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'Silicon Republic Jan 2026',articleUrl:'https://www.siliconrepublic.com/business/ekco-trinidad-and-tobago-office-caribbean-cybersecurity-ireland',contactName:'Mark Donnellan (Head of Business Development, Caribbean)',contactEmail:'mark.donnellan@ekco.io',contactPhone:'+1-868-XXX-XXXX',whyItMatters:'New Caribbean office scaling to 18 staff. Needs CRM for Caribbean client management and Stratiix to build operating rhythms for the new regional team. Time-sensitive — they are in setup mode now.',actionRequired:'Marcus to contact Mark Donnellan. Lead with BluWav CRM for Caribbean client pipeline + Stratiix for new team operating rhythms.',dateDetected:new Date(Date.now()-3*3600000).toISOString(),pushedToCRM:false}
 ];
 
 let cdsiaSignals = [];
