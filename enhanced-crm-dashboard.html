@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 04:57 UTC -->
+<!-- BUILD: 2026-08-19 20:21 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -591,7 +591,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="tb-actions">
 <button aria-label="Toggle menu" class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileSidebar()" style="display:none;" title="Menu">☰</button>
 <div style="position:relative;">
-<input id="globalSearch" onblur="this.style.borderColor='var(--navy-border)';this.style.width='220px'" onfocus="this.style.borderColor='var(--cyan)';this.style.width='280px'" oninput="globalSearchFn(this.value)" placeholder="🔍 Search contacts, deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.8rem;padding:7px 14px;outline:none;width:220px;transition:var(--transition);font-family:var(--font-body);"/>
+<div style="position:relative;display:inline-flex;align-items:center;"><span style="position:absolute;left:10px;color:var(--text3);font-size:12px;pointer-events:none;">&#x1F50D;</span><input id="globalSearch" onblur="this.style.borderColor='var(--navy-border)';this.style.width='220px'" onfocus="this.style.borderColor='var(--cyan)';this.style.width='280px'" oninput="globalSearchFn(this.value)" placeholder="🔍 Search contacts, deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.8rem;padding:7px 14px 7px 30px;outline:none;width:220px;transition:var(--transition);font-family:var(--font-body);"/></div>
 <div id="searchResults" style="position:absolute;top:100%;left:0;right:0;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-md);margin-top:4px;display:none;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
 </div>
 <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ Add Contact</button>
@@ -1165,6 +1165,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal-body">
 <div class="fg-row"><div class="fg"><label class="fl">First Name <span class="req">*</span></label><input class="fi" id="mc-first" placeholder="First name"/></div><div class="fg"><label class="fl">Last Name <span class="req">*</span></label><input class="fi" id="mc-last" placeholder="Last name"/></div></div>
 <div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="mc-email" placeholder="email@company.com" type="email"/></div>
+<div class=\"fg\"><label class=\"fl\" style=\"color:var(--text3);\">Email 2 <span style=\"font-size:10px;font-weight:400;\">(optional)</span></label><input class=\"fi\" id=\"mc-email2\" placeholder=\"alternate@example.com\" type=\"email\"/></div>
 <div class="fg"><label class="fl">Phone / WhatsApp</label>
 <div style="display:flex;gap:6px;">
 <select class="fs" id="mc-phone-cc" style="width:110px;flex-shrink:0;">
@@ -2409,6 +2410,7 @@ async function saveContact(){
   const contact={
     full_name:(first+' '+last).trim(),
     email:email,
+    email2:document.getElementById('mc-email2')?.value.trim()||null,
     source_code:sourceEl?.value||null,
     phone:getFullPhone(),
     whatsapp:getFullPhone(),
@@ -2724,9 +2726,24 @@ function formatPhoneInput(input){
 }
 
 function getFullPhone(){
-  const cc=document.getElementById('mc-phone-cc')?.value||'+1';
-  const num=(document.getElementById('mc-phone')?.value||'').replace(/\D/g,'');
-  return num?cc+num:null;
+  const cc = document.getElementById('mc-phone-cc')?.value||'+1';
+  let raw = (document.getElementById('mc-phone')?.value||'').trim();
+  // Strip all non-digits
+  let num = raw.replace(/\D/g,'');
+  if(!num) return null;
+  // Strip country code prefix if user already included it
+  // e.g. cc='+1868', num='18685551234' → strip leading '1868'
+  const ccDigits = cc.replace(/\D/g,'');
+  if(ccDigits && num.startsWith(ccDigits)){
+    num = num.substring(ccDigits.length);
+  }
+  // Also handle if they typed the + version
+  if(num.startsWith(ccDigits.replace(/^0+/,''))){
+    // double check length — if stripping makes it too short, don't strip
+    const stripped = num.substring(ccDigits.length);
+    if(stripped.length >= 7) num = stripped;
+  }
+  return cc + num;
 }
 
 function validateEmail(email){
