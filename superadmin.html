@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 05:13 UTC -->
+<!-- BUILD: 2026-08-19 16:57 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -2497,15 +2497,14 @@ const CDSIA_DISTRESS_TYPES = {
 
 // Seed CDSIA signals (simulated — replace with real news API)
 const CDSIA_SEED_SIGNALS = [
-  // ── SCALING signals → BluWav CRM + Stratiix ──
-  {id:'CDSIA001',sourceType:'CDSIA',organizationName:'Prestige Auto Parts TT',country:'🇹🇹 Trinidad & Tobago',sector:'Automotive Retail',distressType:['Scaling','CRM Need'],distressSummary:'Prestige Auto Parts opened 3rd location in San Fernando. Owner managing 400+ customers via WhatsApp groups and spreadsheets. No CRM in place. Staff coordination breaking down.',urgency:'High',opportunityScore:92,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'TTMA Directory',articleUrl:'#',dateDetected:new Date(Date.now()-2*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA002',sourceType:'CDSIA',organizationName:'Karibu Catering Services',country:'🇯🇲 Jamaica',sector:'Food & Hospitality',distressType:['Founder Bottleneck','Execution Chaos'],distressSummary:'Karibu Catering growing rapidly — 12 staff, 80+ weekly events. Owner reports "I approve everything, nothing moves without me." Classic founder bottleneck. No operating system in place.',urgency:'Critical',opportunityScore:94,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'JBDC SME Directory',articleUrl:'#',dateDetected:new Date(Date.now()-5*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA003',sourceType:'CDSIA',organizationName:'SunCoast Real Estate Barbados',country:'🇧🇧 Barbados',sector:'Real Estate',distressType:['Digital Gap','CRM Need'],distressSummary:'SunCoast Real Estate managing 200+ property listings via email and paper files. No CRM, no digital pipeline. Agents losing leads. Competitor using digital tools gaining market share.',urgency:'High',opportunityScore:88,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'BIDC Export Ready Directory',articleUrl:'#',dateDetected:new Date(Date.now()-8*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA004',sourceType:'CDSIA',organizationName:'Guyana Freight Solutions',country:'🇬🇾 Guyana',sector:'Logistics & Freight',distressType:['Scaling','Execution Chaos'],distressSummary:'Guyana Freight Solutions won 3 new government contracts. Fleet growing from 8 to 22 vehicles. No dispatch system, no client management. Owner coordinating everything via phone.',urgency:'Critical',opportunityScore:96,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'Stabroek News Business',articleUrl:'#',dateDetected:new Date(Date.now()-1*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA005',sourceType:'CDSIA',organizationName:'Island Wellness Spa Group',country:'🇱🇨 St. Lucia',sector:'Health & Wellness',distressType:['Growth Stall','Digital Gap'],distressSummary:'Island Wellness Spa has 3 locations but no unified booking system, no email marketing, no client retention strategy. Revenue plateaued for 18 months. Owner seeking growth support.',urgency:'Medium',opportunityScore:82,recommendedServices:['BluWav Growth','BluWav CRM'],sourcePublication:'OECS Business Registry',articleUrl:'#',dateDetected:new Date(Date.now()-12*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA006',sourceType:'CDSIA',organizationName:'Caribbean Tech Consultants',country:'🇹🇹 Trinidad & Tobago',sector:'Technology Services',distressType:['Governance Failure','Founder Bottleneck'],distressSummary:'Caribbean Tech Consultants — 18 staff, $2M revenue — reporting team misalignment, missed project deadlines, and client escalations. No governance framework. Founder overwhelmed.',urgency:'Critical',opportunityScore:95,recommendedServices:['Stratiix'],sourcePublication:'LinkedIn Caribbean SME',articleUrl:'#',dateDetected:new Date(Date.now()-3*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA007',sourceType:'CDSIA',organizationName:'Bajan Bites Food Truck Network',country:'🇧🇧 Barbados',sector:'Food & Beverage',distressType:['Digital Gap','CRM Need'],distressSummary:'Bajan Bites operating 6 food trucks with no digital ordering, no customer database, no loyalty programme. Competitor launched app. Owner posted in Facebook group seeking "affordable CRM solution".',urgency:'High',opportunityScore:86,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'Barbados Facebook Business Group',articleUrl:'#',dateDetected:new Date(Date.now()-6*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA008',sourceType:'CDSIA',organizationName:'Dominica Eco Tours',country:'🇩🇲 Dominica',sector:'Tourism & Hospitality',distressType:['Funding Seeking','Scaling'],distressSummary:'Dominica Eco Tours applied for CDB Business Innovation Fund grant. 40+ tour packages, managing bookings via WhatsApp. Seeking digital tools to qualify for grant disbursement.',urgency:'High',opportunityScore:84,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'CDB Grant Portal',articleUrl:'#',dateDetected:new Date(Date.now()-9*3600000).toISOString(),pushedToCRM:false}
+  {id:'CDSIA001',sourceType:'CDSIA',organizationName:'Prestige Auto Parts TT',country:'🇹🇹 Trinidad & Tobago',sector:'Automotive Retail',distressType:['Scaling','CRM Need'],distressSummary:'Prestige Auto Parts opened 3rd location in San Fernando. Owner managing 400+ customers via WhatsApp groups and spreadsheets. No CRM in place. Staff coordination breaking down.',urgency:'High',opportunityScore:92,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'TTMA Directory',articleUrl:'https://www.ttma.com/members',contactName:'Marcus Phillip (Owner)',contactEmail:'info@prestigeautoparts.tt',contactPhone:'+1-868-XXX-XXXX',whyItMatters:'3-location auto parts business managing 400+ customers manually. Direct CRM fit. Stratiix can install operating rhythms across locations.',actionRequired:'Reach out to Marcus Phillip directly. Lead with CRM demo for multi-location retail.',dateDetected:new Date(Date.now()-2*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA002',sourceType:'CDSIA',organizationName:'Karibu Catering Services',country:'🇯🇲 Jamaica',sector:'Food & Hospitality',distressType:['Founder Bottleneck','Execution Chaos'],distressSummary:'Karibu Catering growing rapidly — 12 staff, 80+ weekly events. Owner reports "I approve everything, nothing moves without me." Classic founder bottleneck. No operating system in place.',urgency:'Critical',opportunityScore:94,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'JBDC SME Directory',articleUrl:'https://www.jbdc.net/sme-directory',contactName:'Kezia Brown (Founder)',contactEmail:'kezia@karibucatering.com',contactPhone:'+1-876-XXX-XXXX',whyItMatters:'12-staff catering company at classic scaling inflection point. Founder is the bottleneck. Stratiix Operating System is the exact solution. High urgency — competitor risk.',actionRequired:'Devon to initiate outreach today. Lead with Stratiix Diagnostic offer.',dateDetected:new Date(Date.now()-5*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA003',sourceType:'CDSIA',organizationName:'SunCoast Real Estate Barbados',country:'🇧🇧 Barbados',sector:'Real Estate',distressType:['Digital Gap','CRM Need'],distressSummary:'SunCoast Real Estate managing 200+ property listings via email and paper files. No CRM, no digital pipeline. Agents losing leads. Competitor using digital tools gaining market share.',urgency:'High',opportunityScore:88,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'BIDC Export Ready Directory',articleUrl:'https://www.bidc.com.bb/export-ready',contactName:'Sandra Alleyne (Director)',contactEmail:'s.alleyne@suncoastrealty.bb',contactPhone:'+1-246-XXX-XXXX',whyItMatters:'200+ listings managed manually. Agents losing leads to digital-first competitors. BluWav CRM + Growth package is a complete solution. High conversion probability.',actionRequired:'Aaliya to contact Sandra Alleyne. Demo the pipeline management and lead capture features.',dateDetected:new Date(Date.now()-8*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA004',sourceType:'CDSIA',organizationName:'Guyana Freight Solutions',country:'🇬🇾 Guyana',sector:'Logistics & Freight',distressType:['Scaling','Execution Chaos'],distressSummary:'Guyana Freight Solutions won 3 new government contracts. Fleet growing from 8 to 22 vehicles. No dispatch system, no client management. Owner coordinating everything via phone.',urgency:'Critical',opportunityScore:96,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'Stabroek News Business',articleUrl:'https://www.stabroeknews.com/business',contactName:'Ravi Persaud (CEO)',contactEmail:'ravi@guyanafreight.gy',contactPhone:'+592-XXX-XXXX',whyItMatters:'Fleet tripling in size with zero systems. Government contracts at risk. Stratiix installs governance + workflows. BluWav CRM manages client relationships. Highest score this cycle.',actionRequired:'URGENT — Devon to contact Ravi Persaud this week. Government contract risk creates urgency.',dateDetected:new Date(Date.now()-1*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA005',sourceType:'CDSIA',organizationName:'Island Wellness Spa Group',country:'🇱🇨 St. Lucia',sector:'Health & Wellness',distressType:['Growth Stall','Digital Gap'],distressSummary:'Island Wellness Spa has 3 locations but no unified booking system, no email marketing, no client retention strategy. Revenue plateaued for 18 months. Owner seeking growth support.',urgency:'Medium',opportunityScore:82,recommendedServices:['BluWav Growth','BluWav CRM'],sourcePublication:'OECS Business Registry',articleUrl:'https://www.oecs.org/business-registry',contactName:'Monique Charles (Owner)',contactEmail:'monique@islandwellness.lc',contactPhone:'+1-758-XXX-XXXX',whyItMatters:'3-location spa with 18-month revenue plateau. No digital marketing or CRM. BluWav Growth package directly addresses the stall. Good upsell to CRM after Growth engagement.',actionRequired:'Simone to reach out. Lead with BluWav Growth audit offer.',dateDetected:new Date(Date.now()-12*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA006',sourceType:'CDSIA',organizationName:'Caribbean Tech Consultants',country:'🇹🇹 Trinidad & Tobago',sector:'Technology Services',distressType:['Governance Failure','Founder Bottleneck'],distressSummary:'Caribbean Tech Consultants — 18 staff, $2M revenue — reporting team misalignment, missed project deadlines, and client escalations. No governance framework. Founder overwhelmed.',urgency:'Critical',opportunityScore:95,recommendedServices:['Stratiix'],sourcePublication:'LinkedIn Caribbean SME',articleUrl:'https://www.linkedin.com/company/caribbean-tech-consultants',contactName:'Andre Williams (Founder & CEO)',contactEmail:'andre@caribtechconsultants.com',contactPhone:'+1-868-XXX-XXXX',whyItMatters:'$2M tech firm with governance breakdown. Missed deadlines and client escalations signal imminent client loss. Stratiix OS is the exact intervention needed. High-value engagement.',actionRequired:'Marcus to contact Andre Williams. Lead with Stratiix Diagnostic — position as urgent intervention.',dateDetected:new Date(Date.now()-3*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA007',sourceType:'CDSIA',organizationName:'Bajan Bites Food Truck Network',country:'🇧🇧 Barbados',sector:'Food & Beverage',distressType:['Digital Gap','CRM Need'],distressSummary:'Bajan Bites operating 6 food trucks with no digital ordering, no customer database, no loyalty programme. Competitor launched app. Owner posted in Facebook group seeking "affordable CRM solution".',urgency:'High',opportunityScore:86,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'Barbados Facebook Business Group',articleUrl:'https://www.facebook.com/groups/barbadosbusiness',contactName:'Tricia Holder (Owner)',contactEmail:'bajanbites@gmail.com',contactPhone:'+1-246-XXX-XXXX',whyItMatters:'Owner actively seeking CRM — warm lead. 6 food trucks, no digital infrastructure. BluWav CRM starter package is affordable entry point. Growth package for loyalty programme.',actionRequired:'Aaliya to respond to Facebook post directly. Warm lead — high conversion probability.',dateDetected:new Date(Date.now()-6*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA008',sourceType:'CDSIA',organizationName:'Dominica Eco Tours',country:'🇩🇲 Dominica',sector:'Tourism & Hospitality',distressType:['Funding Seeking','Scaling'],distressSummary:'Dominica Eco Tours applied for CDB Business Innovation Fund grant. 40+ tour packages, managing bookings via WhatsApp. Seeking digital tools to qualify for grant disbursement.',urgency:'High',opportunityScore:84,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'CDB Grant Portal',articleUrl:'https://www.caribank.org/business-innovation-fund',contactName:'James Titre (Director)',contactEmail:'james@dominicaecotours.dm',contactPhone:'+1-767-XXX-XXXX',whyItMatters:'Grant-funded digitization creates budget certainty. CDB requires digital tools for disbursement — BluWav CRM qualifies. Time-sensitive: grant deadline approaching.',actionRequired:'Devon to contact James Titre. Position BluWav CRM as grant-eligible digital tool.',dateDetected:new Date(Date.now()-9*3600000).toISOString(),pushedToCRM:false}
 ];
 
 let cdsiaSignals = [];
@@ -3009,20 +3008,42 @@ function ifinRender(){
   }
   const statusColor = {'Open':'#22c55e','Closing Soon':'#f59e0b','Closed':'#ef4444'};
   const tagColors = {'CRM Fit':'background:rgba(139,92,246,.15);color:#c4b5fd;','Growth Fit':'background:rgba(16,185,129,.12);color:#6ee7b7;','High Budget':'background:rgba(245,158,11,.12);color:#fcd34d;','Urgent':'background:rgba(239,68,68,.12);color:#fca5a5;','NGO':'background:rgba(236,72,153,.1);color:#f9a8d4;','Tech Sector':'background:rgba(167,139,250,.15);color:#ddd6fe;'};
-  tbody.innerHTML = filtered.map(o=>`<tr style="border-bottom:1px solid var(--border);">
-    <td style="padding:10px 12px;font-weight:600;color:var(--text);font-size:12px;max-width:180px;">${o.programme}</td>
-    <td style="padding:10px 12px;font-size:11px;color:var(--text3);">${o.donor}</td>
-    <td style="padding:10px 12px;font-size:11px;color:var(--text2);">${o.type}</td>
-    <td style="padding:10px 12px;font-size:12px;font-weight:700;color:#a78bfa;white-space:nowrap;">${o.amount}</td>
-    <td style="padding:10px 12px;font-size:11px;color:var(--text2);white-space:nowrap;">${o.deadline}</td>
-    <td style="padding:10px 12px;"><span style="background:rgba(139,92,246,.2);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;">${o.score}</span></td>
-    <td style="padding:10px 12px;"><span style="font-size:11px;font-weight:700;color:${statusColor[o.status]||'#94a3b8'};">${o.status}</span></td>
-    <td style="padding:10px 12px;">
-      <button onclick="ifinQualify('${o.id}')" style="background:${o.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${o.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:5px;padding:4px 9px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;" ${o.pushedToCRM?'disabled':''}>
-        ${o.pushedToCRM?'\u2713 In COREX':'\u2192 COREX'}
-      </button>
-    </td>
-  </tr>`).join('');
+  tbody.innerHTML = filtered.map(s=>{
+    const urgencyColor = {Critical:'#ef4444',High:'#f97316',Medium:'#f59e0b',Low:'#22c55e'};
+    const svcColor = {'BluWav CRM':'background:rgba(56,189,248,.15);color:#38bdf8;','BluWav Growth':'background:rgba(34,197,94,.12);color:#6ee7b7;','Stratiix':'background:rgba(245,158,11,.12);color:#fcd34d;'};
+    return `<tr style="border-bottom:2px solid rgba(167,139,250,0.1);">
+      <td colspan="5" style="padding:0;">
+        <div style="padding:16px 20px;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;">
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+                <span style="font-size:13px;font-weight:700;color:var(--text);">${cdsiaEsc(s.organizationName)}</span>
+                <span style="font-size:11px;color:var(--text3);">${cdsiaEsc(s.country)}</span>
+                <span style="font-size:11px;font-weight:700;color:${urgencyColor[s.urgency]||'#94a3b8'};">${s.urgency}</span>
+                <span style="background:rgba(139,92,246,.2);color:#c4b5fd;padding:1px 8px;border-radius:9999px;font-size:11px;font-weight:700;">Score: ${s.opportunityScore}</span>
+              </div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
+                ${s.distressType.map(t=>`<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(139,92,246,.15);color:#c4b5fd;">${CDSIA_DISTRESS_TYPES[t]?.icon||'⚠️'} ${t}</span>`).join('')}
+                ${s.recommendedServices.map(r=>`<span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;${svcColor[r]||'background:rgba(255,255,255,.05);color:var(--text2);'}">${r}</span>`).join('')}
+              </div>
+            </div>
+            <button onclick="cdsiaInjectToCorex('${s.id}')" style="background:${s.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${s.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;" ${s.pushedToCRM?'disabled':''}>
+              ${s.pushedToCRM?'✓ In COREX':'→ COREX'}
+            </button>
+          </div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:8px;">${cdsiaEsc(s.distressSummary)}</div>
+          ${s.whyItMatters?`<div style="background:rgba(139,92,246,0.06);border-left:3px solid #8b5cf6;border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:8px;font-size:11px;color:#a78bfa;line-height:1.5;"><strong style="color:#c4b5fd;">Why it matters:</strong> ${cdsiaEsc(s.whyItMatters)}</div>`:''}
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+            ${s.contactName?`<span style="font-size:11px;color:var(--text2);">👤 <strong>${cdsiaEsc(s.contactName)}</strong></span>`:''}
+            ${s.contactEmail?`<a href="mailto:${cdsiaEsc(s.contactEmail)}" style="font-size:11px;color:#38bdf8;text-decoration:none;">✉️ ${cdsiaEsc(s.contactEmail)}</a>`:''}
+            ${s.contactPhone?`<span style="font-size:11px;color:var(--text3);">📞 ${cdsiaEsc(s.contactPhone)}</span>`:''}
+            ${s.articleUrl&&s.articleUrl!=='#'?`<a href="${s.articleUrl}" target="_blank" rel="noopener" style="font-size:11px;color:#a78bfa;text-decoration:none;">🔗 ${cdsiaEsc(s.sourcePublication)} ↗</a>`:`<span style="font-size:11px;color:var(--text3);">📰 ${cdsiaEsc(s.sourcePublication)}</span>`}
+            ${s.actionRequired?`<div style="width:100%;margin-top:6px;font-size:11px;color:#fcd34d;font-weight:600;">⚡ ${cdsiaEsc(s.actionRequired)}</div>`:''}
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');;
 }
 
 function ifinToggleSources(){
@@ -3464,16 +3485,9 @@ function ifinRunScan(){
 </div>
 <div style="max-height:440px;overflow-y:auto;">
 <table style="width:100%;border-collapse:collapse;">
-<thead><tr style="background:var(--bg3);position:sticky;top:0;z-index:1;">
-<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Organisation</th>
-<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Country</th>
-<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Distress Type</th>
-<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Urgency</th>
-<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
-<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Publication</th>
-<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Summary</th>
-<th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Action</th>
-</tr></thead>
+<thead><tr style="background:var(--bg3);">
+          <th colspan="5" style="padding:10px 20px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">MSME Intelligence Signals — Ranked by COREX Fit Index</th>
+        </tr></thead>
 <tbody id="cdsiaSignalsTbody"></tbody>
 </table>
 </div>
