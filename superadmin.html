@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 17:55 UTC -->
+<!-- BUILD: 2026-08-19 18:07 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -2531,7 +2531,13 @@ const CDSIA_SEED_SIGNALS = [
 
 let cdsiaSignals = [];
 
+const CDSIA_DATA_VERSION = '2026-08-19-real';
 function cdsiaInit(){
+  // Version check — if data version changed, clear old fictional data
+  if(localStorage.getItem('cdsia_data_version') !== CDSIA_DATA_VERSION){
+    localStorage.removeItem('cdsia_signals');
+    localStorage.setItem('cdsia_data_version', CDSIA_DATA_VERSION);
+  }
   // Load from localStorage, always ensure all seed signals present
   const stored = localStorage.getItem('cdsia_signals');
   if(stored){
