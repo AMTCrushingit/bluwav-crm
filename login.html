@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-18 05:28 UTC -->
+<!-- BUILD: 2026-08-19 17:35 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -265,8 +265,12 @@ msBtn.addEventListener('click', async () => {
 // ── ORPHANED STATE CLEANUP (runs before gate check) ──────────────
 (function(){
   try{
-    // Clear expired gate lockout
+    // Clear expired gate lockout + reset stale attempts (older than 1 hour)
     var gs=JSON.parse(localStorage.getItem('bw_gate_state')||'{}');
+    if(gs.ts && (Date.now()-gs.ts) > 60*60*1000 && !gs.lockedUntil){
+      localStorage.removeItem('bw_gate_state');
+      gs={};
+    }
     if(gs.lockedUntil && Date.now()>gs.lockedUntil){
       localStorage.removeItem('bw_gate_state');
     }
@@ -378,13 +382,15 @@ function checkGate() {
     // Wrong code
     inp.value = '';
     var newAttempts = state.attempts + 1;
+    var remaining = Math.max(0, 3 - newAttempts + 1);
 
-    if (newAttempts >= 3) {
-      // Lock for 5 minutes
+    if (newAttempts > 3) {
+      // Lock after 3 failed attempts (locks on 4th fail)
       var lockUntil = now + (5 * 60 * 1000);
       _setGateState(newAttempts, lockUntil);
       inp.disabled = true;
       if (btn) btn.disabled = true;
+      errEl.textContent = '\u274c Incorrect access code. ' + (remaining > 0 ? remaining + ' attempt' + (remaining===1?'':'s') + ' remaining.' : 'No attempts remaining.');
       errEl.style.color = '#ef4444';
       errEl.style.display = 'block';
 
