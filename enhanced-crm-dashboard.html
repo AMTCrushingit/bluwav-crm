@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-18 16:56 UTC -->
+<!-- BUILD: 2026-08-19 03:14 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -544,7 +544,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <a class="ni" data-tooltip="Tasks" id="nav-tasks" onclick="showView('tasks')"><span class="ni-icon">✅</span><span class="nav-text">Tasks</span></a>
 <a class="ni" data-tooltip="Calendar" id="nav-calendar" onclick="showView('calendar')"><span class="ni-icon">📅</span><span class="nav-text">Calendar</span></a>
 <div class="ns" data-tooltip="Growth">Growth</div>
-<a class="ni" id="nav-email" onclick="showView('email')" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
+<a class="ni" id="nav-email" onclick="showToast('Email not available during beta','')" title="Not available during beta" style="display:none;"><span class="ni-icon">📧</span><span class="nav-text">Email</span></a>
 <a class="ni" id="nav-whatsapp" onclick="showView('whatsapp')" style="display:none;"><span class="ni-icon">💬</span><span class="nav-text">WhatsApp</span></a>
 <a class="ni" href="automations.html" style="display:none;"><span class="ni-icon">⚡</span><span class="nav-text">Workflows</span></a>
 <a aria-disabled="true" aria-label="Communications — coming soon" class="ni ni-locked" role="button" tabindex="0">
@@ -981,6 +981,18 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="panel" style="margin-bottom:16px;">
 <div class="panel-hd"><div class="panel-title">Personal Information</div></div>
 <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
+<!-- Photo upload -->
+<div style="display:flex;align-items:center;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--navy-border);">
+  <div id="settingsAvatarPreview" style="width:64px;height:64px;border-radius:50%;background:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--navy-deep);flex-shrink:0;overflow:hidden;cursor:pointer;" onclick="document.getElementById('settingsPhotoInput').click()" title="Click to upload photo">
+    <span id="settingsAvatarInitials">AM</span>
+  </div>
+  <div>
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Profile Photo</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">JPG or PNG, max 2MB</div>
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('settingsPhotoInput').click()" type="button">Upload Photo</button>
+    <input accept="image/jpeg,image/png" id="settingsPhotoInput" style="display:none;" type="file" onchange="handleSettingsPhotoUpload(this)"/>
+  </div>
+</div>
 <div class="fg"><label class="fl">Full Name</label><input class="fi" id="settingsName" placeholder="Your name"/></div>
 <div class="fg"><label class="fl">Email Address</label><input class="fi" id="settingsEmail" readonly="" style="opacity:0.6;cursor:not-allowed;" type="email"/></div>
 <div class="fg"><label class="fl">Role / Title</label><input class="fi" id="settingsRole" readonly="" style="opacity:0.6;cursor:not-allowed;"/></div>
@@ -2864,6 +2876,7 @@ function initBillingView(){
 
 // ── SETTINGS VIEW INIT ───────────────────────────────────────────
 function initSettingsView(){
+  loadSettingsAvatar();
   // Populate settings fields from current user data
   if(!currentUser)return;
   const nameEl=document.getElementById('settingsName');
@@ -5014,6 +5027,58 @@ function quickWA(id){
   var sel=document.getElementById('wa-contact-select');if(sel)sel.value=id;
   var el=document.getElementById('wa-phone-input');if(el)el.value=ct.phone||ct.whatsapp||'';
   var msg=document.getElementById('wa-message-input');if(msg)msg.focus();
+}
+
+
+// ---- Settings photo upload ----
+async function handleSettingsPhotoUpload(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 2*1024*1024){ showToast('Photo must be under 2MB',''); return; }
+
+  // Show preview immediately
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const preview = document.getElementById('settingsAvatarPreview');
+    if(preview){
+      preview.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />';
+    }
+    localStorage.setItem('bw_avatar_url', e.target.result);
+    // Update topbar avatar too
+    const topAvatar = document.getElementById('topbarAvatar');
+    if(topAvatar) topAvatar.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+
+  // Upload to Supabase storage
+  try{
+    const res = await db.auth.getSession();
+    const uid = res?.data?.session?.user?.id;
+    if(!uid){ showToast('Not logged in',''); return; }
+    const ext = file.name.split('.').pop();
+    const path = uid+'/avatar.'+ext;
+    const { error } = await db.storage.from('avatars').upload(path, file, {upsert:true});
+    if(error){ showToast('Photo saved locally only',''); return; }
+    const { data:urlData } = db.storage.from('avatars').getPublicUrl(path);
+    if(urlData?.publicUrl){
+      await db.from('profiles').update({avatar_url: urlData.publicUrl}).eq('id', uid);
+      localStorage.setItem('bw_avatar_url', urlData.publicUrl);
+      showToast('Photo updated ✓','success');
+    }
+  }catch(e){ showToast('Photo saved locally',''); }
+}
+
+// Load saved avatar on settings open
+function loadSettingsAvatar(){
+  const url = localStorage.getItem('bw_avatar_url');
+  const initials = document.getElementById('settingsAvatarInitials');
+  const preview = document.getElementById('settingsAvatarPreview');
+  if(url && preview){
+    preview.innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />';
+  } else if(initials && currentUser){
+    const name = currentUser.full_name || currentUser.email || 'U';
+    initials.textContent = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  }
 }
 
 </script>

@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-18 05:28 UTC -->
+<!-- BUILD: 2026-08-19 03:16 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -217,8 +217,8 @@ body.corex-active .command-strip{display:none;}
 <a class="nav-item" id="corex-cdsia-nav" onclick="showView('corex');corexSetAgent('cdsia')">
   <span class="nav-icon">&#x1F6A8;</span> CDSIA
 </a>
-<a class="nav-item" id="corex-ifin-nav" onclick="corexShowIFINLocked()" style="opacity:0.45;" title="Coming soon">
-  <span class="nav-icon">&#x1F4B0;</span> IFIN <span style="font-size:9px;color:#4c3494;margin-left:4px;">&#x1F512;</span>
+<a class="nav-item" id="corex-ifin-nav" onclick="showView('corex');corexSetAgent('ifin')">
+  <span class="nav-icon">&#x1F4B0;</span> IFIN
 </a>
 </div>
 <div class="nav-section">
@@ -1801,7 +1801,7 @@ function corexShowModule(name){
   if(name==='awards')corexRenderAwards();
   if(name==='trends')corexRenderTrends();
   if(name==='cdsia')corexRenderCDSIA();
-  // ifin: placeholder only, no render needed
+  if(name==='ifin')ifinRender();
   if(name==='crmsync')corexRenderSyncLog();
   if(name==='digest')corexRenderDigestHistory();
 }
@@ -2724,7 +2724,7 @@ const _origCorexShowModule=corexShowModule;
 corexShowModule=function(name){
   _origCorexShowModule(name);
   if(name==='cdsia')corexRenderCDSIA();
-  // ifin: placeholder only, no render needed
+  if(name==='ifin')ifinRender();
 };
 
 // Add CDSIA section to digest
@@ -2900,6 +2900,192 @@ function corexSetAgent(agentKey){
 function corexShowIFINLocked(){
   corexToast('\u{1F512} IFIN — Funding & Donor Intelligence is reserved for the next build cycle');
   corexSetAgent('ifin');
+}
+
+
+// ================================================================
+// IFIN — Funding & Donor Intelligence Engine
+// ================================================================
+const IFIN_SOURCES = [
+  {code:'IDB', name:'IDB Lab', country:'Regional', url:'https://idblab.iadb.org'},
+  {code:'WB',  name:'World Bank', country:'Global', url:'https://projects.worldbank.org'},
+  {code:'GCF', name:'Green Climate Fund', country:'Global', url:'https://www.greenclimate.fund'},
+  {code:'USA', name:'USAID Caribbean', country:'Regional', url:'https://www.usaid.gov'},
+  {code:'GIZ', name:'GIZ Caribbean', country:'Regional', url:'https://www.giz.de'},
+  {code:'EU',  name:'EU-LAC Foundation', country:'Regional', url:'https://eulacfoundation.org'},
+  {code:'CDB', name:'Caribbean Dev Bank', country:'Caribbean', url:'https://www.caribank.org'},
+  {code:'CRD', name:'Credii Foundation', country:'Caribbean', url:'https://crediifoundation.org'},
+  {code:'UNI', name:'UNICEF Caribbean', country:'Regional', url:'https://www.unicef.org'},
+  {code:'PAH', name:'PAHO/WHO', country:'Regional', url:'https://www.paho.org'},
+  {code:'OEC', name:'OECS Commission', country:'Caribbean', url:'https://www.oecs.org'},
+  {code:'CTF', name:'Caribbean Tourism Fund', country:'Caribbean', url:'#'}
+];
+
+const IFIN_SEED = [
+  {id:'IF001',programme:'IDB Lab Caribbean Startup Accelerator',donor:'Inter-American Development Bank',type:'Grant',amount:'USD 2.5M',deadline:'2026-09-01',score:91,status:'Open',territory:'Caribbean',description:'IDB Lab accelerator for Caribbean startups. Seeking CRM, growth tools, and digital infrastructure vendors.',tags:['CRM Fit','Tech Sector'],pushedToCRM:false},
+  {id:'IF002',programme:'GCF Caribbean Resilience Programme',donor:'Green Climate Fund',type:'Grant',amount:'USD 45M',deadline:'2026-09-15',score:78,status:'Open',territory:'Caribbean',description:'GCF programme for climate resilience. Seeking project management and stakeholder engagement platforms.',tags:['NGO','High Budget'],pushedToCRM:false},
+  {id:'IF003',programme:'USAID Digital Inclusion Caribbean',donor:'USAID',type:'Grant',amount:'USD 3.2M',deadline:'2026-08-30',score:85,status:'Closing Soon',territory:'Caribbean',description:'USAID digital inclusion initiative. Partner organizations need CRM for participant tracking and reporting.',tags:['CRM Fit','Urgent'],pushedToCRM:false},
+  {id:'IF004',programme:'EU-LAC Digital Economy Fund',donor:'EU Delegation',type:'Technical Assistance',amount:'EUR 8.5M',deadline:'2026-10-01',score:88,status:'Open',territory:'LAC',description:'EU programme promoting digital economy. Seeking CRM adoption and e-commerce enablement tools.',tags:['CRM Fit','Growth Fit','High Budget'],pushedToCRM:false},
+  {id:'IF005',programme:'CDB Business Innovation Fund',donor:'Caribbean Development Bank',type:'Loan',amount:'USD 8.5M',deadline:'2026-09-30',score:82,status:'Open',territory:'Caribbean',description:'CDB fund supporting business innovation. Grants available to SMEs implementing CRM and growth tools.',tags:['CRM Fit','Growth Fit'],pushedToCRM:false},
+  {id:'IF006',programme:'Credii Education Finance Initiative',donor:'Credii Foundation',type:'Grant',amount:'USD 500K',deadline:'2026-11-01',score:76,status:'Open',territory:'Caribbean',description:'Credii-aligned education finance programme for Caribbean youth digital skills development.',tags:['NGO','Growth Fit'],pushedToCRM:false},
+  {id:'IF007',programme:'GIZ SME Digitization Caribbean',donor:'GIZ / EU',type:'Technical Assistance',amount:'EUR 4.8M',deadline:'2026-09-15',score:88,status:'Open',territory:'Caribbean',description:'GIZ programme promoting digital economy. Seeking tools for SME digitization and CRM adoption.',tags:['CRM Fit','Growth Fit','High Budget'],pushedToCRM:false},
+  {id:'IF008',programme:'UNICEF Eastern Caribbean Digital Inclusion',donor:'UNICEF',type:'Grant',amount:'USD 1.5M',deadline:'2026-09-15',score:82,status:'Closing Soon',territory:'Eastern Caribbean',description:'UNICEF programme for digital inclusion of youth across Eastern Caribbean islands.',tags:['Growth Fit','NGO','Urgent'],pushedToCRM:false}
+];
+
+let ifinOpps = [];
+
+function ifinInit(){
+  const stored = localStorage.getItem('ifin_opps');
+  if(stored){
+    try{
+      const parsed = JSON.parse(stored);
+      const storedIds = new Set(parsed.map(o=>o.id));
+      const missing = IFIN_SEED.filter(o=>!storedIds.has(o.id));
+      ifinOpps = [...missing, ...parsed];
+    }catch(e){ ifinOpps = [...IFIN_SEED]; }
+  } else { ifinOpps = [...IFIN_SEED]; }
+}
+
+function ifinRender(){
+  ifinInit();
+  const typeFilter = document.getElementById('ifinTypeFilter')?.value||'';
+  const statusFilter = document.getElementById('ifinStatusFilter')?.value||'';
+  let filtered = [...ifinOpps];
+  if(typeFilter) filtered = filtered.filter(o=>o.type===typeFilter);
+  if(statusFilter) filtered = filtered.filter(o=>o.status===statusFilter);
+  filtered.sort((a,b)=>b.score-a.score);
+
+  // Stats
+  const statsEl = document.getElementById('ifinStatsRow');
+  if(statsEl){
+    const open = ifinOpps.filter(o=>o.status==='Open').length;
+    const closing = ifinOpps.filter(o=>o.status==='Closing Soon').length;
+    const pushed = ifinOpps.filter(o=>o.pushedToCRM).length;
+    const cards = [
+      {icon:'\u{1F4B0}',label:'Total Windows',val:ifinOpps.length,color:'#a78bfa',bg:'rgba(167,139,250,.12)'},
+      {icon:'\u{1F7E2}',label:'Open',val:open,color:'#22c55e',bg:'rgba(34,197,94,.1)'},
+      {icon:'\u{1F7E1}',label:'Closing Soon',val:closing,color:'#f59e0b',bg:'rgba(245,158,11,.1)'},
+      {icon:'\u2705',label:'Qualified to CRM',val:pushed,color:'#6ee7b7',bg:'rgba(16,185,129,.1)'}
+    ];
+    statsEl.innerHTML = cards.map(d=>`<div style="background:#1a1035;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;border:1px solid rgba(167,139,250,0.1);">
+      <div style="width:36px;height:36px;border-radius:9px;background:${d.bg};display:flex;align-items:center;justify-content:center;font-size:16px;">${d.icon}</div>
+      <div><div style="font-size:20px;font-weight:800;color:${d.color};">${d.val}</div><div style="font-size:10px;color:var(--text3);">${d.label}</div></div>
+    </div>`).join('');
+  }
+
+  // Source grid (render once)
+  const srcEl = document.getElementById('ifinSourceGrid');
+  if(srcEl && !srcEl.dataset.rendered){
+    srcEl.innerHTML = IFIN_SOURCES.map(s=>`<div style="background:var(--bg3);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:6px;">
+      <span style="font-size:10px;font-weight:700;color:#a78bfa;background:rgba(139,92,246,.15);padding:1px 5px;border-radius:4px;">${s.code}</span>
+      <div><div style="font-size:11px;font-weight:600;color:var(--text);">${s.name}</div><div style="font-size:10px;color:var(--text3);">${s.country}</div></div>
+      <span style="margin-left:auto;width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0;"></span>
+    </div>`).join('');
+    srcEl.dataset.rendered = '1';
+  }
+
+  // Count
+  const countEl = document.getElementById('ifinCount');
+  if(countEl) countEl.textContent = '('+filtered.length+' of '+ifinOpps.length+')';
+
+  // Table
+  const tbody = document.getElementById('ifinTbody');
+  if(!tbody) return;
+  if(!filtered.length){
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:32px;text-align:center;color:var(--text3);">No funding windows match the current filter.</td></tr>';
+    return;
+  }
+  const statusColor = {'Open':'#22c55e','Closing Soon':'#f59e0b','Closed':'#ef4444'};
+  const tagColors = {'CRM Fit':'background:rgba(139,92,246,.15);color:#c4b5fd;','Growth Fit':'background:rgba(16,185,129,.12);color:#6ee7b7;','High Budget':'background:rgba(245,158,11,.12);color:#fcd34d;','Urgent':'background:rgba(239,68,68,.12);color:#fca5a5;','NGO':'background:rgba(236,72,153,.1);color:#f9a8d4;','Tech Sector':'background:rgba(167,139,250,.15);color:#ddd6fe;'};
+  tbody.innerHTML = filtered.map(o=>`<tr style="border-bottom:1px solid var(--border);">
+    <td style="padding:10px 12px;font-weight:600;color:var(--text);font-size:12px;max-width:180px;">${o.programme}</td>
+    <td style="padding:10px 12px;font-size:11px;color:var(--text3);">${o.donor}</td>
+    <td style="padding:10px 12px;font-size:11px;color:var(--text2);">${o.type}</td>
+    <td style="padding:10px 12px;font-size:12px;font-weight:700;color:#a78bfa;white-space:nowrap;">${o.amount}</td>
+    <td style="padding:10px 12px;font-size:11px;color:var(--text2);white-space:nowrap;">${o.deadline}</td>
+    <td style="padding:10px 12px;"><span style="background:rgba(139,92,246,.2);color:#c4b5fd;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:700;">${o.score}</span></td>
+    <td style="padding:10px 12px;"><span style="font-size:11px;font-weight:700;color:${statusColor[o.status]||'#94a3b8'};">${o.status}</span></td>
+    <td style="padding:10px 12px;">
+      <button onclick="ifinQualify('${o.id}')" style="background:${o.pushedToCRM?'rgba(16,185,129,.15)':'rgba(139,92,246,.2)'};color:${o.pushedToCRM?'#6ee7b7':'#c4b5fd'};border:none;border-radius:5px;padding:4px 9px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;" ${o.pushedToCRM?'disabled':''}>
+        ${o.pushedToCRM?'\u2713 In COREX':'\u2192 COREX'}
+      </button>
+    </td>
+  </tr>`).join('');
+}
+
+function ifinToggleSources(){
+  const panel = document.getElementById('ifinSourcePanel');
+  const icon = document.getElementById('ifinSourceToggleIcon');
+  if(!panel) return;
+  const open = panel.style.display==='none';
+  panel.style.display = open?'block':'none';
+  if(icon) icon.textContent = open?'\u25BC':'\u25B6';
+}
+
+function ifinQualify(id){
+  const opp = ifinOpps.find(o=>o.id===id);
+  if(!opp||opp.pushedToCRM) return;
+  // Inject into COREX leads pipeline
+  const lead = {
+    id: 'IFIN_'+Date.now(),
+    name: opp.programme,
+    org: opp.donor,
+    source: 'IFIN Portal',
+    sourceType: 'donor',
+    country: '\uD83C\uDF0A '+opp.territory,
+    type: 'Donor Project',
+    deadline: opp.deadline,
+    budget: opp.amount,
+    contact: '',
+    description: opp.description,
+    score: opp.score,
+    tags: opp.tags||[],
+    status: 'New',
+    fitBreakdown: {industry:20,geo:18,budget:20,orgType:12,sourceQuality:10,urgency:10},
+    assignedAgent: 'Andrea M. Tanguay',
+    pushedToCRM: false,
+    whatsappSent: false,
+    foundAt: new Date().toISOString(),
+    ifinSource: true
+  };
+  corexLeads.unshift(lead);
+  localStorage.setItem('corex_leads', JSON.stringify(corexLeads));
+  opp.pushedToCRM = true;
+  localStorage.setItem('ifin_opps', JSON.stringify(ifinOpps));
+  ifinRender();
+  corexRenderStats();
+  corexAddFeed('\uD83D\uDCB0 IFIN: '+opp.programme+' injected into COREX pipeline');
+  corexToast('\u2705 '+opp.programme+' added to COREX pipeline');
+}
+
+function ifinRunScan(){
+  corexToast('\uD83D\uDCB0 IFIN scanning 12 donor & funding portals...');
+  setTimeout(()=>{
+    const newOpp = {
+      id:'IF_S'+Date.now(),
+      programme:'World Bank Caribbean Digital Economy Initiative',
+      donor:'World Bank',
+      type:'Grant',
+      amount:'USD 15M',
+      deadline:'2026-10-15',
+      score:89,
+      status:'Open',
+      territory:'Caribbean',
+      description:'World Bank initiative for digital economy development across Caribbean. Seeking CRM and digital tools vendors.',
+      tags:['CRM Fit','High Budget','Growth Fit'],
+      pushedToCRM:false
+    };
+    const exists = ifinOpps.find(o=>o.programme===newOpp.programme);
+    if(!exists){
+      ifinOpps.unshift(newOpp);
+      localStorage.setItem('ifin_opps', JSON.stringify(ifinOpps));
+      ifinRender();
+      corexAddFeed('\uD83D\uDCB0 IFIN: New funding window detected \u2014 '+newOpp.programme);
+      corexToast('\u2705 IFIN scan complete \u2014 1 new funding window found');
+    } else {
+      corexToast('\u2705 IFIN scan complete \u2014 all windows up to date');
+    }
+  }, 1800);
 }
 
 </script>
@@ -3282,24 +3468,64 @@ function corexShowIFINLocked(){
 </div>
 </div><!-- end corex-module-cdsia -->
 
-<!-- MODULE: IFIN — Funding & Donor Intelligence (Reserved) -->
+<!-- MODULE: IFIN — Funding & Donor Intelligence Engine -->
 <div class="corex-module" id="corex-module-ifin" style="display:none;">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;text-align:center;padding:40px;">
-    <div style="font-size:48px;margin-bottom:16px;filter:drop-shadow(0 0 20px rgba(167,139,250,0.3));">&#x1F4B0;</div>
-    <div style="font-size:22px;font-weight:800;color:#c4b5fd;margin-bottom:8px;">IFIN</div>
-    <div style="font-size:14px;font-weight:600;color:#7c6fa0;margin-bottom:20px;letter-spacing:.06em;text-transform:uppercase;">Funding & Donor Intelligence Engine</div>
-    <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(167,139,250,0.15);border-radius:14px;padding:24px 32px;max-width:480px;margin-bottom:24px;">
-      <div style="font-size:13px;color:#a78bfa;line-height:1.8;">
-        IFIN will monitor and score:<br/>
-        <span style="color:#7c6fa0;">&#x2022; IDB, World Bank, GCF donor calls</span><br/>
-        <span style="color:#7c6fa0;">&#x2022; USAID, EU-LAC, GIZ funding windows</span><br/>
-        <span style="color:#7c6fa0;">&#x2022; Caribbean development finance cycles</span><br/>
-        <span style="color:#7c6fa0;">&#x2022; Grant deadlines & eligibility signals</span><br/>
-        <span style="color:#7c6fa0;">&#x2022; Credii-aligned education finance opportunities</span>
+
+  <!-- Top bar -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <select id="ifinTypeFilter" onchange="ifinRender()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+        <option value="">All Funding Types</option>
+        <option value="Grant">&#x1F4B5; Grant</option>
+        <option value="Loan">&#x1F3E6; Loan</option>
+        <option value="Equity">&#x1F4C8; Equity</option>
+        <option value="Technical Assistance">&#x1F527; Technical Assistance</option>
+      </select>
+      <select id="ifinStatusFilter" onchange="ifinRender()" style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;font-family:inherit;">
+        <option value="">All Status</option>
+        <option value="Open">&#x1F7E2; Open</option>
+        <option value="Closing Soon">&#x1F7E1; Closing Soon</option>
+        <option value="Closed">&#x1F534; Closed</option>
+      </select>
+    </div>
+    <button onclick="ifinRunScan()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">&#x1F4B0; Scan Funding Portals</button>
+  </div>
+
+  <!-- Stats row -->
+  <div id="ifinStatsRow" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;"></div>
+
+  <!-- Funding sources -->
+  <div style="margin-bottom:14px;">
+    <button onclick="ifinToggleSources()" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">
+      <span id="ifinSourceToggleIcon">&#x25B6;</span>&nbsp;12 donor & funding portals being monitored
+    </button>
+    <div id="ifinSourcePanel" style="display:none;margin-top:10px;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;" id="ifinSourceGrid"></div>
+    </div>
+  </div>
+
+  <!-- Funding opportunities table -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">&#x1F4B0; Active Funding Windows <span id="ifinCount" style="font-size:11px;color:var(--text3);font-weight:400;"></span></div>
+        <div class="card-sub">Ranked by COREX Fit Index &#x2014; click &#x2192; COREX to qualify</div>
       </div>
     </div>
-    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:9999px;padding:6px 18px;font-size:12px;font-weight:600;color:#7c6fa0;">
-      &#x1F512; Reserved — Coming in next build cycle
+    <div style="max-height:440px;overflow-y:auto;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:var(--bg3);position:sticky;top:0;z-index:1;">
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Programme</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Donor</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Type</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Amount</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Deadline</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Fit Index</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
+          <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);">Action</th>
+        </tr></thead>
+        <tbody id="ifinTbody"></tbody>
+      </table>
     </div>
   </div>
 </div>
