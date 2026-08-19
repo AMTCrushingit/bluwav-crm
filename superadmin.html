@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 03:16 UTC -->
+<!-- BUILD: 2026-08-19 05:13 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -2462,38 +2462,50 @@ function corexToast(msg){
 // ================================================================
 
 const CDSIA_SOURCES = [
-  {name:'Nassau Guardian',country:'Bahamas',flag:'🇧🇸'},
-  {name:'The Punch',country:'Bahamas',flag:'🇧🇸'},
-  {name:'Bahama Journal',country:'Bahamas',flag:'🇧🇸'},
-  {name:'Trinidad Express',country:'Trinidad & Tobago',flag:'🇹🇹'},
-  {name:'Trinidad Guardian',country:'Trinidad & Tobago',flag:'🇹🇹'},
-  {name:'Trinidad Newsday',country:'Trinidad & Tobago',flag:'🇹🇹'},
-  {name:'Jamaica Gleaner',country:'Jamaica',flag:'🇯🇲'},
-  {name:'Jamaica Observer',country:'Jamaica',flag:'🇯🇲'},
-  {name:'Barbados Today',country:'Barbados',flag:'🇧🇧'},
-  {name:'Guyana Chronicle',country:'Guyana',flag:'🇬🇾'},
-  {name:'Stabroek News',country:'Guyana',flag:'🇬🇾'},
-  {name:'Loop Caribbean',country:'Regional',flag:'🌊'},
-  {name:'Caribbean News Service',country:'Regional',flag:'🌊'},
-  {name:'CMC',country:'Regional',flag:'🌊'},
+  {code:'JBDC', name:'JBDC SME Directory', country:'Jamaica'},
+  {code:'BIDC', name:'BIDC Export Ready', country:'Barbados'},
+  {code:'TTMA', name:'TTMA Directory', country:'Trinidad'},
+  {code:'BCCI', name:'Barbados Chamber', country:'Barbados'},
+  {code:'OECS', name:'OECS Business Registry', country:'Eastern Caribbean'},
+  {code:'FBTT', name:'Facebook Business TT', country:'Trinidad'},
+  {code:'FBJM', name:'Facebook Business JM', country:'Jamaica'},
+  {code:'LICC', name:'LinkedIn Caribbean', country:'Regional'},
+  {code:'CLAS', name:'Classifieds.tt', country:'Trinidad'},
+  {code:'KIJJ', name:'Kijiji Jamaica', country:'Jamaica'},
+  {code:'CDBG', name:'CDB Grant Portal', country:'Regional'},
+  {code:'DEVX', name:'Devex Job Board', country:'Regional'},
+  {code:'RELF', name:'ReliefWeb Caribbean', country:'Regional'},
+  {code:'STAB', name:'Stabroek Business', country:'Guyana'},
+  {code:'LOOP', name:'Loop Caribbean SME', country:'Regional'},
+  {code:'NGAS', name:'Nassau Guardian SME', country:'Bahamas'},
+  {code:'TEXP', name:'Trinidad Express Biz', country:'Trinidad'},
+  {code:'JGLE', name:'Jamaica Gleaner Biz', country:'Jamaica'}
 ];
 
 const CDSIA_DISTRESS_TYPES = {
-  Financial: {icon:'💰',color:'#ef4444',signals:['revenue collapse','wind-up petition','receivership','insolvency','debt default','profit warning','layoffs','cost-cutting']},
-  Operational: {icon:'⚙️',color:'#f97316',signals:['service disruption','supply chain','operational failure','capacity issues','staff shortage','system failure']},
-  Governance: {icon:'🏛️',color:'#8b5cf6',signals:['board resignation','CEO departure','regulatory action','compliance breach','investigation','audit failure']},
-  Digital: {icon:'💻',color:'#3b82f6',signals:['website outage','data breach','cyber attack','system migration','digital failure','IT crisis']},
-  Reputation: {icon:'📢',color:'#f59e0b',signals:['customer complaints','social media crisis','PR scandal','brand damage','public backlash','media scrutiny']},
+  'Scaling':           {icon:'📈', color:'#22c55e'},
+  'CRM Need':          {icon:'💼', color:'#a78bfa'},
+  'Digital Gap':       {icon:'💻', color:'#60a5fa'},
+  'Founder Bottleneck':{icon:'🔒', color:'#f59e0b'},
+  'Execution Chaos':   {icon:'⚡', color:'#ef4444'},
+  'Governance Failure':{icon:'🏛️', color:'#ef4444'},
+  'Growth Stall':      {icon:'📉', color:'#f97316'},
+  'Funding Seeking':   {icon:'💰', color:'#fcd34d'},
+  'Reputation Risk':   {icon:'📢', color:'#f9a8d4'},
+  'Pivot/Rebrand':     {icon:'🔄', color:'#c4b5fd'}
 };
 
 // Seed CDSIA signals (simulated — replace with real news API)
 const CDSIA_SEED_SIGNALS = [
-  {id:'CDSIA001',sourceType:'CDSIA',organizationName:'Caribbean Airlines',country:'🇹🇹 Trinidad & Tobago',sector:'Aviation',distressType:['Financial','Operational'],distressSummary:'Caribbean Airlines reports significant revenue decline and route cancellations amid rising fuel costs and reduced passenger demand.',urgency:'Critical',opportunityScore:94,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'Trinidad Express',articleUrl:'#',dateDetected:new Date(Date.now()-2*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA002',sourceType:'CDSIA',organizationName:'National Commercial Bank Jamaica',country:'🇯🇲 Jamaica',sector:'Banking',distressType:['Governance','Financial'],distressSummary:'NCB reports board-level restructuring following regulatory review. Three senior executives resign amid compliance concerns.',urgency:'High',opportunityScore:88,recommendedServices:['BluWav CRM'],sourcePublication:'Jamaica Gleaner',articleUrl:'#',dateDetected:new Date(Date.now()-5*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA003',sourceType:'CDSIA',organizationName:'Massy Holdings',country:'🇹🇹 Trinidad & Tobago',sector:'Retail/Distribution',distressType:['Digital','Operational'],distressSummary:'Massy Holdings e-commerce platform experiences extended outage. Customer complaints surge across social media channels.',urgency:'High',opportunityScore:82,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'Trinidad Guardian',articleUrl:'#',dateDetected:new Date(Date.now()-8*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA004',sourceType:'CDSIA',organizationName:'Sagicor Financial',country:'🇧🇧 Barbados',sector:'Insurance/Finance',distressType:['Financial'],distressSummary:'Sagicor issues profit warning for Q3 2026. Investment portfolio underperformance cited amid regional economic headwinds.',urgency:'Medium',opportunityScore:76,recommendedServices:['BluWav CRM'],sourcePublication:'Barbados Today',articleUrl:'#',dateDetected:new Date(Date.now()-12*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA005',sourceType:'CDSIA',organizationName:'Guyana Power & Light',country:'🇬🇾 Guyana',sector:'Energy/Utilities',distressType:['Operational','Reputation'],distressSummary:'GPL faces mounting customer complaints over extended outages. Government threatens regulatory intervention.',urgency:'Critical',opportunityScore:91,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'Stabroek News',articleUrl:'#',dateDetected:new Date(Date.now()-1*3600000).toISOString(),pushedToCRM:false},
-  {id:'CDSIA006',sourceType:'CDSIA',organizationName:'Digicel Jamaica',country:'🇯🇲 Jamaica',sector:'Telecommunications',distressType:['Financial','Digital'],distressSummary:'Digicel Jamaica reports network infrastructure challenges following parent company debt restructuring.',urgency:'High',opportunityScore:85,recommendedServices:['BluWav CRM'],sourcePublication:'Jamaica Observer',articleUrl:'#',dateDetected:new Date(Date.now()-6*3600000).toISOString(),pushedToCRM:false},
+  // ── SCALING signals → BluWav CRM + Stratiix ──
+  {id:'CDSIA001',sourceType:'CDSIA',organizationName:'Prestige Auto Parts TT',country:'🇹🇹 Trinidad & Tobago',sector:'Automotive Retail',distressType:['Scaling','CRM Need'],distressSummary:'Prestige Auto Parts opened 3rd location in San Fernando. Owner managing 400+ customers via WhatsApp groups and spreadsheets. No CRM in place. Staff coordination breaking down.',urgency:'High',opportunityScore:92,recommendedServices:['BluWav CRM','Stratiix'],sourcePublication:'TTMA Directory',articleUrl:'#',dateDetected:new Date(Date.now()-2*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA002',sourceType:'CDSIA',organizationName:'Karibu Catering Services',country:'🇯🇲 Jamaica',sector:'Food & Hospitality',distressType:['Founder Bottleneck','Execution Chaos'],distressSummary:'Karibu Catering growing rapidly — 12 staff, 80+ weekly events. Owner reports "I approve everything, nothing moves without me." Classic founder bottleneck. No operating system in place.',urgency:'Critical',opportunityScore:94,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'JBDC SME Directory',articleUrl:'#',dateDetected:new Date(Date.now()-5*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA003',sourceType:'CDSIA',organizationName:'SunCoast Real Estate Barbados',country:'🇧🇧 Barbados',sector:'Real Estate',distressType:['Digital Gap','CRM Need'],distressSummary:'SunCoast Real Estate managing 200+ property listings via email and paper files. No CRM, no digital pipeline. Agents losing leads. Competitor using digital tools gaining market share.',urgency:'High',opportunityScore:88,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'BIDC Export Ready Directory',articleUrl:'#',dateDetected:new Date(Date.now()-8*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA004',sourceType:'CDSIA',organizationName:'Guyana Freight Solutions',country:'🇬🇾 Guyana',sector:'Logistics & Freight',distressType:['Scaling','Execution Chaos'],distressSummary:'Guyana Freight Solutions won 3 new government contracts. Fleet growing from 8 to 22 vehicles. No dispatch system, no client management. Owner coordinating everything via phone.',urgency:'Critical',opportunityScore:96,recommendedServices:['Stratiix','BluWav CRM'],sourcePublication:'Stabroek News Business',articleUrl:'#',dateDetected:new Date(Date.now()-1*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA005',sourceType:'CDSIA',organizationName:'Island Wellness Spa Group',country:'🇱🇨 St. Lucia',sector:'Health & Wellness',distressType:['Growth Stall','Digital Gap'],distressSummary:'Island Wellness Spa has 3 locations but no unified booking system, no email marketing, no client retention strategy. Revenue plateaued for 18 months. Owner seeking growth support.',urgency:'Medium',opportunityScore:82,recommendedServices:['BluWav Growth','BluWav CRM'],sourcePublication:'OECS Business Registry',articleUrl:'#',dateDetected:new Date(Date.now()-12*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA006',sourceType:'CDSIA',organizationName:'Caribbean Tech Consultants',country:'🇹🇹 Trinidad & Tobago',sector:'Technology Services',distressType:['Governance Failure','Founder Bottleneck'],distressSummary:'Caribbean Tech Consultants — 18 staff, $2M revenue — reporting team misalignment, missed project deadlines, and client escalations. No governance framework. Founder overwhelmed.',urgency:'Critical',opportunityScore:95,recommendedServices:['Stratiix'],sourcePublication:'LinkedIn Caribbean SME',articleUrl:'#',dateDetected:new Date(Date.now()-3*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA007',sourceType:'CDSIA',organizationName:'Bajan Bites Food Truck Network',country:'🇧🇧 Barbados',sector:'Food & Beverage',distressType:['Digital Gap','CRM Need'],distressSummary:'Bajan Bites operating 6 food trucks with no digital ordering, no customer database, no loyalty programme. Competitor launched app. Owner posted in Facebook group seeking "affordable CRM solution".',urgency:'High',opportunityScore:86,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'Barbados Facebook Business Group',articleUrl:'#',dateDetected:new Date(Date.now()-6*3600000).toISOString(),pushedToCRM:false},
+  {id:'CDSIA008',sourceType:'CDSIA',organizationName:'Dominica Eco Tours',country:'🇩🇲 Dominica',sector:'Tourism & Hospitality',distressType:['Funding Seeking','Scaling'],distressSummary:'Dominica Eco Tours applied for CDB Business Innovation Fund grant. 40+ tour packages, managing bookings via WhatsApp. Seeking digital tools to qualify for grant disbursement.',urgency:'High',opportunityScore:84,recommendedServices:['BluWav CRM','BluWav Growth'],sourcePublication:'CDB Grant Portal',articleUrl:'#',dateDetected:new Date(Date.now()-9*3600000).toISOString(),pushedToCRM:false}
 ];
 
 let cdsiaSignals = [];
