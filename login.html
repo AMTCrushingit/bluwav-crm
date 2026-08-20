@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 17:35 UTC -->
+<!-- BUILD: 2026-08-20 18:10 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -103,7 +103,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0a0e1
 <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:24px;">
       This platform is available to BluWav Growth clients.<br/>Enter your access code to continue.
     </p>
-<input autocomplete="new-password" class="gate-input" id="gateInput" onkeydown="if(event.key==='Enter')checkGate()" placeholder="" type="password"/>
+<input autocomplete="off" class="gate-input" id="gateInput" onkeydown="if(event.key==='Enter')checkGate()" onfocus="this.removeAttribute('readonly')" placeholder="" readonly type="password" name="access_code_bluwav"/>
 <div class="gate-error" id="gateError">⚠ Incorrect access code. Please try again.</div>
 <button class="gate-btn" onclick="checkGate()">Continue →</button>
 <p class="gate-contact" style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:20px;position:relative;z-index:100000;">Don't have an access code? Contact

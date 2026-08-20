@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 20:21 UTC -->
+<!-- BUILD: 2026-08-20 18:11 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -1196,7 +1196,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal-body">
 <div class="fg-row"><div class="fg"><label class="fl">First Name <span class="req">*</span></label><input class="fi" id="mc-first" placeholder="First name"/></div><div class="fg"><label class="fl">Last Name <span class="req">*</span></label><input class="fi" id="mc-last" placeholder="Last name"/></div></div>
 <div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="mc-email" placeholder="email@company.com" type="email"/></div>
-<div class='\"fg\"'><label class='\"fl\"' style='\"color:var(--text3);\"'>Email 2 <span style='\"font-size:10px;font-weight:400;\"'>(optional)</span></label><input class='\"fi\"' id='\"mc-email2\"' placeholder='\"alternate@example.com\"' type='\"email\"/'/></div>
+
 <div class="fg"><label class="fl">Phone / WhatsApp</label>
 <div style="display:flex;gap:6px;">
 <select class="fs" id="mc-phone-cc" style="width:110px;flex-shrink:0;">
@@ -2414,6 +2414,11 @@ function openModal(id){
         allCustomers.map(c=>`<option value="${c.id}">${c.full_name||'Unknown'}${c.business_name?' — '+c.business_name:''}</option>`).join('');
     }
   }
+
+  // Mobile draft restore for addContact
+  if(id==='addContact'){
+    setTimeout(function(){ restoreContactDraft(); wireContactDraftSaving(); }, 80);
+  }
 }
 function closeModal(id){
   const drawerIds=['addContact','editContact','addDeal','editDeal','addTask','addEvent'];
@@ -2441,7 +2446,6 @@ async function saveContact(){
   const contact={
     full_name:(first+' '+last).trim(),
     email:email,
-    email2:document.getElementById('mc-email2')?.value.trim()||null,
     source_code:sourceEl?.value||null,
     phone:getFullPhone(),
     whatsapp:getFullPhone(),
@@ -2463,7 +2467,7 @@ async function saveContact(){
   }
   showToast('Contact saved ✓','success');
   // Admin notification removed per user request
-  closeModal('addContact');
+  clearContactDraft(); closeModal('addContact');
   // Clear form
   ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value='';
@@ -5147,6 +5151,52 @@ function quickWA(id){
   var sel=document.getElementById('wa-contact-select');if(sel)sel.value=id;
   var el=document.getElementById('wa-phone-input');if(el)el.value=ct.phone||ct.whatsapp||'';
   var msg=document.getElementById('wa-message-input');if(msg)msg.focus();
+}
+
+
+// ================================================================
+// MOBILE FORM DRAFT — sticky contact form data
+// ================================================================
+const CONTACT_DRAFT_KEY = 'bw_contact_draft';
+
+function saveContactDraft(){
+  const fields = ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes','mc-source'];
+  const draft = {};
+  fields.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) draft[id] = el.value;
+  });
+  // Also save phone country code
+  const cc = document.getElementById('mc-phone-cc');
+  if(cc) draft['mc-phone-cc'] = cc.value;
+  localStorage.setItem(CONTACT_DRAFT_KEY, JSON.stringify(draft));
+}
+
+function restoreContactDraft(){
+  try{
+    const draft = JSON.parse(localStorage.getItem(CONTACT_DRAFT_KEY)||'{}');
+    if(!Object.keys(draft).length) return;
+    Object.entries(draft).forEach(([id, val])=>{
+      const el = document.getElementById(id);
+      if(el && val) el.value = val;
+    });
+  }catch(e){}
+}
+
+function clearContactDraft(){
+  localStorage.removeItem(CONTACT_DRAFT_KEY);
+}
+
+// Wire draft saving to all contact form inputs
+function wireContactDraftSaving(){
+  const fields = ['mc-first','mc-last','mc-email','mc-phone','mc-biz','mc-location','mc-notes','mc-source','mc-phone-cc'];
+  fields.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el){
+      el.addEventListener('input', saveContactDraft);
+      el.addEventListener('change', saveContactDraft);
+    }
+  });
 }
 
 </script>
