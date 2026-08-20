@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-20 19:30 UTC -->
+<!-- BUILD: 2026-08-20 19:34 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -5842,78 +5842,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="role-banner" id="roleBanner"></div>
 <!-- ══ DASHBOARD VIEW ══ -->
 <div class="content">
-<div class="view active" id="view-dashboard">
-<!-- Team Switcher (manager/admin only) -->
-<div id="teamSwitcher" style="display:none;">
-<div class="team-switcher" id="teamSwitcherBtns">
-<span class="team-switcher-label">Viewing:</span>
-</div>
-</div>
-<!-- Stats -->
-<div class="stats-grid">
-<div class="stat c" onclick="showView('contacts')" style="cursor:pointer;" title="View all customers"><div class="stat-hd"><span class="stat-lbl">Total Customers</span><span>👥</span></div><div class="stat-val" id="metricCustomers">—</div><div class="stat-chg up" id="contactTrend">Click to view →</div></div>
-<div class="stat g" onclick="showView('deals')" style="cursor:pointer;" title="View all opportunities"><div class="stat-hd"><span class="stat-lbl">Active Opportunities</span><span>💼</span></div><div class="stat-val" id="metricOpportunities">—</div><div class="stat-chg up">Click to view →</div></div>
-<div class="stat o" onclick="showView('deals')" style="cursor:pointer;" title="View pipeline value"><div class="stat-hd"><span class="stat-lbl">Opportunity Value</span><span>💰</span></div><div class="stat-val" id="metricValue">$0</div><div class="stat-chg up">Click to view →</div></div>
-<div class="stat s" onclick="showView('deals')" style="cursor:pointer;" title="View won deals"><div class="stat-hd"><span class="stat-lbl">Revenue Closed</span><span>🏆</span></div><div class="stat-val" id="metricWon">0</div><div class="stat-chg nt">Click to view →</div></div>
-</div>
-<!-- Quick Actions -->
-<div class="qa-grid">
-<div class="qa" onclick="openModal('addContact')"><div class="qa-icon">➕</div><div class="qa-lbl">New Contact</div></div>
-<div class="qa" onclick="openModal('addDeal')"><div class="qa-icon">💼</div><div class="qa-lbl">New Opportunity</div></div>
-<div aria-disabled="true" aria-label="Send Email — not available during beta" class="qa ni-locked" role="button" style="cursor:not-allowed;opacity:0.35;filter:grayscale(0.5);" tabindex="-1" title="Email not available during beta">
-<div class="qa-icon">📧</div>
-<div class="qa-lbl">Send Email</div>
-<div class="ni-tooltip" role="tooltip" style="left:50%;transform:translateX(-50%);top:calc(100% + 8px);">
-<div class="ni-tooltip-title">📧 Email</div>
-<div class="ni-tooltip-desc">Send emails directly from BluWav CRM with full tracking and logging.</div>
-<div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
-</div>
-</div>
-<div class="qa" onclick="openModal('addTask')"><div class="qa-icon">✅</div><div class="qa-lbl">Add Task</div></div>
-</div>
-<!-- Pipeline + Right Panel (Leaderboard or Activity) -->
-<div class="two-col">
-<div class="panel">
-<div class="panel-hd">
-<div class="panel-title">💼 Sales Pipeline</div>
-<button class="btn btn-ghost btn-sm" onclick="showView('deals')">View All →</button>
-</div>
-<div class="panel-body">
-<div class="pipe-cols">
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--text3);">Lead</span><span class="pipe-cnt" id="colLead">0</span></div><div id="dealsLead"></div></div>
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--cyan);">Qualified</span><span class="pipe-cnt" id="colQualified">0</span></div><div id="dealsQualified"></div></div>
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--gold);">Proposal</span><span class="pipe-cnt" id="colProposal">0</span></div><div id="dealsProposal"></div></div>
-<div><div class="pipe-col-hd"><span class="pipe-col-lbl" style="color:var(--success);">Won ✓</span><span class="pipe-cnt" id="colWon">0</span></div><div id="dealsWon"></div></div>
-</div>
-</div>
-</div>
-<div class="panel" id="rightPanel">
-<div class="panel-hd"><div class="panel-title" id="rightPanelTitle">⚡ Activity</div><button class="btn btn-ghost btn-sm">All →</button></div>
-<div class="panel-body" id="rightPanelBody" style="padding:0 20px;">
-<div style="text-align:center;padding:32px;color:var(--text3);font-size:0.82rem;">No data yet</div>
-</div>
-</div>
-</div>
-<!-- Bottom: Pipeline Trend Chart + Recent Customers -->
-<div class="bottom-grid">
-<div class="panel">
-<div class="panel-hd"><div class="panel-title">📈 Pipeline Trend<span style="font-size:0.7rem;color:var(--text3);font-weight:400;margin-left:8px;">Last 6 months</span></div></div>
-<div class="panel-body"><div class="chart-container"><canvas id="revenueChart"></canvas></div></div>
-</div>
-<div class="panel">
-<div class="panel-hd">
-<div class="panel-title">👥 Recent Customers</div>
-<button class="btn btn-ghost btn-sm" onclick="showView('contacts')">View All →</button>
-</div>
-<div style="overflow-x:auto;">
-<table class="tbl">
-<thead><tr><th>Name</th><th>Company</th><th>Status</th><th>Date</th></tr></thead>
-<tbody id="recentCustomersBody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3);">Loading...</td></tr></tbody>
-</table>
-</div>
-</div>
-</div>
-</div><!-- /dashboard -->
+<!-- /dashboard -->
 <!-- ══ CONTACTS VIEW ══ -->
 <div class="view" id="view-contacts">
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
