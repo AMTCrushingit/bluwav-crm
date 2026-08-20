@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-19 20:43 UTC -->
+<!-- BUILD: 2026-08-20 19:26 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -10,6 +10,21 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
+
+// ---- Tenant health status badge ----
+function tenantHealthBadge(lastSeenIso){
+  if(!lastSeenIso) return '<span style="background:rgba(100,116,139,0.15);color:#64748b;padding:3px 10px;border-radius:9999px;font-size:10px;font-weight:700;white-space:nowrap;">Never Active</span>';
+  const mins = Math.floor((Date.now()-new Date(lastSeenIso).getTime())/60000);
+  if(mins < 10)  return '<span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:3px 10px;border-radius:9999px;font-size:10px;font-weight:700;white-space:nowrap;">&#x1F7E2; Online Now</span>';
+  if(mins < 60)  return '<span style="background:rgba(34,197,94,0.1);color:#4ade80;padding:3px 10px;border-radius:9999px;font-size:10px;font-weight:700;white-space:nowrap;">Active ' + mins + 'm ago</span>';
+  const hrs = Math.floor(mins/60);
+  if(hrs < 24)   return '<span style="background:rgba(0,194,216,0.12);color:#00C2D8;padding:3px 10px;border-radius:9999px;font-size:10px;font-weight:700;white-space:nowrap;">Active Today</span>';
+  const days = Math.floor(hrs/24);
+  if(days === 1) return '<span style="background:rgba(247,200,115,0.12);color:#F7C873;padding:3px 10px;border-radius:9999px;font-size:10px;font-weight:700;white-space:nowrap;">Yesterday</span>';
+  if(days <= 7)  return '<span style="background:rgba(245,158,11,0.12);color:#f59e0b;padding:3px 10px;border-radius:9999px;font-size:10px;font-weight:700;white-space:nowrap;">'+days+'d ago</span>';
+  if(days <= 30) return '<span style="background:rgba(239,68,68,0.1);color:#ef4444;padding:3px 10px;border-radius:9999px;font-size:10px;font-weight:700;white-space:nowrap;">Inactive '+days+'d</span>';
+  return '<span style="background:rgba(100,116,139,0.15);color:#64748b;padding:3px 10px;border-radius:9999px;font-size:10px;font-weight:700;white-space:nowrap;">Inactive 30d+</span>';
+}
 :root{
   --bg:#13102a;--bg2:#1c1640;--bg3:#241e50;--bg4:#342a6e;
   --border:rgba(167,139,250,0.18);--border2:rgba(167,139,250,0.32);
@@ -981,7 +996,7 @@ function renderTenantHealth(){
       <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
       <td><span class="badge ${planBadge}">${plan}</span></td>
       <td>${trialBadge}</td>
-      <td style="color:var(--text3);font-size:11px;">${timeAgo(p.last_seen)}</td>
+      <td style="font-size:11px;">${tenantHealthBadge(p.last_seen)}</td>
       <td style="color:var(--text2);text-align:center;">${contactCount}</td>
       <td style="color:var(--text2);text-align:center;">${dealCount}</td>
       <td style="color:var(--green);font-size:12px;font-weight:600;">${fmt(dealVal)}</td>
@@ -1324,7 +1339,7 @@ function renderUsers(){
     <td><span class="badge ${roleBadge[p.role]||'badge-muted'}">${p.role||'salesperson'}</span></td>
     <td style="font-size:13px;color:var(--text3);font-family:monospace;">${p.id.substring(0,16)}...</td>
     <td style="color:var(--text3);font-size:11px;">${fmtDate(p.created_at)}</td>
-    <td style="color:var(--text3);font-size:11px;">${timeAgo(p.last_seen)}</td>
+    <td style="font-size:11px;">${tenantHealthBadge(p.last_seen)}</td>
     <td><div style="display:flex;gap:4px;">
       <button class="btn btn-ghost btn-sm" onclick="editUser('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}','${p.role||'salesperson'}')">&#x270F;&#xFE0F; Edit</button>
       <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${(p.full_name||'').replace(/'/g,"\\'")}')">&#x1F5D1;</button>
