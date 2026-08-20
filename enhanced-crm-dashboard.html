@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-20 18:11 UTC -->
+<!-- BUILD: 2026-08-20 18:29 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -2582,8 +2582,12 @@ document.addEventListener('click',e=>{
 var presenceInterval = null;
 
 async function updatePresence(online) {
-  // Presence tracking disabled — columns not in schema
-  return;
+  if(!currentUser) return;
+  try {
+    await db.from('profiles').update({
+      last_seen: new Date().toISOString()
+    }).eq('id', currentUser.id);
+  } catch(e) { /* silent — never block UI */ }
 }
 
 function startPresence() {
