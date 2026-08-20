@@ -557,6 +557,37 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
 </div>
 </a>
+<div class="ns" data-tooltip="Performance">Performance</div>
+<a aria-disabled="true" aria-label="Agent Dashboard — coming soon" class="ni ni-locked" role="button" tabindex="0">
+<span class="ni-icon">📊</span>
+<span class="nav-text">Agent Dashboard</span>
+<span class="ni-lock-badge">🔒 Soon</span>
+<div class="ni-tooltip" role="tooltip">
+<div class="ni-tooltip-title">📊 Agent Dashboard</div>
+<div class="ni-tooltip-desc">Individual agent performance metrics, activity tracking, and leaderboard rankings.</div>
+<div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
+</div>
+</a>
+<a aria-disabled="true" aria-label="Commission Calculator — coming soon" class="ni ni-locked" role="button" tabindex="0">
+<span class="ni-icon">💰</span>
+<span class="nav-text">Commission Calc</span>
+<span class="ni-lock-badge">🔒 Soon</span>
+<div class="ni-tooltip" role="tooltip">
+<div class="ni-tooltip-title">💰 Commission Calculator</div>
+<div class="ni-tooltip-desc">Calculate agent commissions, view payout history, and manage commission tiers.</div>
+<div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
+</div>
+</a>
+<a aria-disabled="true" aria-label="Onboarding — coming soon" class="ni ni-locked" role="button" tabindex="0">
+<span class="ni-icon">🚀</span>
+<span class="nav-text">Onboarding</span>
+<span class="ni-lock-badge">🔒 Soon</span>
+<div class="ni-tooltip" role="tooltip">
+<div class="ni-tooltip-title">🚀 Agent Onboarding</div>
+<div class="ni-tooltip-desc">Guided onboarding flow for new agents — setup checklist, training resources, and first-week goals.</div>
+<div class="ni-tooltip-date">🗓 Coming Q4 2026</div>
+</div>
+</a>
 <div class="ns" data-tooltip="Insights">Insights</div>
 <a class="ni" data-tooltip="Business Insights" id="nav-reports" onclick="showView('reports')" style="cursor:pointer;"><span class="ni-icon">📈</span><span class="nav-text">Business Insights</span></a>
 <div class="ns" data-tooltip="Workspace">Workspace</div>
@@ -591,7 +622,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="tb-actions">
 <button aria-label="Toggle menu" class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileSidebar()" style="display:none;" title="Menu">☰</button>
 <div style="position:relative;">
-<div style="position:relative;display:inline-flex;align-items:center;"><span style="position:absolute;left:10px;color:var(--text3);font-size:12px;pointer-events:none;">&#x1F50D;</span><input id="globalSearch" onblur="this.style.borderColor='var(--navy-border)';this.style.width='220px'" onfocus="this.style.borderColor='var(--cyan)';this.style.width='280px'" oninput="globalSearchFn(this.value)" placeholder="🔍 Search contacts, deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.8rem;padding:7px 14px 7px 30px;outline:none;width:220px;transition:var(--transition);font-family:var(--font-body);"/></div>
+<div style="position:relative;display:inline-flex;align-items:center;"><span style="position:absolute;left:10px;color:var(--text3);font-size:12px;pointer-events:none;">🔍</span><input id="globalSearch" onblur="this.style.borderColor='var(--navy-border)';this.style.width='220px'" onfocus="this.style.borderColor='var(--cyan)';this.style.width='280px'" oninput="globalSearchFn(this.value)" placeholder="🔍 Search contacts, deals..." style="background:var(--navy-light);border:1px solid var(--navy-border);border-radius:var(--radius-md);color:var(--text);font-size:0.8rem;padding:7px 14px 7px 30px;outline:none;width:220px;transition:var(--transition);font-family:var(--font-body);"/></div>
 <div id="searchResults" style="position:absolute;top:100%;left:0;right:0;background:var(--navy-mid);border:1px solid var(--navy-border);border-radius:var(--radius-md);margin-top:4px;display:none;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
 </div>
 <button class="btn btn-primary btn-sm" onclick="openModal('addContact')">+ Add Contact</button>
@@ -1165,7 +1196,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="modal-body">
 <div class="fg-row"><div class="fg"><label class="fl">First Name <span class="req">*</span></label><input class="fi" id="mc-first" placeholder="First name"/></div><div class="fg"><label class="fl">Last Name <span class="req">*</span></label><input class="fi" id="mc-last" placeholder="Last name"/></div></div>
 <div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" id="mc-email" placeholder="email@company.com" type="email"/></div>
-<div class=\"fg\"><label class=\"fl\" style=\"color:var(--text3);\">Email 2 <span style=\"font-size:10px;font-weight:400;\">(optional)</span></label><input class=\"fi\" id=\"mc-email2\" placeholder=\"alternate@example.com\" type=\"email\"/></div>
+<div class='\"fg\"'><label class='\"fl\"' style='\"color:var(--text3);\"'>Email 2 <span style='\"font-size:10px;font-weight:400;\"'>(optional)</span></label><input class='\"fi\"' id='\"mc-email2\"' placeholder='\"alternate@example.com\"' type='\"email\"/'/></div>
 <div class="fg"><label class="fl">Phone / WhatsApp</label>
 <div style="display:flex;gap:6px;">
 <select class="fs" id="mc-phone-cc" style="width:110px;flex-shrink:0;">
@@ -1183,8 +1214,8 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <option value="+44">🇬🇧 +44 UK</option>
 <option value="+52">🇲🇽 +52 MX</option>
 </select>
-<input class="fi" id="mc-phone" oninput="formatPhoneInput(this)" placeholder="(xxx) xxx-xxxx" style="flex:1;" type="tel"/>
-</div>
+<input class="fi" id="mc-phone" oninput="formatPhoneInput(this)" placeholder="(xxx) xxx-xxxx" style="flex:1;" type="tel">
+</input></div>
 </div>
 <div class="fg"><label class="fl">Business Name</label><input class="fi" id="mc-biz" placeholder="Company name"/></div>
 <div class="fg-row">
