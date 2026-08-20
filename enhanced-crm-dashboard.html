@@ -1,4 +1,4 @@
-<!-- BUILD: 2026-08-20 19:25 UTC -->
+<!-- BUILD: 2026-08-20 19:30 UTC -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -5178,7 +5178,7 @@ function saveContactDraft(){
   // Manager view context subline
   var greetSub = document.getElementById('dashGreetingSub');
   if(greetSub && (role==='manager'||role==='admin'||role==='owner')){
-    greetSub.textContent = 'Here\u2019s what\u2019s happening in your business today.';
+    greetSub.textContent = 'Here’s what’s happening in your business today.';
     greetSub.style.display = 'block';
   }<!-- BUILD: 2026-08-20 19:24 UTC -->
 <!DOCTYPE html>
@@ -5800,7 +5800,7 @@ html{height:100%;}body{height:100%;font-family:var(--font-body);background:var(-
 <div class="topbar-left">
 <div class="greeting" id="dashDate"></div>
 <h1 id="dashGreeting">Loading...</h1>
-<p id="dashGreetingSub" style="display:none;font-size:0.85rem;color:var(--text3);margin-top:2px;font-weight:400;"></p>
+
 </div>
 <div class="tb-actions">
 <button aria-label="Toggle menu" class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileSidebar()" style="display:none;" title="Menu">☰</button>
@@ -10387,6 +10387,13 @@ function wireContactDraftSaving(){
     }
   });
 }
+
+
+// Clear search bar on load to prevent browser autofill
+window.addEventListener('load', function(){
+  var s = document.getElementById('globalSearch');
+  if(s){ s.value = ''; }
+});
 
 </script>
 <!-- ── PAYMENT MODAL ── -->
